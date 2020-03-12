@@ -1,7 +1,7 @@
 #pragma once
 #include "SceneManager.h"
 
-namespace dae
+namespace Balbino
 {
 	class SceneObject;
 	class Scene
@@ -11,7 +11,7 @@ namespace dae
 		void Add(const std::shared_ptr<SceneObject>& object);
 
 		void Update();
-		void Render() const;
+		void Draw() const;
 
 		~Scene();
 		Scene(const Scene& other) = delete;

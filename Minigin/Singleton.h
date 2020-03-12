@@ -1,5 +1,5 @@
 #pragma once
-namespace dae
+namespace Balbino
 {
 	template <typename T>
 	class Singleton

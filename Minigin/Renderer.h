@@ -4,7 +4,7 @@
 struct SDL_Window;
 struct SDL_Renderer;
 
-namespace dae
+namespace Balbino
 {
 	class Texture2D;
 	/**
@@ -14,7 +14,7 @@ namespace dae
 	{
 	public:
 		void Init(SDL_Window* window);
-		void Render() const;
+		void Draw() const;
 		void Destroy();
 
 		void RenderTexture(const Texture2D& texture, float x, float y) const;

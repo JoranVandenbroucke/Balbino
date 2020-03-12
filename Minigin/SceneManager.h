@@ -1,7 +1,7 @@
 #pragma once
 #include "Singleton.h"
 
-namespace dae
+namespace Balbino
 {
 	class Scene;
 	class SceneManager final : public Singleton<SceneManager>
@@ -10,7 +10,7 @@ namespace dae
 		Scene& CreateScene(const std::string& name);
 
 		void Update();
-		void Render();
+		void Draw();
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;

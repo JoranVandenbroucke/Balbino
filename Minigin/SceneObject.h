@@ -1,11 +1,12 @@
 #pragma once
-namespace dae
+namespace Balbino
 {
 	class SceneObject
 	{
 	public:
+		virtual void Create() = 0;
 		virtual void Update() = 0;
-		virtual void Render() const = 0;
+		virtual void Draw() const = 0;
 
 		SceneObject() = default;
 		virtual ~SceneObject() = default;

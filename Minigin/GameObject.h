@@ -2,14 +2,15 @@
 #include "Transform.h"
 #include "SceneObject.h"
 
-namespace dae
+namespace Balbino
 {
 	class Texture2D;
 	class GameObject : public SceneObject
 	{
 	public:
+		void Create() override;
 		void Update() override;
-		void Render() const override;
+		void Draw() const override;
 
 		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);

@@ -1,14 +1,19 @@
 #pragma once
-class Time
+namespace Balbino
 {
-public:
-	static Time& Get();
-	static float DeltaTime();
-	static float UnscaledDeltaTime();
-	static float TimeScale();
-private:
-	Time()=default;
+	class Time
+	{
+	public:
+		static Time& Get();
+		static float DeltaTime();
+		static float UnscaledDeltaTime();
+		static float TimeScale();
 
-	float m_TimeScale;
-	float m_DeltaTime;
-};
+		void SetDT( float dt );
+	private:
+		Time() = default;
+
+		float m_TimeScale = 1.f;
+		float m_DeltaTime = 1.f;
+	};
+}

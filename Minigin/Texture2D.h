@@ -1,6 +1,6 @@
 #pragma once
 struct SDL_Texture;
-namespace dae
+namespace Balbino
 {
 	/**
 	 * Simple RAII wrapper for an SDL_Texture

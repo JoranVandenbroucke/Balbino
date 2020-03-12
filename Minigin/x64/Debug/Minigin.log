@@ -1,17 +1,4 @@
-﻿  MiniginPCH.cpp
-  Font.cpp
-  GameObject.cpp
-  InputManager.cpp
-  Main.cpp
-  Minigin.cpp
-  Renderer.cpp
-  ResourceManager.cpp
-  Scene.cpp
-  SceneManager.cpp
-  TextObject.cpp
-  Texture2D.cpp
-  Transform.cpp
-  Generating Code...
+﻿  FPSCounter.cpp
      Creating library C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Minigin.lib and object C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Minigin.exp
   Minigin.vcxproj -> C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Minigin.exe
   C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2\lib\x64\SDL2.dll

@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "GameObject.h"
 
-using namespace dae;
+using namespace Balbino;
 
 unsigned int Scene::m_IdCounter = 0;
 
@@ -23,11 +23,11 @@ void Scene::Update()
 	}
 }
 
-void Scene::Render() const
+void Scene::Draw() const
 {
 	for (const auto& object : m_Objects)
 	{
-		object->Render();
+		object->Draw();
 	}
 }
 

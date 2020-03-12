@@ -1,7 +1,6 @@
 #include "MiniginPCH.h"
 #include "Time.h"
-#include "Time.h"
-
+using namespace Balbino;
 Time& Time::Get()
 {
 	static Time time{};
@@ -21,4 +20,9 @@ float Time::UnscaledDeltaTime()
 float Time::TimeScale()
 {
 	return Get().m_TimeScale;
+}
+
+void Balbino::Time::SetDT( float dt )
+{
+	m_DeltaTime = dt;
 }
