@@ -7,11 +7,12 @@
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include <SDL.h>
-#include "TextObject.h"
+#include "Text.h"
 #include "GameObject.h"
 #include "Scene.h"
 #include "FPSCounter.h"
 #include "Time.h"
+#include "DAELogo.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -46,24 +47,22 @@ void Balbino::Minigin::LoadGame() const
 {
 	auto& scene = SceneManager::GetInstance().CreateScene( "Demo" );
 
-	auto go = std::make_shared<GameObject>();
+	std::shared_ptr<SceneObject> go = std::make_shared<GameObject>();
 	go->Create();
-	go->SetTexture( "background.jpg" );
 	scene.Add( go );
 
-	go = std::make_shared<GameObject>();
-	go->SetTexture( "logo.png" );
-	go->SetPosition( 216, 180 );
+	go = std::make_shared<DAELogo>();
+	go->Create();
 	scene.Add( go );
 
 	auto font = ResourceManager::GetInstance().LoadFont( "Lingua.otf", 36 );
-	auto to = std::make_shared<TextObject>( "Programming 4 Assignment", font );
+	auto to = std::make_shared<Text>( "Programming 4 Assignment", font );
 	to->SetPosition( 80, 20 );
 	scene.Add( to );
 
-	auto fps = std::make_shared<FPSCounter>();
-	fps->Create();
-	scene.Add( fps );
+	go = std::make_shared<FPSCounter>();
+	go->Create();
+	scene.Add( go );
 }
 
 void Balbino::Minigin::Cleanup()
@@ -100,7 +99,7 @@ void Balbino::Minigin::Run()
 			// Update current time
 			t1 = t2;
 
-			Time::Get().SetDT( deltaTime );
+			BTime::Get().SetDT( deltaTime );
 
 			doContinue = input.ProcessInput();
 			sceneManager.Update();

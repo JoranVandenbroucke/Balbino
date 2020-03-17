@@ -1,28 +1,62 @@
 #include "MiniginPCH.h"
 #include "Time.h"
+#include <algorithm>
+
 using namespace Balbino;
-Time& Time::Get()
+BTime& BTime::Get()
 {
-	static Time time{};
+	static BTime time{};
 	return time;
 }
 
-float Time::DeltaTime()
+float BTime::DeltaTime()
 {
-	return Get().m_DeltaTime * Get().m_TimeScale;
+	return ( std::min )( Get().m_DeltaTime * Get().m_TimeScale, Get().m_MaximumDeltaTime );
 }
 
-float Time::UnscaledDeltaTime()
+float Balbino::BTime::MaximumDeltaTime()
 {
-	return Get().m_DeltaTime;
+	return Get().m_MaximumDeltaTime;
 }
 
-float Time::TimeScale()
+float Balbino::BTime::Time()
+{
+	return Get().m_Time;
+}
+
+float BTime::UnscaledDeltaTime()
+{
+	return ( std::min )( Get().m_DeltaTime, Get().m_MaximumDeltaTime );
+}
+
+float Balbino::BTime::UnscaledTime()
+{
+	return Get().m_UnscaledTime;
+}
+
+float BTime::TimeScale()
 {
 	return Get().m_TimeScale;
 }
 
-void Balbino::Time::SetDT( float dt )
+float Balbino::BTime::TimeSinceLevelLoad()
+{
+	return Get().m_TimeSinceLevelLoad;
+}
+
+void Balbino::BTime::SetDT( float dt )
 {
 	m_DeltaTime = dt;
+	m_Time += dt * m_TimeScale;
+	m_UnscaledTime += dt;
+}
+
+void Balbino::BTime::SetTS( float ts )
+{
+	m_TimeScale = ts;
+}
+
+void Balbino::BTime::LoadLevel()
+{
+	m_TimeSinceLevelLoad = 0.f;
 }

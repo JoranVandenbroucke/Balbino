@@ -1,4 +1,6 @@
 #pragma once
+#include "Transform.h"
+
 namespace Balbino
 {
 	class SceneObject
@@ -14,5 +16,7 @@ namespace Balbino
 		SceneObject(SceneObject&& other) = delete;
 		SceneObject& operator=(const SceneObject& other) = delete;
 		SceneObject& operator=(SceneObject&& other) = delete;
+	protected:
+		Transform m_Transform;
 	};
 }

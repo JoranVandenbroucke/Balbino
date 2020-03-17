@@ -1,19 +1,36 @@
 #pragma once
 namespace Balbino
 {
-	class Time
+	class BTime
 	{
 	public:
-		static Time& Get();
+		static BTime& Get();
 		static float DeltaTime();
-		static float UnscaledDeltaTime();
+		static float MaximumDeltaTime();
+		static float Time();
 		static float TimeScale();
+		static float TimeSinceLevelLoad();
+		static float UnscaledDeltaTime();
+		static float UnscaledTime();
 
 		void SetDT( float dt );
-	private:
-		Time() = default;
+		void SetTS( float ts );
+		void LoadLevel();
 
-		float m_TimeScale = 1.f;
+		~BTime() = default;
+		BTime( BTime& ) = delete;
+		BTime( BTime&& ) = delete;
+		BTime& operator=( BTime& ) = delete;
+		BTime& operator=( BTime&& ) = delete;
+
+	private:
+		BTime() = default;
+
+		const float m_MaximumDeltaTime = 1.f;
 		float m_DeltaTime = 1.f;
+		float m_TimeScale = 1.f;
+		float m_Time = 0.f;
+		float m_UnscaledTime = 0.f;
+		float m_TimeSinceLevelLoad = 0.f;
 	};
 }

@@ -7,6 +7,7 @@ Balbino::GameObject::~GameObject() = default;
 
 void Balbino::GameObject::Create()
 {
+	SetTexture( "background.jpg" );
 }
 
 void Balbino::GameObject::Update(){}

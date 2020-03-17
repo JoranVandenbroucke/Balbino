@@ -3,7 +3,7 @@
 #include "SceneObject.h"
 namespace Balbino
 {
-	class TextObject;
+	class Text;
 	class FPSCounter: public SceneObject
 	{
 	public:
@@ -12,6 +12,6 @@ namespace Balbino
 		void Draw() const override;
 	private:
 		Transform m_Transform;
-		std::shared_ptr<TextObject> m_Text{};
+		std::shared_ptr<Text> m_Text{};
 	};
 }
