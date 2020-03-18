@@ -30,9 +30,6 @@
     <ClInclude Include="FPSCounter.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Minigin.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -60,9 +57,6 @@
     <ClInclude Include="SceneObject.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Font.h">
       <Filter>Engine</Filter>
     </ClInclude>
@@ -72,15 +66,21 @@
     <ClInclude Include="DAELogo.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Avatar.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniginPCH.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
@@ -107,9 +107,6 @@
     <ClCompile Include="Struct.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -124,6 +121,15 @@
     </ClCompile>
     <ClCompile Include="DAELogo.cpp">
       <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Background.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Avatar.cpp">
+      <Filter>Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

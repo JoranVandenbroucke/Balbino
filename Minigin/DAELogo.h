@@ -1,8 +1,9 @@
 #pragma once
-#include "GameObject.h"
+#include "SceneObject.h"
 #include <string>
 namespace Balbino
 {
+	class Texture2D;
 	class DAELogo: public SceneObject
 	{
 	public:

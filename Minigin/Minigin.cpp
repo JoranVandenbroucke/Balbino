@@ -8,11 +8,12 @@
 #include "ResourceManager.h"
 #include <SDL.h>
 #include "Text.h"
-#include "GameObject.h"
+#include "Background.h"
 #include "Scene.h"
 #include "FPSCounter.h"
 #include "Time.h"
 #include "DAELogo.h"
+#include "Avatar.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -47,7 +48,7 @@ void Balbino::Minigin::LoadGame() const
 {
 	auto& scene = SceneManager::GetInstance().CreateScene( "Demo" );
 
-	std::shared_ptr<SceneObject> go = std::make_shared<GameObject>();
+	std::shared_ptr<SceneObject> go = std::make_shared<Background>();
 	go->Create();
 	scene.Add( go );
 
@@ -61,6 +62,10 @@ void Balbino::Minigin::LoadGame() const
 	scene.Add( to );
 
 	go = std::make_shared<FPSCounter>();
+	go->Create();
+	scene.Add( go );
+
+	go = std::make_shared<Avatar>();
 	go->Create();
 	scene.Add( go );
 }

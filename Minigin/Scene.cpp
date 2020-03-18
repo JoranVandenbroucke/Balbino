@@ -1,6 +1,6 @@
 #include "MiniginPCH.h"
 #include "Scene.h"
-#include "GameObject.h"
+#include "Background.h"
 
 using namespace Balbino;
 
