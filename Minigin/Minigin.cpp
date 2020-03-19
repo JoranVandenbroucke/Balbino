@@ -68,6 +68,8 @@ void Balbino::Minigin::LoadGame() const
 	go = std::make_shared<Avatar>();
 	go->Create();
 	scene.Add( go );
+
+	InputManager::Init();
 }
 
 void Balbino::Minigin::Cleanup()
@@ -90,7 +92,6 @@ void Balbino::Minigin::Run()
 	{
 		auto& renderer = Renderer::GetInstance();
 		auto& sceneManager = SceneManager::GetInstance();
-		auto& input = InputManager::GetInstance();
 
 		bool doContinue = true;
 		std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
@@ -106,7 +107,7 @@ void Balbino::Minigin::Run()
 
 			BTime::Get().SetDT( deltaTime );
 
-			doContinue = input.ProcessInput();
+			doContinue = InputManager::ProcessInput();
 			sceneManager.Update();
 			renderer.Draw();
 		}
