@@ -11,8 +11,9 @@ Balbino::Text::Text( const std::string& text, const std::shared_ptr<Font>& font 
 	: m_Text( text )
 	, m_Font( font )
 	, m_Texture( nullptr )
-	, m_Color{ 0,0,0 }
+	, m_Color{ 255, 255, 255 }
 {
+	Update();
 }
 
 void Balbino::Text::Create()

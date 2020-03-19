@@ -75,6 +75,9 @@
     <ClInclude Include="Avatar.h">
       <Filter>Components</Filter>
     </ClInclude>
+    <ClInclude Include="IntroText.h">
+      <Filter>Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MiniginPCH.cpp">
@@ -130,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="Avatar.cpp">
       <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroText.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

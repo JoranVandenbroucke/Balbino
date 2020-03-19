@@ -7,10 +7,10 @@ namespace Balbino
 {
 	class Font;
 	class Texture2D;
-	class Text final : public SceneObject
+	class Text final
 	{
 	public:
-		virtual void Draw() const override;
+		void Draw() const;
 
 		void SetText(const std::string& text);
 		void SetColor(const Color& newColor );
@@ -23,8 +23,8 @@ namespace Balbino
 		Text& operator=(const Text& other) = delete;
 		Text& operator=(Text&& other) = delete;
 	private:
-		virtual void Create() override;
-		virtual void Update() override;
+		void Create();
+		void Update();
 		Color m_Color;
 		std::string m_Text;
 		Transform m_Transform;

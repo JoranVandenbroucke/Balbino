@@ -9,6 +9,11 @@ namespace Balbino
 		virtual void Create() = 0;
 		virtual void Update() = 0;
 		virtual void Draw() const = 0;
+		
+		const glm::vec3& GetPosition()const
+		{
+			return m_Transform.GetPosition();
+		}
 
 		SceneObject() = default;
 		virtual ~SceneObject() = default;

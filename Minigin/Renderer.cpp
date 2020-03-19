@@ -49,3 +49,39 @@ void Balbino::Renderer::RenderTexture(const Texture2D& texture, const float x, c
 	dst.h = static_cast<int>(height);
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
+
+void Balbino::Renderer::RenderTexture( SDL_Texture* texture, float x, float y ) const
+{
+	SDL_Rect dst;
+	dst.x = static_cast< int >( x );
+	dst.y = static_cast< int >( y );
+	SDL_QueryTexture( texture, nullptr, nullptr, &dst.w, &dst.h );
+	SDL_RenderCopy( GetSDLRenderer(), texture, nullptr, &dst );
+}
+
+void Balbino::Renderer::RenderTexture( SDL_Texture* texture, float x, float y, float width, float height ) const
+{
+	SDL_Rect dst;
+	dst.x = static_cast< int >( x );
+	dst.y = static_cast< int >( y );
+	dst.w = static_cast< int >( width );
+	dst.h = static_cast< int >( height );
+	SDL_QueryTexture( texture, nullptr, nullptr, &dst.w, &dst.h );
+	SDL_RenderCopy( GetSDLRenderer(), texture, nullptr, &dst );
+}
+
+//void Balbino::Renderer::RenderTexture( const Texture2D& texture, const Color& overlay, float x, float y, float width, float height ) const
+//{
+//}
+//
+//void Balbino::Renderer::RenderTexture( const Texture2D& texture, const Color& overlay, float x, float y ) const
+//{
+//}
+//
+//void Balbino::Renderer::RenderTexture( const Color& color, const Texture2D& alphaMap, float x, float y ) const
+//{
+//}
+//
+//void Balbino::Renderer::RenderTexture( const Color& color, const Texture2D& alphaMap, float x, float y, float width, float height ) const
+//{
+//}

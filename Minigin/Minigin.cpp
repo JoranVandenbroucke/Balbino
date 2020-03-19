@@ -14,6 +14,7 @@
 #include "Time.h"
 #include "DAELogo.h"
 #include "Avatar.h"
+#include "IntroText.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -55,11 +56,11 @@ void Balbino::Minigin::LoadGame() const
 	go = std::make_shared<DAELogo>();
 	go->Create();
 	scene.Add( go );
-
+	
 	auto font = ResourceManager::GetInstance().LoadFont( "Lingua.otf", 36 );
-	auto to = std::make_shared<Text>( "Programming 4 Assignment", font );
-	to->SetPosition( 80, 20 );
-	scene.Add( to );
+	go = std::make_shared<IntroText>( font );
+	go->Create();
+	scene.Add( go );
 
 	go = std::make_shared<FPSCounter>();
 	go->Create();

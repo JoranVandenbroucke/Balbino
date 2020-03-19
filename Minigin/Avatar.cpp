@@ -6,7 +6,7 @@
 
 void Balbino::Avatar::Create()
 {
-	m_Transform.SetPosition( 42.f, 42.f, 0.f );
+	m_Transform.SetPosition( 200.f, 200.f, 0.f );
 }
 
 void Balbino::Avatar::Update()

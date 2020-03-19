@@ -2,6 +2,7 @@
 #include "DAELogo.h"
 #include "ResourceManager.h"
 #include "Renderer.h"
+#include "Texture2D.h"
 
 void Balbino::DAELogo::Create()
 {
@@ -16,7 +17,8 @@ void Balbino::DAELogo::Update()
 void Balbino::DAELogo::Draw() const
 {
 	const auto pos = m_Transform.GetPosition();
-	Renderer::GetInstance().RenderTexture( *m_Texture, pos.x, pos.y );
+	m_Texture->Draw(pos.x,pos.y);
+	//Renderer::GetInstance().RenderTexture( *m_Texture, pos.x, pos.y );
 }
 
 Balbino::DAELogo::DAELogo()
