@@ -1,138 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Avatar.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Background.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Balbino.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="BalbinoPCH.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="DAELogo.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Font.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="FPSCounter.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="IntroText.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="ResourceManager.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Struct.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture2D.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Cpp files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Avatar.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Background.h">
-      <Filter>header</Filter>
-    </ClInclude>
     <ClInclude Include="Balbino.h">
-      <Filter>header</Filter>
+      <Filter>Connections</Filter>
     </ClInclude>
-    <ClInclude Include="BalbinoPCH.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="DAELogo.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Debug.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Font.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="FPSCounter.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="IntroText.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="ResourceManager.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneObject.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Struct.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture2D.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>header</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>header</Filter>
-    </ClInclude>
+    <ClInclude Include="scr\BalbinoPCH.h" />
+    <ClInclude Include="scr\Struct.h" />
+    <ClInclude Include="scr\Core.h" />
+    <ClInclude Include="scr\EntryPoint.h" />
+    <ClInclude Include="scr\Application.h" />
+    <ClInclude Include="scr\BalbinoCore.h" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="header">
-      <UniqueIdentifier>{050c4257-0443-471d-a485-bd35e42370b8}</UniqueIdentifier>
+    <Filter Include="Components">
+      <UniqueIdentifier>{6dbe092a-11da-44d4-a8bf-a6f41575e5d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cpp files">
+    <Filter Include="Engine">
       <UniqueIdentifier>{e4428f4c-d729-4bcf-b424-b69d28c6ed0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Connections">
+      <UniqueIdentifier>{050c4257-0443-471d-a485-bd35e42370b8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="scr\BalbinoPCH.cpp" />
+    <ClCompile Include="scr\Struct.cpp" />
+    <ClCompile Include="scr\Application.cpp" />
+    <ClCompile Include="scr\BalbinoCore.cpp" />
   </ItemGroup>
 </Project>

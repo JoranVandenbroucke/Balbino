@@ -14,4 +14,17 @@
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="scr\main.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\pch.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="scr\pch.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
