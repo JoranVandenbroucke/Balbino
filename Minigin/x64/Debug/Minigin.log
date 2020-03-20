@@ -1,4 +1,7 @@
-﻿  Avatar.cpp
+﻿  Debug.cpp
+  Renderer.cpp
+  Generating Code...
+     Creating library C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Minigin.lib and object C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Minigin.exp
   Minigin.vcxproj -> C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Minigin.exe
   C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2\lib\x64\SDL2.dll
   1 File(s) copied
