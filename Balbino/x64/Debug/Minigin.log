@@ -1,0 +1,36 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Minigin.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  MiniginPCH.cpp
+  Avatar.cpp
+  DAELogo.cpp
+  Debug.cpp
+  Font.cpp
+  FPSCounter.cpp
+  Background.cpp
+  InputManager.cpp
+  IntroText.cpp
+  Main.cpp
+  Minigin.cpp
+  Renderer.cpp
+  ResourceManager.cpp
+  Scene.cpp
+  SceneManager.cpp
+  Struct.cpp
+  Text.cpp
+  Texture2D.cpp
+  Time.cpp
+  Transform.cpp
+  Generating Code...
+     Creating library C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Balbino.lib and object C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Balbino.exp
+  Minigin.vcxproj -> C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\x64\Debug\Balbino.exe
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2\lib\x64\SDL2.dll
+  1 File(s) copied
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_image\lib\x64\libjpeg-9.dll
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_image\lib\x64\libpng16-16.dll
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_image\lib\x64\libtiff-5.dll
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_image\lib\x64\libwebp-7.dll
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_image\lib\x64\SDL2_image.dll
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_image\lib\x64\zlib1.dll
+  6 File(s) copied
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_ttf\lib\x64\libfreetype-6.dll
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll
+  2 File(s) copied
