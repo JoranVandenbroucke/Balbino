@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{5A4FF4F2-AA49-4DC3-8DD9-3FD57317E741}</ProjectGuid>
+    <ProjectGuid>{C02598DE-BE47-4A8A-A5A1-FC9414FCB379}</ProjectGuid>
     <RootNamespace>BubbleBobble</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>

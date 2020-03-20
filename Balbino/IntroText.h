@@ -8,7 +8,7 @@ namespace Balbino
 	class IntroText: public SceneObject
 	{
 	public:
-		IntroText( std::shared_ptr<Balbino::Font> font );
+		IntroText( std::shared_ptr<Font> font );
 
 		virtual void Create() override;
 		virtual void Update() override;

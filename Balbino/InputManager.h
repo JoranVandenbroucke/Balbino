@@ -61,7 +61,7 @@ namespace Balbino
 		{
 			return m_Name;
 		}
-		void SetCommand( const std::shared_ptr<Balbino::Command> newCommand )
+		void SetCommand( const std::shared_ptr<Command> newCommand )
 		{
 			m_Command = newCommand;
 		}
@@ -75,7 +75,7 @@ namespace Balbino
 		};
 	private:
 		static std::map<std::string, uint16_t> m_ButtonMap;
-		std::shared_ptr<Balbino::Command> m_Command{};
+		std::shared_ptr<Command> m_Command{};
 		std::string m_Name{};
 	};
 
@@ -84,12 +84,12 @@ namespace Balbino
 	public:
 		static void Init();
 		static bool ProcessInput();
-		static std::shared_ptr<Balbino::Command> IsPressed();
+		static std::shared_ptr<Command> IsPressed();
 		//static bool IsPressed(ControllerButton button);
 	private:
 		void IInit();
 		bool IProcessInput();
-		std::shared_ptr<Balbino::Command> IIsPressed() const;
+		std::shared_ptr<Command> IIsPressed() const;
 		//bool IIsPressed(ControllerButton Command ) const;
 
 		XINPUT_STATE m_CurrentState{};
