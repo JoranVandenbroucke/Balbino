@@ -204,18 +204,24 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
   <ItemGroup>
     <ClInclude Include="Balbino.h" />
     <ClInclude Include="scr\Application.h" />
-    <ClInclude Include="scr\BalbinoCore.h" />
     <ClInclude Include="scr\BalbinoPCH.h" />
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
+    <ClInclude Include="scr\Font.h" />
     <ClInclude Include="scr\InputManager.h" />
+    <ClInclude Include="scr\Renderer.h" />
+    <ClInclude Include="scr\ResourceManager.h" />
     <ClInclude Include="scr\Scene.h" />
     <ClInclude Include="scr\SceneManager.h" />
+    <ClInclude Include="scr\SceneObject.h" />
     <ClInclude Include="scr\Singleton.h" />
     <ClInclude Include="scr\Struct.h" />
+    <ClInclude Include="scr\Text.h" />
+    <ClInclude Include="scr\Texture2D.h" />
+    <ClInclude Include="scr\Time.h" />
+    <ClInclude Include="scr\Transform.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scr\BalbinoCore.cpp" />
     <ClCompile Include="scr\BalbinoPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -223,11 +229,17 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="scr\Application.cpp" />
+    <ClCompile Include="scr\Font.cpp" />
     <ClCompile Include="scr\InputManager.cpp" />
+    <ClCompile Include="scr\Renderer.cpp" />
+    <ClCompile Include="scr\ResourceManager.cpp" />
     <ClCompile Include="scr\Scene.cpp" />
     <ClCompile Include="scr\SceneManager.cpp" />
     <ClCompile Include="scr\Struct.cpp" />
+    <ClCompile Include="scr\Text.cpp" />
+    <ClCompile Include="scr\Texture2D.cpp" />
     <ClCompile Include="scr\Time.cpp" />
+    <ClCompile Include="scr\Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

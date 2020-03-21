@@ -1,20 +1,26 @@
 #include "pch.h"
-#include <Balbino.h>
+#include "Background.h"
 
-class BubbleBobble: public Balbino::Application
+namespace BubbleBobble
 {
-public:
-	BubbleBobble() = default;
+	class BubbleBobbleGame: public Balbino::Application
+	{
+	public:
+		BubbleBobbleGame() = default;
 
-	virtual void LoadGame() const override;
-};
+		virtual void LoadGame() const override;
+	};
+
+	void BubbleBobbleGame::LoadGame() const
+	{
+		Balbino::Scene& firsScene = Balbino::SceneManager::Get().CreateScene( "First Scene" );
+		std::shared_ptr<BubbleBobble::Background> bg = std::make_shared<BubbleBobble::Background>();
+		bg->Create();
+		firsScene.Add( bg );
+	}
+}
 
 Balbino::Application* Balbino::CreateApplication()
 {
-	return new BubbleBobble{};
-}
-
-void BubbleBobble::LoadGame() const
-{
-	Balbino::Scene& firsScene = Balbino::SceneManager::Get().CreateScene("First Scene");
+	return new BubbleBobble::BubbleBobbleGame{};
 }

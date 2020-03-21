@@ -11,11 +11,11 @@ Balbino::Texture2D::~Texture2D()
 
 void Balbino::Texture2D::Draw() const
 {
-	Renderer::GetInstance().RenderTexture( m_Texture, 0, 0 );
+	Renderer::Get().RenderTexture( m_Texture, 0, 0 );
 }
 void Balbino::Texture2D::Draw(float x, float y) const
 {
-	Renderer::GetInstance().RenderTexture( m_Texture, x, y );
+	Renderer::Get().RenderTexture( m_Texture, x, y );
 }
 
 SDL_Texture* Balbino::Texture2D::GetSDLTexture() const

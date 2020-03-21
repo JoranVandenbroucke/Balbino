@@ -1,17 +1,19 @@
 #pragma once
-#include "Core.h"
 #include "Transform.h"
+#include "Core.h"
+#pragma warning(push)
+#pragma warning(disable:4251)
 
 namespace Balbino
 {
-	class SceneObject
+	class BALBINO_API SceneObject
 	{
 	public:
 		virtual void Create() = 0;
 		virtual void Update() = 0;
 		virtual void Draw() const = 0;
 		
-		const glm::vec3& GetPosition()const
+		const vec3& GetPosition()const
 		{
 			return m_Transform.GetPosition();
 		}
@@ -26,3 +28,4 @@ namespace Balbino
 		Transform m_Transform;
 	};
 }
+#pragma warning(pop)

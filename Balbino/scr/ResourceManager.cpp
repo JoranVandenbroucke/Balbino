@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-
+#include <fstream>
 #include "Renderer.h"
 #include "Texture2D.h"
 #include "Font.h"
@@ -33,7 +33,13 @@ void Balbino::ResourceManager::Init(const std::string& dataPath)
 std::shared_ptr<Balbino::Texture2D> Balbino::ResourceManager::LoadTexture(const std::string& file) const
 {
 	const auto fullPath = m_DataPath + file;
-	auto texture = IMG_LoadTexture(Renderer::GetInstance().GetSDLRenderer(), fullPath.c_str());
+	std::ifstream fileChecker{ fullPath };
+	if( !fileChecker.is_open() )
+	{
+		throw std::runtime_error("file does not exist");
+	}
+
+	auto texture = IMG_LoadTexture(Renderer::Get().GetSDLRenderer(), fullPath.c_str());
 	if (texture == nullptr) 
 	{
 		throw std::runtime_error(std::string("Failed to load texture: ") + SDL_GetError());

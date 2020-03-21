@@ -1,6 +1,9 @@
 #pragma once
 #include "Singleton.h"
 #include "Struct.h"
+#include "Core.h"
+#pragma warning(push)
+#pragma warning(disable:4251)
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -12,7 +15,7 @@ namespace Balbino
 	/**
 	 * Simple RAII wrapper for the SDL renderer
 	 */
-	class Renderer final: public Singleton<Renderer>
+	class BALBINO_API Renderer final: public Singleton<Renderer>
 	{
 	public:
 		void Init( SDL_Window* window );
@@ -36,4 +39,4 @@ namespace Balbino
 		SDL_Renderer* m_Renderer{};
 	};
 }
-
+#pragma warning(pop)

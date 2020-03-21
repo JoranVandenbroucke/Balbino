@@ -35,7 +35,7 @@ void Balbino::Balbino::Initialize()
 		throw std::runtime_error( std::string( "SDL_CreateWindow Error: " ) + SDL_GetError() );
 	}
 
-	//Renderer::GetInstance().Init( m_Window );
+	Renderer::Get().Init( m_Window );
 }
 
 /**
@@ -43,7 +43,7 @@ void Balbino::Balbino::Initialize()
  */
 void Balbino::Balbino::LoadGame() const
 {
-	///*auto& scene =*/ SceneManager::GetInstance().CreateScene( "Demo" );
+	///*auto& scene =*/ SceneManager::Get().CreateScene( "Demo" );
 
 	//std::shared_ptr<SceneObject> go = std::make_shared<Background>();
 	//go->Create();
@@ -53,7 +53,7 @@ void Balbino::Balbino::LoadGame() const
 	//go->Create();
 	//scene.Add( go );
 	//
-	//auto font = ResourceManager::GetInstance().LoadFont( "Lingua.otf", 36 );
+	//auto font = ResourceManager::Get().LoadFont( "Lingua.otf", 36 );
 	//go = std::make_shared<IntroText>( font );
 	//go->Create();
 	//scene.Add( go );
@@ -71,7 +71,7 @@ void Balbino::Balbino::LoadGame() const
 
 void Balbino::Balbino::Cleanup()
 {
-	//Renderer::GetInstance().Destroy();
+	Renderer::Get().Destroy();
 	SDL_DestroyWindow( m_Window );
 	m_Window = nullptr;
 	SDL_Quit();
@@ -82,13 +82,13 @@ void Balbino::Balbino::Run()
 	Initialize();
 
 	// tell the resource manager where he can find the game data
-	//ResourceManager::GetInstance().Init( "../Data/" );
+	//ResourceManager::Get().Init( "../Data/" );
 
 	LoadGame();
 
 	{
-		//auto& renderer = Renderer::GetInstance();
-		//auto& sceneManager = SceneManager::GetInstance();
+		//auto& renderer = Renderer::Get();
+		//auto& sceneManager = SceneManager::Get();
 
 		bool doContinue = true;
 		std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();

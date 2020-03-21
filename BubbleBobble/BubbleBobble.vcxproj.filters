@@ -15,15 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scr\main.cpp">
+    <ClCompile Include="scr\pch.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scr\pch.cpp">
+    <ClCompile Include="scr\Background.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\main.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scr\pch.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Background.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>

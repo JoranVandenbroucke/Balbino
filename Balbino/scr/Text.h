@@ -1,17 +1,20 @@
 #pragma once
 #include "Transform.h"
+#include "Core.h"
+#pragma warning(push)
+#pragma warning(disable:4251)
 
 namespace Balbino
 {
 	class Font;
 	class Texture2D;
-	class Text final
+	class BALBINO_API Text final
 	{
 	public:
 		void Draw() const;
 
 		void SetText(const std::string& text);
-		void SetColor(const Balbino::Color& newColor );
+		void SetColor(const Color& newColor );
 		void SetPosition(float x, float y);
 
 		explicit Text(const std::string& text, const std::shared_ptr<Font>& font);
@@ -23,10 +26,11 @@ namespace Balbino
 	private:
 		void Create();
 		void Update();
-		Balbino::Color m_Color;
+		Color m_Color;
 		std::string m_Text;
 		Transform m_Transform;
 		std::shared_ptr<Font> m_Font;
 		std::shared_ptr<Texture2D> m_Texture;
 	};
 }
+#pragma warning(pop)

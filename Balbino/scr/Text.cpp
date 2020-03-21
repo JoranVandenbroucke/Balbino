@@ -12,7 +12,7 @@ Balbino::Text::Text( const std::string& text, const std::shared_ptr<Font>& font 
 	, m_Font{ font }
 	, m_Texture{ nullptr }
 	, m_Color{ 255, 255, 255, 255 }
-	, m_Transform{ { 0, 0, 0 } }
+	, m_Transform{}
 {
 	Update();
 }
@@ -30,7 +30,7 @@ void Balbino::Text::Update()
 	{
 		throw std::runtime_error( std::string( "Render text failed: " ) + SDL_GetError() );
 	}
-	auto texture = SDL_CreateTextureFromSurface( Renderer::GetInstance().GetSDLRenderer(), surf );
+	auto texture = SDL_CreateTextureFromSurface( Renderer::Get().GetSDLRenderer(), surf );
 	if( texture == nullptr )
 	{
 		throw std::runtime_error( std::string( "Create text texture from surface failed: " ) + SDL_GetError() );
@@ -44,7 +44,7 @@ void Balbino::Text::Draw() const
 	if( m_Texture != nullptr )
 	{
 		const auto pos = m_Transform.GetPosition();
-		Renderer::GetInstance().RenderTexture( *m_Texture, pos.x, pos.y );
+		Renderer::Get().RenderTexture( *m_Texture, pos.x, pos.y );
 	}
 }
 

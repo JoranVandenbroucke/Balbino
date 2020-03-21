@@ -1,17 +1,17 @@
 #pragma once
+#include "Core.h"
 #pragma warning(push)
-#pragma warning (disable:4201)
-#include <glm/vec3.hpp>
-#pragma warning(pop)
+#pragma warning(disable:4251)
 
 namespace Balbino
 {
-	class Transform final
+	class BALBINO_API Transform final
 	{
 	public:
-		const glm::vec3& GetPosition() const { return m_Position; }
+		const vec3& GetPosition() const { return m_Position; }
 		void SetPosition(float x, float y, float z);
 	private:
-		glm::vec3 m_Position;
+		vec3 m_Position;
 	};
 }
+#pragma warning(pop)

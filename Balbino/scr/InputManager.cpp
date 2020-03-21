@@ -39,7 +39,7 @@ bool Balbino::InputManager::ProcessInput()
 
 //std::shared_ptr<Balbino::Command> Balbino::InputManager::IsPressed()
 //{
-//	return GetInstance().IIsPressed();
+//	return Get().IIsPressed();
 //}
 //
 void Balbino::InputManager::IInit()

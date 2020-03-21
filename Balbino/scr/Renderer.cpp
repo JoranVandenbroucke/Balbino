@@ -17,7 +17,7 @@ void Balbino::Renderer::Draw() const
 {
 	SDL_RenderClear(m_Renderer);
 
-	SceneManager::GetInstance().Draw();
+	SceneManager::Get().Draw();
 	
 	SDL_RenderPresent(m_Renderer);
 }

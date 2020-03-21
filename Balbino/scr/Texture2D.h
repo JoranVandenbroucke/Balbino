@@ -1,13 +1,14 @@
 #pragma once
 #include "Core.h"
-
+#pragma warning(push)
+#pragma warning(disable:4251)
 struct SDL_Texture;
 namespace Balbino
 {
 	/**
 	 * Simple RAII wrapper for an SDL_Texture
 	 */
-	class Texture2D
+	class BALBINO_API Texture2D
 	{
 	public:
 		SDL_Texture* GetSDLTexture() const;
@@ -25,3 +26,4 @@ namespace Balbino
 		SDL_Texture* m_Texture;
 	};
 }
+#pragma warning(pop)
