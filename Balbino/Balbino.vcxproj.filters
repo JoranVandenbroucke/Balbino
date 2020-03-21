@@ -10,6 +10,11 @@
     <ClInclude Include="scr\EntryPoint.h" />
     <ClInclude Include="scr\Application.h" />
     <ClInclude Include="scr\BalbinoCore.h" />
+    <ClInclude Include="scr\Singleton.h" />
+    <ClInclude Include="scr\Time.h" />
+    <ClInclude Include="scr\InputManager.h" />
+    <ClInclude Include="scr\SceneManager.h" />
+    <ClInclude Include="scr\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -27,5 +32,9 @@
     <ClCompile Include="scr\Struct.cpp" />
     <ClCompile Include="scr\Application.cpp" />
     <ClCompile Include="scr\BalbinoCore.cpp" />
+    <ClCompile Include="scr\Time.cpp" />
+    <ClCompile Include="scr\InputManager.cpp" />
+    <ClCompile Include="scr\SceneManager.cpp" />
+    <ClCompile Include="scr\Scene.cpp" />
   </ItemGroup>
 </Project>

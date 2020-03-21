@@ -208,6 +208,10 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClInclude Include="scr\BalbinoPCH.h" />
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
+    <ClInclude Include="scr\InputManager.h" />
+    <ClInclude Include="scr\Scene.h" />
+    <ClInclude Include="scr\SceneManager.h" />
+    <ClInclude Include="scr\Singleton.h" />
     <ClInclude Include="scr\Struct.h" />
   </ItemGroup>
   <ItemGroup>
@@ -219,7 +223,11 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="scr\Application.cpp" />
+    <ClCompile Include="scr\InputManager.cpp" />
+    <ClCompile Include="scr\Scene.cpp" />
+    <ClCompile Include="scr\SceneManager.cpp" />
     <ClCompile Include="scr\Struct.cpp" />
+    <ClCompile Include="scr\Time.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

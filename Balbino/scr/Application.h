@@ -8,12 +8,12 @@ namespace Balbino
 	{
 	public:
 		Application() = default;
-		~Application() = default;
+		virtual ~Application() = default;
 
-		void Initialize();
-		void LoadGame() const;
-		void Cleanup();
-		void Run();
+		virtual void Initialize();
+		virtual void LoadGame() const;
+		virtual void Cleanup();
+		virtual void Run();
 	private:
 		SDL_Window* m_Window{};
 	};
