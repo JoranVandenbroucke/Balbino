@@ -6,9 +6,11 @@
 // --Entry Point--------------------------------------
 #include "scr/Renderer.h"
 #include "scr/ResourceManager.h"
+#include "scr/Struct.h"
 #include "scr/Scene.h"
 #include "scr/SceneManager.h"
 #include "scr/SceneObject.h"
 #include "scr/Text.h"
 #include "scr/Texture2D.h"
+#include "scr/Time.h"
 #include "scr/Transform.h"

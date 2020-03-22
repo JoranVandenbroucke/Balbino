@@ -1,17 +1,16 @@
 #pragma once
-#include "Transform.h"
-#include "SceneObject.h"
-namespace Balbino
+
+namespace BubbleBobble
 {
-	class Text;
-	class FPSCounter: public SceneObject
+	class Balbino::Text;
+	class FPSCounter: public Balbino::SceneObject
 	{
 	public:
 		void Create() override;
 		void Update() override;
 		void Draw() const override;
 	private:
-		Transform m_Transform;
-		std::shared_ptr<Text> m_Text{};
+		Balbino::Transform m_Transform;
+		std::shared_ptr<Balbino::Text> m_Text{};
 	};
 }

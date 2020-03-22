@@ -30,6 +30,9 @@
     <ClCompile Include="scr\IntroText.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scr\FPSCounter.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scr\pch.h">
@@ -42,6 +45,9 @@
       <Filter>Game Objects</Filter>
     </ClInclude>
     <ClInclude Include="scr\IntroText.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\FPSCounter.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>

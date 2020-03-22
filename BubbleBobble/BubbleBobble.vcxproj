@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClCompile Include="scr\Background.cpp" />
     <ClCompile Include="scr\DAELogo.cpp" />
+    <ClCompile Include="scr\FPSCounter.cpp" />
     <ClCompile Include="scr\IntroText.cpp" />
     <ClCompile Include="scr\main.cpp" />
     <ClCompile Include="scr\pch.cpp">
@@ -169,6 +170,7 @@
   <ItemGroup>
     <ClInclude Include="scr\Background.h" />
     <ClInclude Include="scr\DAELogo.h" />
+    <ClInclude Include="scr\FPSCounter.h" />
     <ClInclude Include="scr\IntroText.h" />
     <ClInclude Include="scr\pch.h" />
   </ItemGroup>

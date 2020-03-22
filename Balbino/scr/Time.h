@@ -1,9 +1,10 @@
 #pragma once
 #include "Singleton.h"
+#include "Core.h"
 
 namespace Balbino
 {
-	class BTime: public Singleton<BTime>
+	class BALBINO_API BTime: public Singleton<BTime>
 	{
 	public:
 		static float DeltaTime();
