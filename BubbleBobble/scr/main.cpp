@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Background.h"
 #include "DAELogo.h"
+#include "IntroText.h"
 
 namespace BubbleBobble
 {
@@ -23,10 +24,10 @@ namespace BubbleBobble
 		go->Create();
 		firsScene.Add( go );
 		
-		//auto font = ResourceManager::Get().LoadFont( "Lingua.otf", 36 );
-		//go = std::make_shared<IntroText>( font );
-		//go->Create();
-		//firsScene.Add( go );
+		auto font = Balbino::ResourceManager::Get().LoadFont( "Lingua.otf", 36 );
+		go = std::make_shared<IntroText>( font );
+		go->Create();
+		firsScene.Add( go );
 
 		//go = std::make_shared<FPSCounter>();
 		//go->Create();

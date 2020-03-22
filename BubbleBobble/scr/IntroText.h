@@ -1,20 +1,18 @@
 #pragma once
-#include "SceneObject.h"
-#include "Text.h"
 
-namespace Balbino
+namespace BubbleBobble
 {
 	
-	class IntroText: public SceneObject
+	class IntroText: public Balbino::SceneObject
 	{
 	public:
-		IntroText( std::shared_ptr<Font> font );
+		IntroText( std::shared_ptr<Balbino::Font> font );
 
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw()const override;
 
 	private:
-		Text m_Text;
+		Balbino::Text m_Text;
 	};
 }
