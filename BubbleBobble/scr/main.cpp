@@ -3,6 +3,7 @@
 #include "DAELogo.h"
 #include "IntroText.h"
 #include "FPSCounter.h"
+#include "Players.h"
 
 namespace BubbleBobble
 {
@@ -34,9 +35,9 @@ namespace BubbleBobble
 		go->Create();
 		firsScene.Add( go );
 
-		//go = std::make_shared<Avatar>();
-		//go->Create();
-		//firsScene.Add( go );
+		go = std::make_shared<Bub>();
+		go->Create();
+		firsScene.Add( go );
 	}
 }
 

@@ -8,26 +8,26 @@ void Balbino::Avatar::Draw() const
 {
 	if( m_Texture )
 	{
-		Renderer::GetInstance().RenderTexture( *m_Texture, 0, 0 );
+		Renderer::Get().RenderTexture( *m_Texture, 0, 0 );
 	}
 }
 
 void Balbino::Avatar::Fire()
 {
-	m_Texture = ResourceManager::GetInstance().LoadTexture( "Fire.png" );
+	m_Texture = ResourceManager::Get().LoadTexture( "Fire.png" );
 }
 
 void Balbino::Avatar::Duck()
 {
-	m_Texture = ResourceManager::GetInstance().LoadTexture( "Duck.png" );
+	m_Texture = ResourceManager::Get().LoadTexture( "Duck.png" );
 }
 
 void Balbino::Avatar::Jump()
 {
-	m_Texture = ResourceManager::GetInstance().LoadTexture( "Jump.png" );
+	m_Texture = ResourceManager::Get().LoadTexture( "Jump.png" );
 }
 
 void Balbino::Avatar::Fart()
 {
-	m_Texture = ResourceManager::GetInstance().LoadTexture( "Fart.png" );
+	m_Texture = ResourceManager::Get().LoadTexture( "Fart.png" );
 }

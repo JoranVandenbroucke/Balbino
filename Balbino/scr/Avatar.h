@@ -1,8 +1,12 @@
 #pragma once
+#include "Core.h"
+#pragma warning(push)
+#pragma warning(disable:4251)
+
 namespace Balbino
 {
 	class Texture2D;
-	class Avatar
+	class BALBINO_API Avatar
 	{
 	public:
 		Avatar() = default;
@@ -24,3 +28,4 @@ namespace Balbino
 		std::shared_ptr<Texture2D> m_Texture{};
 	};
 }
+#pragma warning(pop)

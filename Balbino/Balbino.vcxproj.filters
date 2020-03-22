@@ -21,6 +21,7 @@
     <ClInclude Include="scr\Font.h" />
     <ClInclude Include="scr\Transform.h" />
     <ClInclude Include="scr\Time.h" />
+    <ClInclude Include="scr\Avatar.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -47,5 +48,6 @@
     <ClCompile Include="scr\ResourceManager.cpp" />
     <ClCompile Include="scr\Font.cpp" />
     <ClCompile Include="scr\Transform.cpp" />
+    <ClCompile Include="scr\Avatar.cpp" />
   </ItemGroup>
 </Project>

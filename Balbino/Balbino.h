@@ -4,6 +4,8 @@
 // --Entry Point--------------------------------------
 #include "scr/EntryPoint.h"
 // --Entry Point--------------------------------------
+#include "scr/Avatar.h"
+#include "scr/InputManager.h"
 #include "scr/Renderer.h"
 #include "scr/ResourceManager.h"
 #include "scr/Struct.h"

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Players.h"
+#include <memory>
 
 void BubbleBobble::Bub::Create()
 {
@@ -34,10 +35,5 @@ void BubbleBobble::Bub::Update()
 
 void BubbleBobble::Bub::Draw() const
 {
-	/*if( m_Texture )
-	{
-		Balbino::vec3 pos{ m_Transform.GetPosition() };
-		Renderer::Get().RenderTexture( *m_Texture, pos.x, pos.y );
-	}*/
 	m_Avatar.Draw();
 }
