@@ -1,10 +1,9 @@
 #pragma once
-#include "SceneObject.h"
-#include <string>
-namespace Balbino
+
+namespace BubbleBobble
 {
-	class Texture2D;
-	class DAELogo: public SceneObject
+	class Balbino::Texture2D;
+	class DAELogo: public Balbino::SceneObject
 	{
 	public:
 		virtual void Create() override;
@@ -18,7 +17,7 @@ namespace Balbino
 		DAELogo& operator=( const DAELogo& other ) = delete;
 		DAELogo& operator=( DAELogo&& other ) = delete;
 	protected:
-		std::shared_ptr<Texture2D> m_Texture{};
+		std::shared_ptr<Balbino::Texture2D> m_Texture{};
 
 		void SetTexture( const std::string& filename );
 		void SetPosition( float x, float y );

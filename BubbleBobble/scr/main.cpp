@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Background.h"
+#include "DAELogo.h"
 
 namespace BubbleBobble
 {
@@ -14,9 +15,26 @@ namespace BubbleBobble
 	void BubbleBobbleGame::LoadGame() const
 	{
 		Balbino::Scene& firsScene = Balbino::SceneManager::Get().CreateScene( "First Scene" );
-		std::shared_ptr<BubbleBobble::Background> bg = std::make_shared<BubbleBobble::Background>();
-		bg->Create();
-		firsScene.Add( bg );
+		std::shared_ptr<Balbino::SceneObject> go = std::make_shared<Background>();
+		go->Create();
+		firsScene.Add( go );
+
+		go = std::make_shared<DAELogo>();
+		go->Create();
+		firsScene.Add( go );
+		
+		//auto font = ResourceManager::Get().LoadFont( "Lingua.otf", 36 );
+		//go = std::make_shared<IntroText>( font );
+		//go->Create();
+		//firsScene.Add( go );
+
+		//go = std::make_shared<FPSCounter>();
+		//go->Create();
+		//firsScene.Add( go );
+
+		//go = std::make_shared<Avatar>();
+		//go->Create();
+		//firsScene.Add( go );
 	}
 }
 

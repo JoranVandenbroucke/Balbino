@@ -24,12 +24,18 @@
     <ClCompile Include="scr\main.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
+    <ClCompile Include="scr\DAELogo.cpp">
+      <Filter>scripts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scr\pch.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
     <ClInclude Include="scr\Background.h">
+      <Filter>Game Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\DAELogo.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>

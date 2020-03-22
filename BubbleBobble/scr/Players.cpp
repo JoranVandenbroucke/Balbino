@@ -1,15 +1,12 @@
 #include "pch.h"
-#include "Avatar.h"
-#include "InputManager.h"
-#include "ResourceManager.h"
-#include "Renderer.h"
+#include "Players.h"
 
-void Balbino::Avatar::Create()
+void BubbleBobble::Bub::Create()
 {
 	m_Transform.SetPosition( 200.f, 200.f, 0.f );
 }
 
-void Balbino::Avatar::Update()
+void BubbleBobble::Bub::Update()
 {
 	//if( InputManager::IsPressed( Balbino::ControllerButton::ButtonA ) )
 	//{
@@ -31,15 +28,16 @@ void Balbino::Avatar::Update()
 	std::weak_ptr<Balbino::Command> command{ Balbino::InputManager::IsPressed() };
 	if( command.lock() )
 	{
-		command.lock()->Execute( *this );
+		command.lock()->Execute( m_Avatar );
 	}
 }
 
-void Balbino::Avatar::Draw() const
+void BubbleBobble::Bub::Draw() const
 {
-	if( m_Texture )
+	/*if( m_Texture )
 	{
-		glm::vec3 pos{ m_Transform.GetPosition() };
-		Renderer::GetInstance().RenderTexture( *m_Texture, pos.x, pos.y );
-	}
+		Balbino::vec3 pos{ m_Transform.GetPosition() };
+		Renderer::Get().RenderTexture( *m_Texture, pos.x, pos.y );
+	}*/
+	m_Avatar.Draw();
 }
