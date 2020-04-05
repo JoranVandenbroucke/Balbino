@@ -5,7 +5,6 @@
 #include <SDL_ttf.h>
 #include <fstream>
 #include "Renderer.h"
-#include "Texture2D.h"
 #include "Font.h"
 
 void Balbino::ResourceManager::Init(const std::string& dataPath)
@@ -30,7 +29,17 @@ void Balbino::ResourceManager::Init(const std::string& dataPath)
 	}
 }
 
-std::shared_ptr<Balbino::Texture2D> Balbino::ResourceManager::LoadTexture(const std::string& file) const
+SDL_Texture* Balbino::ResourceManager::LoadTexture(const std::string& file)
+{
+	return Get().ILoadTexture(file);
+}
+
+std::shared_ptr<Balbino::Font> Balbino::ResourceManager::LoadFont(const std::string& file, unsigned int size)
+{
+	return Get().ILoadFont( file, size );
+}
+
+SDL_Texture* Balbino::ResourceManager::ILoadTexture( const std::string& file ) const
 {
 	const auto fullPath = m_DataPath + file;
 	std::ifstream fileChecker{ fullPath };
@@ -44,10 +53,10 @@ std::shared_ptr<Balbino::Texture2D> Balbino::ResourceManager::LoadTexture(const 
 	{
 		throw std::runtime_error(std::string("Failed to load texture: ") + SDL_GetError());
 	}
-	return std::make_shared<Texture2D>(texture);
+	return texture;
 }
 
-std::shared_ptr<Balbino::Font> Balbino::ResourceManager::LoadFont(const std::string& file, unsigned int size) const
+std::shared_ptr<Balbino::Font> Balbino::ResourceManager::ILoadFont( const std::string& file, unsigned int size ) const
 {
-	return std::make_shared<Font>(m_DataPath + file, size);
+	return std::make_shared<Font>( m_DataPath + file, size );
 }

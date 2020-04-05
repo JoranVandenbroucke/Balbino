@@ -5,20 +5,17 @@
 #include "Avatar.h"
 #include <map>
 #include <stdlib.h>
-#include "Core.h"
-#pragma warning(push)
-#pragma warning(disable:4251)
 
 
 namespace Balbino
 {
-	class BALBINO_API Command
+	class Command
 	{
 	public:
 		virtual ~Command() = default;
 		virtual void Execute( Avatar& actor ) = 0;
 	};
-	
+
 	class Fire: public Command
 	{
 	public:
@@ -51,13 +48,19 @@ namespace Balbino
 			actor.Fart();
 		}
 	};
-	
-	
+
+	enum class ControllerButton
+	{
+		ButtonA,
+		ButtonB,
+		ButtonX,
+		ButtonY,
+		//...
+	};
 	class Button
 	{
 	public:
 		Button();
-	
 		const std::shared_ptr<Command> GetCommand()const
 		{
 			return m_Command;
@@ -70,9 +73,12 @@ namespace Balbino
 		{
 			m_Command = newCommand;
 		}
-		void SetName( const std::string newName )
+		void SetName( const std::string& newName )
 		{
-			m_Name = newName;
+			if( m_ButtonMap.find( newName ) != m_ButtonMap.end() )
+			{
+				m_Name = newName;
+			}
 		}
 		uint16_t GetKeyCode()
 		{
@@ -84,25 +90,33 @@ namespace Balbino
 		std::string m_Name{};
 	};
 
-	class BALBINO_API InputManager final: public Singleton<InputManager>
+	class InputManager
 	{
 	public:
+		static InputManager& Get();
 		static void Init();
 		static bool ProcessInput();
 		static std::shared_ptr<Command> IsPressed();
-		//static bool IsPressed(ControllerButton button);
+		static bool IsPressed( const ControllerButton& button );
+		static void ChangeButton( const std::string& functionName );
+		static void ChangeButton( const std::string& functionName, const std::string& keyName );
+
+		~InputManager() = default;
+		InputManager( const InputManager& ) = delete;
+		InputManager( InputManager&& ) = delete;
+		InputManager& operator=( const InputManager& ) = delete;
+		InputManager& operator=( InputManager&& ) = delete;
 	private:
+		InputManager() = default;
 		void IInit();
 		bool IProcessInput();
 		std::shared_ptr<Command> IIsPressed() const;
-		//bool IIsPressed(ControllerButton Command ) const;
+		bool IIsPressed( const ControllerButton& button ) const;
 
 		XINPUT_STATE m_CurrentState{};
 		std::unique_ptr<Button> m_Fire;
 		std::unique_ptr<Button> m_Duck;
 		std::unique_ptr<Button> m_Jump;
 		std::unique_ptr<Button> m_Fart;
-
 	};
 }
-#pragma warning(pop)

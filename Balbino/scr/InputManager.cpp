@@ -1,8 +1,8 @@
 #include "BalbinoPCH.h"
 #include "InputManager.h"
 #include <SDL.h>
-#include <SDL_opengl.h>
-#include "Application.h"
+//#include <SDL_opengl.h>
+//#include "Application.h"
 
 std::map<std::string, uint16_t> Balbino::Button::m_ButtonMap{};
 
@@ -26,6 +26,22 @@ Balbino::Button::Button()
 
 	m_ButtonMap.insert( std::make_pair( "C_L_THUMB", uint16_t( XINPUT_GAMEPAD_LEFT_SHOULDER ) ) );
 	m_ButtonMap.insert( std::make_pair( "C_R_THUMB", uint16_t( XINPUT_GAMEPAD_RIGHT_SHOULDER ) ) );
+
+	for( int scan = SDL_SCANCODE_UNKNOWN; scan <= SDL_NUM_SCANCODES; scan++ )
+	{
+		SDL_Keycode code = SDL_GetKeyFromScancode( SDL_Scancode( scan ) );
+		if( code != SDLK_UNKNOWN )
+		{
+			const char* name = SDL_GetKeyName( code );
+			m_ButtonMap.insert( std::make_pair( name, uint16_t( scan ) ) );
+		}
+	}
+}
+
+Balbino::InputManager& Balbino::InputManager::Get()
+{
+	static InputManager instance{};
+	return instance;
 }
 
 void Balbino::InputManager::Init()
@@ -41,6 +57,54 @@ bool Balbino::InputManager::ProcessInput()
 std::shared_ptr<Balbino::Command> Balbino::InputManager::IsPressed()
 {
 	return Get().IIsPressed();
+}
+
+bool Balbino::InputManager::IsPressed( const ControllerButton& button )
+{
+	return Get().IIsPressed( button );
+}
+
+void Balbino::InputManager::ChangeButton( const std::string& functionName )
+{
+	SDL_Event e;
+	while( true )
+	{
+		if( SDL_WaitEvent( &e ) )
+		{
+			if( e.type == SDL_KEYDOWN )
+			{
+				SDL_KeyboardEvent& keyEvent = e.key;
+				if( keyEvent.keysym.sym == SDLK_ESCAPE )
+				{
+					break;
+				}
+				const char* name = SDL_GetKeyName( keyEvent.keysym.sym );
+				ChangeButton( functionName, name );
+				break;
+			}
+		}
+	}
+
+}
+
+void Balbino::InputManager::ChangeButton( const std::string& functionName, const std::string& keyName )
+{
+	if( functionName == "Fire" )
+	{
+		Get().m_Fire->SetName( keyName );
+	}
+	else if( functionName == "Duck" )
+	{
+		Get().m_Duck->SetName( keyName );
+	}
+	else if( functionName == "Jump" )
+	{
+		Get().m_Jump->SetName( keyName );
+	}
+	else if( functionName == "Fart" )
+	{
+		Get().m_Fart->SetName( keyName );
+	}
 }
 
 void Balbino::InputManager::IInit()
@@ -60,6 +124,7 @@ void Balbino::InputManager::IInit()
 	m_Fart = std::make_unique<Button>();
 	m_Fart->SetName( "C_Y" );
 	m_Fart->SetCommand( std::make_shared<Fart>() );
+
 }
 
 bool Balbino::InputManager::IProcessInput()
@@ -73,17 +138,6 @@ bool Balbino::InputManager::IProcessInput()
 		if( e.type == SDL_QUIT )
 		{
 			return false;
-		}
-		else if( e.type == SDL_WINDOWEVENT )
-		{
-			switch( e.window.event )
-			{
-				case SDL_WINDOWEVENT_RESIZED:
-					break;
-				default:
-					break;
-			}
-			break;
 		}
 		else if( e.type == SDL_KEYDOWN )
 		{
@@ -109,57 +163,65 @@ bool Balbino::InputManager::IProcessInput()
 	return true;
 }
 
-//void Core::ResizeWindow( int w, int h )
-//{
-//	// Set the Projection matrix to the identity matrix
-//	glMatrixMode( GL_PROJECTION );
-//	glLoadIdentity();
-//
-//	// Set up a two-dimensional orthographic viewing region.
-//	gluOrtho2D( 0, w, 0, h ); // y from bottom to top
-//
-//	// Set the viewport to the client window area
-//	// The viewport is the rectangular region of the window where the image is drawn.
-//	glViewport( 0, 0, w, h );
-//
-//	// Set the Modelview matrix to the identity matrix
-//	glMatrixMode( GL_MODELVIEW );
-//	glLoadIdentity();
-//}
-
 std::shared_ptr<Balbino::Command> Balbino::InputManager::IIsPressed() const
 {
-	if( m_Fire->GetName()[0] == 'C' && m_CurrentState.Gamepad.wButtons & m_Fire->GetKeyCode() )
+	const Uint8* pStates = SDL_GetKeyboardState( nullptr );
+
+	if( m_Fire->GetName().find( "C_" ) != std::string::npos )
+	{
+		if( m_CurrentState.Gamepad.wButtons & m_Fire->GetKeyCode() )
+			return m_Fire->GetCommand();
+	}
+	else if( pStates[m_Fire->GetKeyCode()] )
 	{
 		return m_Fire->GetCommand();
 	}
-	else
-	{
 
+	if( m_Duck->GetName().find( "C_" ) != std::string::npos )
+	{
+		if( m_CurrentState.Gamepad.wButtons & m_Duck->GetKeyCode() )
+			return m_Duck->GetCommand();
 	}
-	if( m_Duck->GetName()[0] == 'C' && m_CurrentState.Gamepad.wButtons & m_Duck->GetKeyCode() )
+	else if( pStates[m_Duck->GetKeyCode()] )
 	{
 		return m_Duck->GetCommand();
 	}
-	else
-	{
 
+	if( m_Jump->GetName().find( "C_" ) != std::string::npos )
+	{
+		if( m_CurrentState.Gamepad.wButtons & m_Jump->GetKeyCode() )
+			return m_Jump->GetCommand();
 	}
-	if( m_Jump->GetName()[0] == 'C' && m_CurrentState.Gamepad.wButtons & m_Jump->GetKeyCode() )
+	else if( pStates[m_Jump->GetKeyCode()] )
 	{
 		return m_Jump->GetCommand();
 	}
-	else
-	{
 
+	if( m_Fart->GetName().find( "C_" ) != std::string::npos )
+	{
+		if( m_CurrentState.Gamepad.wButtons & m_Fart->GetKeyCode() )
+			return m_Fart->GetCommand();
 	}
-	if( m_Fart->GetName()[0] == 'C' && m_CurrentState.Gamepad.wButtons & m_Fart->GetKeyCode() )
+	else if( pStates[m_Fart->GetKeyCode()] )
 	{
 		return m_Fart->GetCommand();
 	}
-	else
-	{
 
-	}
 	return nullptr;
+}
+
+bool Balbino::InputManager::IIsPressed( const ControllerButton& button ) const
+{
+	switch( button )
+	{
+		case ControllerButton::ButtonA:
+			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_A;
+		case ControllerButton::ButtonB:
+			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_B;
+		case ControllerButton::ButtonX:
+			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_X;
+		case ControllerButton::ButtonY:
+			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_Y;
+		default: return false;
+	}
 }

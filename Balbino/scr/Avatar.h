@@ -1,15 +1,15 @@
 #pragma once
-#include "Core.h"
-#pragma warning(push)
-#pragma warning(disable:4251)
+#include "Component.h"
 
 namespace Balbino
 {
 	class Texture2D;
-	class BALBINO_API Avatar
+	class GameObject;
+
+	class Avatar: public Component
 	{
 	public:
-		Avatar() = default;
+		Avatar( std::weak_ptr<GameObject> origine );
 
 		Avatar( const Avatar& ) = delete;
 		Avatar( Avatar&& ) = delete;
@@ -28,4 +28,3 @@ namespace Balbino
 		std::shared_ptr<Texture2D> m_Texture{};
 	};
 }
-#pragma warning(pop)

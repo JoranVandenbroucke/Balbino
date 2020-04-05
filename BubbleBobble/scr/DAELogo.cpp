@@ -1,35 +1,13 @@
 #include "pch.h"
 #include "DAELogo.h"
 
-BubbleBobble::DAELogo::DAELogo()
-	:SceneObject{}
-	, m_Texture{}
-{
-}
-
 void BubbleBobble::DAELogo::Create()
 {
-	SetTexture( "logo.png" );
-	SetPosition( 216, 180 );
-}
+	std::shared_ptr<Balbino::Transform> transform = AddComponent<Balbino::Transform>();
+	transform->SetPosition( 216.f, 180.f, 0.f );
 
-void BubbleBobble::DAELogo::Update()
-{
-}
+	std::shared_ptr<Balbino::Texture2D> texture = AddComponent<Balbino::Texture2D>();
+	texture->SetTexture( "logo.png" );
 
-void BubbleBobble::DAELogo::Draw() const
-{
-	const auto pos = m_Transform.GetPosition();
-	m_Texture->Draw(pos.x,pos.y);
-	//Renderer::GetInstance().RenderTexture( *m_Texture, pos.x, pos.y );
-}
-
-void BubbleBobble::DAELogo::SetTexture( const std::string& filename )
-{
-	m_Texture = Balbino::ResourceManager::Get().LoadTexture( filename );
-}
-
-void BubbleBobble::DAELogo::SetPosition( float x, float y )
-{
-	m_Transform.SetPosition( x, y, 0.0f );
+	LoadComponents();
 }

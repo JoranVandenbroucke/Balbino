@@ -2,24 +2,17 @@
 
 namespace BubbleBobble
 {
-	class Balbino::Texture2D;
-	class DAELogo: public Balbino::SceneObject
+	class DAELogo: public Balbino::GameObject
 	{
 	public:
 		virtual void Create() override;
-		virtual void Update() override;
-		virtual void Draw() const override;
 
-		DAELogo();
+		DAELogo() = default;
 		virtual ~DAELogo() = default;
 		DAELogo( const DAELogo& other ) = delete;
 		DAELogo( DAELogo&& other ) = delete;
 		DAELogo& operator=( const DAELogo& other ) = delete;
 		DAELogo& operator=( DAELogo&& other ) = delete;
 	protected:
-		std::shared_ptr<Balbino::Texture2D> m_Texture{};
-
-		void SetTexture( const std::string& filename );
-		void SetPosition( float x, float y );
 	};
 }

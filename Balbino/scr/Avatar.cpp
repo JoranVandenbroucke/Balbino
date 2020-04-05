@@ -2,7 +2,13 @@
 #include "Avatar.h"
 #include "Texture2D.h"
 #include "Renderer.h"
-#include "ResourceManager.h"
+#include "GameObject.h"
+
+Balbino::Avatar::Avatar( std::weak_ptr<GameObject> origine )
+	:Component{ origine }
+	, m_Texture{}
+{
+}
 
 void Balbino::Avatar::Draw() const
 {
@@ -14,20 +20,20 @@ void Balbino::Avatar::Draw() const
 
 void Balbino::Avatar::Fire()
 {
-	m_Texture = ResourceManager::Get().LoadTexture( "Fire.png" );
+	m_Texture->SetTexture( "Fire.png" );
 }
 
 void Balbino::Avatar::Duck()
 {
-	m_Texture = ResourceManager::Get().LoadTexture( "Duck.png" );
+	m_Texture->SetTexture( "Duck.png" );
 }
 
 void Balbino::Avatar::Jump()
 {
-	m_Texture = ResourceManager::Get().LoadTexture( "Jump.png" );
+	m_Texture->SetTexture( "Jump.png" );
 }
 
 void Balbino::Avatar::Fart()
 {
-	m_Texture = ResourceManager::Get().LoadTexture( "Fart.png" );
+	m_Texture->SetTexture( "Fart.png" );
 }

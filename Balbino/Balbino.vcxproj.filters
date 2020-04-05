@@ -22,6 +22,9 @@
     <ClInclude Include="scr\Transform.h" />
     <ClInclude Include="scr\Time.h" />
     <ClInclude Include="scr\Avatar.h" />
+    <ClInclude Include="scr\Component.h" />
+    <ClInclude Include="scr\GameObject.h" />
+    <ClInclude Include="scr\FPSScript.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -49,5 +52,9 @@
     <ClCompile Include="scr\Font.cpp" />
     <ClCompile Include="scr\Transform.cpp" />
     <ClCompile Include="scr\Avatar.cpp" />
+    <ClCompile Include="scr\Component.cpp" />
+    <ClCompile Include="scr\GameObject.cpp" />
+    <ClCompile Include="scr\SceneObject.cpp" />
+    <ClCompile Include="scr\FPSScript.cpp" />
   </ItemGroup>
 </Project>

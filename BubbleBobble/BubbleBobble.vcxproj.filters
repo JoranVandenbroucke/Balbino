@@ -18,22 +18,16 @@
     <ClCompile Include="scr\pch.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Background.cpp">
+    <ClCompile Include="scr\main.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scr\main.cpp">
+    <ClCompile Include="scr\Background.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
     <ClCompile Include="scr\DAELogo.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scr\IntroText.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
     <ClCompile Include="scr\FPSCounter.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Players.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,13 +41,7 @@
     <ClInclude Include="scr\DAELogo.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="scr\IntroText.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
     <ClInclude Include="scr\FPSCounter.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\Players.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
   </ItemGroup>

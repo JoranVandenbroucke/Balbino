@@ -5,23 +5,10 @@ BubbleBobble::Background::~Background() = default;
 
 void BubbleBobble::Background::Create()
 {
-	SetTexture( "background.jpg" );
-}
+	std::shared_ptr<Balbino::Transform> transform = AddComponent<Balbino::Transform>();
+	transform->SetPosition( 0.f, 0.f, 0.f );
+	std::shared_ptr<Balbino::Texture2D> texture = AddComponent<Balbino::Texture2D>();
+	texture->SetTexture( "background.jpg" );
 
-void BubbleBobble::Background::Update(){}
-
-void BubbleBobble::Background::Draw() const
-{
-	const auto pos = m_Transform.GetPosition();
-	Balbino::Renderer::Get().RenderTexture(*m_Texture, pos.x, pos.y);
-}
-
-void BubbleBobble::Background::SetTexture(const std::string& filename)
-{
-	m_Texture = Balbino::ResourceManager::Get().LoadTexture(filename);
-}
-
-void BubbleBobble::Background::SetPosition(float x, float y)
-{
-	m_Transform.SetPosition(x, y, 0.0f);
+	LoadComponents();
 }

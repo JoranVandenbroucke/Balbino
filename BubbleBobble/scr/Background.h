@@ -1,14 +1,14 @@
 #pragma once
+//#include <Balbino.h>
 
 namespace BubbleBobble
 {
-	class Balbino::Texture2D;
-	class Background : public Balbino::SceneObject
+	//class Balbino::GameObject;
+
+	class Background : public Balbino::GameObject
 	{
 	public:
 		void Create() override;
-		void Update() override;
-		void Draw() const override;
 
 		Background() = default;
 		virtual ~Background();
@@ -18,9 +18,5 @@ namespace BubbleBobble
 		Background& operator=(Background&& other) = delete;
 
 	private:
-		std::shared_ptr<Balbino::Texture2D> m_Texture{};
-
-		void SetTexture(const std::string& filename);
-		void SetPosition(float x, float y);
 	};
 }

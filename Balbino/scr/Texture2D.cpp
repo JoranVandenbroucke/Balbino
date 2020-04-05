@@ -1,29 +1,49 @@
 #include "BalbinoPCH.h"
 #include "Texture2D.h"
 #include <SDL.h>
-#include "SceneObject.h"
+#include "GameObject.h"
 #include "Renderer.h"
+#include "ResourceManager.h"
+#include "Transform.h"
+
+Balbino::Texture2D::Texture2D( const std::weak_ptr<GameObject> origine )
+	: Component{ origine }
+	, m_Texture{ nullptr }
+{
+}
 
 Balbino::Texture2D::~Texture2D()
 {
 	SDL_DestroyTexture(m_Texture);
 }
 
+void Balbino::Texture2D::SetTexture( const std::string path )
+{
+	m_Texture = ResourceManager::LoadTexture( path );
+}
+
+void Balbino::Texture2D::SetTexture( SDL_Texture* texture )
+{
+	SDL_DestroyTexture( m_Texture );
+	m_Texture = texture;
+}
+
+void Balbino::Texture2D::Create()
+{
+	this->Component::Create();
+}
+
+void Balbino::Texture2D::Update()
+{
+}
+
 void Balbino::Texture2D::Draw() const
 {
-	Renderer::Get().RenderTexture( m_Texture, 0, 0 );
-}
-void Balbino::Texture2D::Draw(float x, float y) const
-{
-	Renderer::Get().RenderTexture( m_Texture, x, y );
+	vec3 pos = m_Transform.lock()->GetPosition();
+	Renderer::Get().RenderTexture( m_Texture, pos.x, pos.y );
 }
 
 SDL_Texture* Balbino::Texture2D::GetSDLTexture() const
 {
 	return m_Texture;
-}
-
-Balbino::Texture2D::Texture2D(SDL_Texture* texture)
-{
-	m_Texture = texture;
 }

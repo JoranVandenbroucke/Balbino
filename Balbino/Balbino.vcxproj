@@ -203,6 +203,9 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Balbino.h" />
+    <ClInclude Include="scr\FPSScript.h" />
+    <ClInclude Include="scr\Component.h" />
+    <ClInclude Include="scr\GameObject.h" />
     <ClInclude Include="scr\Application.h" />
     <ClInclude Include="scr\Avatar.h" />
     <ClInclude Include="scr\BalbinoPCH.h" />
@@ -223,6 +226,9 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClInclude Include="scr\Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\FPSScript.cpp" />
+    <ClCompile Include="scr\Component.cpp" />
+    <ClCompile Include="scr\GameObject.cpp" />
     <ClCompile Include="scr\Avatar.cpp" />
     <ClCompile Include="scr\BalbinoPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -237,6 +243,7 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClCompile Include="scr\ResourceManager.cpp" />
     <ClCompile Include="scr\Scene.cpp" />
     <ClCompile Include="scr\SceneManager.cpp" />
+    <ClCompile Include="scr\SceneObject.cpp" />
     <ClCompile Include="scr\Struct.cpp" />
     <ClCompile Include="scr\Text.cpp" />
     <ClCompile Include="scr\Texture2D.cpp" />

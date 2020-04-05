@@ -5,21 +5,14 @@
 
 void BubbleBobble::FPSCounter::Create()
 {
-	auto font = Balbino::ResourceManager::Get().LoadFont( "Lingua.otf", 16 );
-	m_Text = std::make_shared<Balbino::Text>( "fps: 000.00", font );
-	m_Text->SetColor( { 54, 35, 213 } );
-	m_Text->SetPosition( 0, 0 );
-	m_Transform.SetPosition( 4.f, 4.f, 0.f );
-}
+	std::shared_ptr<Balbino::Transform> transform = AddComponent<Balbino::Transform>();
+	transform->SetPosition( 4.f, 4.f, 0.f );
 
-void BubbleBobble::FPSCounter::Update()
-{
-	std::stringstream stringStream;
-	stringStream << "fps: " << std::setprecision( 2 ) << std::fixed << ( 1.f / Balbino::BTime::UnscaledDeltaTime() );
-	m_Text->SetText( stringStream.str() );
-}
+	std::shared_ptr<Balbino::Text> text = AddComponent<Balbino::Text>();
+	text->SetColor( Balbino::Color{ 54,35,213 } );
+	text->SetText( "fps: 000.00" );
 
-void BubbleBobble::FPSCounter::Draw() const
-{
-	m_Text->Draw();
+	std::shared_ptr<Balbino::FPSScript> fps = AddComponent<Balbino::FPSScript>();
+
+	LoadComponents();
 }
