@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include <SDL.h>
 #include "SceneManager.h"
-#include "Texture2D.h"
+#include "Components/Texture2D.h"
 
 void Balbino::Renderer::Init(SDL_Window * window)
 {

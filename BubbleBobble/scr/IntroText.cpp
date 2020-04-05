@@ -1,23 +1,16 @@
 #include "pch.h"
 #include "IntroText.h"
 
-BubbleBobble::IntroText::IntroText( std::shared_ptr<Balbino::Font> font )
-	: SceneObject{}
-	, m_Text{ "Programming 4 Asignment", font }
-{
-}
-
 void BubbleBobble::IntroText::Create()
 {
-	m_Transform.SetPosition( 80, 20, 0.f );
-	m_Text.SetPosition( 80, 20 );
-}
+	std::shared_ptr<Balbino::Transform> transform = AddComponent<Balbino::Transform>();
+	transform->SetPosition( 20, 80, 0.f );
 
-void BubbleBobble::IntroText::Update()
-{
-}
+	std::shared_ptr<Balbino::Texture2D> textTexture = AddComponent<Balbino::Texture2D>();
 
-void BubbleBobble::IntroText::Draw() const
-{
-	m_Text.Draw();
+	std::shared_ptr<Balbino::Text> text = AddComponent<Balbino::Text>();
+	text->SetFont( "Lingua.otf", 42 );
+	text->SetText( "Programming 4 Assignment" );
+
+	LoadComponents();
 }

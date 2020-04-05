@@ -2,9 +2,9 @@
 #include <windows.h>
 #include <XInput.h>
 #include "Singleton.h"
-#include "Avatar.h"
 #include <map>
 #include <stdlib.h>
+#include "Components/Avatar.h"
 
 
 namespace Balbino

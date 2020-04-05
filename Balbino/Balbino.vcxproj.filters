@@ -15,16 +15,16 @@
     <ClInclude Include="scr\Scene.h" />
     <ClInclude Include="scr\Renderer.h" />
     <ClInclude Include="scr\SceneObject.h" />
-    <ClInclude Include="scr\Text.h" />
-    <ClInclude Include="scr\Texture2D.h" />
     <ClInclude Include="scr\ResourceManager.h" />
     <ClInclude Include="scr\Font.h" />
-    <ClInclude Include="scr\Transform.h" />
     <ClInclude Include="scr\Time.h" />
-    <ClInclude Include="scr\Avatar.h" />
-    <ClInclude Include="scr\Component.h" />
-    <ClInclude Include="scr\GameObject.h" />
-    <ClInclude Include="scr\FPSScript.h" />
+    <ClInclude Include="scr\Components\Avatar.h" />
+    <ClInclude Include="scr\Components\Component.h" />
+    <ClInclude Include="scr\Components\FPSScript.h" />
+    <ClInclude Include="scr\Components\Text.h" />
+    <ClInclude Include="scr\Components\Texture2D.h" />
+    <ClInclude Include="scr\Components\Transform.h" />
+    <ClInclude Include="scr\GameObject\GameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -46,15 +46,15 @@
     <ClCompile Include="scr\SceneManager.cpp" />
     <ClCompile Include="scr\Scene.cpp" />
     <ClCompile Include="scr\Renderer.cpp" />
-    <ClCompile Include="scr\Text.cpp" />
-    <ClCompile Include="scr\Texture2D.cpp" />
     <ClCompile Include="scr\ResourceManager.cpp" />
     <ClCompile Include="scr\Font.cpp" />
-    <ClCompile Include="scr\Transform.cpp" />
-    <ClCompile Include="scr\Avatar.cpp" />
-    <ClCompile Include="scr\Component.cpp" />
-    <ClCompile Include="scr\GameObject.cpp" />
     <ClCompile Include="scr\SceneObject.cpp" />
-    <ClCompile Include="scr\FPSScript.cpp" />
+    <ClCompile Include="scr\Components\Avatar.cpp" />
+    <ClCompile Include="scr\Components\Component.cpp" />
+    <ClCompile Include="scr\Components\FPSScript.cpp" />
+    <ClCompile Include="scr\Components\Text.cpp" />
+    <ClCompile Include="scr\Components\Texture2D.cpp" />
+    <ClCompile Include="scr\Components\Transform.cpp" />
+    <ClCompile Include="scr\GameObject\GameObject.cpp" />
   </ItemGroup>
 </Project>

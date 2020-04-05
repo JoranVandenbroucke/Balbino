@@ -2,8 +2,7 @@
 
 namespace BubbleBobble
 {
-	class Balbino::Texture2D;
-	class Bub: public Balbino::SceneObject
+	class Bub: public Balbino::GameObject
 	{
 	public:
 		Bub() = default;
@@ -16,10 +15,7 @@ namespace BubbleBobble
 		~Bub() = default;
 
 		virtual void Create() override;
-		virtual void Update() override;
-		virtual void Draw() const override;
 	private:
-		Balbino::Avatar m_Avatar;
 	};
 }
 

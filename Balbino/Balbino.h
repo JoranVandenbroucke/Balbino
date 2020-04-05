@@ -4,11 +4,10 @@
 // --Entry Point--------------------------------------
 #include "scr/EntryPoint.h"
 // --Entry Point--------------------------------------
-#include "scr/Component.h"
-#include "scr/FPSScript.h"
-#include "scr/GameObject.h"
 #include "scr/Scene.h"
-#include "scr/SceneManager.h"
-#include "scr/Text.h"
-#include "scr/Texture2D.h"
-#include "scr/Transform.h"
+#include "scr/Components/Component.h"
+#include "scr/Components/FPSScript.h"
+#include "scr/Components/Text.h"
+#include "scr/Components/Texture2D.h"
+#include "scr/Components/Transform.h"
+#include "scr/GameObject/GameObject.h"
