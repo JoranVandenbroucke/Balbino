@@ -101,20 +101,21 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_BUILD_DLL;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_ttf\lib\x86;$(SolutionDir)3rdParty\SDL2_image\lib\x86;$(SolutionDir)3rdParty\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\x86;$(SolutionDir)3rdParty\SDL2_ttf\lib\x86;$(SolutionDir)3rdParty\SDL2_image\lib\x86;$(SolutionDir)3rdParty\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x86\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectName).dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -124,22 +125,23 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SFML_STATIC;BL_PLATFORM_WINDOWS;BL_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Include\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_ttf\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)Include\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;xinput.lib;OpenGL32.lib;sfml-main-d.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-graphics-s-d.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\x64;$(SolutionDir)3rdParty\SDL2_ttf\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectName).dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -153,7 +155,7 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_BUILD_DLL;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -162,13 +164,14 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_ttf\lib\x86;$(SolutionDir)3rdParty\SDL2_image\lib\x86;$(SolutionDir)3rdParty\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\x86;$(SolutionDir)3rdParty\SDL2_ttf\lib\x86;$(SolutionDir)3rdParty\SDL2_image\lib\x86;$(SolutionDir)3rdParty\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x86\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectName).dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -182,7 +185,7 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;BL_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -191,20 +194,23 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_ttf\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\x64;$(SolutionDir)3rdParty\SDL2_ttf\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
 xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectName).dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R/Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Components\Audio.h" />
     <ClInclude Include="Balbino.h" />
     <ClInclude Include="scr\Components\FPSScript.h" />
     <ClInclude Include="scr\Components\Component.h" />
+    <ClInclude Include="scr\Debug.h" />
     <ClInclude Include="scr\GameObject\GameObject.h" />
     <ClInclude Include="scr\Application.h" />
     <ClInclude Include="scr\Components\Avatar.h" />
@@ -212,6 +218,14 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
     <ClInclude Include="scr\Font.h" />
+    <ClInclude Include="scr\imgui-1.75\imconfig.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_internal.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_sdl.h" />
+    <ClInclude Include="scr\imgui-1.75\imstb_rectpack.h" />
+    <ClInclude Include="scr\imgui-1.75\imstb_textedit.h" />
+    <ClInclude Include="scr\imgui-1.75\imstb_truetype.h" />
     <ClInclude Include="scr\InputManager.h" />
     <ClInclude Include="scr\Renderer.h" />
     <ClInclude Include="scr\ResourceManager.h" />
@@ -226,8 +240,10 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClInclude Include="scr\Components\Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Components\Audio.cpp" />
     <ClCompile Include="scr\Components\FPSScript.cpp" />
     <ClCompile Include="scr\Components\Component.cpp" />
+    <ClCompile Include="scr\Debug.cpp" />
     <ClCompile Include="scr\GameObject\GameObject.cpp" />
     <ClCompile Include="scr\Components\Avatar.cpp" />
     <ClCompile Include="scr\BalbinoPCH.cpp">
@@ -238,6 +254,11 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     </ClCompile>
     <ClCompile Include="scr\Application.cpp" />
     <ClCompile Include="scr\Font.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_draw.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_sdl.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_widgets.cpp" />
     <ClCompile Include="scr\InputManager.cpp" />
     <ClCompile Include="scr\Renderer.cpp" />
     <ClCompile Include="scr\ResourceManager.cpp" />

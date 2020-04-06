@@ -24,3 +24,16 @@ vec3::vec3( float x, float y, float z )
 	, z{ z }
 {
 }
+
+vec3& Balbino::vec3::operator+=( const vec3& rhs )
+{
+	this->x += rhs.x;
+	this->y += rhs.y;
+	this->z += rhs.z;
+	return *this;
+}
+
+vec3 Balbino::operator+( vec3 lhs, const vec3& rhs )
+{
+	return lhs += rhs;
+}

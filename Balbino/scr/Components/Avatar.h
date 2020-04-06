@@ -1,12 +1,18 @@
 #pragma once
-#include "../Components/Component.h"
+#include "Component.h"
+#include "../Core.h"
+#pragma warning(push)
+#pragma warning(disable:4251)
+#pragma warning(disable:4275)
+
 
 namespace Balbino
 {
-	class Texture2D;
+	class ConsoleAudio;
+	class LoggedAudio;
 	class GameObject;
 
-	class Avatar: public Component
+	class BALBINO_API Avatar: public Component
 	{
 	public:
 		Avatar( std::weak_ptr<GameObject> origine );
@@ -18,13 +24,17 @@ namespace Balbino
 
 		~Avatar() = default;
 
-		void Draw() const;
+		virtual void Create() override;
+		virtual void Update() override;
+		virtual void Draw() const override;
 
 		void Fire();
 		void Duck();
 		void Jump();
 		void Fart();
 	private:
-		std::shared_ptr<Texture2D> m_Texture{};
+		std::shared_ptr<ConsoleAudio> m_ConsoleAudio;
+		std::shared_ptr<LoggedAudio> m_LoggedAudio;
 	};
 }
+#pragma warning(pop)

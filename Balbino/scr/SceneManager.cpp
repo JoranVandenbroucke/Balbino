@@ -2,7 +2,6 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "SceneObject.h"
-
 void Balbino::SceneManager::Update()
 {
 	for( auto& scene : m_Scenes )

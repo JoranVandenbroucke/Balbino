@@ -6,6 +6,14 @@ void BubbleBobble::Bub::Create()
 {
 	std::shared_ptr<Balbino::Transform> transform = AddComponent<Balbino::Transform>();
 	transform->SetPosition( 200.f, 200.f, 0.f );
+
+	std::shared_ptr<Balbino::Avatar> avatar = AddComponent<Balbino::Avatar>();
+
+	std::shared_ptr<Balbino::ConsoleAudio> consAud = AddComponent<Balbino::ConsoleAudio>();
+
+	std::shared_ptr<Balbino::LoggedAudio> logAud = AddComponent<Balbino::LoggedAudio>();
+
+	LoadComponents();
 }
 
 //void BubbleBobble::Bub::Update()

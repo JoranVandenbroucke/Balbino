@@ -25,6 +25,16 @@
     <ClInclude Include="scr\Components\Texture2D.h" />
     <ClInclude Include="scr\Components\Transform.h" />
     <ClInclude Include="scr\GameObject\GameObject.h" />
+    <ClInclude Include="scr\imgui-1.75\imconfig.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_internal.h" />
+    <ClInclude Include="scr\imgui-1.75\imstb_rectpack.h" />
+    <ClInclude Include="scr\imgui-1.75\imstb_textedit.h" />
+    <ClInclude Include="scr\imgui-1.75\imstb_truetype.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_sdl.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h" />
+    <ClInclude Include="scr\Debug.h" />
+    <ClInclude Include="scr\Components\Audio.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -56,5 +66,12 @@
     <ClCompile Include="scr\Components\Texture2D.cpp" />
     <ClCompile Include="scr\Components\Transform.cpp" />
     <ClCompile Include="scr\GameObject\GameObject.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_draw.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_widgets.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_sdl.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp" />
+    <ClCompile Include="scr\Debug.cpp" />
+    <ClCompile Include="scr\Components\Audio.cpp" />
   </ItemGroup>
 </Project>

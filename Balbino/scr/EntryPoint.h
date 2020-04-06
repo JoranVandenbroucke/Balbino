@@ -3,7 +3,7 @@
 #include <iostream>
 
 extern Balbino::Application* Balbino::CreateApplication();
-
+#undef main
 int main( int arc, char* argv[] )
 {
 	auto bubble = Balbino::CreateApplication();

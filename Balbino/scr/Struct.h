@@ -17,5 +17,8 @@ namespace Balbino
 	{
 		vec3( float x = 0.f, float y = 0.f, float z = 0.f );
 		float x, y, z;
+
+		vec3& operator+=( const vec3& rhs );
+		friend vec3 operator+( vec3 lhs, const vec3& rhs );
 	};
 }

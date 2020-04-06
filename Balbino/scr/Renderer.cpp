@@ -3,7 +3,8 @@
 #include <SDL.h>
 #include "SceneManager.h"
 #include "Components/Texture2D.h"
-
+#include "imgui-1.75/imgui.h"
+#include "imgui-1.75/imgui_sdl.h"
 void Balbino::Renderer::Init(SDL_Window * window)
 {
 	m_Renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -18,7 +19,11 @@ void Balbino::Renderer::Draw() const
 	SDL_RenderClear(m_Renderer);
 
 	SceneManager::Get().Draw();
-	
+#ifdef _DEBUG
+	ImGui::Render();
+	ImGuiSDL::Render( ImGui::GetDrawData() );
+#endif // _DEBUG
+
 	SDL_RenderPresent(m_Renderer);
 }
 
