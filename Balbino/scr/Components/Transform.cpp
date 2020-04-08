@@ -29,11 +29,15 @@ void Balbino::Transform::Draw() const
 void Balbino::Transform::DrawInpector() const
 {
 	ImGui::BeginChild( "Transform" );
-
+	ImGui::PushItemWidth(80);
+	ImGui::DragFloat("z: ", &m_Position.x);
+	ImGui::DragFloat("y: ", &m_Position.x);
+	ImGui::DragFloat("z: ", &m_Position.x);
+	ImGui::PopItemWidth();
 	ImGui::EndChild();
 }
 #endif
-void Balbino::Transform::SetPosition(const float x, const float y, const float z)
+void Balbino::Transform::SetPosition( const float x, const float y, const float z )
 {
 	m_Position.x = x;
 	m_Position.y = y;

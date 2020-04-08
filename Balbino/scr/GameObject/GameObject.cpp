@@ -20,12 +20,16 @@ void Balbino::GameObject::Update()
 	}
 }
 
-void Balbino::GameObject::Draw() const
+void Balbino::GameObject::DrawInspector() const
 {
 	for( std::weak_ptr<Component> comp : m_Components )
 	{
 		comp.lock()->Draw();
 	}
+}
+
+void Balbino::GameObject::DrawInspector() const
+{
 }
 
 void Balbino::GameObject::Destroy()

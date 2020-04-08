@@ -1,6 +1,7 @@
 #include "BalbinoPCH.h"
 #include "Scene.h"
 #include "SceneObject.h"
+#include "imgui-1.75/imgui.h"
 
 using namespace Balbino;
 
@@ -29,6 +30,13 @@ void Scene::Draw() const
 	{
 		object->Draw();
 	}
+}
+
+void Balbino::Scene::DrawEditor() const
+{
+	ImGui::Begin("Inspector");
+	m_Objects[0]->DrawInspector();
+	ImGui::End();
 }
 
 void Balbino::Scene::Load()
