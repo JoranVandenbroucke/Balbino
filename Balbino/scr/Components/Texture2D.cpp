@@ -46,6 +46,10 @@ void Balbino::Texture2D::Draw() const
 	Renderer::Get().RenderTexture( m_Texture, pos.x, pos.y );
 }
 
+void Balbino::Texture2D::DrawInpector() const
+{
+}
+
 SDL_Texture* Balbino::Texture2D::GetSDLTexture() const
 {
 	return m_Texture;

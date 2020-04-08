@@ -22,7 +22,9 @@ namespace Balbino
 		virtual void Create();
 		virtual void Update() override;
 		virtual void Draw() const override;
-
+#ifdef _DEBUG
+		virtual void DrawInpector() const override;
+#endif // _DEBUG
 
 
 		Transform( const Transform& ) = delete;

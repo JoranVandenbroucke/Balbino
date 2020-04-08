@@ -13,7 +13,7 @@ Balbino::Text::Text( const std::weak_ptr<GameObject> origin )
 	: Component{ origin }
 	, m_Text{ "Text" }
 	, m_Font{ Balbino::ResourceManager::Get().LoadFont( "Lingua.otf", 12 ) }
-	, m_Texture{ nullptr }
+	, m_Texture{}
 	, m_Color{ 255, 255, 255, 255 }
 	, m_NeedsUpdate{ true }
 {
@@ -30,7 +30,7 @@ void Balbino::Text::Update()
 	if( m_NeedsUpdate )
 	{
 		const SDL_Color color = { m_Color.r, m_Color.g, m_Color.b }; // only white text is supported now
-		const auto surf = TTF_RenderText_Blended( m_Font->GetFont(), m_Text.c_str(), color );
+		const auto surf = TTF_RenderText_Blended( m_Font.lock()->GetFont(), m_Text.c_str(), color );
 		if( surf == nullptr )
 		{
 			throw std::runtime_error( std::string( "Render text failed: " ) + SDL_GetError() );
@@ -41,7 +41,7 @@ void Balbino::Text::Update()
 			throw std::runtime_error( std::string( "Create text texture from surface failed: " ) + SDL_GetError() );
 		}
 		SDL_FreeSurface( surf );
-		m_Texture->SetTexture( texture );
+		m_Texture.lock()->SetTexture( texture );
 	}
 }
 
@@ -52,6 +52,10 @@ void Balbino::Text::Draw() const
 		const auto pos = m_Transform.lock()->GetPosition();
 		Renderer::Get().RenderTexture( *m_Texture, pos.x, pos.y );
 	}*/
+}
+
+void Balbino::Text::DrawInpector() const
+{
 }
 
 // This implementation uses the "dirty flag" pattern

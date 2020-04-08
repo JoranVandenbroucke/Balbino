@@ -4,10 +4,16 @@
 #include "../Debug.h"
 #include "../ResourceManager.h"
 #include <algorithm>
+#include "../imgui-1.75/imgui.h"
 
 Balbino::Audio::Audio()
 	:m_pMixChunks{}
 {
+}
+
+Balbino::Audio::~Audio()
+{
+	m_pMixChunks.clear();
 }
 
 void Balbino::Audio::AddSound( const char* filePath )
@@ -19,7 +25,7 @@ void Balbino::Audio::SetVolume( const int soundID, const int volume )
 {
 	if( int( m_pMixChunks.size() ) > soundID )
 	{
-		Mix_VolumeChunk( m_pMixChunks[soundID].get(), std::max( std::min( MIX_MAX_VOLUME, volume ), 0 ) );
+		Mix_VolumeChunk( m_pMixChunks[soundID].lock().get(), std::max( std::min( MIX_MAX_VOLUME, volume ), 0 ) );
 	}
 }
 
@@ -41,11 +47,16 @@ void Balbino::ConsoleAudio::Draw() const
 {
 }
 
+void Balbino::ConsoleAudio::DrawInpector() const
+{
+	
+}
+
 void Balbino::ConsoleAudio::PlaySound( int soundID )
 {
 	if( int( m_pMixChunks.size() ) > soundID )
 	{
-		Mix_PlayChannel( soundID, m_pMixChunks[soundID].get(), 0 );
+		Mix_PlayChannel( soundID, m_pMixChunks[soundID].lock().get(), 0 );
 	}
 }
 
@@ -77,11 +88,16 @@ void Balbino::LoggedAudio::Draw() const
 {
 }
 
+void Balbino::LoggedAudio::DrawInpector() const
+{
+
+}
+
 void Balbino::LoggedAudio::PlaySound( int soundID )
 {
 	if( int( m_pMixChunks.size() ) > soundID )
 	{
-		Mix_PlayChannel( soundID, m_pMixChunks[soundID].get(), 0 );
+		Mix_PlayChannel( soundID, m_pMixChunks[soundID].lock().get(), 0 );
 	}
 	Log( "Playing Sound" );
 }

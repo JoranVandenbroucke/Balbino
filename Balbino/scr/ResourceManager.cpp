@@ -27,6 +27,12 @@ void Balbino::ResourceManager::Init( const std::string& dataPath )
 	{
 		throw std::runtime_error( std::string( "Failed to load support for fonts: " ) + SDL_GetError() );
 	}
+
+	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+	{
+		std::cerr << "Core::Initialize( ), error when calling Mix_OpenAudio: " << Mix_GetError() << std::endl;
+		return;
+	}
 }
 
 SDL_Texture* Balbino::ResourceManager::LoadTexture( const std::string& file )
@@ -42,6 +48,15 @@ std::shared_ptr<Balbino::Font> Balbino::ResourceManager::LoadFont( const std::st
 std::shared_ptr<Mix_Chunk> Balbino::ResourceManager::LoadAudio( const std::string& file )
 {
 	return Get().ILoadAudio(file);
+}
+
+void Balbino::ResourceManager::Cleanup()
+{
+	Get().ICleanup();
+}
+
+Balbino::ResourceManager::~ResourceManager()
+{
 }
 
 SDL_Texture* Balbino::ResourceManager::ILoadTexture( const std::string& file )
@@ -94,4 +109,16 @@ std::shared_ptr<Mix_Chunk> Balbino::ResourceManager::ILoadAudio( const std::stri
 		throw std::runtime_error{ errorMsg };
 	}
 	return m_Audio[file] = audio;
+}
+
+void Balbino::ResourceManager::ICleanup()
+{
+	for( auto& mix : m_Audio )
+	{
+		Mix_FreeChunk( mix.second.get() );
+		//mix.second = nullptr;
+	}
+	//m_Audio.clear();
+	m_Fonts.clear();
+	m_Textures.clear();
 }

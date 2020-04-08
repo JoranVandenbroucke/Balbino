@@ -20,6 +20,9 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+#ifdef _DEBUG
+		virtual void DrawInpector()const override;
+#endif // _DEBUG
 
 		void SetText( const std::string& text );
 		void SetColor( const Color& newColor );
@@ -34,8 +37,8 @@ namespace Balbino
 		bool m_NeedsUpdate;
 		Color m_Color;
 		std::string m_Text;
-		std::shared_ptr<Font> m_Font;
-		std::shared_ptr<Texture2D> m_Texture;
+		std::weak_ptr<Font> m_Font;
+		std::weak_ptr<Texture2D> m_Texture;
 	};
 }
 #pragma warning(pop)

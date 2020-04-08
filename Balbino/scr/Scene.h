@@ -15,6 +15,8 @@ namespace Balbino
 
 		void Update();
 		void Draw() const;
+		void Load();
+		void Unload();
 
 		~Scene();
 		Scene( const Scene& other ) = delete;

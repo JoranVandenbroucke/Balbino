@@ -70,9 +70,9 @@ void Balbino::Debug::Draw() const
 	ImGui::End();
 }
 
-void Balbino::Debug::Reset()
+Balbino::Debug::~Debug()
 {
-	//m_Log.clear();
+	m_Log.clear();
 }
 
 void Balbino::Debug::ILog( const std::string& log )

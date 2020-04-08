@@ -24,7 +24,15 @@ void Balbino::Transform::Update()
 void Balbino::Transform::Draw() const
 {
 }
+#ifdef _DEBUG
+#include "../imgui-1.75/imgui.h"
+void Balbino::Transform::DrawInpector() const
+{
+	ImGui::BeginChild( "Transform" );
 
+	ImGui::EndChild();
+}
+#endif
 void Balbino::Transform::SetPosition(const float x, const float y, const float z)
 {
 	m_Position.x = x;

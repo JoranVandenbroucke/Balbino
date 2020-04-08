@@ -1,4 +1,3 @@
-#include "BalbinoPCH.h"
 // dear imgui, v1.75
 // (main code and documentation)
 
@@ -2061,13 +2060,13 @@ bool ImGuiTextFilter::PassFilter(const char* text, const char* text_end) const
 
 // On some platform vsnprintf() takes va_list by reference and modifies it.
 // va_copy is the 'correct' way to copy a va_list but Visual Studio prior to 2013 doesn't have it.
-//#ifndef va_copy
-//    #if defined(__GNUC__) || defined(__clang__)
-//        #define va_copy(dest, src) __builtin_va_copy(dest, src)
-//    #else
-//        #define va_copy(dest, src) (dest = src)
-//    #endif
-//#endif
+#ifndef va_copy
+#if defined(__GNUC__) || defined(__clang__)
+#define va_copy(dest, src) __builtin_va_copy(dest, src)
+#else
+#define va_copy(dest, src) (dest = src)
+#endif
+#endif
 
 char ImGuiTextBuffer::EmptyString[1] = { 0 };
 

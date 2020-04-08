@@ -1,6 +1,9 @@
 #include "BalbinoPCH.h"
 #include "InputManager.h"
 #include <SDL.h>
+
+#include "imgui-1.75/imgui.h"
+
 //#include <SDL_opengl.h>
 //#include "Application.h"
 
@@ -36,6 +39,11 @@ Balbino::Button::Button()
 			m_ButtonMap.insert( std::make_pair( name, uint16_t( scan ) ) );
 		}
 	}
+}
+
+Balbino::Button::~Button()
+{
+	m_ButtonMap.clear();
 }
 
 Balbino::InputManager& Balbino::InputManager::Get()
@@ -131,7 +139,9 @@ bool Balbino::InputManager::IProcessInput()
 {
 	ZeroMemory( &m_CurrentState, sizeof( XINPUT_STATE ) );
 	XInputGetState( 0, &m_CurrentState );
+	ImGuiIO& io = ImGui::GetIO();
 
+	int wheel = 0;
 	SDL_Event e;
 	while( SDL_PollEvent( &e ) )
 	{
@@ -149,17 +159,36 @@ bool Balbino::InputManager::IProcessInput()
 		}
 		else if( e.type == SDL_MOUSEBUTTONUP )
 		{
-
+			if( e.button.button == 1 )
+			{
+				io.MouseDown[0] = 0;
+			}
+			else if( e.button.button == 2 )
+			{
+				io.MouseDown[1] = 0;
+			}
 		}
 		else if( e.type == SDL_MOUSEBUTTONDOWN )
 		{
-
+			if( e.button.button == 1 )
+			{
+				io.MouseDown[0] = 1;
+			}
+			else if( e.button.button == 2 )
+			{
+				io.MouseDown[1] = 1;
+			}
 		}
 		else if( e.type == SDL_MOUSEWHEEL )
 		{
-
+			wheel = e.wheel.y;
+		}
+		else if( e.type == SDL_MOUSEMOTION )
+		{
+			io.MousePos = ImVec2{ float( e.motion.x ),float( e.motion.y ) };
 		}
 	}
+	io.MouseWheel = static_cast< float >( wheel );
 	return true;
 }
 

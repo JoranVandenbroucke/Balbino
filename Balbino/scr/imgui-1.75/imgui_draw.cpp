@@ -1,4 +1,3 @@
-#include "BalbinoPCH.h"
 // dear imgui, v1.75
 // (drawing and font code)
 
@@ -126,7 +125,7 @@ namespace IMGUI_STB_NAMESPACE
 #define STB_RECT_PACK_IMPLEMENTATION
 #endif
 #ifdef IMGUI_STB_RECT_PACK_FILENAME
-//#include IMGUI_STB_RECT_PACK_FILENAME
+#include IMGUI_STB_RECT_PACK_FILENAME
 #else
 #include "imstb_rectpack.h"
 #endif
@@ -149,7 +148,7 @@ namespace IMGUI_STB_NAMESPACE
 #define STBTT_DEF extern
 #endif
 #ifdef IMGUI_STB_TRUETYPE_FILENAME
-//#include IMGUI_STB_TRUETYPE_FILENAME
+#include IMGUI_STB_TRUETYPE_FILENAME
 #else
 #include "imstb_truetype.h"
 #endif

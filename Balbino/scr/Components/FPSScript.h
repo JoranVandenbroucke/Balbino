@@ -20,13 +20,16 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+#ifdef _DEBUG
+		virtual void DrawInpector()const  override;
+#endif // _DEBUG
 
 		FPSScript( const FPSScript& ) = delete;
 		FPSScript( FPSScript&& ) = delete;
 		FPSScript& operator= ( const FPSScript& ) = delete;
 		FPSScript& operator= ( const FPSScript&& ) = delete;
 	private:
-		std::shared_ptr<Text> m_Text{};
+		std::weak_ptr<Text> m_Text{};
 	};
 }
 #pragma warning(pop)

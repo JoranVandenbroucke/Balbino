@@ -1,9 +1,11 @@
 #pragma once
 #ifdef BL_PLATFORM_WINDOWS
+#include <vld.h>
 #include <iostream>
 
 extern Balbino::Application* Balbino::CreateApplication();
-#undef main
+//#undef main
+
 int main( int arc, char* argv[] )
 {
 	auto bubble = Balbino::CreateApplication();

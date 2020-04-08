@@ -12,14 +12,15 @@ namespace Balbino
 	public:
 		Audio();
 
-		virtual ~Audio() = default;
+		virtual ~Audio();
 		virtual void PlaySound( int soundID ) = 0;
 		virtual void StopSound( int soundID ) = 0;
 		virtual void StopAllSounds() = 0;
+
 		void AddSound( const char* filePath );
 		void SetVolume( const int soundID, const int volume );
 	protected:
-		std::vector<std::shared_ptr<Mix_Chunk>> m_pMixChunks;
+		std::vector<std::weak_ptr<Mix_Chunk>> m_pMixChunks;
 	};
 
 #pragma warning(push)
@@ -33,6 +34,9 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+#ifdef _DEBUG
+		virtual void DrawInpector() const override;
+#endif // _DEBUG
 
 		virtual void PlaySound( int soundID );
 		virtual void StopSound( int soundID );
@@ -47,6 +51,9 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+#ifdef _DEBUG
+		virtual void DrawInpector() const override;
+#endif // _DEBUG
 
 		virtual void PlaySound( int soundID );
 		virtual void StopSound( int soundID );

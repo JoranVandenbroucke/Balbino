@@ -14,11 +14,15 @@ namespace Balbino
 		virtual void Create();
 		virtual void Update() = 0;
 		virtual void Draw() const = 0;
+#ifdef _DEBUG
+		virtual void DrawInpector() const = 0;
+#endif // _DEBUG
+
 
 		template <class T>
-		std::shared_ptr<T> GetComponent();
+		std::weak_ptr<T> GetComponent();
 		template <class T, class... Args>
-		std::shared_ptr<T> AddComponent(Args&&... args);
+		std::weak_ptr<T> AddComponent(Args&&... args);
 
 		Component( const Component& ) = delete;
 		Component( Component&& ) = delete;
@@ -30,13 +34,13 @@ namespace Balbino
 	};
 
 	template<class T>
-	inline std::shared_ptr<T> Component::GetComponent()
+	inline std::weak_ptr<T> Component::GetComponent()
 	{
 		return m_Origin.lock()->template GetComponent<T>();
 	}
 
 	template<class T, class... Args>
-	inline std::shared_ptr<T> Component::AddComponent(Args&&... args)
+	inline std::weak_ptr<T> Component::AddComponent(Args&&... args)
 	{
 		return m_Origin.lock()->template AddComponent<T>(std::forward<Args>(args)...);
 	}

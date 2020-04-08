@@ -31,3 +31,18 @@ void Scene::Draw() const
 	}
 }
 
+void Balbino::Scene::Load()
+{
+	for( auto& object : m_Objects )
+	{
+		object->Create();
+	}
+}
+
+void Balbino::Scene::Unload()
+{
+	for( auto& object : m_Objects )
+	{
+		object->Destroy();
+	}
+}

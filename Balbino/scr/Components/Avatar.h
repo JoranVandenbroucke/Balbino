@@ -27,14 +27,17 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+#ifdef _DEBUG
+		virtual void DrawInpector()const  override;
+#endif // _DEBUG
 
 		void Fire();
 		void Duck();
 		void Jump();
 		void Fart();
 	private:
-		std::shared_ptr<ConsoleAudio> m_ConsoleAudio;
-		std::shared_ptr<LoggedAudio> m_LoggedAudio;
+		std::weak_ptr<ConsoleAudio> m_ConsoleAudio;
+		std::weak_ptr<LoggedAudio> m_LoggedAudio;
 	};
 }
 #pragma warning(pop)

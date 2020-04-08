@@ -27,12 +27,14 @@ namespace Balbino
 		static SDL_Texture* LoadTexture( const std::string& file );
 		static std::shared_ptr<Font> LoadFont( const std::string& file, unsigned int size );
 		static std::shared_ptr<Mix_Chunk> LoadAudio( const std::string& file );
+		static void Cleanup();
+		virtual ~ResourceManager();
 	private:
 		SDL_Texture* ILoadTexture( const std::string& file );
 		std::shared_ptr<Font> ILoadFont( const std::string& file, unsigned int size );
-		friend class Singleton<ResourceManager>;
 		std::shared_ptr<Mix_Chunk> ILoadAudio( const std::string& file );
-
+		void ICleanup();
+		friend class Singleton<ResourceManager>;
 		ResourceManager() = default;
 		std::string m_DataPath;
 

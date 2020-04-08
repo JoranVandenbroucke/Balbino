@@ -35,6 +35,7 @@
     <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h" />
     <ClInclude Include="scr\Debug.h" />
     <ClInclude Include="scr\Components\Audio.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_plot.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -73,5 +74,7 @@
     <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp" />
     <ClCompile Include="scr\Debug.cpp" />
     <ClCompile Include="scr\Components\Audio.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_demo.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_plot.cpp" />
   </ItemGroup>
 </Project>

@@ -61,6 +61,7 @@ namespace Balbino
 	{
 	public:
 		Button();
+		~Button();
 		const std::shared_ptr<Command> GetCommand()const
 		{
 			return m_Command;
@@ -114,9 +115,9 @@ namespace Balbino
 		bool IIsPressed( const ControllerButton& button ) const;
 
 		XINPUT_STATE m_CurrentState{};
-		std::unique_ptr<Button> m_Fire;
-		std::unique_ptr<Button> m_Duck;
-		std::unique_ptr<Button> m_Jump;
-		std::unique_ptr<Button> m_Fart;
+		std::shared_ptr<Button> m_Fire;
+		std::shared_ptr<Button> m_Duck;
+		std::shared_ptr<Button> m_Jump;
+		std::shared_ptr<Button> m_Fart;
 	};
 }

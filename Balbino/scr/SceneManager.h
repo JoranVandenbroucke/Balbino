@@ -15,12 +15,18 @@ namespace Balbino
 	public:
 		Scene& CreateScene( const std::string& name );
 
+		void SetScene(const unsigned int sceneNr );
 		void Update();
 		void Draw();
+#ifdef _DEBUG
+		void DrawInpector();
+#endif
+
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
 		std::vector<std::shared_ptr<Scene>> m_Scenes;
+		std::weak_ptr<Scene> m_CurrentScenes;
 	};
 }
 #pragma warning(pop)

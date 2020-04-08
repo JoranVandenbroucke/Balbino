@@ -20,7 +20,7 @@ namespace Balbino
 		static void LogWarning( const std::string& warning );																//A variant of Debug.Log that logs a warning message to the console.
 
 		void Draw() const;
-		void Reset();
+		~Debug();
 	private:
 		std::deque<std::pair<std::string, Color>> m_Log;
 
