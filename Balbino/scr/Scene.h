@@ -15,7 +15,7 @@ namespace Balbino
 
 		void Update();
 		void Draw() const;
-		void DrawEditor() const;
+		void DrawEditor();
 		void Load();
 		void Unload();
 

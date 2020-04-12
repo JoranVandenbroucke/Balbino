@@ -1,5 +1,7 @@
 #pragma once
 #include "Component.h"
+#include "../gl3w/GL/gl3w.h"
+#include "../Renderer/Renderer.h"
 #include "../Core.h"
 #pragma warning(push)
 #pragma warning(disable:4251)
@@ -17,23 +19,46 @@ namespace Balbino
 		virtual ~Texture2D();
 
 		void SetTexture( const std::string path );
-		void SetTexture( SDL_Texture* m_Texture );
+		void SetTexture( GLuint newTexture );
+		void SetColor( const Color& color );
 
 		virtual void Create();
 		virtual void Update() override;
 		virtual void Draw() const override;
-#ifdef _DEBUG
-		virtual void DrawInpector() const override;
-#endif // _DEBUG
-
-		SDL_Texture* GetSDLTexture() const;
 
 		Texture2D(const Texture2D &) = delete;
 		Texture2D(Texture2D &&) = delete;
 		Texture2D & operator= (const Texture2D &) = delete;
 		Texture2D & operator= (const Texture2D &&) = delete;
 	private:
-		SDL_Texture* m_Texture;
+		GLuint m_Texture;
+		std::string m_File;
+		vertex m_Vert[4]
+		{
+			{-1.0f,-1.0f,0.0f, 0.f,0.f, 1.f,0.f,0.f,1.f},
+			{-1.0f, 1.0f,0.0f, 0.f,1.f, 0.f,0.f,1.f,1.f},
+			{ 1.0f,-1.0f,0.0f, 1.f,0.f, 0.f,1.f,0.f,1.f},
+			{ 1.0f, 1.0f,0.0f, 1.f,1.f, 1.f,1.f,1.f,1.f}
+		};
+		const Uint32 m_Index[6]
+		{
+			0,1,2,
+			1,2,3
+		};
+		VertexBuffer m_VertexBuff;
+		IndexBuffer m_IndexBuff;
+		Shader m_Shader;
+		Color m_Color;
+		int m_ColorUniformLocation;
+		int m_TextureUniformLocation;
+		int m_ModelMatricLocation;
+#ifdef _DEBUG
+	public:
+		virtual void DrawInpector() override;
+
+	private:
+		char* m_InputField{nullptr};
+#endif
 	};
 }
 #pragma warning(pop)

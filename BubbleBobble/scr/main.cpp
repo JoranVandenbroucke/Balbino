@@ -27,11 +27,11 @@ namespace BubbleBobble
 		go = std::make_shared<IntroText>();
 		firsScene.Add( go );
 
-		go = std::make_shared<FPSCounter>();
-		firsScene.Add( go );
+		//go = std::make_shared<FPSCounter>();
+		//firsScene.Add( go );
 
-		go = std::make_shared<Bub>();
-		firsScene.Add( go );
+		//go = std::make_shared<Bub>();
+		//firsScene.Add( go );
 	}
 }
 

@@ -15,7 +15,7 @@ namespace Balbino
 		virtual void Update() = 0;
 		virtual void Draw() const = 0;
 #ifdef _DEBUG
-		virtual void DrawInpector() const = 0;
+		virtual void DrawInpector() = 0;
 #endif // _DEBUG
 
 

@@ -3,6 +3,7 @@
 #include <SDL.h>
 
 #include "imgui-1.75/imgui.h"
+#include "imgui-1.75/imgui_impl_sdl.h"
 
 //#include <SDL_opengl.h>
 //#include "Application.h"
@@ -145,6 +146,7 @@ bool Balbino::InputManager::IProcessInput()
 	SDL_Event e;
 	while( SDL_PollEvent( &e ) )
 	{
+		ImGui_ImplSDL2_ProcessEvent( &e );
 		if( e.type == SDL_QUIT )
 		{
 			return false;

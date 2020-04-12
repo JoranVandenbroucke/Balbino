@@ -13,7 +13,6 @@
     <ClInclude Include="scr\InputManager.h" />
     <ClInclude Include="scr\SceneManager.h" />
     <ClInclude Include="scr\Scene.h" />
-    <ClInclude Include="scr\Renderer.h" />
     <ClInclude Include="scr\SceneObject.h" />
     <ClInclude Include="scr\ResourceManager.h" />
     <ClInclude Include="scr\Font.h" />
@@ -36,6 +35,11 @@
     <ClInclude Include="scr\Debug.h" />
     <ClInclude Include="scr\Components\Audio.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_plot.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_impl_opengl3.h" />
+    <ClInclude Include="scr\gl3w\GL\gl3w.h" />
+    <ClInclude Include="scr\gl3w\GL\glcorearb.h" />
+    <ClInclude Include="scr\Renderer\Renderer.h" />
+    <ClInclude Include="scr\Components\Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -56,7 +60,6 @@
     <ClCompile Include="scr\InputManager.cpp" />
     <ClCompile Include="scr\SceneManager.cpp" />
     <ClCompile Include="scr\Scene.cpp" />
-    <ClCompile Include="scr\Renderer.cpp" />
     <ClCompile Include="scr\ResourceManager.cpp" />
     <ClCompile Include="scr\Font.cpp" />
     <ClCompile Include="scr\SceneObject.cpp" />
@@ -76,5 +79,15 @@
     <ClCompile Include="scr\Components\Audio.cpp" />
     <ClCompile Include="scr\imgui-1.75\imgui_demo.cpp" />
     <ClCompile Include="scr\imgui-1.75\imgui_plot.cpp" />
+    <ClCompile Include="scr\imgui-1.75\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="scr\gl3w\GL\gl3w.c" />
+    <ClCompile Include="scr\Renderer\Renderer.cpp" />
+    <ClCompile Include="scr\Components\Camera.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scr\Shaders\Basic.fs" />
+    <None Include="scr\Shaders\Basic.vs" />
+    <None Include="scr\Shaders\Font.fs" />
+    <None Include="scr\Shaders\Font.vs" />
   </ItemGroup>
 </Project>

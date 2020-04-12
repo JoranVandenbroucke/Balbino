@@ -26,9 +26,9 @@ void Balbino::SceneManager::Draw()
 	m_CurrentScenes.lock()->Draw();
 }
 
-void Balbino::SceneManager::DrawInpector()
+void Balbino::SceneManager::DrawEngine()
 {
-	//m_CurrentScenes.lock()->DrawInspector();
+	m_CurrentScenes.lock()->DrawEditor();
 }
 
 Balbino::Scene& Balbino::SceneManager::CreateScene( const std::string& name )

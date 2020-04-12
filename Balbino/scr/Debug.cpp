@@ -2,7 +2,7 @@
 #include "Debug.h"
 
 #ifdef _DEBUG
-#include "Renderer.h"
+#include "Renderer/Renderer.h"
 #include "ResourceManager.h"
 #include "Components/Text.h" 
 

@@ -21,7 +21,7 @@ namespace Balbino
 		virtual void Update() override;
 		virtual void Draw() const override;
 #ifdef _DEBUG
-		virtual void DrawInpector()const  override;
+		virtual void DrawInpector() override;
 #endif // _DEBUG
 
 		FPSScript( const FPSScript& ) = delete;

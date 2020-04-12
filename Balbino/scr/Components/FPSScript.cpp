@@ -29,6 +29,9 @@ void Balbino::FPSScript::Draw() const
 {
 }
 
-void Balbino::FPSScript::DrawInpector() const
+#ifdef _DEBUG
+#include "../imgui-1.75/imgui.h"
+void Balbino::FPSScript::DrawInpector()
 {
 }
+#endif

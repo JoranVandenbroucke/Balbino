@@ -4,7 +4,7 @@
 void BubbleBobble::IntroText::Create()
 {
 	std::shared_ptr<Balbino::Transform> transform = AddComponent<Balbino::Transform>();
-	transform->SetPosition( 20, 80, 0.f );
+	transform->SetPosition( 0.f, 0.f, 0.f );
 
 	std::shared_ptr<Balbino::Texture2D> textTexture = AddComponent<Balbino::Texture2D>();
 

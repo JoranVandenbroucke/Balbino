@@ -2,7 +2,6 @@
 #include "Avatar.h"
 #include "Texture2D.h"
 #include "Audio.h"
-#include "../Renderer.h"
 #include "../GameObject/GameObject.h"
 #include "../InputManager.h"
 
@@ -44,9 +43,13 @@ void Balbino::Avatar::Draw() const
 
 }
 
-void Balbino::Avatar::DrawInpector() const
+#ifdef _DEBUG
+#include "../imgui-1.75/imgui.h"
+void Balbino::Avatar::DrawInpector()
 {
+
 }
+#endif
 
 void Balbino::Avatar::Fire()
 {

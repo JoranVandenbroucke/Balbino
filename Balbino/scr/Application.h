@@ -18,9 +18,20 @@ namespace Balbino
 		virtual void LoadGame() const;
 		virtual void Cleanup();
 		virtual void Run();
+#ifdef _DEBUG
+		static SDL_Window* GetWindow()
+		{
+			return m_pWindow;
+		}
+#endif
 	private:
 		// The window we render to
+#ifdef _DEBUG
+		static SDL_Window* m_pWindow;
+#else
 		SDL_Window* m_pWindow;
+#endif // _DEBUG
+
 		// OpenGL context
 		SDL_GLContext m_pContext;
 	};

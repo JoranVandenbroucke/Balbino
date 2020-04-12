@@ -74,11 +74,10 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectName).dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R/Y</Command>
+      <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(OutputPath)..\BubbleBobble" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(OutputPath)..\BubbleBobble" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)..\BubbleBobble" /R /Y
+xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -104,14 +103,14 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;xinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x64\SDL2.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\x64\*.dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R /Y
-xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectName).dll" "$(SolutionDir)bin\$(Configuration)-$(Platform)\Bubblebobble\" /R/Y</Command>
+      <Command>xcopy "$(SolutionDir)3rdParty\SDL2\lib\x86\SDL2.dll" "$(OutputPath)..\BubbleBobble" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\x86\*.dll" "$(OutputPath)..\BubbleBobble" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\x86\*.dll" "$(OutputPath)..\BubbleBobble" /R /Y
+xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Components\Camera.h" />
     <ClInclude Include="scr\Components\Audio.h" />
     <ClInclude Include="Balbino.h" />
     <ClInclude Include="scr\Components\FPSScript.h" />
@@ -124,8 +123,11 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
     <ClInclude Include="scr\Font.h" />
+    <ClInclude Include="scr\gl3w\GL\gl3w.h" />
+    <ClInclude Include="scr\gl3w\GL\glcorearb.h" />
     <ClInclude Include="scr\imgui-1.75\imconfig.h" />
     <ClInclude Include="scr\imgui-1.75\imgui.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_impl_opengl3.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_internal.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_plot.h" />
@@ -134,7 +136,7 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClInclude Include="scr\imgui-1.75\imstb_textedit.h" />
     <ClInclude Include="scr\imgui-1.75\imstb_truetype.h" />
     <ClInclude Include="scr\InputManager.h" />
-    <ClInclude Include="scr\Renderer.h" />
+    <ClInclude Include="scr\Renderer\Renderer.h" />
     <ClInclude Include="scr\ResourceManager.h" />
     <ClInclude Include="scr\Scene.h" />
     <ClInclude Include="scr\SceneManager.h" />
@@ -147,6 +149,7 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClInclude Include="scr\Components\Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Components\Camera.cpp" />
     <ClCompile Include="scr\Components\Audio.cpp" />
     <ClCompile Include="scr\Components\FPSScript.cpp" />
     <ClCompile Include="scr\Components\Component.cpp" />
@@ -159,6 +162,10 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     </ClCompile>
     <ClCompile Include="scr\Application.cpp" />
     <ClCompile Include="scr\Font.cpp" />
+    <ClCompile Include="scr\gl3w\GL\gl3w.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="scr\imgui-1.75\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -170,6 +177,10 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClCompile Include="scr\imgui-1.75\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_impl_opengl3.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -188,7 +199,7 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="scr\InputManager.cpp" />
-    <ClCompile Include="scr\Renderer.cpp" />
+    <ClCompile Include="scr\Renderer\Renderer.cpp" />
     <ClCompile Include="scr\ResourceManager.cpp" />
     <ClCompile Include="scr\Scene.cpp" />
     <ClCompile Include="scr\SceneManager.cpp" />
@@ -198,6 +209,12 @@ xcopy "$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\$(ProjectNa
     <ClCompile Include="scr\Components\Texture2D.cpp" />
     <ClCompile Include="scr\Time.cpp" />
     <ClCompile Include="scr\Components\Transform.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scr\Shaders\Basic.fs" />
+    <None Include="scr\Shaders\Basic.vs" />
+    <None Include="scr\Shaders\Font.fs" />
+    <None Include="scr\Shaders\Font.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

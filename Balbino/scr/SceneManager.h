@@ -19,7 +19,7 @@ namespace Balbino
 		void Update();
 		void Draw();
 #ifdef _DEBUG
-		void DrawInpector();
+		void DrawEngine();
 #endif
 
 	private:

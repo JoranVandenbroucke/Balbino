@@ -1,6 +1,7 @@
 #pragma once
-#include "Transform.h"
-#include "../Components/Component.h" 
+#include "Component.h" 
+#include "../gl3w/GL/gl3w.h"
+#include "../Renderer/Renderer.h"
 #include "../Core.h" 
 #pragma warning(push)
 #pragma warning(disable:4251)
@@ -20,9 +21,6 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
-#ifdef _DEBUG
-		virtual void DrawInpector()const override;
-#endif // _DEBUG
 
 		void SetText( const std::string& text );
 		void SetColor( const Color& newColor );
@@ -34,11 +32,35 @@ namespace Balbino
 		Text& operator=( const Text& other ) = delete;
 		Text& operator=( Text&& other ) = delete;
 	private:
-		bool m_NeedsUpdate;
+		GLuint m_Texture;
+		vertex m_Vert[4]
+		{
+			{-1.0f,-1.0f,0.0f, 0.f,0.f, 1.f,0.f,0.f,1.f},
+			{-1.0f, 1.0f,0.0f, 0.f,1.f, 0.f,0.f,1.f,1.f},
+			{ 1.0f,-1.0f,0.0f, 1.f,0.f, 0.f,1.f,0.f,1.f},
+			{ 1.0f, 1.0f,0.0f, 1.f,1.f, 1.f,1.f,1.f,1.f}
+		};
+		const Uint32 m_Index[6]
+		{
+			0,1,2,
+			1,2,3
+		};
+		VertexBuffer m_VertexBuff;
+		IndexBuffer m_IndexBuff;
+		Shader m_Shader;
 		Color m_Color;
+		int m_ColorUniformLocation;
+		int m_TextureUniformLocation;
+		int m_ModelMatricLocation;
+		bool m_NeedsUpdate;
 		std::string m_Text;
 		std::weak_ptr<Font> m_Font;
-		std::weak_ptr<Texture2D> m_Texture;
+#ifdef _DEBUG
+		virtual void DrawInpector() override;
+#endif // _DEBUG
+#ifdef _DEBUG
+		char* m_InputField{ nullptr };
+#endif
 	};
 }
 #pragma warning(pop)

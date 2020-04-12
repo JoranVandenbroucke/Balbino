@@ -25,7 +25,7 @@ void Balbino::Audio::SetVolume( const int soundID, const int volume )
 {
 	if( int( m_pMixChunks.size() ) > soundID )
 	{
-		Mix_VolumeChunk( m_pMixChunks[soundID].lock().get(), std::max( std::min( MIX_MAX_VOLUME, volume ), 0 ) );
+		Mix_VolumeChunk( m_pMixChunks[soundID].lock().get(), (std::max)( (std::min)( MIX_MAX_VOLUME, volume ), 0 ) );
 	}
 }
 
@@ -47,7 +47,7 @@ void Balbino::ConsoleAudio::Draw() const
 {
 }
 
-void Balbino::ConsoleAudio::DrawInpector() const
+void Balbino::ConsoleAudio::DrawInpector()
 {
 	
 }
@@ -88,10 +88,13 @@ void Balbino::LoggedAudio::Draw() const
 {
 }
 
-void Balbino::LoggedAudio::DrawInpector() const
+#ifdef _DEBUG
+#include "../imgui-1.75/imgui.h"
+void Balbino::LoggedAudio::DrawInpector()
 {
 
 }
+#endif
 
 void Balbino::LoggedAudio::PlaySound( int soundID )
 {
