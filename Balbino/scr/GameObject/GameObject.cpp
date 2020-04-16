@@ -10,6 +10,18 @@ Balbino::GameObject::GameObject()
 
 void Balbino::GameObject::Create()
 {
+	AddComponent<Transform>();
+	if( m_Components.size() > 1 )
+	{
+		for( int i = int( m_Components.size() - 1 ); i > 0; --i )
+		{
+			std::swap( m_Components[i], m_Components[i - 1] );
+		}
+	}
+	for( std::weak_ptr<Component> comp : m_Components )
+	{
+		comp.lock()->Create();
+	}
 }
 
 void Balbino::GameObject::Update()
@@ -22,7 +34,7 @@ void Balbino::GameObject::Update()
 
 void Balbino::GameObject::Draw() const
 {
-	for (std::weak_ptr<Component> comp : m_Components)
+	for( std::weak_ptr<Component> comp : m_Components )
 	{
 		comp.lock()->Draw();
 	}
@@ -30,7 +42,7 @@ void Balbino::GameObject::Draw() const
 
 void Balbino::GameObject::DrawInspector()
 {
-	for (std::weak_ptr<Component> comp : m_Components)
+	for( std::weak_ptr<Component> comp : m_Components )
 	{
 		comp.lock()->DrawInpector();
 	}
@@ -39,7 +51,6 @@ void Balbino::GameObject::DrawInspector()
 void Balbino::GameObject::Destroy()
 {
 	m_Components.clear();
-	m_Childeren.clear();
 }
 
 void Balbino::GameObject::LoadComponents()
@@ -50,7 +61,12 @@ void Balbino::GameObject::LoadComponents()
 	}
 }
 
-void Balbino::GameObject::RemoveChild( std::shared_ptr<GameObject> child )
+void Balbino::GameObject::SetName( const char* newName )
 {
-	m_Childeren.erase( std::remove( m_Childeren.begin(), m_Childeren.end(), child ) );
+	m_Name = newName;
+}
+
+const char* Balbino::GameObject::GetName() const
+{
+	return m_Name.c_str();
 }

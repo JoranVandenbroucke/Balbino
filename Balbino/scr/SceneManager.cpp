@@ -26,6 +26,11 @@ void Balbino::SceneManager::Draw()
 	m_CurrentScenes.lock()->Draw();
 }
 
+std::weak_ptr<Balbino::Scene> Balbino::SceneManager::GetCurrentScene()
+{
+	return m_CurrentScenes;
+}
+
 void Balbino::SceneManager::DrawEngine()
 {
 	m_CurrentScenes.lock()->DrawEditor();
@@ -36,5 +41,4 @@ Balbino::Scene& Balbino::SceneManager::CreateScene( const std::string& name )
 	const auto scene = std::shared_ptr<Scene>( new Scene( name ) );
 	m_Scenes.push_back( scene );
 	return *scene;
-	//return Get().ICreateScene( name );
 }

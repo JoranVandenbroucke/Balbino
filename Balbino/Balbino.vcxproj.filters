@@ -40,6 +40,8 @@
     <ClInclude Include="scr\gl3w\GL\glcorearb.h" />
     <ClInclude Include="scr\Renderer\Renderer.h" />
     <ClInclude Include="scr\Components\Camera.h" />
+    <ClInclude Include="scr\Components\All.h" />
+    <ClInclude Include="scr\BinaryReaderWrider.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Components">
@@ -83,6 +85,7 @@
     <ClCompile Include="scr\gl3w\GL\gl3w.c" />
     <ClCompile Include="scr\Renderer\Renderer.cpp" />
     <ClCompile Include="scr\Components\Camera.cpp" />
+    <ClCompile Include="scr\BinaryReaderWrider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="scr\Shaders\Basic.fs" />

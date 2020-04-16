@@ -38,14 +38,21 @@ void Balbino::Texture2D::DrawInpector()
 	{
 		m_InputField = const_cast<char*>( m_File.c_str() );
 	}
-	ImGui::BeginChild( "Texture2D Component", ImVec2{ 420, 64 }, true );
+	float color[4]{ m_Color.r / 255.f, m_Color.g / 255.f, m_Color.b / 255.f, m_Color.a / 255.f };
+	ImGui::BeginChild( "Texture2D Component", ImVec2{ 420, 96 }, true );
 	ImGui::Text( "Texture" );
-	ImGui::InputText( "Image Path", m_InputField, 512, ImGuiInputTextFlags_CharsNoBlank ); ImGui::SameLine();
-	if( ImGui::Button( "confurm" ) && m_InputField != m_File.c_str() )
+	ImGui::InputText( "Image Path", m_InputField, 512 ); ImGui::SameLine();
+	if( ImGui::Button( "confurm" ) )
 	{
 		SetTexture( m_InputField );
 	}
-	ImGui::EndChild();
+	ImGui::ColorEdit4( "Color", color );
+	m_Color.r = (unsigned char) ( color[0] * 255 );
+	m_Color.g = (unsigned char) ( color[1] * 255 );
+	m_Color.b = (unsigned char) ( color[2] * 255 );
+	m_Color.a = (unsigned char) ( color[3] * 255 );
+
+		ImGui::EndChild();
 }
 #else
 Balbino::Texture2D::Texture2D( const std::weak_ptr<GameObject> origine )
@@ -116,7 +123,7 @@ void Balbino::Texture2D::Update()
 void Balbino::Texture2D::Draw() const
 {
 	m_Shader.Bind();
-	glUniformMatrix4fv( m_ModelMatricLocation, 1, GL_TRUE, &m_Transform.lock()->myModelMatrix[0][0]);
+	glUniformMatrix4fv( m_ModelMatricLocation, 1, GL_TRUE, &m_Transform.lock()->TransfomationMatrix[0][0] );
 	glUniform4f( m_ColorUniformLocation, m_Color.r / 255.f, m_Color.g / 255.f, m_Color.b / 255.f, m_Color.a / 255.f );
 	m_VertexBuff.Bind();
 	m_IndexBuff.Bind();

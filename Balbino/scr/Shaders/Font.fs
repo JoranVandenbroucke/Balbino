@@ -10,6 +10,6 @@ uniform vec4 u_Color;
 
 void main()
 {
-	vec4 color = vec4(texture(u_Texture, v_TexCoord)) * u_Color;
-    f_color = color;
+	vec4 sampled = vec4(1.0, 1.0, 1.0, texture(u_Texture, v_TexCoord).r);
+    f_color = u_Color * sampled;
 }

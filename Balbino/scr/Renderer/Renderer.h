@@ -27,7 +27,7 @@ namespace Balbino
 	{
 	public:
 		void Init( SDL_Window* window );
-		void Draw() const;
+		void Draw();
 		void Destroy();
 
 		void RenderTexture( const GLuint& texture, float x, float y ) const;
@@ -58,7 +58,7 @@ namespace Balbino
 
 		void Bind()const;
 		void Unbind()const;
-		void Update( void* data, Uint32 numVertices );
+		void Update( void* data, Uint32 numVertices ) const;
 	private:
 		GLuint m_BufferId;
 		GLuint m_VAO;

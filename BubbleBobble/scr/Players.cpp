@@ -12,6 +12,7 @@ void BubbleBobble::Bub::Create()
 	std::shared_ptr<Balbino::ConsoleAudio> consAud = AddComponent<Balbino::ConsoleAudio>();
 
 	std::shared_ptr<Balbino::LoggedAudio> logAud = AddComponent<Balbino::LoggedAudio>();
+	SetName( "Bub" );
 
 	LoadComponents();
 }

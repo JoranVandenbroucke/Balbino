@@ -18,19 +18,20 @@ namespace BubbleBobble
 	void BubbleBobbleGame::LoadGame() const
 	{
 		Balbino::Scene& firsScene = Balbino::SceneManager::Get().CreateScene( "First Scene" );
-		std::shared_ptr<Balbino::SceneObject> go = std::make_shared<Background>();
-		firsScene.Add( go );
 
-		go = std::make_shared<DAELogo>();
-		firsScene.Add( go );
-		
-		go = std::make_shared<IntroText>();
-		firsScene.Add( go );
+		//std::shared_ptr<Balbino::GameObject> go = std::make_shared<Bub>();
+		//firsScene.Add( go );
 
 		//go = std::make_shared<FPSCounter>();
 		//firsScene.Add( go );
+		//
+		//go = std::make_shared<IntroText>();
+		//firsScene.Add( go );
 
-		//go = std::make_shared<Bub>();
+		//go = std::make_shared<DAELogo>();
+		//firsScene.Add( go );
+
+		//go = std::make_shared<Background>();
 		//firsScene.Add( go );
 	}
 }

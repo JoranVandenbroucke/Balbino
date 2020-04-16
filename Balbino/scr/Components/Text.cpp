@@ -56,7 +56,7 @@ void Balbino::Text::Update()
 void Balbino::Text::Draw() const
 {
 	m_Shader.Bind();
-	glUniformMatrix4fv( m_ModelMatricLocation, 1, GL_TRUE, &m_Transform.lock()->myModelMatrix[0][0] );
+	glUniformMatrix4fv( m_ModelMatricLocation, 1, GL_TRUE, &m_Transform.lock()->TransfomationMatrix[0][0] );
 	glUniform4f( m_ColorUniformLocation, m_Color.r / 255.f, m_Color.g / 255.f, m_Color.b / 255.f, m_Color.a / 255.f );
 	m_VertexBuff.Bind();
 	m_IndexBuff.Bind();

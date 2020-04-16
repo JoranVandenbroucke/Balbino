@@ -110,6 +110,8 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\BinaryReaderWrider.h" />
+    <ClInclude Include="scr\Components\All.h" />
     <ClInclude Include="scr\Components\Camera.h" />
     <ClInclude Include="scr\Components\Audio.h" />
     <ClInclude Include="Balbino.h" />
@@ -149,6 +151,7 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
     <ClInclude Include="scr\Components\Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\BinaryReaderWrider.cpp" />
     <ClCompile Include="scr\Components\Camera.cpp" />
     <ClCompile Include="scr\Components\Audio.cpp" />
     <ClCompile Include="scr\Components\FPSScript.cpp" />

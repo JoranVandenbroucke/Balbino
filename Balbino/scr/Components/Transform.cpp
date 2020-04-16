@@ -2,14 +2,16 @@
 #include "Transform.h"
 #include "../GameObject/GameObject.h"
 
+
 Balbino::Transform::Transform( const std::weak_ptr<GameObject> origine )
-	: Component{ origine }
+	:Component{ origine }
 	, m_Position{ 0.f, 0.f, 0.f }
 	, m_Rotation{ 0.f, 0.f, 0.f }
 	, m_Scale{ 1.f, 1.f, 1.f }
+	, m_Parent{}
+	, m_Childeren{}
 {
 }
-
 Balbino::Transform::~Transform()
 {
 }
@@ -23,18 +25,44 @@ void Balbino::Transform::Update()
 {
 	glm::mat4x4 translate{ {1.f, 0.f, 0.f, m_Position.x}, {0.f, 1.f, 0.f, m_Position.y}, {0.f, 0.f, 1.f, m_Position.z}, {0.f, 0.f, 0.f, 1.f} };
 	glm::mat4x4 scale{ {m_Scale.x, 0.f, 0.f, 0.f}, {0.f, m_Scale.y, 0.f, 0.f}, {0.f, 0.f, m_Scale.z, 0.f}, {0.f, 0.f, 0.f, 1.f} };
-	glm::mat4x4 rotateX{ {cos( m_Rotation.x ), 0.f, sin( m_Rotation.x ), 0.f},{0.f, 1.f, 0.f, 0.f}, {-sin( m_Rotation.x ), 0, cos(m_Rotation.x), 0.f},{0.f, 0.f, 0.f, 1.f} };
-	glm::mat4x4 rotateY{ {1.f, 0.f, 0.f, 0.f},{0.f, cos( m_Rotation.y ), -sin( m_Rotation.y ), 0.f}, {0.f, sin(m_Rotation.y), cos(m_Rotation.y), 0.f},{0.f, 0.f, 0.f, 1.f} };
-	glm::mat4x4 rotateZ{ {cos( m_Rotation.z ), -sin( m_Rotation.z ), 0.f, 0.f}, {sin(m_Rotation.z), cos(m_Rotation.z), 0.f, 0.f},{0.f, 0.f, 1.f, 0.f},{0.f, 0.f, 0.f, 1.f} };
+	glm::mat4x4 rotateX{ {cos( m_Rotation.x ), 0.f, sin( m_Rotation.x ), 0.f},{0.f, 1.f, 0.f, 0.f}, {-sin( m_Rotation.x ), 0, cos( m_Rotation.x ), 0.f},{0.f, 0.f, 0.f, 1.f} };
+	glm::mat4x4 rotateY{ {1.f, 0.f, 0.f, 0.f},{0.f, cos( m_Rotation.y ), -sin( m_Rotation.y ), 0.f}, {0.f, sin( m_Rotation.y ), cos( m_Rotation.y ), 0.f},{0.f, 0.f, 0.f, 1.f} };
+	glm::mat4x4 rotateZ{ {cos( m_Rotation.z ), -sin( m_Rotation.z ), 0.f, 0.f}, {sin( m_Rotation.z ), cos( m_Rotation.z ), 0.f, 0.f},{0.f, 0.f, 1.f, 0.f},{0.f, 0.f, 0.f, 1.f} };
 	glm::mat4x4 rotate{ rotateX * rotateY * rotateZ };
-	myModelMatrix = scale * rotate * translate;
-	//points = myModelMatrix * m_OriginalPoints;
+	TransfomationMatrix = scale * rotate * translate;
 
-
+	if( m_Parent )
+	{
+		TransfomationMatrix *= m_Parent->TransfomationMatrix;
+		//TransfomationMatrix = m_Parent->TransfomationMatrix * TransfomationMatrix;
+	}
 }
 
 void Balbino::Transform::Draw() const
 {
+}
+void Balbino::Transform::SetParrent( std::shared_ptr<Transform> parent )
+{
+	std::shared_ptr<Transform> thisPtr{ shared_from_this() };
+	if( m_Parent )
+	{
+		m_Parent->m_Childeren.erase( std::remove( m_Parent->m_Childeren.begin(), m_Parent->m_Childeren.end(), thisPtr ) );
+	}
+	if( parent )
+	{
+		parent->m_Childeren.push_back( thisPtr );
+	}
+	m_Parent = parent;
+}
+int Balbino::Transform::GetNumberOfChilderen()
+{
+	return int( m_Childeren.size() );
+}
+void Balbino::Transform::RemoveChild( int index )
+{
+	std::list<std::shared_ptr<Transform>>::iterator it{ m_Childeren.begin() };
+	for( int i = 0; i < index; i++ )++it;
+	m_Childeren.erase( it );
 }
 #ifdef _DEBUG
 #include "../imgui-1.75/imgui.h"
@@ -64,6 +92,10 @@ void Balbino::Transform::DrawInpector()
 	ImGui::Text( "Z:" ); ImGui::SameLine(); ImGui::DragFloat( "##SclaeZ", &m_Scale.z, 0.1f );
 	ImGui::PopItemWidth();
 	ImGui::EndChild();
+}
+void Balbino::Transform::DrawHierarchy()
+{
+
 }
 #endif
 void Balbino::Transform::SetPosition( const float x, const float y, const float z )

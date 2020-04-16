@@ -8,6 +8,7 @@ void BubbleBobble::DAELogo::Create()
 
 	std::shared_ptr<Balbino::Texture2D> texture = AddComponent<Balbino::Texture2D>();
 	texture->SetTexture( "logo.png" );
+	SetName( "Logo" );
 
 	LoadComponents();
 }

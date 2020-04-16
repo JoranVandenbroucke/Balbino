@@ -1,4 +1,5 @@
 #pragma once
+#include "../Components/All.h"
 #include "../SceneObject.h"
 #include "../Core.h"
 #include <vector>
@@ -23,22 +24,21 @@ namespace Balbino
 		virtual void Destroy() override;
 
 		void LoadComponents();
+		void SetName( const char* newName );
+		const char* GetName()const;
 
 		template <class T>
 		std::shared_ptr<T> GetComponent();
 		template <class T, class... Args>
 		std::shared_ptr<T> AddComponent( Args&&... args );
-		template< class T>
-		std::shared_ptr<T> AddChild();
-		void RemoveChild( std::shared_ptr<GameObject> child );
+
 		GameObject( const GameObject& ) = delete;
 		GameObject( GameObject&& ) = delete;
 		GameObject& operator= ( const GameObject& ) = delete;
 		GameObject& operator= ( const GameObject&& ) = delete;
 	private:
 		std::vector<std::shared_ptr<Component>> m_Components;
-		std::weak_ptr<GameObject> m_Parent;
-		std::vector<std::shared_ptr<GameObject>> m_Childeren;
+		std::string m_Name;
 	};
 
 	template<class T>
@@ -61,14 +61,6 @@ namespace Balbino
 		const std::shared_ptr<GameObject> thisPtr{ weak_from_this() };
 		std::shared_ptr<T> comp{ std::make_shared<T>( thisPtr, std::forward<Args>( args )... ) };
 		m_Components.push_back( comp );
-		return comp;
-	}
-
-	template<class T>
-	inline std::shared_ptr<T> GameObject::AddChild()
-	{
-		std::shared_ptr<T> comp{ std::make_shared<T>() };
-		m_Childeren.push_back( comp );
 		return comp;
 	}
 }

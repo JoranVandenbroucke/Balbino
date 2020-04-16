@@ -1,7 +1,9 @@
 #pragma once
 #include "Component.h"
-#include "../Core.h"
 #include "../Struct.h"
+#include "../Core.h"
+#include <memory>
+#include <list>
 #pragma warning(push)
 #pragma warning(disable:4201)
 #pragma warning(disable:431)
@@ -16,7 +18,7 @@ namespace Balbino
 {
 	class GameObject;
 
-	class BALBINO_API Transform final : public Component
+	class BALBINO_API Transform final : public Component, public std::enable_shared_from_this<Transform>
 	{
 	public:
 		explicit Transform( const std::weak_ptr<GameObject> origine );
@@ -29,17 +31,20 @@ namespace Balbino
 		void SetRotation(float x, float y, float z);
 		void SetScale(float x, float y, float z);
 
-		virtual void Create();
+		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+		
+		void SetParrent(std::shared_ptr<Transform> parent);
+		int GetNumberOfChilderen();
+		void RemoveChild(int index);
 
-		glm::mat4x4 myModelMatrix{ 1.f };
+		glm::mat4x4 TransfomationMatrix{ 1.f };
 
 #ifdef _DEBUG
 		virtual void DrawInpector() override;
+		virtual void DrawHierarchy();
 #endif // _DEBUG
-
-		glm::vec4 m_OriginalPoints{ 1.f };
 
 		Transform( const Transform& ) = delete;
 		Transform( Transform&& ) = delete;
@@ -50,6 +55,8 @@ namespace Balbino
 		vec3 m_Rotation;
 		vec3 m_Scale;
 
+		std::shared_ptr<Transform> m_Parent;
+		std::list<std::shared_ptr<Transform>> m_Childeren;
 	};
 }
 #pragma warning(pop)

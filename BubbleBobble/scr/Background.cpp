@@ -9,6 +9,6 @@ void BubbleBobble::Background::Create()
 	transform->SetPosition( 0.f, 0.f, 0.f );
 	std::shared_ptr<Balbino::Texture2D> texture = AddComponent<Balbino::Texture2D>();
 	texture->SetTexture( "background.jpg" );
-
+	SetName( "Background" );
 	LoadComponents();
 }

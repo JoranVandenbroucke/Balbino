@@ -18,10 +18,10 @@ namespace Balbino
 		void SetScene(const unsigned int sceneNr );
 		void Update();
 		void Draw();
+		std::weak_ptr<Scene> GetCurrentScene();
 #ifdef _DEBUG
 		void DrawEngine();
 #endif
-
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;

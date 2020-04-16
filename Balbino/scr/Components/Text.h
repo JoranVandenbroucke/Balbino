@@ -56,9 +56,9 @@ namespace Balbino
 		std::string m_Text;
 		std::weak_ptr<Font> m_Font;
 #ifdef _DEBUG
+	public:
 		virtual void DrawInpector() override;
-#endif // _DEBUG
-#ifdef _DEBUG
+	private:
 		char* m_InputField{ nullptr };
 #endif
 	};

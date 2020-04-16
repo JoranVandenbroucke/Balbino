@@ -9,6 +9,7 @@
 #include "../imgui-1.75/imgui.h"
 #include "../imgui-1.75/imgui_impl_opengl3.h"
 #include "../imgui-1.75/imgui_impl_sdl.h"
+#include "../Scene.h"
 
 #include <iostream>
 #ifdef _DEBUG
@@ -26,17 +27,6 @@ void Balbino::Renderer::Init( SDL_Window* window )
 	glBindFramebuffer( GL_FRAMEBUFFER, m_FrameBufferIndex );
 	glDrawBuffer( GL_COLOR_ATTACHMENT0 );
 
-	/*
-	glGenTextures(1, &m_RenderedTexture);
-	glBindTexture(GL_TEXTURE_2D, m_RenderedTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, 640, 480, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_RenderedTexture, 0);
-
-	*/
-
 	glGenTextures( 1, &m_RenderedTexture );
 	glBindTexture( GL_TEXTURE_2D, m_RenderedTexture );
 
@@ -52,17 +42,13 @@ void Balbino::Renderer::Init( SDL_Window* window )
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
 }
 
-void Balbino::Renderer::Draw() const
+void Balbino::Renderer::Draw()
 {
 	//start ImGui
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame( Application::GetWindow() );
 	ImGui::NewFrame();
 
-
-	glViewport( 0, 0, (int) 1920, (int) 1080 );
-	glClearColor( 0.f, 0.f, 0.f, 1.f );
-	glClear( GL_COLOR_BUFFER_BIT );
 
 	Bind();
 	glViewport( 0, 0, (int) 640, (int) 480 );
@@ -72,8 +58,13 @@ void Balbino::Renderer::Draw() const
 	SceneManager::Get().Draw();
 	Unbind();
 
+	glViewport( 0, 0, (int) 1920, (int) 1080 );
+	glClearColor( 0.f, 0.f, 0.f, 1.f );
+	glClear( GL_COLOR_BUFFER_BIT );
 	//Draw All Of Im Gui
 	//ImGui::ShowDemoWindow();
+	ImGuiIO& io = ImGui::GetIO(); (void) io;
+
 	Debug::Get().Draw();
 	SceneManager::Get().DrawEngine();
 
@@ -90,7 +81,6 @@ void Balbino::Renderer::Draw() const
 	ImGui::Render();
 
 	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
-	ImGuiIO& io = ImGui::GetIO(); (void) io;
 
 	// Update and Render additional Platform Windows
 	// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
@@ -206,10 +196,11 @@ void Balbino::VertexBuffer::Unbind()const
 	glBindVertexArray( 0 );
 }
 
-void Balbino::VertexBuffer::Update( void* data, Uint32 numVertices )
+void Balbino::VertexBuffer::Update( void* data, Uint32 numVertices )const
 {
 	glBindBuffer( GL_ARRAY_BUFFER, m_BufferId );
 	glBufferData( GL_ARRAY_BUFFER, numVertices * sizeof( vertex ), data, GL_STATIC_DRAW );
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
