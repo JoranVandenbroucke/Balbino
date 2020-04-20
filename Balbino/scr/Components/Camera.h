@@ -21,14 +21,16 @@ namespace Balbino
 	class BALBINO_API Camera final: public Component
 	{
 	public:
-		Camera( const std::weak_ptr<GameObject> origine, float fov, float w, float h );
+		Camera( const std::weak_ptr<GameObject> origine, float fov, float w );
 		virtual ~Camera()=default;
-		const glm::mat4& GetViewProjection() const;
 
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
-		void Translate(const vec3& v);
+
+		virtual void Save( std::ostream& file )override;
+		virtual void Load( std::istream& file )override;
+
 
 		Camera( const Camera& ) = delete;
 		Camera( Camera&& ) = delete;
@@ -39,9 +41,10 @@ namespace Balbino
 		virtual void DrawInpector() override;
 #endif // _DEBUG
 	private:
-		glm::mat4 m_Projection;
-		glm::mat4 m_View;
-		glm::mat4 m_ViewProjection;
+		bool m_IsOrtographic;
+		float m_OrthographicSize;
+		float m_FieldOfView;
+		float m_Depth;
 	};
 }
 #pragma warning(pop)

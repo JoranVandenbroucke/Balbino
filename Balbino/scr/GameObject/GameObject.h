@@ -3,6 +3,7 @@
 #include "../SceneObject.h"
 #include "../Core.h"
 #include <vector>
+#include <fstream>
 #pragma warning(push)
 #pragma warning(disable:4251)
 #pragma warning(disable:4275)
@@ -31,6 +32,9 @@ namespace Balbino
 		std::shared_ptr<T> GetComponent();
 		template <class T, class... Args>
 		std::shared_ptr<T> AddComponent( Args&&... args );
+
+		void Save( std::ostream& file );
+		void Load( std::istream& file );
 
 		GameObject( const GameObject& ) = delete;
 		GameObject( GameObject&& ) = delete;

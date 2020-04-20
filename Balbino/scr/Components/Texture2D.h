@@ -26,6 +26,9 @@ namespace Balbino
 		virtual void Update() override;
 		virtual void Draw() const override;
 
+		virtual void Save( std::ostream& file )override;
+		virtual void Load( std::istream& file )override;
+
 		Texture2D(const Texture2D &) = delete;
 		Texture2D(Texture2D &&) = delete;
 		Texture2D & operator= (const Texture2D &) = delete;
@@ -40,7 +43,7 @@ namespace Balbino
 			{ 1.0f,-1.0f,0.0f, 1.f,0.f, 0.f,1.f,0.f,1.f},
 			{ 1.0f, 1.0f,0.0f, 1.f,1.f, 1.f,1.f,1.f,1.f}
 		};
-		const Uint32 m_Index[6]
+		const UINT32 m_Index[6]
 		{
 			0,1,2,
 			1,2,3

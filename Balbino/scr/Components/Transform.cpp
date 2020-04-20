@@ -1,7 +1,7 @@
 #include "BalbinoPCH.h"
 #include "Transform.h"
 #include "../GameObject/GameObject.h"
-
+#include "../BinaryReaderWrider.h"
 
 Balbino::Transform::Transform( const std::weak_ptr<GameObject> origine )
 	:Component{ origine }
@@ -41,6 +41,21 @@ void Balbino::Transform::Update()
 void Balbino::Transform::Draw() const
 {
 }
+void Balbino::Transform::Save( std::ostream& file )
+{
+	BinaryReadWrite::Write( file, int( ComponentList::Transform ) );
+	BinaryReadWrite::Write( file, m_Position );
+	BinaryReadWrite::Write( file, m_Rotation );
+	BinaryReadWrite::Write( file, m_Scale );
+	//BinaryReadWrite::Write( file, int( m_Childeren.size() ) );
+
+}
+void Balbino::Transform::Load( std::istream& file )
+{
+	BinaryReadWrite::Read( file, m_Position );
+	BinaryReadWrite::Read( file, m_Rotation );
+	BinaryReadWrite::Read( file, m_Scale );
+}
 void Balbino::Transform::SetParrent( std::shared_ptr<Transform> parent )
 {
 	std::shared_ptr<Transform> thisPtr{ shared_from_this() };
@@ -60,9 +75,7 @@ int Balbino::Transform::GetNumberOfChilderen()
 }
 void Balbino::Transform::RemoveChild( int index )
 {
-	std::list<std::shared_ptr<Transform>>::iterator it{ m_Childeren.begin() };
-	for( int i = 0; i < index; i++ )++it;
-	m_Childeren.erase( it );
+	m_Childeren.erase( m_Childeren.begin() + index );
 }
 #ifdef _DEBUG
 #include "../imgui-1.75/imgui.h"
@@ -70,6 +83,7 @@ void Balbino::Transform::DrawInpector()
 {
 	ImGui::BeginChild( "Transform Component", ImVec2{ 420, 128 }, true );
 	ImGui::Text( "Transformation" );
+	ImGui::Separator();
 
 	ImGui::PushItemWidth( 80 );
 	ImGui::Text( "Position: " ); ImGui::SameLine();

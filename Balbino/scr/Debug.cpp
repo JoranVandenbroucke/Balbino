@@ -62,7 +62,7 @@ void Balbino::Debug::LogWarning( const std::string& warning )
 
 void Balbino::Debug::Draw() const
 {
-	ImGui::Begin( "Log", nullptr, ImGuiWindowFlags_AlwaysAutoResize );
+	ImGui::Begin( "Log" );
 	for( const std::pair<std::string, Color>& text : m_Log )
 	{
 		ImGui::TextColored( ImVec4{ text.second.r / 255.f, text.second.g / 255.f, text.second.b / 255.f, text.second.a / 255.f }, text.first.c_str() );

@@ -3,6 +3,14 @@
 #include "Components/All.h"
 #include "GameObject/GameObject.h"
 #include "imgui-1.75/imgui.h"
+#include "BinaryReaderWrider.h"
+#include "Debug.h"
+
+#include <windows.h>
+#include <commdlg.h>
+#include <string.h>
+#include <iostream>
+#include <regex>
 
 using namespace Balbino;
 
@@ -11,6 +19,7 @@ unsigned int Scene::m_IdCounter = 0;
 Scene::Scene( const std::string& name )
 	: m_GameObjects{}
 	, m_Name{ name }
+	, m_Saved{}
 {
 }
 
@@ -39,6 +48,8 @@ void Scene::Draw() const
 #ifdef _DEBUG
 void Balbino::Scene::DrawEditor()
 {
+
+	// a lot of the ImGui Code comes from the demo file (imgui_demo.cpp)
 	ImGuiIO& io = ImGui::GetIO(); (void) io;
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus /*| ImGuiWindowFlags_NoDocking*/;
 	ImGui::SetNextWindowSize( io.DisplaySize );
@@ -51,12 +62,83 @@ void Balbino::Scene::DrawEditor()
 		{
 			if( ImGui::MenuItem( "New" ) )
 			{
+				m_Saved = false;
+				m_Name = "New Scene";
+				m_GameObjects.clear();
 			}
 			if( ImGui::MenuItem( "Open" ) )
 			{
+				char fileName[MAX_PATH] = "";
+				OPENFILENAME ofn;
+				ZeroMemory( &ofn, sizeof( ofn ) );
+				ofn.lStructSize = sizeof( OPENFILENAME );
+				ofn.hwndOwner = nullptr;
+				ofn.lpstrFilter = "Balbino Files (.Balbino)\0*.Balbino\0Any File\0*.*\0";
+				ofn.lpstrFile = fileName;
+				ofn.nMaxFile = MAX_PATH;
+				ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+				ofn.lpstrDefExt = "";
+				if( GetOpenFileName( &ofn ) )
+					m_SavePosition = fileName;
+				std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
+				std::smatch match;
+				if( std::regex_match( m_SavePosition, match, sceneName ) )
+					m_Name = match[1].str();
+
+				std::ifstream saveFile{};
+				saveFile.open( m_SavePosition, std::ios::in | std::ios::binary );
+				if( saveFile.is_open() )
+				{
+					m_GameObjects.clear();
+					int size{};
+					BinaryReadWrite::Read( saveFile, size );
+					for( int i = 0; i < size; i++ )
+					{
+						std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
+						gameObject->Load( saveFile );
+						gameObject->Create();
+						Add( gameObject );
+						m_IndentPosition.push_back(0);
+					}
+					m_GameObjects.reverse();
+					m_Saved = true;
+				}
+				saveFile.close();
 			}
 			if( ImGui::MenuItem( "Save Scene" ) )
 			{
+				char fileName[MAX_PATH] = "";
+				if( !m_Saved )
+				{
+					OPENFILENAME ofn;
+					ZeroMemory( &ofn, sizeof( ofn ) );
+					ofn.lStructSize = sizeof( OPENFILENAME );
+					ofn.hwndOwner = nullptr;
+					ofn.lpstrFilter = "Balbino Files (.Balbino)\0*.Balbino\0Any File\0*.*\0";
+					ofn.lpstrFile = fileName;
+					ofn.nMaxFile = MAX_PATH;
+					ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+					ofn.lpstrDefExt = "";
+					if( GetSaveFileName( &ofn ) )
+						m_SavePosition = fileName;
+					std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
+					std::smatch match;
+					if( std::regex_match( m_SavePosition, match, sceneName ) )
+						m_Name = match[1].str();
+				}
+
+				std::ofstream saveFile{};
+				saveFile.open( m_SavePosition, std::ios::out | std::ios::binary );
+				if( saveFile.is_open() )
+				{
+					BinaryReadWrite::Write( saveFile, int( m_GameObjects.size() ) );
+					for( std::shared_ptr<GameObject> gameObject : m_GameObjects )
+					{
+						gameObject->Save( saveFile );
+					}
+					m_Saved = true;
+				}
+				saveFile.close();
 			}
 			ImGui::EndMenu();
 		}
@@ -178,7 +260,7 @@ void Balbino::Scene::DrawEditor()
 
 	ImGui::SetNextItemOpen( true );
 	int selection_mask = ( 1 << selected ); // Dumb representation of what may be user-side selection state. You may carry selection state inside or outside your objects in whatever format you see fit.
-	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	static ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	bool open{ true };
 	if( ImGui::TreeNode( m_Name.c_str() ) )
 	{
@@ -191,26 +273,23 @@ void Balbino::Scene::DrawEditor()
 				std::list<std::shared_ptr<GameObject>>::iterator it1{ m_GameObjects.begin() };
 				std::list<int>::iterator it2{ m_IndentPosition.begin() };
 				for( int j = 0; j < i; j++ )++it1, ++it2;
-				const bool is_selected = ( selection_mask & ( 1 << i ) ) != 0;
-				ImGuiTreeNodeFlags node_flags = base_flags;
-				if( is_selected )
-					node_flags |= ImGuiTreeNodeFlags_Selected;
-				node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; // ImGuiTreeNodeFlags_Bullet
 
+				const bool isSelected = ( selection_mask & ( 1 << i ) ) != 0;
+				ImGuiTreeNodeFlags nodeFlags = baseFlags;
 				int nrOfChilderen = ( *it1 )->GetComponent<Transform>()->GetNumberOfChilderen();
+				if( isSelected )
+					nodeFlags |= ImGuiTreeNodeFlags_Selected;
+				nodeFlags |= ( nrOfChilderen == 0 ? ImGuiTreeNodeFlags_Leaf : 0 ); // ImGuiTreeNodeFlags_Bullet
+
 
 				int indent = *it2;
-				//ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2( 5, 5 ) );
-				open = ImGui::TreeNodeEx( (void*) (intptr_t) i,
-					ImGuiTreeNodeFlags_FramePadding | ImGuiTreeNodeFlags_NoTreePushOnOpen | ( is_selected ? ImGuiTreeNodeFlags_Selected : 0 ) || ( nrOfChilderen == 0 ? ImGuiTreeNodeFlags_Leaf : 0 ),
+				open = ImGui::TreeNodeEx( (void*) (intptr_t) i, nodeFlags,
 					( *it1 )->GetName() );
-				//ImGui::PopStyleVar();
 
 
 				ImGui::PushID( (void*) &i );
 				if( ImGui::BeginPopupContextItem() )
 				{
-					// Some processing...
 					ImGui::EndPopup();
 				}
 				ImGui::PopID();
@@ -222,7 +301,6 @@ void Balbino::Scene::DrawEditor()
 				{
 					ImGui::SetDragDropPayload( "GameObject", &i, sizeof( int ) );
 					ImGui::Text( "Swap %s", ( *it1 )->GetName() );
-					// Some processing...
 					ImGui::EndDragDropSource();
 				}
 
@@ -246,10 +324,6 @@ void Balbino::Scene::DrawEditor()
 					if( ( i + 1 != m_IndentPosition.size() && *( ++it2 ) <= indent ) )
 					{
 						ImGui::TreePop();
-						//for( int j = 0; j < m_IndentPosition[i + 1] - indent; j++ )
-						//{
-						//	ImGui::TreePop();
-						//}
 					}
 					if( i + 1 == m_IndentPosition.size() )
 					{
@@ -288,8 +362,8 @@ void Balbino::Scene::DrawEditor()
 		}
 		ImGui::TreePop();
 	}
-
 	ImGui::End();
+
 	if( m_GameObjects.size() != 0 )
 	{
 		ImGui::Begin( "Inspector" );
@@ -297,8 +371,17 @@ void Balbino::Scene::DrawEditor()
 		std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
 
 		for( int i = 0; i < selected; i++ )++it;
-		char* name{ const_cast<char*>( ( *it )->GetName() ) };
+		std::string actualName{ ( *it )->GetName() };
+		char name[32]{};
+		int size{ std::min( int( actualName.size() ), 32 ) };
+
+		for( int i = 0; i < size; i++ )
+		{
+			name[i] = actualName[i];
+		}
+
 		ImGui::InputText( "Name:", name, 32 );
+		( *it )->SetName( name );
 		( *it )->DrawInspector();
 
 		if( ImGui::Button( "Add Component" ) )
@@ -313,34 +396,34 @@ void Balbino::Scene::DrawEditor()
 				{
 					switch( ComponentList( i ) )
 					{
-					case Balbino::Scene::ComponentList::Audio:
+					case Balbino::ComponentList::Audio:
 						( *it )->AddComponent<ConsoleAudio>();
 						( *it )->GetComponent<ConsoleAudio>()->Create();
 						break;
-					case Balbino::Scene::ComponentList::LoggedAudio:
+					case Balbino::ComponentList::LoggedAudio:
 						( *it )->AddComponent<LoggedAudio>();
 						( *it )->GetComponent<LoggedAudio>()->Create();
 						break;
-					case Balbino::Scene::ComponentList::Avatar:
+					case Balbino::ComponentList::Avatar:
 						( *it )->AddComponent<Avatar>();
 						( *it )->GetComponent<Avatar>()->Create();
 						break;
-					case Balbino::Scene::ComponentList::Camera:
+					case Balbino::ComponentList::Camera:
 						//( *it )->AddComponent<Camera>();
 						break;
-					case Balbino::Scene::ComponentList::FPSScript:
+					case Balbino::ComponentList::FPSScript:
 						( *it )->AddComponent<FPSScript>();
 						( *it )->GetComponent<FPSScript>()->Create();
 						break;
-					case Balbino::Scene::ComponentList::Text:
+					case Balbino::ComponentList::Text:
 						( *it )->AddComponent<Text>();
 						( *it )->GetComponent<Text>()->Create();
 						break;
-					case Balbino::Scene::ComponentList::Texture2D:
+					case Balbino::ComponentList::Texture2D:
 						( *it )->AddComponent<Texture2D>();
 						( *it )->GetComponent<Texture2D>()->Create();
 						break;
-					case Balbino::Scene::ComponentList::Transform:
+					case Balbino::ComponentList::Transform:
 						( *it )->AddComponent<Transform>();
 						( *it )->GetComponent<Transform>()->Create();
 						break;

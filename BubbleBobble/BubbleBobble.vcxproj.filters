@@ -21,40 +21,23 @@
     <ClCompile Include="scr\main.cpp">
       <Filter>scripts</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Background.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\DAELogo.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\FPSCounter.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\IntroText.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Players.cpp">
-      <Filter>scripts</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scr\pch.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Background.h">
+    <ClInclude Include="resource.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="scr\DAELogo.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\FPSCounter.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\IntroText.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\Players.h">
-      <Filter>Game Objects</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="BubbleBobble.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Balbino.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

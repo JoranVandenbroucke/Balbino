@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Background.h"
-#include "DAELogo.h"
-#include "IntroText.h"
-#include "FPSCounter.h"
-#include "Players.h"
+//#include "Background.h"
+//#include "DAELogo.h"
+//#include "IntroText.h"
+//#include "FPSCounter.h"
+//#include "Players.h"
 
 namespace BubbleBobble
 {

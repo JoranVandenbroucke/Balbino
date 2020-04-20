@@ -1,18 +1,16 @@
 #include "BalbinoPCH.h"
 #include "Camera.h"
 #include "../GameObject/GameObject.h"
+#include "../BinaryReaderWrider.h"
 
-Balbino::Camera::Camera( const std::weak_ptr<GameObject> origine, float fov, float w, float h )
+Balbino::Camera::Camera( const std::weak_ptr<GameObject> origine, float fov, float w )
 	:Component( origine )
-	, m_Projection{ glm::perspective( fov / 2.f, w / h, 0.1f, 100.f ) }
-	, m_View{ glm::mat4{ 1.f } }
-	, m_ViewProjection{}
+	, m_IsOrtographic{ false }
+	, m_OrthographicSize{ w }
+	, m_FieldOfView{ fov }
+	, m_Depth{ -1 }
 {
 	Update();
-}
-const glm::mat4& Balbino::Camera::GetViewProjection() const
-{
-	return m_ViewProjection;
 }
 
 void Balbino::Camera::Create()
@@ -22,17 +20,31 @@ void Balbino::Camera::Create()
 
 void Balbino::Camera::Update()
 {
-	m_ViewProjection = m_View * m_Projection;
+	//m_ViewProjection = m_View * m_Projection;
 }
 
 void Balbino::Camera::Draw() const
 {
 }
 
-void Balbino::Camera::Translate( const vec3& v )
+void Balbino::Camera::Save( std::ostream& file )
 {
-	m_View = glm::translate( m_View, glm::vec3{ v.x, v.y, v.z }*-1.f );
+	BinaryReadWrite::Write( file, int( ComponentList::Camera ) );
+	BinaryReadWrite::Write( file, m_IsOrtographic );
+	BinaryReadWrite::Write( file, m_OrthographicSize );
+	BinaryReadWrite::Write( file, m_FieldOfView );
+	BinaryReadWrite::Write( file, m_Depth );
+
 }
+
+void Balbino::Camera::Load( std::istream& file )
+{
+	BinaryReadWrite::Read( file, m_IsOrtographic );
+	BinaryReadWrite::Read( file, m_OrthographicSize );
+	BinaryReadWrite::Read( file, m_FieldOfView );
+	BinaryReadWrite::Read( file, m_Depth );
+}
+
 #ifdef _DEBUG
 void Balbino::Camera::DrawInpector()
 {

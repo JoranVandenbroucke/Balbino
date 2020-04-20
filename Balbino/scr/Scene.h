@@ -31,17 +31,7 @@ namespace Balbino
 		std::list<std::shared_ptr<GameObject>> m_GameObjects;
 		std::string m_Name;
 		static unsigned int m_IdCounter;
-		enum class ComponentList
-		{
-			Audio,
-			LoggedAudio,
-			Avatar,
-			Camera,
-			FPSScript,
-			Text,
-			Texture2D,
-			Transform
-		} m_ComponentsEnum;
+		ComponentList m_ComponentsEnum;
 		const char* const m_ComponentsString[8]
 		{
 			"Audio",
@@ -58,6 +48,8 @@ namespace Balbino
 		void DrawEditor();
 	private:
 		//std::vector<int> m_Indent;
+		bool m_Saved;
+		std::string m_SavePosition;
 		std::list<int> m_IndentPosition;
 #endif // _DEBUG
 	};

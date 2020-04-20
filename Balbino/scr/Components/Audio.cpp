@@ -47,6 +47,16 @@ void Balbino::ConsoleAudio::Draw() const
 {
 }
 
+void Balbino::ConsoleAudio::Save( std::ostream& file )
+{
+	(void) file;
+}
+
+void Balbino::ConsoleAudio::Load( std::istream& file )
+{
+	(void) file;
+}
+
 void Balbino::ConsoleAudio::DrawInpector()
 {
 	
@@ -86,6 +96,16 @@ void Balbino::LoggedAudio::Update()
 
 void Balbino::LoggedAudio::Draw() const
 {
+}
+
+void Balbino::LoggedAudio::Save( std::ostream& file )
+{
+	(void) file;
+}
+
+void Balbino::LoggedAudio::Load( std::istream& file )
+{
+	(void) file;
 }
 
 #ifdef _DEBUG

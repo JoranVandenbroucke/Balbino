@@ -3,7 +3,8 @@
 #include "../Struct.h"
 #include "../Core.h"
 #include <memory>
-#include <list>
+#include <vector>
+#include <fstream>
 #pragma warning(push)
 #pragma warning(disable:4201)
 #pragma warning(disable:431)
@@ -34,6 +35,9 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+
+		virtual void Save( std::ostream& file )override;
+		virtual void Load( std::istream& file )override;
 		
 		void SetParrent(std::shared_ptr<Transform> parent);
 		int GetNumberOfChilderen();
@@ -56,7 +60,7 @@ namespace Balbino
 		vec3 m_Scale;
 
 		std::shared_ptr<Transform> m_Parent;
-		std::list<std::shared_ptr<Transform>> m_Childeren;
+		std::vector<std::shared_ptr<Transform>> m_Childeren;
 	};
 }
 #pragma warning(pop)

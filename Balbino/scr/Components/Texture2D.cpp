@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "../GameObject/GameObject.h"
 #include "../ResourceManager.h"
+#include "../BinaryReaderWrider.h"
 #include <SDL.h>
 
 #ifdef _DEBUG
@@ -133,4 +134,17 @@ void Balbino::Texture2D::Draw() const
 	m_IndexBuff.Unbind();
 	m_VertexBuff.Unbind();
 	m_Shader.Unbind();
+}
+
+void Balbino::Texture2D::Save( std::ostream& file )
+{
+	BinaryReadWrite::Write( file, int( ComponentList::Texture2D ) );
+	BinaryReadWrite::Write( file, m_File );
+	BinaryReadWrite::Write( file, m_Color );
+}
+
+void Balbino::Texture2D::Load( std::istream& file )
+{
+	BinaryReadWrite::Read( file, m_File );
+	BinaryReadWrite::Read( file, m_Color );
 }

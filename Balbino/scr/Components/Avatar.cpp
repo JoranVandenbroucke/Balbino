@@ -4,6 +4,7 @@
 #include "Audio.h"
 #include "../GameObject/GameObject.h"
 #include "../InputManager.h"
+#include "../BinaryReaderWrider.h"
 
 Balbino::Avatar::Avatar( std::weak_ptr<GameObject> origine )
 	:Component{ origine }
@@ -41,6 +42,16 @@ void Balbino::Avatar::Update()
 void Balbino::Avatar::Draw() const
 {
 
+}
+
+void Balbino::Avatar::Save( std::ostream& file )
+{
+	BinaryReadWrite::Write( file, int( ComponentList::Avatar ) );
+}
+
+void Balbino::Avatar::Load( std::istream& file )
+{
+	(void) file;
 }
 
 #ifdef _DEBUG

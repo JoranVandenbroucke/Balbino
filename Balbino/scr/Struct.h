@@ -21,4 +21,16 @@ namespace Balbino
 		vec3& operator+=( const vec3& rhs );
 		friend vec3 operator+( vec3 lhs, const vec3& rhs );
 	};
+
+	enum class ComponentList
+	{
+		Audio,
+		LoggedAudio,
+		Avatar,
+		Camera,
+		FPSScript,
+		Text,
+		Texture2D,
+		Transform
+	};
 }

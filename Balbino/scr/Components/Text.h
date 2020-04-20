@@ -22,9 +22,11 @@ namespace Balbino
 		virtual void Update() override;
 		virtual void Draw() const override;
 
+		virtual void Save( std::ostream& file )override;
+		virtual void Load( std::istream& file )override;
+
 		void SetText( const std::string& text );
 		void SetColor( const Color& newColor );
-		void SetPosition( float x, float y );
 		void SetFont( const std::string path, int size );
 
 		Text( const Text& other ) = delete;
@@ -49,11 +51,13 @@ namespace Balbino
 		IndexBuffer m_IndexBuff;
 		Shader m_Shader;
 		Color m_Color;
+		bool m_NeedsUpdate;
 		int m_ColorUniformLocation;
 		int m_TextureUniformLocation;
 		int m_ModelMatricLocation;
-		bool m_NeedsUpdate;
+		int m_FontSize;
 		std::string m_Text;
+		std::string m_FontPath;
 		std::weak_ptr<Font> m_Font;
 #ifdef _DEBUG
 	public:

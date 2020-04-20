@@ -20,6 +20,10 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+
+		virtual void Save( std::ostream& file )override;
+		virtual void Load( std::istream& file )override;
+
 #ifdef _DEBUG
 		virtual void DrawInpector() override;
 #endif // _DEBUG
