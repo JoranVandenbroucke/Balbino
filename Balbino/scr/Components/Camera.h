@@ -1,11 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "../Struct.h"
-#include "../Core.h"
 #include <memory>
-#pragma warning(push)
-#pragma warning(disable:4251)
-#pragma warning(disable:4275)
 #pragma warning(push)
 #pragma warning(disable:4201)
 #pragma warning(disable:4127)
@@ -18,10 +14,16 @@ namespace Balbino
 {
 	class GameObject;
 
-	class BALBINO_API Camera final: public Component
+	class Camera final: public Component
 	{
 	public:
 		Camera( const std::weak_ptr<GameObject> origine, float fov, float w );
+
+		Camera( const Camera& ) = delete;
+		Camera( Camera&& ) = delete;
+		Camera& operator= ( const Camera& ) = delete;
+		Camera& operator= ( const Camera&& ) = delete;
+
 		virtual ~Camera()=default;
 
 		virtual void Create() override;
@@ -30,12 +32,6 @@ namespace Balbino
 
 		virtual void Save( std::ostream& file )override;
 		virtual void Load( std::istream& file )override;
-
-
-		Camera( const Camera& ) = delete;
-		Camera( Camera&& ) = delete;
-		Camera& operator= ( const Camera& ) = delete;
-		Camera& operator= ( const Camera&& ) = delete;
 
 #ifdef _DEBUG
 		virtual void DrawInpector() override;
@@ -47,4 +43,3 @@ namespace Balbino
 		float m_Depth;
 	};
 }
-#pragma warning(pop)

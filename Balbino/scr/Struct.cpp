@@ -18,14 +18,32 @@ Color::Color( uint32_t color )
 {
 }
 
-vec3::vec3( float x, float y, float z )
+Balbino::Vector2::Vector2( float x, float y )
+	: x{ x }
+	, y{ y }
+{
+}
+
+Vector2& Balbino::Vector2::operator+=( const Vector2& rhs )
+{
+	this->x += rhs.x;
+	this->y += rhs.y;
+	return *this;
+}
+
+Vector2 Balbino::operator+( Vector2 lhs, const Vector2& rhs )
+{
+	return lhs += rhs;
+}
+
+Vector3::Vector3( float x, float y, float z )
 	: x{ x }
 	, y{ y }
 	, z{ z }
 {
 }
 
-vec3& Balbino::vec3::operator+=( const vec3& rhs )
+Vector3& Balbino::Vector3::operator+=( const Vector3& rhs )
 {
 	this->x += rhs.x;
 	this->y += rhs.y;
@@ -33,7 +51,53 @@ vec3& Balbino::vec3::operator+=( const vec3& rhs )
 	return *this;
 }
 
-vec3 Balbino::operator+( vec3 lhs, const vec3& rhs )
+Vector3 Balbino::operator+( Vector3 lhs, const Vector3& rhs )
+{
+	return lhs += rhs;
+}
+
+Balbino::Vector4::Vector4( float x, float y, float z, float w )
+	:x{ x }
+	, y{ y }
+	, z{ z }
+	, w{ w }
+{
+}
+
+Vector4& Balbino::Vector4::operator+=( const Vector4& rhs )
+{
+	this->x += rhs.x;
+	this->y += rhs.y;
+	this->z += rhs.z;
+	this->w += rhs.w;
+	return *this;
+}
+
+Vector4 Balbino::operator+( Vector4 lhs, const Vector4& rhs )
+{
+	return lhs += rhs;
+}
+
+Balbino::Rect::Rect( float xMin, float xMax, float yMin, float yMax )
+	:xMin{ xMin }
+	, xMax{ xMax }
+	, yMin{ yMin }
+	, yMax{ yMax }
+	, width{ xMax - xMin }
+	, height{ yMax - yMin }
+{
+}
+
+Rect& Balbino::Rect::operator+=( const Rect& rhs )
+{
+	this->xMin += rhs.xMin;
+	this->xMax += rhs.xMax;
+	this->yMin += rhs.yMin;
+	this->yMax += rhs.yMax;
+	return *this;
+}
+
+Rect Balbino::operator+( Rect lhs, const Rect& rhs )
 {
 	return lhs += rhs;
 }

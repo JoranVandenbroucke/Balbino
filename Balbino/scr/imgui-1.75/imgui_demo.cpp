@@ -32,7 +32,7 @@
 // Because of this:
 // - We never omit the ImGui:: namespace when calling functions, even though most of our code is already in the same namespace.
 // - We try to declare static variables in the local scope, as close as possible to the code using them.
-// - We never use any of the helpers/facilities used internally by Dear ImGui, unless it has been exposed in the public API (imgui.h).
+// - We never use any of the helpers/facilities used internally by Dear ImGui, unless it has been exposed in the API (imgui.h).
 // - We never use maths operators on ImVec2/ImVec4. For other of our sources files, they are provided by imgui_internal.h w/ IMGUI_DEFINE_MATH_OPERATORS.
 //   For your own sources file they are optional and require you either enable those, either provide your own via IM_VEC2_CLASS_EXTRA in imconfig.h.
 //   Because we don't want to assume anything about your support of maths operators, we don't use them in imgui_demo.cpp.
@@ -1392,7 +1392,7 @@ static void ShowDemoWindowWidgets()
     if (ImGui::TreeNode("Data Types"))
     {
         // The DragScalar/InputScalar/SliderScalar functions allow various data types: signed/unsigned int/long long and float/double
-        // To avoid polluting the public API with all possible combinations, we use the ImGuiDataType enum to pass the type,
+        // To avoid polluting the API with all possible combinations, we use the ImGuiDataType enum to pass the type,
         // and passing all arguments by address.
         // This is the reason the test code below creates local variables to hold "zero" "one" etc. for each types.
         // In practice, if you frequently use a given type that is not covered by the normal API entry points, you can wrap it

@@ -1,9 +1,5 @@
 #pragma once
 #include "Component.h"
-#include "../Core.h"
-#pragma warning(push)
-#pragma warning(disable:4251)
-#pragma warning(disable:4275)
 
 namespace Balbino
 {
@@ -11,7 +7,7 @@ namespace Balbino
 	class Transform;
 	class Text;
 
-	class BALBINO_API FPSScript final: public Component
+	class FPSScript final: public Component
 	{
 	public:
 		explicit FPSScript( const std::weak_ptr<GameObject> origine );
@@ -36,4 +32,3 @@ namespace Balbino
 		std::weak_ptr<Text> m_Text{};
 	};
 }
-#pragma warning(pop)

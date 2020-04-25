@@ -16,12 +16,20 @@ using namespace Balbino;
 
 unsigned int Scene::m_IdCounter = 0;
 
+#ifdef _DEBUG
 Scene::Scene( const std::string& name )
 	: m_GameObjects{}
 	, m_Name{ name }
 	, m_Saved{}
 {
 }
+#else
+Scene::Scene( const std::string& name )
+	: m_GameObjects{}
+	, m_Name{ name }
+{
+}
+#endif // _DEBUG
 
 Scene::~Scene() = default;
 
@@ -29,7 +37,7 @@ void Balbino::Scene::Add( const std::shared_ptr<GameObject> & object, int pos )
 {
 	std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
 	if( pos != -1 )
-		for( size_t i = 0; i < pos; i++ ) ++it;
+		for( int i = 0; i < pos; i++ ) ++it;
 
 	m_GameObjects.insert( it, object );
 }
@@ -68,18 +76,22 @@ void Balbino::Scene::DrawEditor()
 			}
 			if( ImGui::MenuItem( "Open" ) )
 			{
-				char fileName[MAX_PATH] = "";
+				std::string currentPath = std::filesystem::current_path().u8string();
+				wchar_t fileName[MAX_PATH] = L"";
 				OPENFILENAME ofn;
 				ZeroMemory( &ofn, sizeof( ofn ) );
 				ofn.lStructSize = sizeof( OPENFILENAME );
 				ofn.hwndOwner = nullptr;
-				ofn.lpstrFilter = "Balbino Files (.Balbino)\0*.Balbino\0Any File\0*.*\0";
+				ofn.lpstrFilter = L"Balbino Files (.Balbino)\0*.Balbino\0Any File\0*.*\0";
 				ofn.lpstrFile = fileName;
 				ofn.nMaxFile = MAX_PATH;
 				ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-				ofn.lpstrDefExt = "";
+				ofn.lpstrDefExt = L"";
 				if( GetOpenFileName( &ofn ) )
-					m_SavePosition = fileName;
+				{
+					m_SavePosition = std::filesystem::relative( fileName, currentPath ).u8string();
+				}
+				std::filesystem::current_path( currentPath );
 				std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
 				std::smatch match;
 				if( std::regex_match( m_SavePosition, match, sceneName ) )
@@ -98,7 +110,7 @@ void Balbino::Scene::DrawEditor()
 						gameObject->Load( saveFile );
 						gameObject->Create();
 						Add( gameObject );
-						m_IndentPosition.push_back(0);
+						m_IndentPosition.push_back( 0 );
 					}
 					m_GameObjects.reverse();
 					m_Saved = true;
@@ -107,20 +119,24 @@ void Balbino::Scene::DrawEditor()
 			}
 			if( ImGui::MenuItem( "Save Scene" ) )
 			{
-				char fileName[MAX_PATH] = "";
+				std::string currentPath = std::filesystem::current_path().u8string();
+				wchar_t fileName[MAX_PATH] = L"";
 				if( !m_Saved )
 				{
 					OPENFILENAME ofn;
 					ZeroMemory( &ofn, sizeof( ofn ) );
 					ofn.lStructSize = sizeof( OPENFILENAME );
 					ofn.hwndOwner = nullptr;
-					ofn.lpstrFilter = "Balbino Files (.Balbino)\0*.Balbino\0Any File\0*.*\0";
+					ofn.lpstrFilter = L"Balbino Files (.Balbino)\0*.Balbino\0Any File\0*.*\0";
 					ofn.lpstrFile = fileName;
 					ofn.nMaxFile = MAX_PATH;
 					ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-					ofn.lpstrDefExt = "";
+					ofn.lpstrDefExt = L"";
 					if( GetSaveFileName( &ofn ) )
-						m_SavePosition = fileName;
+					{
+						m_SavePosition = std::filesystem::relative( fileName, currentPath ).u8string();
+					}
+					std::filesystem::current_path( currentPath );
 					std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
 					std::smatch match;
 					if( std::regex_match( m_SavePosition, match, sceneName ) )
@@ -196,7 +212,7 @@ void Balbino::Scene::DrawEditor()
 
 		std::list<int>::iterator it{ m_IndentPosition.begin() };
 		if( selected != -1 )
-			for( size_t i = 0; i < selected; i++ ) ++it;
+			for( int i = 0; i < selected; i++ ) ++it;
 
 		m_IndentPosition.insert( it, 0 );
 		Add( newObject );
@@ -208,8 +224,8 @@ void Balbino::Scene::DrawEditor()
 		{
 			std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
 			std::list<int>::iterator it2{ m_IndentPosition.begin() };
-			for( size_t i = 1; i < selected; i++ ) ++it;
-			for( size_t i = 1; i < selected; i++ ) ++it2;
+			for( int i = 1; i < selected; i++ ) ++it;
+			for( int i = 1; i < selected; i++ ) ++it2;
 			m_GameObjects.erase( it );
 			m_IndentPosition.erase( it2 );
 			--selected;
@@ -223,8 +239,8 @@ void Balbino::Scene::DrawEditor()
 			bool worked{ true };
 			std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
 			std::list<int>::iterator it3{ m_IndentPosition.begin() };
-			for( size_t i = 0; i < selected; i++ ) ++it;
-			for( size_t i = 0; i < selected; i++ ) ++it3;
+			for( int i = 0; i < selected; i++ ) ++it;
+			for( int i = 0; i < selected; i++ ) ++it3;
 			std::list<std::shared_ptr<GameObject>>::iterator it2{ it };
 			for( std::list<int>::iterator it4{ it3 }; *--it4 < *it3; )
 			{
@@ -249,8 +265,8 @@ void Balbino::Scene::DrawEditor()
 		{
 			std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
 			std::list<int>::iterator it2{ m_IndentPosition.begin() };
-			for( size_t i = 0; i < selected; i++ ) ++it;
-			for( size_t i = 0; i < selected; i++ ) ++it2;
+			for( int i = 0; i < selected; i++ ) ++it;
+			for( int i = 0; i < selected; i++ ) ++it2;
 			( *it2 ) = 0;
 			( *it )->GetComponent<Transform>()->SetParrent( nullptr );
 		}
@@ -260,7 +276,7 @@ void Balbino::Scene::DrawEditor()
 
 	ImGui::SetNextItemOpen( true );
 	int selection_mask = ( 1 << selected ); // Dumb representation of what may be user-side selection state. You may carry selection state inside or outside your objects in whatever format you see fit.
-	static ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	static ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 	bool open{ true };
 	if( ImGui::TreeNode( m_Name.c_str() ) )
 	{
@@ -281,11 +297,13 @@ void Balbino::Scene::DrawEditor()
 					nodeFlags |= ImGuiTreeNodeFlags_Selected;
 				nodeFlags |= ( nrOfChilderen == 0 ? ImGuiTreeNodeFlags_Leaf : 0 ); // ImGuiTreeNodeFlags_Bullet
 
-
 				int indent = *it2;
+
 				open = ImGui::TreeNodeEx( (void*) (intptr_t) i, nodeFlags,
 					( *it1 )->GetName() );
-
+				//open = ImGui::TreeNodeEx( (void*) (intptr_t) i,
+				//	ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ( isSelected ? ImGuiTreeNodeFlags_Selected : 0 ) | ( nrOfChilderen == 0 ? ImGuiTreeNodeFlags_Leaf : 0 ),
+				//	( *it1 )->GetName() );
 
 				ImGui::PushID( (void*) &i );
 				if( ImGui::BeginPopupContextItem() )
@@ -309,7 +327,7 @@ void Balbino::Scene::DrawEditor()
 					if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( "GameObject" ) )
 					{
 						int end = *(const int*) payload->Data;
-						if( end >= 0 && end < m_GameObjects.size() )
+						if( end >= 0 && end < int( m_GameObjects.size() ) )
 						{
 							std::list<std::shared_ptr<GameObject>>::iterator it3{ m_GameObjects.begin() };
 							for( int j = 0; j < end; j++ )++it3;
@@ -321,11 +339,11 @@ void Balbino::Scene::DrawEditor()
 
 				if( open )
 				{
-					if( ( i + 1 != m_IndentPosition.size() && *( ++it2 ) <= indent ) )
+					if( ( i + 1 != int( m_IndentPosition.size() ) && *( ++it2 ) <= indent ) )
 					{
 						ImGui::TreePop();
 					}
-					if( i + 1 == m_IndentPosition.size() )
+					if( i + 1 == int( m_IndentPosition.size() ) )
 					{
 						for( int j = 0; j < indent + 1; j++ )
 						{
@@ -338,7 +356,7 @@ void Balbino::Scene::DrawEditor()
 				{
 					if( m_IndentPosition.size() > 1 )
 					{
-						if( i + 1 == m_IndentPosition.size() )
+						if( i + 1 == int( m_IndentPosition.size() ) )
 						{
 							for( int j = 0; j < indent; j++ )
 							{
@@ -346,9 +364,9 @@ void Balbino::Scene::DrawEditor()
 							}
 						}
 
-						while( i + 1 < m_IndentPosition.size()
+						while( i + 1 < int( m_IndentPosition.size() )
 							&& *( ++it2 ) > indent )++i;
-						if( i + 1 == m_IndentPosition.size()
+						if( i + 1 == int( m_IndentPosition.size() )
 							&& *it2 > indent )
 						{
 							break;
@@ -358,7 +376,7 @@ void Balbino::Scene::DrawEditor()
 				}
 				iOld = i;
 			}
-			while( i < m_GameObjects.size() /*|| ( i == 0 && m_GameObjects.size() == 1 )*/ );
+			while( i < int( m_GameObjects.size() ) /*|| ( i == 0 && m_GameObjects.size() == 1 )*/ );
 		}
 		ImGui::TreePop();
 	}

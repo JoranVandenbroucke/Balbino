@@ -15,7 +15,7 @@ namespace Balbino
 	public:
 		Scene& CreateScene( const std::string& name );
 
-		void SetScene(const unsigned int sceneNr );
+		static void SetScene(const unsigned int sceneNr );
 		void Update();
 		void Draw();
 		std::weak_ptr<Scene> GetCurrentScene();

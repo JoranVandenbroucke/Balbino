@@ -12,12 +12,14 @@
 Balbino::Text::Text( const std::weak_ptr<GameObject> origin )
 	: Component{ origin }
 	, m_Text{ "Text" }
-	, m_Font{ Balbino::ResourceManager::Get().LoadFont( "Lingua.otf", 12 ) }
+	, m_Font{}
 	, m_Color{ 255, 255, 255, 255 }
 	, m_NeedsUpdate{ true }
 	, m_VertexBuff{ (void*) m_Vert, 4 }
 	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
-	, m_Shader{ "scr/Shaders/Font.vs", "scr/Shaders/Font.fs" }
+	, m_Shader{ "Shaders/Font.vs", "Shaders/Font.fs" }
+	, m_FontPath{ "Lingua.otf" }
+	, m_FontSize{ 12 }
 {
 	m_VertexBuff.Unbind();
 
@@ -38,6 +40,7 @@ Balbino::Text::Text( const std::weak_ptr<GameObject> origin )
 void Balbino::Text::Create()
 {
 	m_Transform = GetComponent<Transform>();
+	SetFont( m_FontPath, m_FontSize );
 }
 
 void Balbino::Text::Update()

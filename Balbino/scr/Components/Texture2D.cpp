@@ -14,7 +14,7 @@ Balbino::Texture2D::Texture2D( const std::weak_ptr<GameObject> origine )
 	, m_File{ "" }
 	, m_VertexBuff{ (void*) m_Vert, 4 }
 	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
-	, m_Shader{ "scr/Shaders/Basic.vs", "scr/Shaders/Basic.fs" }
+	, m_Shader{ "Shaders/Basic.vs", "Shaders/Basic.fs" }
 	, m_Color{ 255,255,255 }
 {
 	m_VertexBuff.Unbind();
@@ -62,7 +62,7 @@ Balbino::Texture2D::Texture2D( const std::weak_ptr<GameObject> origine )
 	, m_File{ "" }
 	, m_VertexBuff{ (void*) m_Vert, 4 }
 	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
-	, m_Shader{ "scr/Shaders/Basic.vs", "scr/Shaders/Basic.fs" }
+	, m_Shader{ "Shaders/Basic.vs", "Shaders/Basic.fs" }
 	, m_Color{ 255,255,255 }
 {
 	m_VertexBuff.Unbind();
@@ -147,4 +147,5 @@ void Balbino::Texture2D::Load( std::istream& file )
 {
 	BinaryReadWrite::Read( file, m_File );
 	BinaryReadWrite::Read( file, m_Color );
+	SetTexture( m_File );
 }

@@ -3,7 +3,7 @@
 // Mostly fixing for compiler and static analyzer warnings.
 // Grep for [DEAR IMGUI] to find the changes.
 
-// stb_truetype.h - v1.20 - public domain
+// stb_truetype.h - v1.20 - domain
 // authored from 2009-2016 by Sean Barrett / RAD Game Tools
 //
 //   This library processes TrueType files:
@@ -4857,7 +4857,7 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 //   0.3  (2009-06-24) cmap fmt=12, compound shapes (MM)
 //                    userdata, malloc-from-userdata, non-zero fill (stb)
 //   0.2  (2009-03-11) Fix unsigned/signed char warnings
-//   0.1  (2009-03-09) First public release
+//   0.1  (2009-03-09) First release
 //
 
 /*
@@ -4882,14 +4882,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE.
 ------------------------------------------------------------------------------
-ALTERNATIVE B - Public Domain (www.unlicense.org)
-This is free and unencumbered software released into the public domain.
+ALTERNATIVE B - Domain (www.unlicense.org)
+This is free and unencumbered software released into the domain.
 Anyone is free to copy, modify, publish, use, compile, sell, or distribute this 
 software, either in source code form or as a compiled binary, for any purpose, 
 commercial or non-commercial, and by any means.
 In jurisdictions that recognize copyright laws, the author or authors of this 
-software dedicate any and all copyright interest in the software to the public 
-domain. We make this dedication for the benefit of the public at large and to 
+software dedicate any and all copyright interest in the software to the 
+domain. We make this dedication for the benefit of the at large and to 
 the detriment of our heirs and successors. We intend this dedication to be an 
 overt act of relinquishment in perpetuity of all present and future rights to 
 this software under copyright law.

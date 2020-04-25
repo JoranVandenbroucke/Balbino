@@ -4,37 +4,50 @@
 #include "SceneObject.h"
 void Balbino::SceneManager::SetScene( const unsigned int sceneNr )
 {
-	if( sceneNr < m_Scenes.size() )
+	if( sceneNr < Get().m_Scenes.size() )
 	{
-		std::shared_ptr<Scene> current = m_CurrentScenes.lock();
+		std::shared_ptr<Scene> current = Get().m_CurrentScenes.lock();
 		if( current )
 		{
 			current->Unload();
 		}
-		current = m_Scenes[sceneNr];
+		current = Get().m_Scenes[sceneNr];
 		current->Load();
-		m_CurrentScenes = current;
+		Get().m_CurrentScenes = current;
 	}
 }
 void Balbino::SceneManager::Update()
 {
-	m_CurrentScenes.lock()->Update();
+	auto currentScene = m_CurrentScenes.lock();
+	if( currentScene )
+	{
+		currentScene->Update();
+	}
 }
 
 void Balbino::SceneManager::Draw()
 {
-	m_CurrentScenes.lock()->Draw();
+	auto currentScene = m_CurrentScenes.lock();
+	if( currentScene )
+	{
+		currentScene->Draw();
+	}
 }
 
 std::weak_ptr<Balbino::Scene> Balbino::SceneManager::GetCurrentScene()
 {
 	return m_CurrentScenes;
 }
-
+#ifdef _DEBUG
 void Balbino::SceneManager::DrawEngine()
 {
-	m_CurrentScenes.lock()->DrawEditor();
+	auto currentScene = m_CurrentScenes.lock();
+	if( currentScene )
+	{
+		currentScene->DrawEditor();
+	}
 }
+#endif //_DEBUG
 
 Balbino::Scene& Balbino::SceneManager::CreateScene( const std::string& name )
 {

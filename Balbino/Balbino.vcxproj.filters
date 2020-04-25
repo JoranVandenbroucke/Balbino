@@ -1,96 +1,243 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Balbino.h">
-      <Filter>Connections</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\BalbinoPCH.h" />
-    <ClInclude Include="scr\Struct.h" />
-    <ClInclude Include="scr\Core.h" />
-    <ClInclude Include="scr\EntryPoint.h" />
-    <ClInclude Include="scr\Application.h" />
-    <ClInclude Include="scr\Singleton.h" />
-    <ClInclude Include="scr\InputManager.h" />
-    <ClInclude Include="scr\SceneManager.h" />
-    <ClInclude Include="scr\Scene.h" />
-    <ClInclude Include="scr\SceneObject.h" />
-    <ClInclude Include="scr\ResourceManager.h" />
-    <ClInclude Include="scr\Font.h" />
-    <ClInclude Include="scr\Time.h" />
-    <ClInclude Include="scr\Components\Avatar.h" />
-    <ClInclude Include="scr\Components\Component.h" />
-    <ClInclude Include="scr\Components\FPSScript.h" />
-    <ClInclude Include="scr\Components\Text.h" />
-    <ClInclude Include="scr\Components\Texture2D.h" />
-    <ClInclude Include="scr\Components\Transform.h" />
-    <ClInclude Include="scr\GameObject\GameObject.h" />
-    <ClInclude Include="scr\imgui-1.75\imconfig.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_internal.h" />
-    <ClInclude Include="scr\imgui-1.75\imstb_rectpack.h" />
-    <ClInclude Include="scr\imgui-1.75\imstb_textedit.h" />
-    <ClInclude Include="scr\imgui-1.75\imstb_truetype.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_sdl.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h" />
-    <ClInclude Include="scr\Debug.h" />
-    <ClInclude Include="scr\Components\Audio.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_plot.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_impl_opengl3.h" />
-    <ClInclude Include="scr\gl3w\GL\gl3w.h" />
-    <ClInclude Include="scr\gl3w\GL\glcorearb.h" />
-    <ClInclude Include="scr\Renderer\Renderer.h" />
-    <ClInclude Include="scr\Components\Camera.h" />
-    <ClInclude Include="scr\Components\All.h" />
-    <ClInclude Include="scr\BinaryReaderWrider.h" />
+    <ClInclude Include="scr\Components\All.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Avatar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\FPSScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\LevelLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Texture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\GameObject\GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\gl3w\GL\gl3w.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\gl3w\GL\glcorearb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imgui_impl_opengl3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imgui_plot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imgui_sdl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Renderer\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\BalbinoPCH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\BinaryReaderWrider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\EntryPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\InputManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\ResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\SceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\SceneObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Struct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Components">
-      <UniqueIdentifier>{6dbe092a-11da-44d4-a8bf-a6f41575e5d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{e4428f4c-d729-4bcf-b424-b69d28c6ed0f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Connections">
-      <UniqueIdentifier>{050c4257-0443-471d-a485-bd35e42370b8}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="scr\BalbinoPCH.cpp" />
-    <ClCompile Include="scr\Struct.cpp" />
-    <ClCompile Include="scr\Application.cpp" />
-    <ClCompile Include="scr\Time.cpp" />
-    <ClCompile Include="scr\InputManager.cpp" />
-    <ClCompile Include="scr\SceneManager.cpp" />
-    <ClCompile Include="scr\Scene.cpp" />
-    <ClCompile Include="scr\ResourceManager.cpp" />
-    <ClCompile Include="scr\Font.cpp" />
-    <ClCompile Include="scr\SceneObject.cpp" />
-    <ClCompile Include="scr\Components\Avatar.cpp" />
-    <ClCompile Include="scr\Components\Component.cpp" />
-    <ClCompile Include="scr\Components\FPSScript.cpp" />
-    <ClCompile Include="scr\Components\Text.cpp" />
-    <ClCompile Include="scr\Components\Texture2D.cpp" />
-    <ClCompile Include="scr\Components\Transform.cpp" />
-    <ClCompile Include="scr\GameObject\GameObject.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_draw.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_widgets.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_sdl.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp" />
-    <ClCompile Include="scr\Debug.cpp" />
-    <ClCompile Include="scr\Components\Audio.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_demo.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_plot.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="scr\gl3w\GL\gl3w.c" />
-    <ClCompile Include="scr\Renderer\Renderer.cpp" />
-    <ClCompile Include="scr\Components\Camera.cpp" />
-    <ClCompile Include="scr\BinaryReaderWrider.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="scr\Shaders\Basic.fs" />
-    <None Include="scr\Shaders\Basic.vs" />
-    <None Include="scr\Shaders\Font.fs" />
-    <None Include="scr\Shaders\Font.vs" />
+    <ClCompile Include="scr\Components\Audio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Avatar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\FPSScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\LevelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Transform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\GameObject\GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Renderer\Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\BalbinoPCH.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\BinaryReaderWrider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\SceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\SceneObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Struct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Time.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_sdl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_plot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\gl3w\GL\gl3w.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

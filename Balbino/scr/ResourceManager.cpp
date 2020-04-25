@@ -82,7 +82,7 @@ GLuint Balbino::ResourceManager::ILoadTexture( const std::string& file, vertex* 
 	{
 		throw std::runtime_error( "file does not exist" );
 	}
-
+	fileChecker.close();
 	SDL_Surface* pTexture = IMG_Load( fullPath.c_str() );
 	if( pTexture == nullptr )
 	{
@@ -208,5 +208,9 @@ void Balbino::ResourceManager::ICleanup()
 	}
 	//m_Audio.clear();
 	m_Fonts.clear();
+	for( auto& texture : m_Textures )
+	{
+		glDeleteTextures( 1, &texture.second );
+	}
 	m_Textures.clear();
 }

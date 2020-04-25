@@ -1,0 +1,4 @@
+﻿  pch.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  main.cpp
+LINK : fatal error LNK1561: entry point must be defined

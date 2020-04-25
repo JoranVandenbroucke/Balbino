@@ -4,7 +4,7 @@
 // - Fix in stb_textedit_discard_redo (see https://github.com/nothings/stb/issues/321)
 // Grep for [DEAR IMGUI] to find the changes.
 
-// stb_textedit.h - v1.13  - public domain - Sean Barrett
+// stb_textedit.h - v1.13  - domain - Sean Barrett
 // Development of this library was sponsored by RAD Game Tools
 //
 // This C header file implements the guts of a multi-line text-editing
@@ -48,7 +48,7 @@
 //   1.3  (2014-06-19) fix mouse clicking to round to nearest char boundary
 //   1.2  (2014-05-27) fix some RAD types that had crept into the new code
 //   1.1  (2013-12-15) move-by-word (requires STB_TEXTEDIT_IS_SPACE )
-//   1.0  (2012-07-26) improve documentation, initial public release
+//   1.0  (2012-07-26) improve documentation, initial release
 //   0.3  (2012-02-24) bugfixes, single-line mode; insert mode
 //   0.2  (2011-11-28) fixes to undo/redo
 //   0.1  (2010-07-08) initial version
@@ -75,7 +75,7 @@
 //
 //   If you do not define STB_TEXTEDIT_IMPLEMENTATION before including this,
 //   it will operate in "header file" mode. In this mode, it declares a
-//   single public symbol, STB_TexteditState, which encapsulates the current
+//   single symbol, STB_TexteditState, which encapsulates the current
 //   state of a text widget (except for the string, which you will store
 //   separately).
 //
@@ -320,7 +320,7 @@ typedef struct
 {
    /////////////////////
    //
-   // public data
+   // data
    //
 
    int cursor;
@@ -1396,14 +1396,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
 SOFTWARE.
 ------------------------------------------------------------------------------
-ALTERNATIVE B - Public Domain (www.unlicense.org)
-This is free and unencumbered software released into the public domain.
+ALTERNATIVE B - Domain (www.unlicense.org)
+This is free and unencumbered software released into the domain.
 Anyone is free to copy, modify, publish, use, compile, sell, or distribute this 
 software, either in source code form or as a compiled binary, for any purpose, 
 commercial or non-commercial, and by any means.
 In jurisdictions that recognize copyright laws, the author or authors of this 
-software dedicate any and all copyright interest in the software to the public 
-domain. We make this dedication for the benefit of the public at large and to 
+software dedicate any and all copyright interest in the software to the 
+domain. We make this dedication for the benefit of the at large and to 
 the detriment of our heirs and successors. We intend this dedication to be an 
 overt act of relinquishment in perpetuity of all present and future rights to 
 this software under copyright law.

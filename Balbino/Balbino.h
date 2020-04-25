@@ -5,4 +5,3 @@
 #include "scr/EntryPoint.h"
 // --Entry Point--------------------------------------
 #include "scr/Scene.h"
-#include "scr/Components/All.h"

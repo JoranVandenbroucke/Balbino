@@ -27,7 +27,6 @@ namespace Balbino
 	{
 	public:
 		void Init( SDL_Window* window );
-		void Draw();
 		void Destroy();
 
 		void RenderTexture( const GLuint& texture, float x, float y ) const;
@@ -40,12 +39,18 @@ namespace Balbino
 	private:
 		SDL_Renderer* m_Renderer{};
 #ifdef _DEBUG
+	public:
+		void Draw();
+	private:
 		GLuint m_FrameBufferIndex{};
 		GLuint m_Rbo{};
 		uint32_t m_RenderedTexture{};
 		GLenum m_DrawBuffers[1];
 		void Bind() const;
 		void Unbind() const;
+#else
+	public:
+		void Draw() const;
 #endif // _DEBUG
 
 	};

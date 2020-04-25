@@ -1,0 +1,62 @@
+﻿  BalbinoPCH.cpp
+  LevelLoader.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  BinaryReaderWrider.cpp
+  Camera.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Audio.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  FPSScript.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Component.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Debug.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  GameObject.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Avatar.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Application.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Font.cpp
+  InputManager.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Renderer.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  ResourceManager.cpp
+  Scene.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(71,46): error C2039: 'filesystem': is not a member of 'std'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.25.28610\include\regex(59): message : see declaration of 'std'
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(71,36): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(71,48): error C2039: 'current_path': is not a member of 'std'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.25.28610\include\regex(59): message : see declaration of 'std'
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(71,60): error C3861: 'current_path': identifier not found
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(84,38): error C2039: 'filesystem': is not a member of 'std'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.25.28610\include\regex(59): message : see declaration of 'std'
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(84,28): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(84,40): error C2039: 'relative': is not a member of 'std'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.25.28610\include\regex(59): message : see declaration of 'std'
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(84,48): error C3861: 'relative': identifier not found
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(86,20): error C2039: 'filesystem': is not a member of 'std'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.25.28610\include\regex(59): message : see declaration of 'std'
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(86,10): error C3083: 'filesystem': the symbol to the left of a '::' must be a type
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(86,22): error C2039: 'current_path': is not a member of 'std'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.25.28610\include\regex(59): message : see declaration of 'std'
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\scr\Scene.cpp(86,34): error C3861: 'current_path': identifier not found
+  SceneManager.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  SceneObject.cpp
+  Struct.cpp
+  Text.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Texture2D.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Generating Code...
+  Compiling...
+  Time.cpp
+  Transform.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Sprite.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+  Generating Code...

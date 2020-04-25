@@ -8,6 +8,8 @@ extern Balbino::Application* Balbino::CreateApplication();
 
 int main( int arc, char* argv[] )
 {
+	(void) arc;
+	(void) argv;
 	auto bubble = Balbino::CreateApplication();
 	try
 	{

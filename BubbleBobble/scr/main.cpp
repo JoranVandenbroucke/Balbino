@@ -1,9 +1,4 @@
 #include "pch.h"
-//#include "Background.h"
-//#include "DAELogo.h"
-//#include "IntroText.h"
-//#include "FPSCounter.h"
-//#include "Players.h"
 
 namespace BubbleBobble
 {
@@ -17,7 +12,7 @@ namespace BubbleBobble
 
 	void BubbleBobbleGame::LoadGame() const
 	{
-		Balbino::Scene& firsScene = Balbino::SceneManager::Get().CreateScene( "First Scene" );
+		/*Balbino::Scene& firsScene =*/ Balbino::SceneManager::Get().CreateScene( "First Scene" );
 
 		//std::shared_ptr<Balbino::GameObject> go = std::make_shared<Bub>();
 		//firsScene.Add( go );

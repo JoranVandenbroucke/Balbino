@@ -2,17 +2,13 @@
 #include "Component.h"
 #include "../gl3w/GL/gl3w.h"
 #include "../Renderer/Renderer.h"
-#include "../Core.h"
-#pragma warning(push)
-#pragma warning(disable:4251)
-#pragma warning(disable:4275)
 
 struct SDL_Texture;
 namespace Balbino
 {
 	class GameObject;
 
-	class BALBINO_API Texture2D final: public Component
+	class Texture2D final: public Component
 	{
 	public:
 		explicit Texture2D(const std::weak_ptr<GameObject> origine );
@@ -64,4 +60,3 @@ namespace Balbino
 #endif
 	};
 }
-#pragma warning(pop)

@@ -1129,7 +1129,7 @@ bool ImGui::RadioButton(const char* label, bool active)
     return pressed;
 }
 
-// FIXME: This would work nicely if it was a public template, e.g. 'template<T> RadioButton(const char* label, T* v, T v_button)', but I'm not sure how we would expose it..
+// FIXME: This would work nicely if it was a template, e.g. 'template<T> RadioButton(const char* label, T* v, T v_button)', but I'm not sure how we would expose it..
 bool ImGui::RadioButton(const char* label, int* v, int v_button)
 {
     const bool pressed = RadioButton(label, *v == v_button);
@@ -3321,7 +3321,7 @@ ImGuiInputTextCallbackData::ImGuiInputTextCallbackData()
     memset(this, 0, sizeof(*this));
 }
 
-// Public API to manipulate UTF-8 text
+// API to manipulate UTF-8 text
 // We expose UTF-8 to the user (unlike the STB_TEXTEDIT_* functions which are manipulating wchar)
 // FIXME: The existence of this rarely exercised code path is a bit of a nuisance.
 void ImGuiInputTextCallbackData::DeleteChars(int pos, int bytes_count)
@@ -7833,7 +7833,7 @@ void ImGui::EndColumns()
     window->DC.CursorPos.x = IM_FLOOR(window->Pos.x + window->DC.Indent.x + window->DC.ColumnsOffset.x);
 }
 
-// [2018-03: This is currently the only public API, while we are working on making BeginColumns/EndColumns user-facing]
+// [2018-03: This is currently the only API, while we are working on making BeginColumns/EndColumns user-facing]
 void ImGui::Columns(int columns_count, const char* id, bool border)
 {
     ImGuiWindow* window = GetCurrentWindow();

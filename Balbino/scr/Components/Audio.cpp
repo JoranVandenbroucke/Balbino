@@ -56,11 +56,13 @@ void Balbino::ConsoleAudio::Load( std::istream& file )
 {
 	(void) file;
 }
-
+#ifdef _DEBUG
 void Balbino::ConsoleAudio::DrawInpector()
 {
 	
+
 }
+#endif // _DEBUG
 
 void Balbino::ConsoleAudio::PlaySound( int soundID )
 {

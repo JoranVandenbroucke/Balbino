@@ -10,6 +10,12 @@ namespace Balbino
 	{
 	public:
 		Component( const std::weak_ptr<GameObject> origin );
+
+		Component( const Component& ) = delete;
+		Component( Component&& ) = delete;
+		Component& operator= ( const Component& ) = delete;
+		Component& operator= ( const Component&& ) = delete;
+
 		virtual ~Component() = default;
 
 		virtual void Create();
@@ -22,16 +28,10 @@ namespace Balbino
 		virtual void DrawInpector() = 0;
 #endif // _DEBUG
 
-
 		template <class T>
 		std::weak_ptr<T> GetComponent();
 		template <class T, class... Args>
 		std::weak_ptr<T> AddComponent( Args&&... args );
-
-		Component( const Component& ) = delete;
-		Component( Component&& ) = delete;
-		Component& operator= ( const Component& ) = delete;
-		Component& operator= ( const Component&& ) = delete;
 	protected:
 		const std::weak_ptr<GameObject> m_Origin;
 		std::weak_ptr<Transform> m_Transform;

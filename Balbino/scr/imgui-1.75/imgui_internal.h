@@ -944,7 +944,7 @@ struct ImDrawDataBuilder
 
 // ImGuiViewport Private/Internals fields (cardinal sin: we are using inheritance!)
 // Note that every instance of ImGuiViewport is in fact a ImGuiViewportP.
-struct ImGuiViewportP : public ImGuiViewport
+struct ImGuiViewportP : ImGuiViewport
 {
     int                 Idx;
     int                 LastFrameActive;          // Last frame number this viewport was activated by a window
@@ -2013,7 +2013,7 @@ namespace ImGui
     IMGUI_API void          SetWindowDock(ImGuiWindow* window, ImGuiID dock_id, ImGuiCond cond);
 
     // Docking - Builder function needs to be generally called before the node is used/submitted.
-    // - The DockBuilderXXX functions are designed to _eventually_ become a public API, but it is too early to expose it and guarantee stability.
+    // - The DockBuilderXXX functions are designed to _eventually_ become a API, but it is too early to expose it and guarantee stability.
     // - Do not hold on ImGuiDockNode* pointers! They may be invalidated by any split/merge/remove operation and every frame.
     // - To create a DockSpace() node, make sure to set the ImGuiDockNodeFlags_DockSpace flag when calling DockBuilderAddNode().
     //   You can create dockspace nodes (attached to a window) _or_ floating nodes (carry its own window) with this API.
@@ -2066,7 +2066,7 @@ namespace ImGui
     IMGUI_API bool          TabItemLabelAndCloseButton(ImDrawList* draw_list, const ImRect& bb, ImGuiTabItemFlags flags, ImVec2 frame_padding, const char* label, ImGuiID tab_id, ImGuiID close_button_id);
 
     // Render helpers
-    // AVOID USING OUTSIDE OF IMGUI.CPP! NOT FOR PUBLIC CONSUMPTION. THOSE FUNCTIONS ARE A MESS. THEIR SIGNATURE AND BEHAVIOR WILL CHANGE, THEY NEED TO BE REFACTORED INTO SOMETHING DECENT.
+    // AVOID USING OUTSIDE OF IMGUI.CPP! NOT FOR CONSUMPTION. THOSE FUNCTIONS ARE A MESS. THEIR SIGNATURE AND BEHAVIOR WILL CHANGE, THEY NEED TO BE REFACTORED INTO SOMETHING DECENT.
     // NB: All position are in absolute pixels coordinates (we are never using window coordinates internally)
     IMGUI_API void          RenderText(ImVec2 pos, const char* text, const char* text_end = NULL, bool hide_text_after_hash = true);
     IMGUI_API void          RenderTextWrapped(ImVec2 pos, const char* text, const char* text_end, float wrap_width);

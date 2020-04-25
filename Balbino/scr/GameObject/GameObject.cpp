@@ -44,6 +44,7 @@ void Balbino::GameObject::Draw() const
 	}
 }
 
+#ifdef _DEBUG
 void Balbino::GameObject::DrawInspector()
 {
 	for( std::weak_ptr<Component> comp : m_Components )
@@ -51,6 +52,7 @@ void Balbino::GameObject::DrawInspector()
 		comp.lock()->DrawInpector();
 	}
 }
+#endif // _DEBUG
 
 void Balbino::GameObject::Destroy()
 {

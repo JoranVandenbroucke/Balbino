@@ -16,7 +16,7 @@ namespace Balbino
 		virtual void Execute( Avatar& actor ) = 0;
 	};
 
-	class Fire: public Command
+	class Fire : public Command
 	{
 	public:
 		virtual void Execute( Avatar& actor )override
@@ -24,7 +24,7 @@ namespace Balbino
 			actor.Fire();
 		}
 	};
-	class Duck: public Command
+	class Duck : public Command
 	{
 	public:
 		virtual void Execute( Avatar& actor )override
@@ -32,7 +32,7 @@ namespace Balbino
 			actor.Duck();
 		}
 	};
-	class Jump: public Command
+	class Jump : public Command
 	{
 	public:
 		virtual void Execute( Avatar& actor )override
@@ -40,7 +40,7 @@ namespace Balbino
 			actor.Jump();
 		}
 	};
-	class Fart: public Command
+	class Fart : public Command
 	{
 	public:
 		virtual void Execute( Avatar& actor )override

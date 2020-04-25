@@ -70,7 +70,7 @@ namespace Balbino
 
 		std::ostream& Write( std::ostream& file, const std::string& value );
 		std::ostream& Write( std::ostream& file, const Balbino::Color& value );
-		std::ostream& Write( std::ostream& file, const Balbino::vec3& value );
+		std::ostream& Write( std::ostream& file, const Balbino::Vector3& value );
 
 		//read
 		template<typename T>
@@ -117,7 +117,7 @@ namespace Balbino
 
 		std::istream& Read( std::istream& file, std::string& value );
 		std::istream& Read( std::istream& file, Balbino::Color& value );
-		std::istream& Read( std::istream& file, Balbino::vec3& value );
+		std::istream& Read( std::istream& file, Balbino::Vector3& value );
 
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		//write

@@ -1,6 +1,5 @@
 #pragma once
 #include "Component.h"
-#include "../Core.h"
 
 struct Mix_Chunk;
 namespace Balbino
@@ -23,10 +22,7 @@ namespace Balbino
 		std::vector<std::weak_ptr<Mix_Chunk>> m_pMixChunks;
 	};
 
-#pragma warning(push)
-#pragma warning(disable:4251)
-#pragma warning(disable:4275)
-	class BALBINO_API ConsoleAudio: public Audio, public Component
+	class ConsoleAudio: public Audio, public Component
 	{
 	public:
 		ConsoleAudio( const std::weak_ptr<GameObject> origine );
@@ -46,7 +42,7 @@ namespace Balbino
 		virtual void StopAllSounds();
 	};
 
-	class BALBINO_API LoggedAudio: public Audio, public Component
+	class LoggedAudio: public Audio, public Component
 	{
 	public:
 		LoggedAudio( const std::weak_ptr<GameObject> origine );
@@ -69,4 +65,3 @@ namespace Balbino
 		void Log( const char* message );
 	};
 }
-#pragma warning(pop)

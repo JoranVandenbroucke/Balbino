@@ -4,6 +4,7 @@
 #include "../SceneManager.h"
 #include "../Components/Texture2D.h"
 #include "../Debug.h"
+#include "../Application.h"
 #include <fstream> 
 
 #include "../imgui-1.75/imgui.h"
@@ -14,7 +15,6 @@
 #include <iostream>
 #ifdef _DEBUG
 #include "../gl3w/GL/gl3w.h"
-#include "../Application.h"
 void Balbino::Renderer::Init( SDL_Window* window )
 {
 	m_Renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
@@ -65,8 +65,8 @@ void Balbino::Renderer::Draw()
 	//ImGui::ShowDemoWindow();
 	ImGuiIO& io = ImGui::GetIO(); (void) io;
 
-	Debug::Get().Draw();
 	SceneManager::Get().DrawEngine();
+	Debug::Get().Draw();
 
 	ImGui::Begin( "GameView" );
 	ImGui::BeginChild( "game", ImVec2{ 640,480 } );
@@ -131,6 +131,7 @@ void Balbino::Renderer::Draw() const
 	SceneManager::Get().Draw();
 	SDL_GL_SwapWindow( Application::GetWindow() );
 }
+
 void Balbino::Renderer::Destroy()
 {
 	if( m_Renderer != nullptr )
@@ -273,14 +274,27 @@ GLuint Balbino::Shader::Compile( const std::string& sourceCode, GLenum type )
 
 std::string Balbino::Shader::Parse( const char* fileName )
 {
-	std::ifstream file{ fileName };
-	if( !file.is_open() )
+	try
 	{
-		throw std::runtime_error{ "could not open shader" };
+		std::ifstream file{};
+		file.exceptions( std::ifstream::failbit );
+		file.open( fileName, std::ios::binary | std::ios::in );
+		if( !file.is_open() )
+		{
+			throw std::runtime_error{ "could not open shader" };
+		}
+		std::string content( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>() );
+		file.close();
+		return content;
 	}
-	std::string content( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>() );
-	file.close();
-	return content;
+	catch( const std::ios_base::failure& f )
+	{
+		std::cerr << "Caught error: " << f.what() << f.code().message() << '\n';
+		std::stringstream error{};
+		error << GetLastError();
+		std::cerr << error.str();
+	}
+	return 0;
 }
 
 GLuint Balbino::Shader::CreateShader( const char* vertexShader, const char* fragmentShader )

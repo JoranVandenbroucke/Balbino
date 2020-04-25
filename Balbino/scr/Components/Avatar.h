@@ -1,10 +1,5 @@
 #pragma once
 #include "Component.h"
-#include "../Core.h"
-#pragma warning(push)
-#pragma warning(disable:4251)
-#pragma warning(disable:4275)
-
 
 namespace Balbino
 {
@@ -12,7 +7,7 @@ namespace Balbino
 	class LoggedAudio;
 	class GameObject;
 
-	class BALBINO_API Avatar: public Component
+	class Avatar: public Component
 	{
 	public:
 		Avatar( std::weak_ptr<GameObject> origine );
@@ -43,4 +38,3 @@ namespace Balbino
 		std::weak_ptr<LoggedAudio> m_LoggedAudio;
 	};
 }
-#pragma warning(pop)

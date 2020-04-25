@@ -31,7 +31,6 @@ namespace Balbino
 		std::list<std::shared_ptr<GameObject>> m_GameObjects;
 		std::string m_Name;
 		static unsigned int m_IdCounter;
-		ComponentList m_ComponentsEnum;
 		const char* const m_ComponentsString[8]
 		{
 			"Audio",

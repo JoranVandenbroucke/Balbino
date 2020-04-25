@@ -2,17 +2,13 @@
 #include "Component.h" 
 #include "../gl3w/GL/gl3w.h"
 #include "../Renderer/Renderer.h"
-#include "../Core.h" 
-#pragma warning(push)
-#pragma warning(disable:4251)
-#pragma warning(disable:4275)
 
 namespace Balbino
 {
 	class GameObject;
 	class Font;
 	class Texture2D;
-	class BALBINO_API Text final: public Component
+	class Text final: public Component
 	{
 	public:
 		explicit Text( const std::weak_ptr<GameObject> origin );
@@ -67,4 +63,3 @@ namespace Balbino
 #endif
 	};
 }
-#pragma warning(pop)

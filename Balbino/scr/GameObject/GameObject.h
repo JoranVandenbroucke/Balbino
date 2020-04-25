@@ -21,7 +21,10 @@ namespace Balbino
 		virtual void Create() override;
 		virtual void Update() override;
 		virtual void Draw() const override;
+#ifdef _DEBUG
 		virtual void DrawInspector() override;
+#endif // _DEBUG
+
 		virtual void Destroy() override;
 
 		void LoadComponents();

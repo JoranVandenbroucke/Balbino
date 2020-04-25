@@ -17,7 +17,7 @@ void Balbino::Debug::Assert( bool argument )
 	assert( argument );
 }
 
-void Balbino::Debug::DrawLine( const vec3& start, const vec3& end, const Color& color )
+void Balbino::Debug::DrawLine( const Vector3& start, const Vector3& end, const Color& color )
 {
 #ifdef _DEBUG
 	SDL_SetRenderDrawColor( Renderer::Get().GetSDLRenderer(), color.r, color.g, color.b, color.a );
@@ -25,7 +25,7 @@ void Balbino::Debug::DrawLine( const vec3& start, const vec3& end, const Color& 
 #endif //_DEBUG
 }
 
-void Balbino::Debug::DrawRay( const vec3& start, const vec3& direction, const Color& color )
+void Balbino::Debug::DrawRay( const Vector3& start, const Vector3& direction, const Color& color )
 {
 #ifdef _DEBUG
 	DrawLine( start, start + direction, color );

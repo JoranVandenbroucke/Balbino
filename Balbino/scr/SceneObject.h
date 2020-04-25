@@ -8,7 +8,10 @@ namespace Balbino
 		virtual void Create() = 0;
 		virtual void Update() = 0;
 		virtual void Draw() const = 0;
+#ifdef _DEBUG
 		virtual void DrawInspector() = 0;
+#endif // _DEBUG
+
 		virtual void Destroy() = 0;
 
 		SceneObject();
