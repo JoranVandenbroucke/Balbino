@@ -5,6 +5,7 @@
 #include "../ResourceManager.h"
 #include "../Font.h"
 #include "../BinaryReaderWrider.h"
+#include "../Editor/File.h"
 
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -114,6 +115,18 @@ void Balbino::Text::DrawInpector()
 	ImGui::InputText( "Text", text, 512 );
 	ImGui::ColorEdit3( "Color", color );
 	ImGui::InputText( "Font Path", font, 512 ); ImGui::SameLine();
+	if( ImGui::BeginDragDropTarget() )
+	{
+		if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( "asset" ) )
+		{
+			file droppedFile = *(const file*) payload->Data;
+			if( droppedFile.type == fileTypes::font )
+			{
+				SetFont( std::filesystem::relative( droppedFile.path ).string(), m_FontSize );
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
 	if( ImGui::Button( "submit" ) )
 	{
 		SetFont( font, m_FontSize );

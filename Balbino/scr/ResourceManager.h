@@ -24,7 +24,7 @@ namespace Balbino
 	{
 	public:
 		void Init( const std::string& data );
-		static GLuint LoadTexture( const std::string& file, vertex* vert );
+		static GLuint LoadTexture( const std::string& file, vertex* vert = nullptr );
 		static GLuint LoadTexture( const Font& font, const std::string& text, vertex* vert );
 		static GLuint CreateFromSurface( SDL_Surface* pSurface );
 		static std::shared_ptr<Font> LoadFont( const std::string& file, unsigned int size );

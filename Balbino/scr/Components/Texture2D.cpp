@@ -4,6 +4,7 @@
 #include "../GameObject/GameObject.h"
 #include "../ResourceManager.h"
 #include "../BinaryReaderWrider.h"
+#include "../Editor/File.h"
 #include <SDL.h>
 
 #ifdef _DEBUG
@@ -43,6 +44,18 @@ void Balbino::Texture2D::DrawInpector()
 	ImGui::BeginChild( "Texture2D Component", ImVec2{ 420, 96 }, true );
 	ImGui::Text( "Texture" );
 	ImGui::InputText( "Image Path", m_InputField, 512 ); ImGui::SameLine();
+	if( ImGui::BeginDragDropTarget() )
+	{
+		if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( "asset" ) )
+		{
+			file droppedFile = *(const file*) payload->Data;
+			if( droppedFile.type == fileTypes::image )
+			{
+				SetTexture( std::filesystem::relative( droppedFile.path ).generic_u8string() );
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
 	if( ImGui::Button( "confurm" ) )
 	{
 		SetTexture( m_InputField );
@@ -53,7 +66,7 @@ void Balbino::Texture2D::DrawInpector()
 	m_Color.b = (unsigned char) ( color[2] * 255 );
 	m_Color.a = (unsigned char) ( color[3] * 255 );
 
-		ImGui::EndChild();
+	ImGui::EndChild();
 }
 #else
 Balbino::Texture2D::Texture2D( const std::weak_ptr<GameObject> origine )
@@ -89,10 +102,6 @@ Balbino::Texture2D::~Texture2D()
 
 void Balbino::Texture2D::SetTexture( const std::string path )
 {
-	if( m_Texture )
-	{
-		glDeleteTextures( 1, &m_Texture );
-	}
 	m_Texture = ResourceManager::LoadTexture( path, m_Vert );
 	m_File = path;
 	m_VertexBuff.Update( (void*) m_Vert, 4 );
@@ -100,10 +109,6 @@ void Balbino::Texture2D::SetTexture( const std::string path )
 
 void Balbino::Texture2D::SetTexture( GLuint newTexture )
 {
-	if( m_Texture )
-	{
-		glDeleteTextures( 1, &m_Texture );
-	}
 	m_Texture = newTexture;
 }
 

@@ -7,12 +7,15 @@
 #include "Renderer/Renderer.h"
 #include "Font.h"
 #include "Debug.h"
+#include <regex>
 
 void Balbino::ResourceManager::Init( const std::string& dataPath )
 {
 	m_DataPath = dataPath;
 
-	// load support for png and jpg, this takes a while!
+	/********************************************************************************
+								setup images suport
+	*********************************************************************************/
 
 	if( ( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG ) != IMG_INIT_PNG )
 	{
@@ -24,16 +27,62 @@ void Balbino::ResourceManager::Init( const std::string& dataPath )
 		throw std::runtime_error( std::string( "Failed to load support for jpg's: " ) + SDL_GetError() );
 	}
 
+	if( ( IMG_Init( IMG_INIT_TIF ) & IMG_INIT_TIF ) != IMG_INIT_TIF )
+	{
+		throw std::runtime_error( std::string( "Failed to load support for tif's: " ) + SDL_GetError() );
+	}
+
+	if( ( IMG_Init( IMG_INIT_WEBP ) & IMG_INIT_WEBP ) != IMG_INIT_WEBP )
+	{
+		throw std::runtime_error( std::string( "Failed to load support for webp's: " ) + SDL_GetError() );
+	}
+
+	/********************************************************************************
+								setup TTF suport
+	*********************************************************************************/
 	if( TTF_Init() != 0 )
 	{
 		throw std::runtime_error( std::string( "Failed to load support for fonts: " ) + SDL_GetError() );
 	}
 
+	/********************************************************************************
+								setup Audio suport
+	*********************************************************************************/
 	if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
 	{
 		std::cerr << "Core::Initialize( ), error when calling Mix_OpenAudio: " << Mix_GetError() << std::endl;
 		return;
 	}
+
+	if( ( Mix_Init( MIX_INIT_FLAC ) & MIX_INIT_FLAC ) != MIX_INIT_FLAC )
+	{
+		throw std::runtime_error( std::string( "Failed to load support for flac's: " ) + SDL_GetError() );
+	}
+
+	if( ( Mix_Init( MIX_INIT_MID ) & MIX_INIT_MID ) != MIX_INIT_MID )
+	{
+		throw std::runtime_error( std::string( "Failed to load support for mid's: " ) + SDL_GetError() );
+	}
+
+	if( ( Mix_Init( MIX_INIT_MOD ) & MIX_INIT_MOD ) != MIX_INIT_MOD )
+	{
+		throw std::runtime_error( std::string( "Failed to load support for mod's: " ) + SDL_GetError() );
+	}
+
+	if( ( Mix_Init( MIX_INIT_MP3 ) & MIX_INIT_MP3 ) != MIX_INIT_MP3 )
+	{
+		throw std::runtime_error( std::string( "Failed to load support for mp3's: " ) + SDL_GetError() );
+	}
+
+	if( ( Mix_Init( MIX_INIT_OGG ) & MIX_INIT_OGG ) != MIX_INIT_OGG )
+	{
+		throw std::runtime_error( std::string( "Failed to load support for ogg's: " ) + SDL_GetError() );
+	}
+
+	//if( ( Mix_Init( MIX_INIT_OPUS ) & MIX_INIT_OPUS ) != MIX_INIT_OPUS )
+	//{
+	//	throw std::runtime_error( std::string( "Failed to load support for opus's: " ) + SDL_GetError() );
+	//}
 }
 
 GLuint Balbino::ResourceManager::LoadTexture( const std::string& file, vertex* vert )
@@ -76,7 +125,12 @@ GLuint Balbino::ResourceManager::ILoadTexture( const std::string& file, vertex* 
 	{
 		return m_Textures[file];
 	}
-	const auto fullPath = m_DataPath + file;
+	auto fullPath = m_DataPath + file;
+	std::regex completePathChecker{ "^[A-Z]:.*$|^\\.\\.\\/.*$" };
+	if( std::regex_match(file, completePathChecker) )
+	{
+		fullPath = file;
+	}
 	std::ifstream fileChecker{ fullPath };
 	if( !fileChecker.is_open() )
 	{
@@ -90,13 +144,16 @@ GLuint Balbino::ResourceManager::ILoadTexture( const std::string& file, vertex* 
 		Debug::LogError( std::string( "Failed to load texture: " ) + SDL_GetError() );
 		return 0;
 	}
-	float relativeW = pTexture->w / 640.f;
-	float relativeH = pTexture->h / 480.f;
+	if( vert )
+	{
+		float relativeW = pTexture->w / 640.f;
+		float relativeH = pTexture->h / 480.f;
 
-	vert[0].x = -relativeW;	vert[0].y = -relativeH;
-	vert[1].x = -relativeW;	vert[1].y = relativeH;
-	vert[2].x = relativeW;	vert[2].y = -relativeH;
-	vert[3].x = relativeW;	vert[3].y = relativeH;
+		vert[0].x = -relativeW;	vert[0].y = -relativeH;
+		vert[1].x = -relativeW;	vert[1].y = relativeH;
+		vert[2].x = relativeW;	vert[2].y = -relativeH;
+		vert[3].x = relativeW;	vert[3].y = relativeH;
+	}
 	return m_Textures[file] = CreateFromSurface( pTexture );
 }
 
@@ -111,12 +168,17 @@ GLuint Balbino::ResourceManager::ILoadTexture( const Font& font, const std::stri
 	float relativeW = pTexture->w / 640.f;
 	float relativeH = pTexture->h / 480.f;
 
-	vert[0].x = -relativeW;	vert[0].y = -relativeH;
-	vert[1].x = -relativeW;	vert[1].y = relativeH;
-	vert[2].x = relativeW;	vert[2].y = -relativeH;
-	vert[3].x = relativeW;	vert[3].y = relativeH;
+	if( vert )
+	{
+		float relativeW = pTexture->w / 640.f;
+		float relativeH = pTexture->h / 480.f;
 
-	return ICreateFromSurface(pTexture);
+		vert[0].x = -relativeW;	vert[0].y = -relativeH;
+		vert[1].x = -relativeW;	vert[1].y = relativeH;
+		vert[2].x = relativeW;	vert[2].y = -relativeH;
+		vert[3].x = relativeW;	vert[3].y = relativeH;
+	}
+	return ICreateFromSurface( pTexture );
 }
 
 std::shared_ptr<Balbino::Font> Balbino::ResourceManager::ILoadFont( const std::string& file, unsigned int size )

@@ -138,6 +138,18 @@
     <ClInclude Include="scr\Time.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scr\imgui-1.75\imgui_extra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Editor\AssetBrouser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Editor\File.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Editor\SpriteEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scr\Components\Audio.cpp">
@@ -237,6 +249,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\gl3w\GL\gl3w.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\imgui-1.75\imgui_extra.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Editor\AssetBrouser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Editor\SpriteEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

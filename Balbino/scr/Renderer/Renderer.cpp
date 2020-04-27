@@ -7,13 +7,15 @@
 #include "../Application.h"
 #include <fstream> 
 
-#include "../imgui-1.75/imgui.h"
-#include "../imgui-1.75/imgui_impl_opengl3.h"
-#include "../imgui-1.75/imgui_impl_sdl.h"
 #include "../Scene.h"
 
 #include <iostream>
 #ifdef _DEBUG
+#include "../imgui-1.75/imgui.h"
+#include "../imgui-1.75/imgui_impl_opengl3.h"
+#include "../imgui-1.75/imgui_impl_sdl.h"
+#include "../Editor/AssetBrouser.h"
+#include "../Editor/SpriteEditor.h"
 #include "../gl3w/GL/gl3w.h"
 void Balbino::Renderer::Init( SDL_Window* window )
 {
@@ -40,6 +42,8 @@ void Balbino::Renderer::Init( SDL_Window* window )
 	if( glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE )
 		Debug::LogError( "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" );
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+
+	//AssetBrouser::Get();
 }
 
 void Balbino::Renderer::Draw()
@@ -67,6 +71,8 @@ void Balbino::Renderer::Draw()
 
 	SceneManager::Get().DrawEngine();
 	Debug::Get().Draw();
+	AssetBrouser::Get().Draw();
+	SpriteEditor::Get().Draw();
 
 	ImGui::Begin( "GameView" );
 	ImGui::BeginChild( "game", ImVec2{ 640,480 } );

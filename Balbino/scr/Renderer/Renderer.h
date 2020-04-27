@@ -12,7 +12,7 @@ namespace Balbino
 	struct VertexBuffer;
 	struct IndexBuffer;
 	struct Shader;
-
+	class AssetBrouser;
 	/**
 	 * Simple RAII wrapper for the SDL renderer
 	 */

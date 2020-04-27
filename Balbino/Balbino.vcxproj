@@ -99,6 +99,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,7 +150,7 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -198,6 +199,9 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Editor\File.h" />
+    <ClInclude Include="scr\imgui-1.75\imgui_extra.h" />
+    <ClInclude Include="scr\Editor\AssetBrouser.h" />
     <ClInclude Include="Balbino.h" />
     <ClInclude Include="scr\Application.h" />
     <ClInclude Include="scr\BalbinoPCH.h" />
@@ -239,8 +243,14 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
     <ClInclude Include="scr\Singleton.h" />
     <ClInclude Include="scr\Struct.h" />
     <ClInclude Include="scr\Time.h" />
+    <ClInclude Include="scr\Editor\SpriteEditor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\imgui-1.75\imgui_extra.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="scr\Editor\AssetBrouser.cpp" />
     <ClCompile Include="scr\Application.cpp" />
     <ClCompile Include="scr\BalbinoPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -324,6 +334,7 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
     <ClCompile Include="scr\SceneObject.cpp" />
     <ClCompile Include="scr\Struct.cpp" />
     <ClCompile Include="scr\Time.cpp" />
+    <ClCompile Include="scr\Editor\SpriteEditor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

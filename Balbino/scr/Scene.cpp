@@ -272,8 +272,6 @@ void Balbino::Scene::DrawEditor()
 		}
 	}
 
-
-
 	ImGui::SetNextItemOpen( true );
 	int selection_mask = ( 1 << selected ); // Dumb representation of what may be user-side selection state. You may carry selection state inside or outside your objects in whatever format you see fit.
 	static ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
