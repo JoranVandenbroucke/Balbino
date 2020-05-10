@@ -100,6 +100,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\box2d\include;$(SolutionDir)3rdParty\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,6 +127,7 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
       <Optimization>Disabled</Optimization>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,6 +156,7 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
       <Optimization>Full</Optimization>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -184,6 +187,7 @@ xcopy "$(OutputPath)Balbino.dll" "$(OutputPath)..\BubbleBobble" /R /Y</Command>
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\box2d\include;$(SolutionDir)3rdParty\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MaxSpeed</Optimization>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
