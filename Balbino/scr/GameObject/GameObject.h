@@ -1,5 +1,4 @@
 #pragma once
-#include "../Components/All.h"
 #include "../SceneObject.h"
 #include "../Core.h"
 #include <vector>
@@ -16,25 +15,28 @@ namespace Balbino
 	{
 	public:
 		GameObject();
-		~GameObject() = default;
+		~GameObject();
 
 		virtual void Create() override;
+		virtual void FixedUpdate() override;
 		virtual void Update() override;
+		virtual void LateUpdate() override;
 		virtual void Draw() const override;
 #ifdef _DEBUG
 		virtual void DrawInspector() override;
 #endif // _DEBUG
 
-		virtual void Destroy() override;
+		void Destroy();
+		bool IsDestroy()const;
 
 		void LoadComponents();
 		void SetName( const char* newName );
 		const char* GetName()const;
 
 		template <class T>
-		std::shared_ptr<T> GetComponent();
+		T* GetComponent() const;
 		template <class T, class... Args>
-		std::shared_ptr<T> AddComponent( Args&&... args );
+		T* AddComponent( Args&&... args );
 
 		void Save( std::ostream& file );
 		void Load( std::istream& file );
@@ -44,16 +46,17 @@ namespace Balbino
 		GameObject& operator= ( const GameObject& ) = delete;
 		GameObject& operator= ( const GameObject&& ) = delete;
 	private:
-		std::vector<std::shared_ptr<Component>> m_Components;
+		std::vector<Component*> m_Components;
 		std::string m_Name;
+		bool m_IsDestroyed;
 	};
 
 	template<class T>
-	inline std::shared_ptr<T> GameObject::GetComponent()
+	inline T* GameObject::GetComponent() const
 	{
-		for( std::weak_ptr<Component> comp : m_Components )
+		for( Component* comp : m_Components )
 		{
-			std::shared_ptr<T> component = std::dynamic_pointer_cast< T >( comp.lock() );
+			T* component = dynamic_cast< T* >( comp );
 			if( component )
 			{
 				return component;
@@ -63,10 +66,9 @@ namespace Balbino
 	}
 
 	template<class T, class... Args>
-	inline std::shared_ptr<T> GameObject::AddComponent( Args&&... args )
+	inline T* GameObject::AddComponent( Args&&... args )
 	{
-		const std::shared_ptr<GameObject> thisPtr{ weak_from_this() };
-		std::shared_ptr<T> comp{ std::make_shared<T>( thisPtr, std::forward<Args>( args )... ) };
+		T* comp{ new T{ this, std::forward<Args>( args )... } };
 		m_Components.push_back( comp );
 		return comp;
 	}

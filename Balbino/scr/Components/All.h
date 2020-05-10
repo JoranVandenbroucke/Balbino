@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "FPSScript.h"
 #include "LevelLoader.h"
+#include "Sprite.h"
 #include "Text.h"
 #include "Texture2D.h"
 #include "Transform.h"

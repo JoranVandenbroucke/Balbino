@@ -1,10 +1,11 @@
 #include "BalbinoPCH.h"
 #include "Scene.h"
 #include "Components/All.h"
-#include "GameObject/GameObject.h"
-#include "imgui-1.75/imgui.h"
 #include "BinaryReaderWrider.h"
-#include "Debug.h"
+#include "Editor/Debug.h"
+#include "Editor/AssetBrouser.h"
+#include "Editor/SpriteEditor.h"
+#include "Application.h"
 
 #include <windows.h>
 #include <commdlg.h>
@@ -18,42 +19,166 @@ unsigned int Scene::m_IdCounter = 0;
 
 #ifdef _DEBUG
 Scene::Scene( const std::string& name )
-	: m_GameObjects{}
-	, m_Name{ name }
+	: m_Name{ name }
 	, m_Saved{}
 {
+	GameObject* gameObject = new GameObject{};
+
+	gameObject->AddComponent<Camera>( 640.f / 480.f, 640.f );
+	gameObject->Create();
+	gameObject->SetName( "Maint Camera" );
+	Add( gameObject );
 }
 #else
 Scene::Scene( const std::string& name )
-	: m_GameObjects{}
-	, m_Name{ name }
+	: m_Name{ name }
 {
 }
 #endif // _DEBUG
 
-Scene::~Scene() = default;
-
-void Balbino::Scene::Add( const std::shared_ptr<GameObject> & object, int pos )
+Scene::~Scene()
 {
-	std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
+	m_pGameObjects.clear();
+}
+
+#ifdef _DEBUG
+void Balbino::Scene::Add( GameObject* pObject, int pos )
+{
+
 	if( pos != -1 )
+	{
+		std::list<GameObject*>::iterator it{ m_pGameObjects.begin() };
+
 		for( int i = 0; i < pos; i++ ) ++it;
 
+		m_pGameObjects.insert( it, pObject );
+	}
+	else
+	{
+		m_pGameObjects.push_back( pObject );
+	}
+}
+#else
+void Balbino::Scene::Add( const GameObject*& object, int pos )
+
+{
+	std::list<GameObject>* ::iterator it{ m_GameObjects.begin() };
+
+	if( pos != -1 )
+		for( int i = 0; i < pos; i++ ) ++it, ++it2;
+
 	m_GameObjects.insert( it, object );
+}
+#endif // _DEBUG
+
+
+void Balbino::Scene::FixedUpdate()
+{
+	for( auto& object : m_pGameObjects )
+		object->LateUpdate();
 }
 
 void Scene::Update()
 {
-	for( auto& object : m_GameObjects )
+	for( auto& object : m_pGameObjects )
 		object->Update();
 }
+void Balbino::Scene::LateUpdate()
+{
+	for( auto& object : m_pGameObjects )
+		object->LateUpdate();
+
+	m_pGameObjects.sort( []( const GameObject* obj, const GameObject* obj2 )
+	{
+		return obj->IsDestroy() < obj2->IsDestroy();
+	} );
+
+	std::list<GameObject*>::reverse_iterator it{ m_pGameObjects.rbegin() };
+
+	for( it; it != m_pGameObjects.rend(); ++it )
+	{
+		if( !( *it )->IsDestroy() )
+		{
+			break;
+		}
+	}
+	m_pGameObjects.erase( it.base(), m_pGameObjects.end() );
+}
+#ifdef _DEBUG
+
 void Scene::Draw() const
 {
-	for( const auto& object : m_GameObjects )
-		object->Draw();
+	//start ImGui
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame( Application::GetWindow() );
+	ImGui::NewFrame();
+
+	auto allCameras = Camera::GetAllCameras();
+	if( allCameras.size() != 0 )
+	{
+		for( auto& camera : allCameras )
+		{
+			auto currentCam = camera;
+			if( currentCam )
+			{
+				Color clearColor = currentCam->GetClearColor();
+				glBindFramebuffer( GL_FRAMEBUFFER, currentCam->GetCameraIndex() );
+				glViewport( 0, 0, (int) 640, (int) 480 );
+				glClearColor( clearColor.r, clearColor.g, clearColor.b, 1.f );
+				glClear( GL_COLOR_BUFFER_BIT );
+				glEnable( GL_DEPTH_TEST );
+				Shader::SetCamera( *currentCam );
+				for( const auto& object : m_pGameObjects )
+					object->Draw();
+
+			}
+		}
+	}
+
+	auto mainCamera = Camera::GetMainCamera();
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+	glViewport( 0, 0, (int) 1920, (int) 1080 );
+	glClearColor( 0.f, 0.f, 0.f, 1.f );
+	glClear( GL_COLOR_BUFFER_BIT );
+
+	ImGuiIO& io = ImGui::GetIO(); (void) io;
+
+	SceneManager::Get().DrawEngine();
+	Debug::Get().Draw();
+	AssetBrouser::Get().Draw();
+	SpriteEditor::Get().Draw();
+
+	ImGui::Begin( "GameView" );
+	ImGui::BeginChild( "game", ImVec2{ 640,480 } );
+	//ImGui::Image( (ImTextureID) (intptr_t) m_RenderedTexture, ImVec2{ 640,480 } );
+	if( mainCamera )
+	{
+		ImGui::GetWindowDrawList()->AddImage( (void*) (uint64_t) mainCamera->GetTargetTexture(),
+			ImVec2{ ImGui::GetCursorScreenPos() },
+			ImVec2{ ImGui::GetCursorScreenPos().x + 640, ImGui::GetCursorScreenPos().y + 480 } );
+	}
+	ImGui::EndChild();
+	ImGui::End();
+
+	// Rendering Game
+	ImGui::Render();
+
+	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+
+	// Update and Render additional Platform Windows
+	// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+	//  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
+	if( io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable )
+	{
+		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent( backup_current_window, backup_current_context );
+	}
+	SDL_GL_SwapWindow( Application::GetWindow() );
 }
 
-#ifdef _DEBUG
 void Balbino::Scene::DrawEditor()
 {
 
@@ -72,7 +197,7 @@ void Balbino::Scene::DrawEditor()
 			{
 				m_Saved = false;
 				m_Name = "New Scene";
-				m_GameObjects.clear();
+				m_pGameObjects.clear();
 			}
 			if( ImGui::MenuItem( "Open" ) )
 			{
@@ -101,18 +226,18 @@ void Balbino::Scene::DrawEditor()
 				saveFile.open( m_SavePosition, std::ios::in | std::ios::binary );
 				if( saveFile.is_open() )
 				{
-					m_GameObjects.clear();
+					m_pGameObjects.clear();
 					int size{};
 					BinaryReadWrite::Read( saveFile, size );
 					for( int i = 0; i < size; i++ )
 					{
-						std::shared_ptr<GameObject> gameObject = std::make_shared<GameObject>();
+						GameObject* gameObject = new GameObject{};
+
 						gameObject->Load( saveFile );
 						gameObject->Create();
 						Add( gameObject );
-						m_IndentPosition.push_back( 0 );
 					}
-					m_GameObjects.reverse();
+					m_pGameObjects.reverse();
 					m_Saved = true;
 				}
 				saveFile.close();
@@ -147,8 +272,9 @@ void Balbino::Scene::DrawEditor()
 				saveFile.open( m_SavePosition, std::ios::out | std::ios::binary );
 				if( saveFile.is_open() )
 				{
-					BinaryReadWrite::Write( saveFile, int( m_GameObjects.size() ) );
-					for( std::shared_ptr<GameObject> gameObject : m_GameObjects )
+					BinaryReadWrite::Write( saveFile, int( m_pGameObjects.size() ) );
+					for( GameObject* gameObject : m_pGameObjects )
+
 					{
 						gameObject->Save( saveFile );
 					}
@@ -163,31 +289,28 @@ void Balbino::Scene::DrawEditor()
 			ImGui::Text( "Add GameObject" );
 			if( ImGui::MenuItem( "Empty" ) )
 			{
-				std::shared_ptr<GameObject> newObject{ std::make_shared<GameObject>() };
+				GameObject* newObject{ new GameObject{} };
+
 				newObject->Create();
 				newObject->SetName( "Empty" );
-				std::list<int>::iterator it{ m_IndentPosition.begin() };
-				m_IndentPosition.insert( it, 0 );
 				Add( newObject );
 			}
 			if( ImGui::MenuItem( "Image" ) )
 			{
-				std::shared_ptr<GameObject> newObject{ std::make_shared<GameObject>() };
-				newObject->AddComponent<Texture2D>();
+				GameObject* newObject{ new GameObject{} };
+
+				newObject->AddComponent<Sprite>();
 				newObject->Create();
 				newObject->SetName( "Image" );
-				std::list<int>::iterator it{ m_IndentPosition.begin() };
-				m_IndentPosition.insert( it, 0 );
 				Add( newObject );
 			}
 			if( ImGui::MenuItem( "Text" ) )
 			{
-				std::shared_ptr<GameObject> newObject{ std::make_shared<GameObject>() };
+				GameObject* newObject{ new GameObject{} };
+
 				newObject->AddComponent<Text>();
 				newObject->Create();
 				newObject->SetName( "Text" );
-				std::list<int>::iterator it{ m_IndentPosition.begin() };
-				m_IndentPosition.insert( it, 0 );
 				Add( newObject );
 			}
 			ImGui::EndMenu();
@@ -204,56 +327,41 @@ void Balbino::Scene::DrawEditor()
 	ImGui::Begin( "Hierarchy" );
 	if( ImGui::Button( "+" ) )
 	{
-		std::shared_ptr<GameObject> newObject{ std::make_shared<GameObject>() };
-		//newObject->AddComponent<Transform>();
+		GameObject* newObject{ new GameObject{} };
+
 		newObject->Create();
 		newObject->SetName( "Game Object" );
-		//m_IndentPosition.push_back( 0 );
-
-		std::list<int>::iterator it{ m_IndentPosition.begin() };
-		if( selected != -1 )
-			for( int i = 0; i < selected; i++ ) ++it;
-
-		m_IndentPosition.insert( it, 0 );
 		Add( newObject );
 	}
 	ImGui::SameLine();
 	if( ImGui::Button( "-" ) )
 	{
-		if( m_GameObjects.size() != 0 && selected >= 0 )
+		if( m_pGameObjects.size() != 0 && selected >= 0 )
 		{
-			std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
-			std::list<int>::iterator it2{ m_IndentPosition.begin() };
-			for( int i = 1; i < selected; i++ ) ++it;
-			for( int i = 1; i < selected; i++ ) ++it2;
-			m_GameObjects.erase( it );
-			m_IndentPosition.erase( it2 );
+			std::list<GameObject*>::iterator it{ m_pGameObjects.begin() };
+
+			for( int i = 0; i < selected; ++i ) ++it;
+			m_pGameObjects.erase( it );
 			--selected;
+			if( selected == -1 ) selected = 0;
 		}
 	}
 	ImGui::SameLine();
 	if( ImGui::Button( ">>" ) )
 	{
-		if( m_GameObjects.size() != 0 && selected > 0 )
+		if( m_pGameObjects.size() != 0 && selected > 0 )
 		{
 			bool worked{ true };
-			std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
-			std::list<int>::iterator it3{ m_IndentPosition.begin() };
+			std::list<GameObject*>::iterator it{ m_pGameObjects.begin() };
+
 			for( int i = 0; i < selected; i++ ) ++it;
-			for( int i = 0; i < selected; i++ ) ++it3;
-			std::list<std::shared_ptr<GameObject>>::iterator it2{ it };
-			for( std::list<int>::iterator it4{ it3 }; *--it4 < *it3; )
+			std::list<GameObject*>::iterator it2{ it };
+
 			{
-				if( it4 == m_IndentPosition.begin() )
-				{
-					worked = false;
-					break;
-				}
 				--it2;
 			}
 			if( worked )
 			{
-				++( *it3 );
 				( *it )->GetComponent<Transform>()->SetParrent( ( *--it2 )->GetComponent<Transform>() );
 			}
 		}
@@ -261,13 +369,11 @@ void Balbino::Scene::DrawEditor()
 	ImGui::SameLine();
 	if( ImGui::Button( "<<" ) )
 	{
-		if( m_GameObjects.size() != 0 && selected != 0 )
+		if( m_pGameObjects.size() != 0 && selected != 0 )
 		{
-			std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
-			std::list<int>::iterator it2{ m_IndentPosition.begin() };
+			std::list<GameObject*>::iterator it{ m_pGameObjects.begin() };
+
 			for( int i = 0; i < selected; i++ ) ++it;
-			for( int i = 0; i < selected; i++ ) ++it2;
-			( *it2 ) = 0;
 			( *it )->GetComponent<Transform>()->SetParrent( nullptr );
 		}
 	}
@@ -275,116 +381,90 @@ void Balbino::Scene::DrawEditor()
 	ImGui::SetNextItemOpen( true );
 	int selection_mask = ( 1 << selected ); // Dumb representation of what may be user-side selection state. You may carry selection state inside or outside your objects in whatever format you see fit.
 	static ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
-	bool open{ true };
+	bool open{};
+	bool isSelected{};
+	bool isDropBegined{};
+	bool isDropEnded{};
 	if( ImGui::TreeNode( m_Name.c_str() ) )
 	{
 		int i{};
-		int iOld{};
-		if( m_GameObjects.size() != 0 )
+		std::vector<int> endChildPos;
+		if( m_pGameObjects.size() != 0 )
 		{
-			do
-			{
-				std::list<std::shared_ptr<GameObject>>::iterator it1{ m_GameObjects.begin() };
-				std::list<int>::iterator it2{ m_IndentPosition.begin() };
-				for( int j = 0; j < i; j++ )++it1, ++it2;
+			std::list<GameObject*>::iterator objIt{ m_pGameObjects.begin() };
 
-				const bool isSelected = ( selection_mask & ( 1 << i ) ) != 0;
+			while( objIt != m_pGameObjects.end() )
+			{
+
+				const bool isCurrentSelected = ( selection_mask & ( 1 << i ) ) != 0;
 				ImGuiTreeNodeFlags nodeFlags = baseFlags;
-				int nrOfChilderen = ( *it1 )->GetComponent<Transform>()->GetNumberOfChilderen();
-				if( isSelected )
+				int nrOfChilderen = ( *objIt )->GetComponent<Transform>()->GetNumberOfChilderen();
+				if( isCurrentSelected )
 					nodeFlags |= ImGuiTreeNodeFlags_Selected;
 				nodeFlags |= ( nrOfChilderen == 0 ? ImGuiTreeNodeFlags_Leaf : 0 ); // ImGuiTreeNodeFlags_Bullet
 
-				int indent = *it2;
+				open = ImGui::TreeNodeEx( (void*) (intptr_t) i, nodeFlags, ( *objIt )->GetName() );
 
-				open = ImGui::TreeNodeEx( (void*) (intptr_t) i, nodeFlags,
-					( *it1 )->GetName() );
-				//open = ImGui::TreeNodeEx( (void*) (intptr_t) i,
-				//	ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding | ( isSelected ? ImGuiTreeNodeFlags_Selected : 0 ) | ( nrOfChilderen == 0 ? ImGuiTreeNodeFlags_Leaf : 0 ),
-				//	( *it1 )->GetName() );
+				isSelected = ImGui::IsItemClicked();
 
-				ImGui::PushID( (void*) &i );
-				if( ImGui::BeginPopupContextItem() )
-				{
-					ImGui::EndPopup();
-				}
-				ImGui::PopID();
+				isDropBegined = ImGui::BeginDragDropSource( ImGuiDragDropFlags_None );
+				isDropEnded = ImGui::BeginDragDropTarget();
 
-				if( ImGui::IsItemClicked() )
+				if( isSelected )
 					selected = i;
-
-				if( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ) )
+				if( isDropBegined )
 				{
 					ImGui::SetDragDropPayload( "GameObject", &i, sizeof( int ) );
-					ImGui::Text( "Swap %s", ( *it1 )->GetName() );
+					ImGui::Text( "Swap %s", ( *objIt )->GetName() );
 					ImGui::EndDragDropSource();
 				}
-
-				if( ImGui::BeginDragDropTarget() )
+				if( isDropEnded )
 				{
 					if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( "GameObject" ) )
 					{
 						int end = *(const int*) payload->Data;
-						if( end >= 0 && end < int( m_GameObjects.size() ) )
+						if( end >= 0 && end < int( m_pGameObjects.size() ) )
 						{
-							std::list<std::shared_ptr<GameObject>>::iterator it3{ m_GameObjects.begin() };
+							std::list<GameObject*>::iterator it3{ m_pGameObjects.begin() };
+
 							for( int j = 0; j < end; j++ )++it3;
-							m_GameObjects.splice( it1, m_GameObjects, it3, std::next( it3 ) );
+							m_pGameObjects.splice( objIt, m_pGameObjects, it3, std::next( it3 ) );
 						}
 					}
 					ImGui::EndDragDropTarget();
 				}
-
-				if( open )
+				if( !open )
 				{
-					if( ( i + 1 != int( m_IndentPosition.size() ) && *( ++it2 ) <= indent ) )
-					{
-						ImGui::TreePop();
-					}
-					if( i + 1 == int( m_IndentPosition.size() ) )
-					{
-						for( int j = 0; j < indent + 1; j++ )
-						{
-							ImGui::TreePop();
-						}
-					}
-					++i;
+					std::advance( objIt, nrOfChilderen );
+					i += nrOfChilderen;
 				}
 				else
 				{
-					if( m_IndentPosition.size() > 1 )
+					endChildPos.push_back( nrOfChilderen );
+					for( int& j : endChildPos )
 					{
-						if( i + 1 == int( m_IndentPosition.size() ) )
-						{
-							for( int j = 0; j < indent; j++ )
-							{
-								ImGui::TreePop();
-							}
-						}
-
-						while( i + 1 < int( m_IndentPosition.size() )
-							&& *( ++it2 ) > indent )++i;
-						if( i + 1 == int( m_IndentPosition.size() )
-							&& *it2 > indent )
-						{
-							break;
-						}
+						--j;
 					}
-					if( iOld == i )++i;
+					while( endChildPos.size() && endChildPos.back() <= 0 )
+					{
+						ImGui::TreePop();
+						endChildPos.pop_back();
+					}
 				}
-				iOld = i;
+				++objIt;
+				++i;
 			}
-			while( i < int( m_GameObjects.size() ) /*|| ( i == 0 && m_GameObjects.size() == 1 )*/ );
 		}
 		ImGui::TreePop();
 	}
 	ImGui::End();
 
-	if( m_GameObjects.size() != 0 )
+	if( m_pGameObjects.size() != 0 )
 	{
 		ImGui::Begin( "Inspector" );
 
-		std::list<std::shared_ptr<GameObject>>::iterator it{ m_GameObjects.begin() };
+		std::list<GameObject*>::iterator it{ m_pGameObjects.begin() };
+
 
 		for( int i = 0; i < selected; i++ )++it;
 		std::string actualName{ ( *it )->GetName() };
@@ -406,7 +486,7 @@ void Balbino::Scene::DrawEditor()
 		}
 		if( ImGui::BeginPopup( "Select Components" ) )
 		{
-			for( int i = 0; i < 8; i++ )
+			for( int i = 0; i < 9; i++ )
 			{
 				if( ImGui::Selectable( m_ComponentsString[i] ) )
 				{
@@ -425,7 +505,8 @@ void Balbino::Scene::DrawEditor()
 						( *it )->GetComponent<Avatar>()->Create();
 						break;
 					case Balbino::ComponentList::Camera:
-						//( *it )->AddComponent<Camera>();
+						( *it )->AddComponent<Camera>( 640.f / 480.f, 640.f );
+						( *it )->GetComponent<Camera>()->Create();
 						break;
 					case Balbino::ComponentList::FPSScript:
 						( *it )->AddComponent<FPSScript>();
@@ -435,14 +516,18 @@ void Balbino::Scene::DrawEditor()
 						( *it )->AddComponent<Text>();
 						( *it )->GetComponent<Text>()->Create();
 						break;
-					case Balbino::ComponentList::Texture2D:
-						( *it )->AddComponent<Texture2D>();
-						( *it )->GetComponent<Texture2D>()->Create();
+					case Balbino::ComponentList::Sprite:
+						( *it )->AddComponent<Sprite>();
+						( *it )->GetComponent<Sprite>()->Create();
 						break;
 					case Balbino::ComponentList::Transform:
 						( *it )->AddComponent<Transform>();
 						( *it )->GetComponent<Transform>()->Create();
 						break;
+					case Balbino::ComponentList::LevelLoader:
+						( *it )->AddComponent<LevelLoader>();
+						( *it )->GetComponent<LevelLoader>()->Create();
+
 					default:
 						break;
 					}
@@ -458,12 +543,12 @@ void Balbino::Scene::DrawEditor()
 
 void Balbino::Scene::Load()
 {
-	for( auto& object : m_GameObjects )
+	for( auto& object : m_pGameObjects )
 		object->Create();
 }
 
 void Balbino::Scene::Unload()
 {
-	for( auto& object : m_GameObjects )
+	for( auto& object : m_pGameObjects )
 		object->Destroy();
 }

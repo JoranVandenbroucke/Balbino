@@ -10,6 +10,8 @@ namespace Balbino
 	private:
 		friend class Singleton<SpriteEditor>;
 		SpriteEditor() = default;
+		void DrawOptoins( std::vector<Vector2>& sprites );
+		void DrawImageSlicer( std::vector<Vector2>& sprites );
 		file m_Image;
 		int m_CountX;
 		int m_CountY;

@@ -62,17 +62,17 @@ namespace Balbino
 	public:
 		Button();
 		~Button();
-		const std::shared_ptr<Command> GetCommand()const
+		const Command* GetCommand()const
 		{
-			return m_Command;
+			return m_pCommand;
 		}
 		const std::string& GetName()const
 		{
 			return m_Name;
 		}
-		void SetCommand( const std::shared_ptr<Command> newCommand )
+		void SetCommand( const Command* const pNewCommand )
 		{
-			m_Command = newCommand;
+			m_pCommand = pNewCommand;
 		}
 		void SetName( const std::string& newName )
 		{
@@ -87,7 +87,7 @@ namespace Balbino
 		};
 	private:
 		static std::map<std::string, uint16_t> m_ButtonMap;
-		std::shared_ptr<Command> m_Command{};
+		const Command* m_pCommand{};
 		std::string m_Name{};
 	};
 
@@ -97,27 +97,24 @@ namespace Balbino
 		static InputManager& Get();
 		static void Init();
 		static bool ProcessInput();
-		static std::shared_ptr<Command> IsPressed();
+		static Command* const IsPressed();
 		static bool IsPressed( const ControllerButton& button );
 		static void ChangeButton( const std::string& functionName );
 		static void ChangeButton( const std::string& functionName, const std::string& keyName );
 
-		~InputManager() = default;
+		~InputManager();
 		InputManager( const InputManager& ) = delete;
 		InputManager( InputManager&& ) = delete;
 		InputManager& operator=( const InputManager& ) = delete;
 		InputManager& operator=( InputManager&& ) = delete;
 	private:
-		InputManager() = default;
+		InputManager();
 		void IInit();
 		bool IProcessInput();
-		std::shared_ptr<Command> IIsPressed() const;
+		Command* const IIsPressed() const;
 		bool IIsPressed( const ControllerButton& button ) const;
 
 		XINPUT_STATE m_CurrentState{};
-		std::shared_ptr<Button> m_Fire;
-		std::shared_ptr<Button> m_Duck;
-		std::shared_ptr<Button> m_Jump;
-		std::shared_ptr<Button> m_Fart;
+		std::map<std::string, Button* const> m_pButtons;
 	};
 }

@@ -35,4 +35,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Basic.fs" />
+    <None Include="Shaders\Basic.vs" />
+    <None Include="Shaders\Font.fs" />
+    <None Include="Shaders\Font.vs" />
+  </ItemGroup>
 </Project>

@@ -10,14 +10,15 @@ namespace Balbino
 	class Avatar: public Component
 	{
 	public:
-		Avatar( std::weak_ptr<GameObject> origine );
+		explicit Avatar( const GameObject* const origine );
+
 
 		Avatar( const Avatar& ) = delete;
 		Avatar( Avatar&& ) = delete;
 		Avatar& operator=( const Avatar& ) = delete;
 		Avatar& operator=( Avatar&& ) = delete;
 
-		~Avatar() = default;
+		virtual ~Avatar() = default;
 
 		virtual void Create() override;
 		virtual void Update() override;
@@ -34,7 +35,9 @@ namespace Balbino
 		void Jump();
 		void Fart();
 	private:
-		std::weak_ptr<ConsoleAudio> m_ConsoleAudio;
-		std::weak_ptr<LoggedAudio> m_LoggedAudio;
+		ConsoleAudio* m_ConsoleAudio;
+
+		LoggedAudio* m_LoggedAudio;
+
 	};
 }

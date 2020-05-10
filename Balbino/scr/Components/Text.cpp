@@ -10,7 +10,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
-Balbino::Text::Text( const std::weak_ptr<GameObject> origin )
+Balbino::Text::Text( const GameObject* const origin )
 	: Component{ origin }
 	, m_Text{ "Text" }
 	, m_Font{}
@@ -40,7 +40,7 @@ Balbino::Text::Text( const std::weak_ptr<GameObject> origin )
 
 void Balbino::Text::Create()
 {
-	m_Transform = GetComponent<Transform>();
+	m_pTransform = GetComponent<Transform>();
 	SetFont( m_FontPath, m_FontSize );
 }
 
@@ -52,7 +52,7 @@ void Balbino::Text::Update()
 		{
 			glDeleteTextures( 1, &m_Texture );
 		}
-		m_Texture = ResourceManager::LoadTexture( *m_Font.lock().get(), m_Text, m_Vert );
+		m_Texture = ResourceManager::LoadTexture( *m_Font, m_Text, m_Vert );
 		m_VertexBuff.Update( (void*) m_Vert, 4 );
 		m_NeedsUpdate = false;
 	}
@@ -61,7 +61,7 @@ void Balbino::Text::Update()
 void Balbino::Text::Draw() const
 {
 	m_Shader.Bind();
-	glUniformMatrix4fv( m_ModelMatricLocation, 1, GL_TRUE, &m_Transform.lock()->TransfomationMatrix[0][0] );
+	glUniformMatrix4fv( m_ModelMatricLocation, 1, GL_TRUE, &m_pTransform->TransfomationMatrix[0][0] );
 	glUniform4f( m_ColorUniformLocation, m_Color.r / 255.f, m_Color.g / 255.f, m_Color.b / 255.f, m_Color.a / 255.f );
 	m_VertexBuff.Bind();
 	m_IndexBuff.Bind();
@@ -96,9 +96,13 @@ void Balbino::Text::Load( std::istream& file )
 #include <algorithm>
 void Balbino::Text::DrawInpector()
 {
+	bool dragAndDrop{ false };
+	bool submit{ false };
 	char text[512]{ "" };
 	char font[512]{ "" };
 	int size = ( std::min )( int( m_Text.size() ), 512 );
+	float color[3]{ m_Color.r / 255.f, m_Color.g / 255.f, m_Color.b / 255.f };
+
 	for( int i = 0; i < size; i++ )
 	{
 		text[i] = m_Text[i];
@@ -108,14 +112,18 @@ void Balbino::Text::DrawInpector()
 	{
 		font[i] = m_FontPath[i];
 	}
-	float color[3]{ m_Color.r / 255.f, m_Color.g / 255.f, m_Color.b / 255.f };
-	ImGui::BeginChild( "Text Component", ImVec2{ 420, 128 }, true );
+
+	ImGui::BeginChild( "Text Component", ImVec2{ -1, 128 }, true );
 	ImGui::Text( "Text" );
 	ImGui::Separator();
 	ImGui::InputText( "Text", text, 512 );
 	ImGui::ColorEdit3( "Color", color );
 	ImGui::InputText( "Font Path", font, 512 ); ImGui::SameLine();
-	if( ImGui::BeginDragDropTarget() )
+	dragAndDrop = ImGui::BeginDragDropTarget();
+	submit = ImGui::Button( "submit" );
+	ImGui::InputInt( "size", &m_FontSize );
+
+	if( dragAndDrop )
 	{
 		if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( "asset" ) )
 		{
@@ -127,7 +135,7 @@ void Balbino::Text::DrawInpector()
 		}
 		ImGui::EndDragDropTarget();
 	}
-	if( ImGui::Button( "submit" ) )
+	if( submit )
 	{
 		SetFont( font, m_FontSize );
 		m_NeedsUpdate = true;
@@ -136,9 +144,6 @@ void Balbino::Text::DrawInpector()
 		m_Color.g = char( color[1] * 255 );
 		m_Color.b = char( color[2] * 255 );
 	}
-	ImGui::InputInt( "size", &m_FontSize );
-	ImGui::EndChild();
-
 	if( strcmp( m_Text.c_str(), text ) || m_Color.r != unsigned char( color[0] * 255 ) || m_Color.g != unsigned char( color[1] * 255 ) || m_Color.b != unsigned char( color[2] * 255 ) )
 	{
 		m_NeedsUpdate = true;
@@ -147,7 +152,7 @@ void Balbino::Text::DrawInpector()
 		m_Color.g = char( color[1] * 255 );
 		m_Color.b = char( color[2] * 255 );
 	}
-
+	ImGui::EndChild();
 }
 #endif
 

@@ -23,7 +23,7 @@ std::vector<Balbino::file> Balbino::AssetBrouser::GetFilesInPath( const std::fil
 		fileTypes type{};
 		for( char& character : extention )
 		{
-			character = std::toupper( character );
+			character = char( std::toupper( character ) );
 		}
 
 		if( extention == "" )
@@ -169,41 +169,7 @@ void Balbino::AssetBrouser::Draw()
 			break;
 		}
 		}
-		//if( currentFile.type )
-		//{
-		//	ImGui::Image( (void*) (intptr_t) ( m_FolderTexture ), { 16,16 } );
-		//}
-		//else if( currentFile.type == ".BALBINO" )
-		//{
-		//	ImGui::Image( (void*) (intptr_t) ( m_BalbinoTexture ), { 16,16 } );
-		//}
-		//else if( currentFile.type )
-		//{
-		//	GLuint texture = ResourceManager::LoadTexture( currentFile.path.generic_u8string() );
-		//	int w{}, h{};
-		//	int miplevel = 0;
-		//	glBindTexture( GL_TEXTURE_2D, texture );
-		//	glGetTexLevelParameteriv( GL_TEXTURE_2D, miplevel, GL_TEXTURE_WIDTH, &w );
-		//	glGetTexLevelParameteriv( GL_TEXTURE_2D, miplevel, GL_TEXTURE_HEIGHT, &h );
-		//	glBindTexture( GL_TEXTURE_2D, 0 );
-		//	( texture, miplevel, GL_TEXTURE_HEIGHT, &h );
-		//	int biggestSide{ ( w > h ) ? w : h };
-		//	ImGui::Image( (void*) (intptr_t) ( texture ), { float( w ) / biggestSide * 16, float( h ) / biggestSide * 16 } );
-		//}
-		//else if( currentFile.type )
-		//{
-		//	ImGui::Image( (void*) (intptr_t) ( m_AudioTexture ), { 16,16 } );
-		//}
-		//else if( currentFile.type == ".CPP" || currentFile.type == ".H" )
-		//{
-		//	ImGui::Image( (void*) (intptr_t) ( m_CppChTexture ), { 16,16 } );
-		//}
-		//else
-		//{
-		//	ImGui::Image( (void*) (intptr_t) ( m_UnknownTexture ), { 16,16 } );
-		//}
 		ImGui::SameLine();
-		//ImGui::TextColored( ImVec4{ .3f, .6f, 0.f, 1.f }, file.alias.c_str() );
 		bool isSelected{ false };
 		ImGui::Selectable( currentFile.alias.c_str(), &isSelected, ImGuiSelectableFlags_AllowDoubleClick );
 		if( isSelected )

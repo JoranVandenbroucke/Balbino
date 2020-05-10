@@ -43,6 +43,26 @@ Vector3::Vector3( float x, float y, float z )
 {
 }
 
+float Balbino::Vector3::Magnitude()
+{
+	return std::sqrtf( SqrMagnitude() );
+}
+
+Vector3 Balbino::Vector3::Normalized()
+{
+	float magnitude{ Magnitude() };
+	if( magnitude <= 0.001f )
+	{
+		return PositiveInfinity();
+	}
+	return Vector3{ x / magnitude, y / magnitude, z / magnitude };
+}
+
+float Balbino::Vector3::SqrMagnitude()
+{
+	return x * x + y * y + z * z;
+}
+
 Vector3& Balbino::Vector3::operator+=( const Vector3& rhs )
 {
 	this->x += rhs.x;
@@ -51,9 +71,62 @@ Vector3& Balbino::Vector3::operator+=( const Vector3& rhs )
 	return *this;
 }
 
+Vector3& Balbino::Vector3::operator-=( const Vector3& rhs )
+{
+	this->x -= rhs.x;
+	this->y -= rhs.y;
+	this->z -= rhs.z;
+	return *this;
+}
+
+Vector3& Balbino::Vector3::operator/=( float rhs )
+{
+	this->x /= rhs;
+	this->y /= rhs;
+	this->z /= rhs;
+	return *this;
+}
+
+Vector3& Balbino::Vector3::operator*=( float rhs )
+{
+	this->x *= rhs;
+	this->y *= rhs;
+	this->z *= rhs;
+	return *this;
+}
+
 Vector3 Balbino::operator+( Vector3 lhs, const Vector3& rhs )
 {
 	return lhs += rhs;
+}
+
+Vector3 Balbino::operator-( Vector3 lhs, const Vector3& rhs )
+{
+	return lhs -= rhs;
+}
+
+Vector3 Balbino::operator/( Vector3 lhs, float rhs )
+{
+	return lhs /= rhs;
+}
+
+Vector3 Balbino::operator*( Vector3 lhs, float rhs )
+{
+	return lhs *= rhs;
+}
+
+bool Balbino::operator!=( Vector3 lhs, const Vector3& rhs )
+{
+	return !(lhs == rhs);
+}
+
+bool Balbino::operator==( Vector3 lhs, const Vector3& rhs )
+{
+	if( ( lhs.x + 0.001f > rhs.x && lhs.x - 0.001f < rhs.x ) && ( lhs.y + 0.001f > rhs.y && lhs.y - 0.001f < rhs.y ) )
+	{
+		true;
+	}
+	return false;
 }
 
 Balbino::Vector4::Vector4( float x, float y, float z, float w )

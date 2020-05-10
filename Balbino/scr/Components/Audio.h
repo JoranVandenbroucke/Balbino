@@ -19,13 +19,14 @@ namespace Balbino
 		void AddSound( const char* filePath );
 		void SetVolume( const int soundID, const int volume );
 	protected:
-		std::vector<std::weak_ptr<Mix_Chunk>> m_pMixChunks;
+		std::vector<Mix_Chunk*> m_pMixChunks;
+
 	};
 
-	class ConsoleAudio: public Audio, public Component
+	class ConsoleAudio: public Balbino::Audio, public Balbino::Component
 	{
 	public:
-		ConsoleAudio( const std::weak_ptr<GameObject> origine );
+		ConsoleAudio( const GameObject* const origine );
 
 		virtual void Create() override;
 		virtual void Update() override;
@@ -42,10 +43,11 @@ namespace Balbino
 		virtual void StopAllSounds();
 	};
 
-	class LoggedAudio: public Audio, public Component
+	class LoggedAudio: public Balbino::Audio, public Balbino::Component
 	{
 	public:
-		LoggedAudio( const std::weak_ptr<GameObject> origine );
+		LoggedAudio( const GameObject* const origine );
+
 
 		virtual void Create() override;
 		virtual void Update() override;

@@ -1,11 +1,18 @@
 #include "BalbinoPCH.h"
 #include "GameObject.h"
-#include "../Components/Component.h"
+#include "../Components/All.h"
 #include "../BinaryReaderWrider.h"
 Balbino::GameObject::GameObject()
 	: SceneObject{}
-	, m_Components{}
+	, m_IsDestroyed{ false }
 {
+}
+
+Balbino::GameObject::~GameObject()
+{
+	m_IsDestroyed = true;
+	m_Name = "";
+	m_Components.clear();
 }
 
 void Balbino::GameObject::Create()
@@ -22,34 +29,56 @@ void Balbino::GameObject::Create()
 		}
 	}
 
-	for( std::weak_ptr<Component> comp : m_Components )
+	for( Component* comp : m_Components )
+
 	{
-		comp.lock()->Create();
+		comp->Create();
+	}
+}
+
+void Balbino::GameObject::FixedUpdate()
+{
+	for( Component* comp : m_Components )
+
+	{
+		comp->FixedUpdate();
 	}
 }
 
 void Balbino::GameObject::Update()
 {
-	for( std::weak_ptr<Component> comp : m_Components )
+	for( Component* comp : m_Components )
+
 	{
-		comp.lock()->Update();
+		comp->Update();
+	}
+}
+
+void Balbino::GameObject::LateUpdate()
+{
+	for( Component* comp : m_Components )
+
+	{
+		comp->LateUpdate();
 	}
 }
 
 void Balbino::GameObject::Draw() const
 {
-	for( std::weak_ptr<Component> comp : m_Components )
+	for( Component* comp : m_Components )
+
 	{
-		comp.lock()->Draw();
+		comp->Draw();
 	}
 }
 
 #ifdef _DEBUG
 void Balbino::GameObject::DrawInspector()
 {
-	for( std::weak_ptr<Component> comp : m_Components )
+	for( Component* comp : m_Components )
+
 	{
-		comp.lock()->DrawInpector();
+		comp->DrawInpector();
 	}
 }
 #endif // _DEBUG
@@ -57,13 +86,20 @@ void Balbino::GameObject::DrawInspector()
 void Balbino::GameObject::Destroy()
 {
 	m_Components.clear();
+	m_IsDestroyed = true; 
+}
+
+bool Balbino::GameObject::IsDestroy() const
+{
+	return m_IsDestroyed;
 }
 
 void Balbino::GameObject::LoadComponents()
 {
-	for( std::weak_ptr<Component> comp : m_Components )
+	for( Component* comp : m_Components )
+
 	{
-		comp.lock()->Create();
+		comp->Create();
 	}
 }
 
@@ -101,7 +137,7 @@ void Balbino::GameObject::Load( std::istream& file )
 		switch( ComponentList( type ) )
 		{
 		case Balbino::ComponentList::Audio:
-			AddComponent<ConsoleAudio>()->Load(file);
+			AddComponent<ConsoleAudio>()->Load( file );
 			break;
 		case Balbino::ComponentList::LoggedAudio:
 			AddComponent<LoggedAudio>()->Load( file );
@@ -110,7 +146,7 @@ void Balbino::GameObject::Load( std::istream& file )
 			AddComponent<Avatar>()->Load( file );
 			break;
 		case Balbino::ComponentList::Camera:
-			//AddComponent<Camera>();
+			AddComponent<Camera>( .75f, 640.f );
 			break;
 		case Balbino::ComponentList::FPSScript:
 			AddComponent<FPSScript>()->Load( file );
@@ -118,8 +154,8 @@ void Balbino::GameObject::Load( std::istream& file )
 		case Balbino::ComponentList::Text:
 			AddComponent<Text>()->Load( file );
 			break;
-		case Balbino::ComponentList::Texture2D:
-			AddComponent<Texture2D>()->Load( file );
+		case Balbino::ComponentList::Sprite:
+			AddComponent<Sprite>()->Load( file );
 			break;
 		case Balbino::ComponentList::Transform:
 			AddComponent<Transform>()->Load( file );

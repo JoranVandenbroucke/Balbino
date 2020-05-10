@@ -1,12 +1,12 @@
 #include "BalbinoPCH.h"
 #include "ResourceManager.h"
+#include "Renderer/Renderer.h"
+#include "Font.h"
+#include "Editor/Debug.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <fstream>
-#include "Renderer/Renderer.h"
-#include "Font.h"
-#include "Debug.h"
 #include <regex>
 
 void Balbino::ResourceManager::Init( const std::string& dataPath )
@@ -100,12 +100,12 @@ GLuint Balbino::ResourceManager::CreateFromSurface( SDL_Surface* pSurface )
 	return Get().ICreateFromSurface( pSurface );
 }
 
-std::shared_ptr<Balbino::Font> Balbino::ResourceManager::LoadFont( const std::string& file, unsigned int size )
+Balbino::Font* Balbino::ResourceManager::LoadFont( const std::string& file, unsigned int size )
 {
 	return Get().ILoadFont( file, size );
 }
 
-std::shared_ptr<Mix_Chunk> Balbino::ResourceManager::LoadAudio( const std::string& file )
+Mix_Chunk* Balbino::ResourceManager::LoadAudio( const std::string& file )
 {
 	return Get().ILoadAudio( file );
 }
@@ -123,6 +123,16 @@ GLuint Balbino::ResourceManager::ILoadTexture( const std::string& file, vertex* 
 {
 	if( m_Textures.find( file ) != m_Textures.cend() )
 	{
+		auto fullPath = m_DataPath + file;
+		SDL_Surface* pTexture = IMG_Load( fullPath.c_str() );
+		if( vert )
+		{
+			vert[0].x = -pTexture->w / 2.f;	vert[0].y = -pTexture->h / 2.f;
+			vert[1].x = -pTexture->w / 2.f;	vert[1].y = pTexture->h / 2.f;
+			vert[2].x = pTexture->w / 2.f;	vert[2].y = -pTexture->h / 2.f;
+			vert[3].x = pTexture->w / 2.f;	vert[3].y = pTexture->h / 2.f;
+		}
+		SDL_FreeSurface( pTexture );
 		return m_Textures[file];
 	}
 	auto fullPath = m_DataPath + file;
@@ -134,7 +144,7 @@ GLuint Balbino::ResourceManager::ILoadTexture( const std::string& file, vertex* 
 	std::ifstream fileChecker{ fullPath };
 	if( !fileChecker.is_open() )
 	{
-		throw std::runtime_error( "file does not exist" );
+		throw std::runtime_error( file + "does not exist" );
 	}
 	fileChecker.close();
 	SDL_Surface* pTexture = IMG_Load( fullPath.c_str() );
@@ -146,13 +156,13 @@ GLuint Balbino::ResourceManager::ILoadTexture( const std::string& file, vertex* 
 	}
 	if( vert )
 	{
-		float relativeW = pTexture->w / 640.f;
-		float relativeH = pTexture->h / 480.f;
+		//float relativeW = pTexture->w / 640.f;
+		//float relativeH = pTexture->h / 480.f;
 
-		vert[0].x = -relativeW;	vert[0].y = -relativeH;
-		vert[1].x = -relativeW;	vert[1].y = relativeH;
-		vert[2].x = relativeW;	vert[2].y = -relativeH;
-		vert[3].x = relativeW;	vert[3].y = relativeH;
+		vert[0].x = -pTexture->w / 2.f;	vert[0].y = -pTexture->h / 2.f;
+		vert[1].x = -pTexture->w / 2.f;	vert[1].y = pTexture->h / 2.f;
+		vert[2].x = pTexture->w / 2.f;	vert[2].y = -pTexture->h / 2.f;
+		vert[3].x = pTexture->w / 2.f;	vert[3].y = pTexture->h / 2.f;
 	}
 	return m_Textures[file] = CreateFromSurface( pTexture );
 }
@@ -165,32 +175,29 @@ GLuint Balbino::ResourceManager::ILoadTexture( const Font& font, const std::stri
 		throw std::runtime_error( std::string( "Failed to load texture: " ) + SDL_GetError() );
 	}
 
-	float relativeW = pTexture->w / 640.f;
-	float relativeH = pTexture->h / 480.f;
-
 	if( vert )
 	{
-		float relativeW = pTexture->w / 640.f;
-		float relativeH = pTexture->h / 480.f;
+		//float relativeW = pTexture->w / 640.f;
+		//float relativeH = pTexture->h / 480.f;
 
-		vert[0].x = -relativeW;	vert[0].y = -relativeH;
-		vert[1].x = -relativeW;	vert[1].y = relativeH;
-		vert[2].x = relativeW;	vert[2].y = -relativeH;
-		vert[3].x = relativeW;	vert[3].y = relativeH;
+		vert[0].x = -pTexture->w / 2.f;	vert[0].y = -pTexture->h / 2.f;
+		vert[1].x = -pTexture->w / 2.f;	vert[1].y = pTexture->h / 2.f;
+		vert[2].x = pTexture->w / 2.f;	vert[2].y = -pTexture->h / 2.f;
+		vert[3].x = pTexture->w / 2.f;	vert[3].y = pTexture->h / 2.f;
 	}
 	return ICreateFromSurface( pTexture );
 }
 
-std::shared_ptr<Balbino::Font> Balbino::ResourceManager::ILoadFont( const std::string& file, unsigned int size )
+Balbino::Font* Balbino::ResourceManager::ILoadFont( const std::string& file, unsigned int size )
 {
 	if( m_Fonts.find( std::make_pair( file, size ) ) != m_Fonts.end() )
 	{
 		return m_Fonts[std::make_pair( file, size )];
 	}
-	return m_Fonts[std::make_pair( file, size )] = std::make_shared<Font>( m_DataPath + file, size );
+	return m_Fonts[std::make_pair( file, size )] = new Font{ m_DataPath + file, size };
 }
 
-std::shared_ptr<Mix_Chunk> Balbino::ResourceManager::ILoadAudio( const std::string& file )
+Mix_Chunk* Balbino::ResourceManager::ILoadAudio( const std::string& file )
 {
 	if( m_Audio.find( file ) != m_Audio.end() )
 	{
@@ -198,7 +205,7 @@ std::shared_ptr<Mix_Chunk> Balbino::ResourceManager::ILoadAudio( const std::stri
 	}
 	const auto fullPath = m_DataPath + file;
 
-	std::shared_ptr<Mix_Chunk> audio = std::shared_ptr<Mix_Chunk>( Mix_LoadWAV( fullPath.c_str() ) );
+	Mix_Chunk* audio = Mix_LoadWAV( fullPath.c_str() );
 
 	if( !audio )
 	{
@@ -265,14 +272,13 @@ void Balbino::ResourceManager::ICleanup()
 {
 	for( auto& mix : m_Audio )
 	{
-		Mix_FreeChunk( mix.second.get() );
-		//mix.second = nullptr;
+		Mix_FreeChunk( mix.second );
 	}
-	//m_Audio.clear();
-	m_Fonts.clear();
 	for( auto& texture : m_Textures )
 	{
 		glDeleteTextures( 1, &texture.second );
 	}
+	m_Audio.clear();
+	m_Fonts.clear();
 	m_Textures.clear();
 }

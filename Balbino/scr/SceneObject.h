@@ -6,7 +6,9 @@ namespace Balbino
 	{
 	public:
 		virtual void Create() = 0;
+		virtual void FixedUpdate() = 0;
 		virtual void Update() = 0;
+		virtual void LateUpdate() = 0;
 		virtual void Draw() const = 0;
 #ifdef _DEBUG
 		virtual void DrawInspector() = 0;

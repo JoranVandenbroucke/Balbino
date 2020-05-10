@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.h" 
-#include "../gl3w/GL/gl3w.h"
+//#include "../gl3w/GL/gl3w.h"
 #include "../Renderer/Renderer.h"
 
 namespace Balbino
@@ -11,7 +11,14 @@ namespace Balbino
 	class Text final: public Component
 	{
 	public:
-		explicit Text( const std::weak_ptr<GameObject> origin );
+		explicit Text( const GameObject* const origin );
+
+
+		Text( const Text& other ) = delete;
+		Text( Text&& other ) = delete;
+		Text& operator=( const Text& other ) = delete;
+		Text& operator=( Text&& other ) = delete;
+
 		virtual ~Text() = default;
 
 		virtual void Create() override;
@@ -25,10 +32,6 @@ namespace Balbino
 		void SetColor( const Color& newColor );
 		void SetFont( const std::string path, int size );
 
-		Text( const Text& other ) = delete;
-		Text( Text&& other ) = delete;
-		Text& operator=( const Text& other ) = delete;
-		Text& operator=( Text&& other ) = delete;
 	private:
 		GLuint m_Texture;
 		vertex m_Vert[4]
@@ -54,7 +57,8 @@ namespace Balbino
 		int m_FontSize;
 		std::string m_Text;
 		std::string m_FontPath;
-		std::weak_ptr<Font> m_Font;
+		Font* m_Font;
+
 #ifdef _DEBUG
 	public:
 		virtual void DrawInpector() override;

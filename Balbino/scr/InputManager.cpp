@@ -47,6 +47,10 @@ Balbino::Button::~Button()
 	m_ButtonMap.clear();
 }
 
+Balbino::InputManager::InputManager()
+{
+}
+
 Balbino::InputManager& Balbino::InputManager::Get()
 {
 	static InputManager instance{};
@@ -63,7 +67,7 @@ bool Balbino::InputManager::ProcessInput()
 	return Get().IProcessInput();
 }
 
-std::shared_ptr<Balbino::Command> Balbino::InputManager::IsPressed()
+Balbino::Command* const Balbino::InputManager::IsPressed()
 {
 	return Get().IIsPressed();
 }
@@ -98,41 +102,34 @@ void Balbino::InputManager::ChangeButton( const std::string& functionName )
 
 void Balbino::InputManager::ChangeButton( const std::string& functionName, const std::string& keyName )
 {
-	if( functionName == "Fire" )
+	if( Get().m_pButtons.find( functionName ) != Get().m_pButtons.cend() )
 	{
-		Get().m_Fire->SetName( keyName );
+		Get().m_pButtons[functionName]->SetName( keyName );
 	}
-	else if( functionName == "Duck" )
-	{
-		Get().m_Duck->SetName( keyName );
-	}
-	else if( functionName == "Jump" )
-	{
-		Get().m_Jump->SetName( keyName );
-	}
-	else if( functionName == "Fart" )
-	{
-		Get().m_Fart->SetName( keyName );
-	}
+}
+
+Balbino::InputManager::~InputManager()
+{
+	m_pButtons.clear();
 }
 
 void Balbino::InputManager::IInit()
 {
-	m_Fire = std::make_unique<Button>();
-	m_Fire->SetName( "C_A" );
-	m_Fire->SetCommand( std::make_shared<Fire>() );
+	m_pButtons.emplace( std::pair{ "Fire", new Button{} } );
+	m_pButtons["Fire"]->SetName( "C_A" );
+	m_pButtons["Fire"]->SetCommand( new Fire{} );
 
-	m_Duck = std::make_unique<Button>();
-	m_Duck->SetName( "C_B" );
-	m_Duck->SetCommand( std::make_shared<Duck>() );
+	m_pButtons.emplace( std::pair{ "Duck", new Button{} } );
+	m_pButtons["Duck"]->SetName( "C_B" );
+	m_pButtons["Duck"]->SetCommand( new Duck{} );
 
-	m_Jump = std::make_unique<Button>();
-	m_Jump->SetName( "C_X" );
-	m_Jump->SetCommand( std::make_shared<Jump>() );
+	m_pButtons.emplace( std::pair{ "Jump", new Button{} } );
+	m_pButtons["Jump"]->SetName( "C_X" );
+	m_pButtons["Jump"]->SetCommand( new Jump{} );
 
-	m_Fart = std::make_unique<Button>();
-	m_Fart->SetName( "C_Y" );
-	m_Fart->SetCommand( std::make_shared<Fart>() );
+	m_pButtons.emplace( std::pair{ "Fart", new Button{} } );
+	m_pButtons["Fart"]->SetName( "C_Y" );
+	m_pButtons["Fart"]->SetCommand( new Fart{} );
 
 }
 
@@ -190,54 +187,12 @@ bool Balbino::InputManager::IProcessInput()
 			io.MousePos = ImVec2{ float( e.motion.x ),float( e.motion.y ) };
 		}
 	}
-	io.MouseWheel = static_cast< float >( wheel );
+	io.MouseWheel = static_cast<float>( wheel );
 	return true;
 }
 
-std::shared_ptr<Balbino::Command> Balbino::InputManager::IIsPressed() const
+Balbino::Command* const Balbino::InputManager::IIsPressed() const
 {
-	const Uint8* pStates = SDL_GetKeyboardState( nullptr );
-
-	if( m_Fire->GetName().find( "C_" ) != std::string::npos )
-	{
-		if( m_CurrentState.Gamepad.wButtons & m_Fire->GetKeyCode() )
-			return m_Fire->GetCommand();
-	}
-	else if( pStates[m_Fire->GetKeyCode()] )
-	{
-		return m_Fire->GetCommand();
-	}
-
-	if( m_Duck->GetName().find( "C_" ) != std::string::npos )
-	{
-		if( m_CurrentState.Gamepad.wButtons & m_Duck->GetKeyCode() )
-			return m_Duck->GetCommand();
-	}
-	else if( pStates[m_Duck->GetKeyCode()] )
-	{
-		return m_Duck->GetCommand();
-	}
-
-	if( m_Jump->GetName().find( "C_" ) != std::string::npos )
-	{
-		if( m_CurrentState.Gamepad.wButtons & m_Jump->GetKeyCode() )
-			return m_Jump->GetCommand();
-	}
-	else if( pStates[m_Jump->GetKeyCode()] )
-	{
-		return m_Jump->GetCommand();
-	}
-
-	if( m_Fart->GetName().find( "C_" ) != std::string::npos )
-	{
-		if( m_CurrentState.Gamepad.wButtons & m_Fart->GetKeyCode() )
-			return m_Fart->GetCommand();
-	}
-	else if( pStates[m_Fart->GetKeyCode()] )
-	{
-		return m_Fart->GetCommand();
-	}
-
 	return nullptr;
 }
 
@@ -245,14 +200,14 @@ bool Balbino::InputManager::IIsPressed( const ControllerButton& button ) const
 {
 	switch( button )
 	{
-		case ControllerButton::ButtonA:
-			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_A;
-		case ControllerButton::ButtonB:
-			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_B;
-		case ControllerButton::ButtonX:
-			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_X;
-		case ControllerButton::ButtonY:
-			return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_Y;
-		default: return false;
+	case ControllerButton::ButtonA:
+		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_A;
+	case ControllerButton::ButtonB:
+		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_B;
+	case ControllerButton::ButtonX:
+		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_X;
+	case ControllerButton::ButtonY:
+		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_Y;
+	default: return false;
 	}
 }

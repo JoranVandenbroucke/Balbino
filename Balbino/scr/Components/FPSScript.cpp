@@ -7,7 +7,8 @@
 #include <sstream>
 #include <iomanip>
 
-Balbino::FPSScript::FPSScript( const std::weak_ptr<GameObject> origine )
+Balbino::FPSScript::FPSScript( const GameObject* const origine )
+
 	:Component{ origine }
 {
 }
@@ -22,7 +23,7 @@ void Balbino::FPSScript::Update()
 {
 	std::stringstream stringStream;
 	stringStream << "fps: " << std::setprecision( 2 ) << std::fixed << ( 1.f / BTime::UnscaledDeltaTime() );
-	m_Text.lock()->SetText( stringStream.str() );
+	m_Text->SetText( stringStream.str() );
 }
 
 void Balbino::FPSScript::Draw() const
@@ -43,5 +44,7 @@ void Balbino::FPSScript::Load( std::istream& file )
 #include "../imgui-1.75/imgui.h"
 void Balbino::FPSScript::DrawInpector()
 {
+	ImGui::BeginChild( "FPS Script Component", ImVec2{ -1, 128 }, true );
+	ImGui::EndChild();
 }
 #endif

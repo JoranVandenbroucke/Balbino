@@ -3,20 +3,24 @@
 //#include <SDL.h>
 #include "../SceneManager.h"
 #include "../Components/Texture2D.h"
-#include "../Debug.h"
 #include "../Application.h"
+
 #include <fstream> 
 
 #include "../Scene.h"
 
 #include <iostream>
+#include <sstream>
+
+#pragma warning(push)
+#pragma warning(disable:4201)
+#include <glm/gtc/type_ptr.hpp>
+#pragma warning(pop)
+
 #ifdef _DEBUG
-#include "../imgui-1.75/imgui.h"
-#include "../imgui-1.75/imgui_impl_opengl3.h"
-#include "../imgui-1.75/imgui_impl_sdl.h"
 #include "../Editor/AssetBrouser.h"
 #include "../Editor/SpriteEditor.h"
-#include "../gl3w/GL/gl3w.h"
+
 void Balbino::Renderer::Init( SDL_Window* window )
 {
 	m_Renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
@@ -24,82 +28,10 @@ void Balbino::Renderer::Init( SDL_Window* window )
 	{
 		throw std::runtime_error( std::string( "SDL_CreateRenderer Error: " ) + SDL_GetError() );
 	}
-
-	glGenFramebuffers( 1, &m_FrameBufferIndex );
-	glBindFramebuffer( GL_FRAMEBUFFER, m_FrameBufferIndex );
-	glDrawBuffer( GL_COLOR_ATTACHMENT0 );
-
-	glGenTextures( 1, &m_RenderedTexture );
-	glBindTexture( GL_TEXTURE_2D, m_RenderedTexture );
-
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL );
-
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-
-	glFramebufferTexture2D( GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_RenderedTexture, 0 );
-
-	if( glCheckFramebufferStatus( GL_FRAMEBUFFER ) != GL_FRAMEBUFFER_COMPLETE )
-		Debug::LogError( "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" );
-	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-
-	//AssetBrouser::Get();
 }
 
 void Balbino::Renderer::Draw()
 {
-	//start ImGui
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplSDL2_NewFrame( Application::GetWindow() );
-	ImGui::NewFrame();
-
-
-	Bind();
-	glViewport( 0, 0, (int) 640, (int) 480 );
-	glClearColor( 0.f, 1.f, 0.f, 1.f );
-	glClear( GL_COLOR_BUFFER_BIT ); // we're not using the stencil buffer now
-	glEnable( GL_DEPTH_TEST );
-	SceneManager::Get().Draw();
-	Unbind();
-
-	glViewport( 0, 0, (int) 1920, (int) 1080 );
-	glClearColor( 0.f, 0.f, 0.f, 1.f );
-	glClear( GL_COLOR_BUFFER_BIT );
-	//Draw All Of Im Gui
-	//ImGui::ShowDemoWindow();
-	ImGuiIO& io = ImGui::GetIO(); (void) io;
-
-	SceneManager::Get().DrawEngine();
-	Debug::Get().Draw();
-	AssetBrouser::Get().Draw();
-	SpriteEditor::Get().Draw();
-
-	ImGui::Begin( "GameView" );
-	ImGui::BeginChild( "game", ImVec2{ 640,480 } );
-	//ImGui::Image( (ImTextureID) (intptr_t) m_RenderedTexture, ImVec2{ 640,480 } );
-	ImGui::GetWindowDrawList()->AddImage( (void*) (uint64_t) m_RenderedTexture,
-		ImVec2{ ImGui::GetCursorScreenPos() },
-		ImVec2{ ImGui::GetCursorScreenPos().x + 640, ImGui::GetCursorScreenPos().y + 480 } );
-	ImGui::EndChild();
-	ImGui::End();
-
-	// Rendering Game
-	ImGui::Render();
-
-	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
-
-	// Update and Render additional Platform Windows
-	// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
-	//  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
-	if( io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable )
-	{
-		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
-		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		SDL_GL_MakeCurrent( backup_current_window, backup_current_context );
-	}
-	SDL_GL_SwapWindow( Application::GetWindow() );
 }
 
 void Balbino::Renderer::Bind() const
@@ -167,7 +99,7 @@ void Balbino::Renderer::RenderTexture( const GLuint& texture, const float x, con
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-Balbino::VertexBuffer::VertexBuffer( void* data, Uint32 numVertices )
+Balbino::VertexBuffer::VertexBuffer( void* data, uint32_t numVertices )
 {
 	glGenVertexArrays( 1, &m_VAO );
 	glBindVertexArray( m_VAO );
@@ -203,7 +135,7 @@ void Balbino::VertexBuffer::Unbind()const
 	glBindVertexArray( 0 );
 }
 
-void Balbino::VertexBuffer::Update( void* data, Uint32 numVertices )const
+void Balbino::VertexBuffer::Update( void* data, uint32_t numVertices )const
 {
 	glBindBuffer( GL_ARRAY_BUFFER, m_BufferId );
 	glBufferData( GL_ARRAY_BUFFER, numVertices * sizeof( vertex ), data, GL_STATIC_DRAW );
@@ -211,7 +143,7 @@ void Balbino::VertexBuffer::Update( void* data, Uint32 numVertices )const
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
-Balbino::IndexBuffer::IndexBuffer( void* data, Uint32 numVertices, Uint8 elementSize )
+Balbino::IndexBuffer::IndexBuffer( void* data, uint32_t numVertices, uint8_t elementSize )
 {
 	glGenBuffers( 1, &m_BufferId );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_BufferId );
@@ -234,14 +166,27 @@ void Balbino::IndexBuffer::Unbind() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
+int Balbino::Shader::m_Users{ 0 };
+std::map<const char*, GLuint> Balbino::Shader::m_Shaders{};
+std::map<std::pair<GLuint, GLuint>, GLuint> Balbino::Shader::m_Programs{};
+
 Balbino::Shader::Shader( const char* vertexShader, const char* fragmentShader )
 	:m_ShaderId{ CreateShader( vertexShader, fragmentShader ) }
 {
+	++m_Users;
 }
 
 Balbino::Shader::~Shader()
 {
-	glDeleteProgram( m_ShaderId );
+	if( --m_Users == 0 )
+	{
+		m_Shaders.clear();
+		for( auto& program : m_Programs )
+		{
+			glDeleteProgram( program.second );
+		}
+		m_Programs.clear();
+	}
 }
 
 void Balbino::Shader::Bind() const
@@ -252,6 +197,16 @@ void Balbino::Shader::Bind() const
 void Balbino::Shader::Unbind() const
 {
 	glUseProgram( 0 );
+}
+
+void Balbino::Shader::SetCamera( Balbino::Camera& camera )
+{
+	for( auto shader : m_Programs )
+	{
+		glUseProgram( shader.second );
+		GLint location = glGetUniformLocation( shader.second, "u_ViewProjection"  );
+		glUniformMatrix4fv( location, 1, GL_TRUE, glm::value_ptr( camera.GetViewProjectionMatrix() ) );
+	}
 }
 
 GLuint Balbino::Shader::Compile( const std::string& sourceCode, GLenum type )
@@ -305,12 +260,36 @@ std::string Balbino::Shader::Parse( const char* fileName )
 
 GLuint Balbino::Shader::CreateShader( const char* vertexShader, const char* fragmentShader )
 {
-	std::string vertexShaderSource = Parse( vertexShader );
-	std::string fragmentShaderSource = Parse( fragmentShader );
+	GLuint program{ glCreateProgram() };
+	GLuint vs{};
+	GLuint fs{};
 
-	GLuint program = glCreateProgram();
-	GLuint vs = Compile( vertexShaderSource, GL_VERTEX_SHADER );
-	GLuint fs = Compile( fragmentShaderSource, GL_FRAGMENT_SHADER );
+	if( m_Shaders.find( vertexShader ) == m_Shaders.end() )
+	{
+		std::string vertexShaderSource = Parse( vertexShader );
+		vs = Compile( vertexShaderSource, GL_VERTEX_SHADER );
+		m_Shaders[vertexShader] = vs;
+	}
+	else
+	{
+		vs = m_Shaders[vertexShader];
+	}
+
+	if( m_Shaders.find( fragmentShader ) == m_Shaders.end() )
+	{
+		std::string fragmentShaderSource = Parse( fragmentShader );
+		fs = Compile( fragmentShaderSource, GL_FRAGMENT_SHADER );
+		m_Shaders[fragmentShader] = fs;
+	}
+	else
+	{
+		fs = m_Shaders[fragmentShader];
+	};
+
+	if( m_Programs.find(std::make_pair(vs,fs)) != m_Programs.end() )
+	{
+		return m_Programs[std::make_pair( vs, fs )];
+	}
 
 	glAttachShader( program, vs );
 	glAttachShader( program, fs );
@@ -324,5 +303,5 @@ GLuint Balbino::Shader::CreateShader( const char* vertexShader, const char* frag
 	glDeleteShader( fs );
 #endif
 
-	return program;
+	return m_Programs[std::make_pair( vs, fs )] = program;
 }

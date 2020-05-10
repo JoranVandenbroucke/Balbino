@@ -1,19 +1,29 @@
 #include "BalbinoPCH.h"
 #include "SpriteEditor.h"
 #include "../ResourceManager.h"
-
+#include "Debug.h"
+#include "../BinaryReaderWrider.h"
 #include <fstream>
 #include <algorithm>
 
 void Balbino::SpriteEditor::Draw()
 {
-	const char* items[13] = { "Auto", "Grid By Cell Size", "Grid By Cell Count",
-							"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom" };
-	static const char* currentItem = items[0];            // Here our selection is a single pointer stored outside the object.
-	static const char* currentPivot = items[3];            // Here our selection is a single pointer stored outside the object.
-	static const char* image{};
-	static std::vector<ImVec2> m_Sprites;
+
+	static std::vector<Vector2> spriteUVs;
 	ImGui::Begin( "Sprite Editor" );
+	DrawOptoins( spriteUVs );
+	ImGui::SameLine();
+	DrawImageSlicer( spriteUVs );
+	ImGui::End();
+}
+
+void Balbino::SpriteEditor::DrawOptoins( std::vector<Vector2>& sprites )
+{
+	const char* items[13] = { "Auto", "Grid By Cell Size", "Grid By Cell Count",
+						"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom" };
+	static const char* currentItem = items[0];
+	static const char* currentPivot = items[3];
+
 	ImGui::BeginChild( "editor", { 350,-1 }, true );
 	if( ImGui::BeginCombo( "Mode", currentItem ) )
 	{
@@ -93,9 +103,11 @@ void Balbino::SpriteEditor::Draw()
 		ImGui::Text( "Y:" ); ImGui::SameLine(); ImGui::DragFloat( "##PivotY", &m_PivotY, 0.01f ); ImGui::NextColumn();
 		ImGui::Columns( 1 );
 	}
-	if( ImGui::Button( "Slice" ) && image )
+
+	if( ImGui::Button( "Slice" ) && m_Image.type == fileTypes::image )
 	{
 		std::string fullPath{ "../Data/" + m_Image.path.string() };
+		std::ofstream file{ fullPath + ".spr", std::ios::out | std::ios::binary };
 		SDL_Surface* pImage = IMG_Load( fullPath.c_str() );
 		if( currentItem == items[1] )
 		{
@@ -107,20 +119,26 @@ void Balbino::SpriteEditor::Draw()
 			m_Widht = ( pImage->w - m_OffsetX * 2 - ( m_CountX ? m_CountX - 1 : 0 ) * m_PaddingX ) / m_CountX;
 			m_Height = ( pImage->h - m_OffsetY * 2 - ( m_CountY ? m_CountY - 1 : 0 ) * m_PaddingY ) / m_CountY;
 		}
-		m_Sprites.clear();
+		sprites.clear();
+		BinaryReadWrite::Write( file, m_CountX * m_CountY * 2 );
 		for( int y = 0; y < m_CountY; y++ )
 		{
 			for( int x = 0; x < m_CountX; x++ )
 			{
-				ImVec2 topLeft{ float( m_OffsetX + x * ( m_Widht + m_PaddingX ) ), float( m_OffsetY + y * ( m_Height + m_PaddingY ) ) };
-				ImVec2 bottomRight{ topLeft.x + m_Widht, topLeft.y + m_Height };
-				m_Sprites.push_back( topLeft );
-				m_Sprites.push_back( bottomRight );
+				Vector2 topLeft{ float( m_OffsetX + x * ( m_Widht + m_PaddingX ) ) / float( pImage->w ), float( m_OffsetY + y * ( m_Height + m_PaddingY ) ) / float( pImage->h ) };
+				Vector2 bottomRight{ topLeft.x + m_Widht / float( pImage->w ), topLeft.y + m_Height / float( pImage->h ) };
+				sprites.push_back( topLeft );
+				sprites.push_back( bottomRight );
+				BinaryReadWrite::Write( file, topLeft );
+				BinaryReadWrite::Write( file, bottomRight );
 			}
 		}
 	}
 	ImGui::EndChild();
-	ImGui::SameLine();
+}
+
+void Balbino::SpriteEditor::DrawImageSlicer( std::vector<Vector2>& sprites )
+{
 	ImGui::BeginChild( "Image", ImVec2{ -1,-1 }, true );
 	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
 	ImVec2 vMax = ImGui::GetWindowContentRegionMax();
@@ -129,7 +147,7 @@ void Balbino::SpriteEditor::Draw()
 	vMin.y += ImGui::GetWindowPos().y;
 	vMax.x += ImGui::GetWindowPos().x;
 	vMax.y += ImGui::GetWindowPos().y;
-	if( image )
+	if( m_Image.type == fileTypes::image )
 	{
 		GLuint texture = ResourceManager::LoadTexture( m_Image.path.string() );
 		int w{}, h{};
@@ -138,13 +156,10 @@ void Balbino::SpriteEditor::Draw()
 		glGetTexLevelParameteriv( GL_TEXTURE_2D, miplevel, GL_TEXTURE_WIDTH, &w );
 		glGetTexLevelParameteriv( GL_TEXTURE_2D, miplevel, GL_TEXTURE_HEIGHT, &h );
 		glBindTexture( GL_TEXTURE_2D, 0 );
-		( texture, miplevel, GL_TEXTURE_HEIGHT, &h );
-		int biggestSide{ ( w > h ) ? w : h };
 		ImGui::Image( (void*) (intptr_t) ( texture ), { float( w ), float( h ) } );
-		for( int i = 0; i < int( m_Sprites.size() ); i += 2 )
+		for( int i = 0; i < int( sprites.size() ); i += 2 )
 		{
-			ImGui::GetForegroundDrawList()->AddRect( { vMin.x + m_Sprites[i].x, vMin.y + m_Sprites[i].y }, { vMin.x + m_Sprites[i + 1].x, vMin.y + m_Sprites[i + 1].y }, IM_COL32( 128, 255, 0, 255 ) );
-			//ImGui::GetForegroundDrawList()->AddRect( vMin, vMax, IM_COL32( 128, 255, 0, 255 ) );
+			ImGui::GetForegroundDrawList()->AddRect( { vMin.x + sprites[i].x * w, vMin.y + sprites[i].y * h }, { vMin.x + sprites[i + 1].x * w, vMin.y + sprites[i + 1].y * h }, IM_COL32( 128, 255, 0, 255 ) );
 		}
 	}
 	else
@@ -164,10 +179,8 @@ void Balbino::SpriteEditor::Draw()
 			if( droppedFile.type == fileTypes::image )
 			{
 				m_Image = droppedFile;
-				image = droppedFile.path.string().c_str();
 			}
 		}
 		ImGui::EndDragDropTarget();
 	}
-	ImGui::End();
 }

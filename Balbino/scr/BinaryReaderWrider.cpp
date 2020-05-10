@@ -19,11 +19,27 @@ std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino
 	return file;
 }
 
+std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino::Vector2& value )
+{
+	Write( file, value.x );
+	Write( file, value.y );
+	return file;
+}
+
 std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino::Vector3& value )
 {
 	Write( file, value.x );
 	Write( file, value.y );
 	Write( file, value.z );
+	return file;
+}
+
+std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino::Vector4& value )
+{
+	Write( file, value.x );
+	Write( file, value.y );
+	Write( file, value.z );
+	Write( file, value.w );
 	return file;
 }
 
@@ -37,6 +53,7 @@ std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, std::string& v
 	char* pBuffer{ new char[size] };
 	file.read( pBuffer, size );
 	value.append( pBuffer, size );
+	delete[] pBuffer;
 	return file;
 }
 
@@ -49,10 +66,26 @@ std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::Color
 	return file;
 }
 
+std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::Vector2& value )
+{
+	Read( file, value.x );
+	Read( file, value.y );
+	return file;
+}
+
 std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::Vector3& value )
 {
 	Read( file, value.x );
 	Read( file, value.y );
 	Read( file, value.z );
+	return file;
+}
+
+std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::Vector4& value )
+{
+	Read( file, value.x );
+	Read( file, value.y );
+	Read( file, value.z );
+	Read( file, value.w );
 	return file;
 }

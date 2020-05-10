@@ -1,6 +1,8 @@
 #pragma once
 #include "../Singleton.h"
 #include "../Struct.h"
+#include "../Components/Camera.h"
+#include <map>
 
 struct SDL_Window;
 struct SDL_Renderer;
@@ -13,6 +15,7 @@ namespace Balbino
 	struct IndexBuffer;
 	struct Shader;
 	class AssetBrouser;
+
 	/**
 	 * Simple RAII wrapper for the SDL renderer
 	 */
@@ -58,12 +61,12 @@ namespace Balbino
 	struct VertexBuffer
 	{
 	public:
-		VertexBuffer( void* data, Uint32 numVertices );
+		VertexBuffer( void* data, uint32_t numVertices );
 		virtual ~VertexBuffer();
 
 		void Bind()const;
 		void Unbind()const;
-		void Update( void* data, Uint32 numVertices ) const;
+		void Update( void* data, uint32_t numVertices ) const;
 	private:
 		GLuint m_BufferId;
 		GLuint m_VAO;
@@ -72,7 +75,7 @@ namespace Balbino
 	struct IndexBuffer
 	{
 	public:
-		IndexBuffer( void* data, Uint32 numVertices, Uint8 elementSize );
+		IndexBuffer( void* data, uint32_t numVertices, uint8_t elementSize );
 		virtual ~IndexBuffer();
 
 		void Bind()const;
@@ -94,12 +97,15 @@ namespace Balbino
 
 		void Bind()const;
 		void Unbind()const;
+		static void SetCamera( Balbino::Camera& camera );
 	private:
 		GLuint Compile( const std::string& sourceCode, GLenum type );
 		std::string Parse( const char* fileName );
 		GLuint CreateShader( const char* vertexShader, const char* fragmentShader );
 
 		GLuint m_ShaderId;
-
+		static int m_Users;
+		static std::map<const char*, GLuint> m_Shaders;
+		static std::map<std::pair<GLuint, GLuint>, GLuint> m_Programs;
 	};
 }

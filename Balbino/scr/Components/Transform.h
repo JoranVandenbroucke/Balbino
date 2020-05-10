@@ -4,12 +4,9 @@
 #include <memory>
 #include <vector>
 #include <fstream>
-#pragma warning(push)
-#pragma warning(disable:4201)
-#pragma warning(disable:431)
+
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
-#pragma warning(pop)
 
 namespace Balbino
 {
@@ -18,7 +15,8 @@ namespace Balbino
 	class Transform final : public Component, public std::enable_shared_from_this<Transform>
 	{
 	public:
-		explicit Transform( const std::weak_ptr<GameObject> origine );
+		explicit Transform( const GameObject* const origine );
+
 		virtual ~Transform();
 
 		const Vector3& GetPosition() const { return m_Position; }
@@ -30,15 +28,16 @@ namespace Balbino
 
 		virtual void Create() override;
 		virtual void Update() override;
+		virtual void LateUpdate() override;
 		virtual void Draw() const override;
 
 		virtual void Save( std::ostream& file )override;
 		virtual void Load( std::istream& file )override;
 		
-		void SetParrent(std::shared_ptr<Transform> parent);
+		void SetParrent( Transform* parent);
 		int GetNumberOfChilderen();
 		void RemoveChild(int index);
-
+		void DestroyChilderen();
 		glm::mat4x4 TransfomationMatrix{ 1.f };
 
 #ifdef _DEBUG
@@ -55,7 +54,9 @@ namespace Balbino
 		Vector3 m_Rotation;
 		Vector3 m_Scale;
 
-		std::shared_ptr<Transform> m_Parent;
-		std::vector<std::shared_ptr<Transform>> m_Childeren;
+		Transform* m_Parent;
+
+		std::vector<Transform*> m_pChilderen;
+
 	};
 }

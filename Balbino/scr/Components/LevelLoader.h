@@ -5,7 +5,8 @@ namespace Balbino
 	class LevelLoader :	public Component
 	{
 	public:
-		LevelLoader( std::weak_ptr<GameObject> origine );
+		explicit LevelLoader( const GameObject* const origine );
+
 
 		LevelLoader( const LevelLoader& ) = delete;
 		LevelLoader( LevelLoader&& ) = delete;
@@ -22,6 +23,11 @@ namespace Balbino
 		virtual void Load( std::istream & file )override;
 
 		void SetLevelNr( int levelNr );
+
+#ifdef _DEBUG
+		virtual void DrawInpector() override;
+#endif // _DEBUG
+
 	private:
 		int m_LevelNr;
 	};

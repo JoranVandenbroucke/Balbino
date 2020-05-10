@@ -1,0 +1,33 @@
+TODO:
+Engine:
+- Pattern, State
+- pattern, Observer
+- Threading
+
+Game:
+- Bub and Bob can move along platforms, fall to lower ones, and jump to higher ones and over gaps.
+- Each level is limited to a single screen, with no scrolling
+- If a screen has gaps in its bottom edge, players can fall through these and reappear at the top.
+- Each level has a certain number of enemies that must be defeated in order to advance.
+- The players must blow bubbles to trap the enemies, then burst these bubbles by colliding with them within a set amount of time.
+- Each enemy defeated in this manner turns into a food item that can be picked up for extra points.
+- If the player takes too long to burst the bubble, the enemy pops out of it again.
+- All bubbles will float for a certain length of time before bursting on their own; players can jump on these and ride them to otherwise inaccessible areas.
+- A player loses one life upon touching any free enemies or their projectiles.
+- A player has 4 lives
+- There are two types of enemies:
+  * Maita - which looks like a ghost and throws boulders (https://bubblebobble.fandom.com/wiki/Maita (Links to an external site.))
+  * Zen-Chan - which can jump on or charge at the player (https://bubblebobble.fandom.com/wiki/Zen-chan (Links to an external site.))
+- When a Zen-Chan dies, a watermelon spawns awarding 100 points
+- When a Maita dies, french fries spawn awarding 200 points
+- Implement at least three levels, these must be loaded from a file. At least one level has gaps at the bottom edge.
+- There must be three game modes:
+  * Single player (Bob)
+  * Co-op (Bob and Bub)
+  * Versus - here one player plays as Bob and one player as a Maita.
+- Players can play with keyboard and controller
+
+Personal Bonus:
+- 3D/Vulkan
+- PhisX
+- Fmod

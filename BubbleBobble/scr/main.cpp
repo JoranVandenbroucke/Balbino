@@ -1,5 +1,5 @@
 #include "pch.h"
-
+#include <vld.h>
 namespace BubbleBobble
 {
 	class BubbleBobbleGame: public Balbino::Application
@@ -12,22 +12,14 @@ namespace BubbleBobble
 
 	void BubbleBobbleGame::LoadGame() const
 	{
-		/*Balbino::Scene& firsScene =*/ Balbino::SceneManager::Get().CreateScene( "First Scene" );
+		Balbino::SceneManager::Get().CreateScene( "First Scene" );
 
-		//std::shared_ptr<Balbino::GameObject> go = std::make_shared<Bub>();
-		//firsScene.Add( go );
-
-		//go = std::make_shared<FPSCounter>();
-		//firsScene.Add( go );
-		//
-		//go = std::make_shared<IntroText>();
-		//firsScene.Add( go );
-
-		//go = std::make_shared<DAELogo>();
-		//firsScene.Add( go );
-
-		//go = std::make_shared<Background>();
-		//firsScene.Add( go );
+		int* pI = new int[64];
+		(void*) pI;
+		for( int i = 0; i < 64; i++ )
+		{
+			pI[i] = rand();
+		}
 	}
 }
 

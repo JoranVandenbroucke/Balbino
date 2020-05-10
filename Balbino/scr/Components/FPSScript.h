@@ -10,7 +10,8 @@ namespace Balbino
 	class FPSScript final: public Component
 	{
 	public:
-		explicit FPSScript( const std::weak_ptr<GameObject> origine );
+		explicit FPSScript( const GameObject* const origine );
+
 		virtual ~FPSScript() = default;
 
 		virtual void Create() override;
@@ -29,6 +30,7 @@ namespace Balbino
 		FPSScript& operator= ( const FPSScript& ) = delete;
 		FPSScript& operator= ( const FPSScript&& ) = delete;
 	private:
-		std::weak_ptr<Text> m_Text{};
+		Text* m_Text{};
+
 	};
 }

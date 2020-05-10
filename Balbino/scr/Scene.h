@@ -12,9 +12,12 @@ namespace Balbino
 	{
 		friend Scene& SceneManager::CreateScene( const std::string& name );
 	public:
-		void Add( const std::shared_ptr<GameObject>& object, int pos = -1 );
+		void Add( GameObject* pObject, int pos = -1 );
 
+
+		void FixedUpdate();
 		void Update();
+		void LateUpdate();
 		void Draw() const;
 		void Load();
 		void Unload();
@@ -28,28 +31,28 @@ namespace Balbino
 
 	private:
 		explicit Scene( const std::string& name );
-		std::list<std::shared_ptr<GameObject>> m_GameObjects;
+		std::list<GameObject*> m_pGameObjects;
+
 		std::string m_Name;
 		static unsigned int m_IdCounter;
-		const char* const m_ComponentsString[8]
+		const char* const m_ComponentsString[9]
 		{
 			"Audio",
 			"LoggedAudio",
 			"Avatar",
 			"Camera",
 			"FPSScript",
+			"LevelLoader",
 			"Text",
-			"Texture2D",
+			"Sprite",
 			"Transform"
 		};
 #ifdef _DEBUG
 	public:
 		void DrawEditor();
 	private:
-		//std::vector<int> m_Indent;
 		bool m_Saved;
 		std::string m_SavePosition;
-		std::list<int> m_IndentPosition;
 #endif // _DEBUG
 	};
 }
