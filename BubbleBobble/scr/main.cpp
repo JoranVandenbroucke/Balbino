@@ -13,13 +13,6 @@ namespace BubbleBobble
 	void BubbleBobbleGame::LoadGame() const
 	{
 		Balbino::SceneManager::Get().CreateScene( "First Scene" );
-
-		int* pI = new int[64];
-		(void*) pI;
-		for( int i = 0; i < 64; i++ )
-		{
-			pI[i] = rand();
-		}
 	}
 }
 

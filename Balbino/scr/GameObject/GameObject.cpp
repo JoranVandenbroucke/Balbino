@@ -30,7 +30,6 @@ void Balbino::GameObject::Create()
 	}
 
 	for( Component* comp : m_Components )
-
 	{
 		comp->Create();
 	}
@@ -39,7 +38,6 @@ void Balbino::GameObject::Create()
 void Balbino::GameObject::FixedUpdate()
 {
 	for( Component* comp : m_Components )
-
 	{
 		comp->FixedUpdate();
 	}
@@ -48,7 +46,6 @@ void Balbino::GameObject::FixedUpdate()
 void Balbino::GameObject::Update()
 {
 	for( Component* comp : m_Components )
-
 	{
 		comp->Update();
 	}
@@ -57,7 +54,6 @@ void Balbino::GameObject::Update()
 void Balbino::GameObject::LateUpdate()
 {
 	for( Component* comp : m_Components )
-
 	{
 		comp->LateUpdate();
 	}
@@ -66,7 +62,6 @@ void Balbino::GameObject::LateUpdate()
 void Balbino::GameObject::Draw() const
 {
 	for( Component* comp : m_Components )
-
 	{
 		comp->Draw();
 	}
@@ -76,7 +71,6 @@ void Balbino::GameObject::Draw() const
 void Balbino::GameObject::DrawInspector()
 {
 	for( Component* comp : m_Components )
-
 	{
 		comp->DrawInpector();
 	}
@@ -97,7 +91,6 @@ bool Balbino::GameObject::IsDestroy() const
 void Balbino::GameObject::LoadComponents()
 {
 	for( Component* comp : m_Components )
-
 	{
 		comp->Create();
 	}
