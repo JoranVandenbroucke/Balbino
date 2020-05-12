@@ -14,18 +14,24 @@ namespace Balbino
 	{
 	public:
 		void Init( const std::string& data );
+
 		static GLuint LoadTexture( const std::string& file, vertex* vert = nullptr );
 		static GLuint LoadTexture( const Font& font, const std::string& text, vertex* vert );
 		static GLuint CreateFromSurface( SDL_Surface* pSurface );
 		static Font* LoadFont( const std::string& file, unsigned int size );
 		static Mix_Chunk* LoadAudio( const std::string& file );
-		static void Cleanup();
+		static void Fini();
+
 		virtual ~ResourceManager();
+		ResourceManager( ResourceManager& ) = delete;
+		ResourceManager( ResourceManager&& ) = delete;
+		ResourceManager& operator=( ResourceManager& ) = delete;
+		ResourceManager& operator=( ResourceManager&& ) = delete;
+		static void SetScene( const unsigned int sceneNr );
 	private:
 		GLuint ILoadTexture( const std::string& file, vertex* vert );
 		GLuint ILoadTexture( const Font& font, const std::string& text, vertex* vert );
 		Font* ILoadFont( const std::string& file, unsigned int size );
-
 		Mix_Chunk* ILoadAudio( const std::string& file );
 
 		GLuint ICreateFromSurface( SDL_Surface* pSurface );
@@ -48,7 +54,6 @@ namespace Balbino
 		};
 		std::unordered_map<std::string, GLuint> m_Textures;
 		std::unordered_map<std::pair<std::string, int>, Font*, comp> m_Fonts;
-
 		std::unordered_map<std::string, Mix_Chunk*> m_Audio;
 	};
 }

@@ -17,10 +17,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #pragma warning(pop)
 
-#ifdef _DEBUG
-#include "../Editor/AssetBrouser.h"
-#include "../Editor/SpriteEditor.h"
-
 void Balbino::Renderer::Init( SDL_Window* window )
 {
 	m_Renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
@@ -30,46 +26,6 @@ void Balbino::Renderer::Init( SDL_Window* window )
 	}
 }
 
-void Balbino::Renderer::Draw()
-{
-}
-
-void Balbino::Renderer::Bind() const
-{
-	glBindFramebuffer( GL_FRAMEBUFFER, m_FrameBufferIndex );
-}
-
-void Balbino::Renderer::Unbind() const
-{
-	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-}
-void Balbino::Renderer::Destroy()
-{
-	glDeleteFramebuffers( 1, &m_FrameBufferIndex );
-	if( m_Renderer != nullptr )
-	{
-		SDL_DestroyRenderer( m_Renderer );
-		m_Renderer = nullptr;
-	}
-}
-#else
-void Balbino::Renderer::Init( SDL_Window* window )
-{
-	m_Renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-	if( m_Renderer == nullptr )
-	{
-		throw std::runtime_error( std::string( "SDL_CreateRenderer Error: " ) + SDL_GetError() );
-	};
-}
-
-void Balbino::Renderer::Draw() const
-{
-	glClearColor( 0.f, 0.f, 0.f, 0.f );
-	glClear( GL_COLOR_BUFFER_BIT );
-	SceneManager::Get().Draw();
-	SDL_GL_SwapWindow( Application::GetWindow() );
-}
-
 void Balbino::Renderer::Destroy()
 {
 	if( m_Renderer != nullptr )
@@ -77,25 +33,6 @@ void Balbino::Renderer::Destroy()
 		SDL_DestroyRenderer( m_Renderer );
 		m_Renderer = nullptr;
 	}
-}
-#endif // _DEBUG
-
-
-void Balbino::Renderer::RenderTexture( const GLuint& texture, const float x, const float y ) const
-{
-	int w, h;
-	glGetTexLevelParameteriv( GL_TEXTURE_2D, texture, GL_TEXTURE_WIDTH, &w );
-	glGetTexLevelParameteriv( GL_TEXTURE_2D, texture, GL_TEXTURE_HEIGHT, &h );
-	RenderTexture( texture, x, y, (const float) w, (const float) h );
-}
-
-void Balbino::Renderer::RenderTexture( const GLuint& texture, const float x, const float y, const float width, const float height ) const
-{
-	(void) texture;
-	(void) x;
-	(void) y;
-	(void) width;
-	(void) height;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

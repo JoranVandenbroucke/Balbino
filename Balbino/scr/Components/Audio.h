@@ -10,8 +10,13 @@ namespace Balbino
 	{
 	public:
 		Audio();
-
 		virtual ~Audio();
+
+		Audio( const Audio& ) = delete;
+		Audio( Audio&& ) = delete;
+		Audio& operator=( const Audio& ) = delete;
+		Audio& operator=( Audio&& ) = delete;
+
 		virtual void PlaySound( int soundID ) = 0;
 		virtual void StopSound( int soundID ) = 0;
 		virtual void StopAllSounds() = 0;
@@ -20,13 +25,18 @@ namespace Balbino
 		void SetVolume( const int soundID, const int volume );
 	protected:
 		std::vector<Mix_Chunk*> m_pMixChunks;
-
 	};
 
 	class ConsoleAudio: public Balbino::Audio, public Balbino::Component
 	{
 	public:
-		ConsoleAudio( const GameObject* const origine );
+		explicit ConsoleAudio( const GameObject* const origine );
+		virtual ~ConsoleAudio() = default;
+
+		ConsoleAudio( const ConsoleAudio& ) = delete;
+		ConsoleAudio( ConsoleAudio&& ) = delete;
+		ConsoleAudio& operator=( const ConsoleAudio& ) = delete;
+		ConsoleAudio& operator=( ConsoleAudio&& ) = delete;
 
 		virtual void Create() override;
 		virtual void Update() override;
@@ -46,8 +56,13 @@ namespace Balbino
 	class LoggedAudio: public Balbino::Audio, public Balbino::Component
 	{
 	public:
-		LoggedAudio( const GameObject* const origine );
+		explicit LoggedAudio( const GameObject* const origine );
+		virtual ~LoggedAudio() = default;
 
+		LoggedAudio( const LoggedAudio& ) = delete;
+		LoggedAudio( LoggedAudio&& ) = delete;
+		LoggedAudio& operator=( const LoggedAudio& ) = delete;
+		LoggedAudio& operator=( LoggedAudio&& ) = delete;
 
 		virtual void Create() override;
 		virtual void Update() override;

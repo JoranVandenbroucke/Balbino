@@ -10,6 +10,11 @@ Balbino::GameObject::GameObject()
 
 Balbino::GameObject::~GameObject()
 {
+	for( Component* pComponet : m_Components )
+	{
+		delete pComponet;
+		pComponet = nullptr;
+	}
 	m_IsDestroyed = true;
 	m_Name = "";
 	m_Components.clear();
@@ -79,7 +84,6 @@ void Balbino::GameObject::DrawInspector()
 
 void Balbino::GameObject::Destroy()
 {
-	m_Components.clear();
 	m_IsDestroyed = true; 
 }
 

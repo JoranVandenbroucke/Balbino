@@ -28,14 +28,13 @@ namespace Balbino
 		Scene& operator=( const Scene& other ) = delete;
 		Scene& operator=( Scene&& other ) = delete;
 
-
 	private:
 		explicit Scene( const std::string& name );
 		std::list<GameObject*> m_pGameObjects;
 
 		std::string m_Name;
 		static unsigned int m_IdCounter;
-		const char* const m_ComponentsString[9]
+		const char* const m_pComponentsString[9]
 		{
 			"Audio",
 			"LoggedAudio",

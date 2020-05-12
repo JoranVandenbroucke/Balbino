@@ -101,8 +101,9 @@ namespace Balbino
 		static bool IsPressed( const ControllerButton& button );
 		static void ChangeButton( const std::string& functionName );
 		static void ChangeButton( const std::string& functionName, const std::string& keyName );
+		static void Fini();
 
-		~InputManager();
+		~InputManager() = default;
 		InputManager( const InputManager& ) = delete;
 		InputManager( InputManager&& ) = delete;
 		InputManager& operator=( const InputManager& ) = delete;
@@ -113,6 +114,7 @@ namespace Balbino
 		bool IProcessInput();
 		Command* const IIsPressed() const;
 		bool IIsPressed( const ControllerButton& button ) const;
+		void IFini();
 
 		XINPUT_STATE m_CurrentState{};
 		std::map<std::string, Button* const> m_pButtons;

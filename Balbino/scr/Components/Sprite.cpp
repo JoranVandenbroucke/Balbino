@@ -13,6 +13,11 @@ Balbino::Sprite::Sprite( const GameObject* const origine )
 {
 }
 
+Balbino::Sprite::~Sprite()
+{
+	m_UV.clear();
+}
+
 void Balbino::Sprite::SetSpriteIndex( int index )
 {
 	if( index < 0 ) index = 0;

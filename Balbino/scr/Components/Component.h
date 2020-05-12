@@ -11,14 +11,12 @@ namespace Balbino
 	{
 	public:
 		Component( const GameObject* const origin );
-
+		virtual ~Component() = default;
 
 		Component( const Component& ) = delete;
 		Component( Component&& ) = delete;
 		Component& operator= ( const Component& ) = delete;
 		Component& operator= ( const Component&& ) = delete;
-
-		virtual ~Component() = default;
 
 		virtual void Create();
 		virtual void FixedUpdate()

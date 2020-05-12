@@ -11,8 +11,12 @@ namespace Balbino
 	{
 	public:
 		explicit FPSScript( const GameObject* const origine );
-
 		virtual ~FPSScript() = default;
+
+		FPSScript( const FPSScript& ) = delete;
+		FPSScript( FPSScript&& ) = delete;
+		FPSScript& operator= ( const FPSScript& ) = delete;
+		FPSScript& operator= ( const FPSScript&& ) = delete;
 
 		virtual void Create() override;
 		virtual void Update() override;
@@ -25,10 +29,6 @@ namespace Balbino
 		virtual void DrawInpector() override;
 #endif // _DEBUG
 
-		FPSScript( const FPSScript& ) = delete;
-		FPSScript( FPSScript&& ) = delete;
-		FPSScript& operator= ( const FPSScript& ) = delete;
-		FPSScript& operator= ( const FPSScript&& ) = delete;
 	private:
 		Text* m_Text{};
 

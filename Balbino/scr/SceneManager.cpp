@@ -4,24 +4,30 @@
 #include "SceneObject.h"
 #include "GameObject/GameObject.h"
 
+Balbino::SceneManager::SceneManager()
+	:Singleton{}
+	, m_pCurrentScenes{ nullptr }
+{
+}
+
 void Balbino::SceneManager::SetScene( const unsigned int sceneNr )
 {
-	if( sceneNr < Get().m_Scenes.size() )
+	if( sceneNr < Get().m_pScenes.size() )
 	{
-		Scene* current = Get().m_CurrentScenes;
+		Scene* current = Get().m_pCurrentScenes;
 
 		if( current )
 		{
 			current->Unload();
 		}
-		current = Get().m_Scenes[sceneNr];
+		current = Get().m_pScenes[sceneNr];
 		current->Load();
-		Get().m_CurrentScenes = current;
+		Get().m_pCurrentScenes = current;
 	}
 }
 Balbino::GameObject* Balbino::SceneManager::AddGameObjectToScene( GameObject* gameObject )
 {
-	if( !Get().m_CurrentScenes )
+	if( !Get().m_pCurrentScenes )
 	{
 		return nullptr;
 	}
@@ -30,13 +36,13 @@ Balbino::GameObject* Balbino::SceneManager::AddGameObjectToScene( GameObject* ga
 	{
 		gameObject = new GameObject;
 	}
-	Get().m_CurrentScenes->Add( gameObject );
+	Get().m_pCurrentScenes->Add( gameObject );
 	return gameObject;
 }
 
 void Balbino::SceneManager::FixedUpdate()
 {
-	auto currentScene = m_CurrentScenes;
+	auto currentScene = m_pCurrentScenes;
 	if( currentScene )
 	{
 		currentScene->FixedUpdate();
@@ -44,7 +50,7 @@ void Balbino::SceneManager::FixedUpdate()
 }
 void Balbino::SceneManager::Update()
 {
-	auto currentScene = m_CurrentScenes;
+	auto currentScene = m_pCurrentScenes;
 	if( currentScene )
 	{
 		currentScene->Update();
@@ -53,7 +59,7 @@ void Balbino::SceneManager::Update()
 
 void Balbino::SceneManager::LateUpdate()
 {
-	auto currentScene = m_CurrentScenes;
+	auto currentScene = m_pCurrentScenes;
 	if( currentScene )
 	{
 		currentScene->LateUpdate();
@@ -62,7 +68,7 @@ void Balbino::SceneManager::LateUpdate()
 
 void Balbino::SceneManager::Draw()
 {
-	auto currentScene = m_CurrentScenes;
+	auto currentScene = m_pCurrentScenes;
 	if( currentScene )
 	{
 		currentScene->Draw();
@@ -70,14 +76,23 @@ void Balbino::SceneManager::Draw()
 }
 
 Balbino::Scene* Balbino::SceneManager::GetCurrentScene()
-
 {
-	return m_CurrentScenes;
+	return m_pCurrentScenes;
+}
+void Balbino::SceneManager::Stop()
+{
+	m_pCurrentScenes = nullptr;
+	for( Scene* pScene : m_pScenes )
+	{
+		delete pScene;
+		pScene = nullptr;
+	}
+	m_pScenes.clear();
 }
 #ifdef _DEBUG
 void Balbino::SceneManager::DrawEngine()
 {
-	auto currentScene = m_CurrentScenes;
+	auto currentScene = m_pCurrentScenes;
 	if( currentScene )
 	{
 		currentScene->DrawEditor();
@@ -89,6 +104,6 @@ Balbino::Scene& Balbino::SceneManager::CreateScene( const std::string& name )
 {
 	Scene* scene = new Scene{ name };
 
-	m_Scenes.push_back( scene );
+	m_pScenes.push_back( scene );
 	return *scene;
 }

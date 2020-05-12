@@ -6,14 +6,13 @@ namespace Balbino
 	class Sprite final : public Texture2D
 	{
 	public:
-		Sprite( const GameObject* const origine );
+		explicit Sprite( const GameObject* const origine );
+		virtual ~Sprite();
 
 		Sprite( const Sprite& ) = delete;
 		Sprite( Sprite&& ) = delete;
 		Sprite& operator=( const Sprite& ) = delete;
 		Sprite& operator=( Sprite&& ) = delete;
-
-		~Sprite() = default;
 
 		virtual void Save( std::ostream& file )override;
 		virtual void Load( std::istream& file )override;

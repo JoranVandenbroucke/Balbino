@@ -45,20 +45,7 @@ void Balbino::Transform::Update()
 
 void Balbino::Transform::LateUpdate()
 {
-	std::sort( m_pChilderen.begin(), m_pChilderen.end(), []( Transform* t1, Transform* t2 )
-	{
-		return t1 < t2;
-	} );
-	std::vector<Transform*>::reverse_iterator it{ m_pChilderen.rbegin() };
 
-	for( it; it != m_pChilderen.rend(); ++it )
-	{
-		if( !(*it ) )
-		{
-			break;
-		}
-	}
-	m_pChilderen.erase( it.base(), m_pChilderen.end() );
 }
 
 void Balbino::Transform::Draw() const
@@ -81,6 +68,14 @@ void Balbino::Transform::Load( std::istream& file )
 }
 void Balbino::Transform::SetParrent( Transform* parent )
 {
+	if( m_Parent == parent )
+	{
+		return;
+	}
+	if( m_Parent )
+	{
+		m_Parent->m_pChilderen.erase( std::remove( m_Parent->m_pChilderen.begin(), m_Parent->m_pChilderen.end(), this ) );
+	}
 	if( parent )
 	{
 		parent->m_pChilderen.push_back( this );

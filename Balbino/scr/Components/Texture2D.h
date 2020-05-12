@@ -12,8 +12,12 @@ namespace Balbino
 	{
 	public:
 		explicit Texture2D(const GameObject* const origine );
-
 		virtual ~Texture2D();
+
+		Texture2D( const Texture2D& ) = delete;
+		Texture2D( Texture2D&& ) = delete;
+		Texture2D& operator= ( const Texture2D& ) = delete;
+		Texture2D& operator= ( const Texture2D&& ) = delete;
 
 		void SetTexture( const std::string path );
 		void SetTexture( GLuint newTexture );
@@ -22,10 +26,6 @@ namespace Balbino
 		virtual void Update() override;
 		virtual void Draw() const override;
 
-		Texture2D(const Texture2D &) = delete;
-		Texture2D(Texture2D &&) = delete;
-		Texture2D & operator= (const Texture2D &) = delete;
-		Texture2D & operator= (const Texture2D &&) = delete;
 	protected:
 		GLuint m_Texture;
 

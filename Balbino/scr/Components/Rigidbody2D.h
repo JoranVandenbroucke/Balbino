@@ -10,15 +10,13 @@ namespace Balbino
 	class Rigidbody2D : public Component
 	{
 	public:
-		Rigidbody2D( const GameObject* const origine );
-
+		explicit Rigidbody2D( const GameObject* const origine );
+		virtual ~Rigidbody2D() = default;
 
 		Rigidbody2D( const Rigidbody2D& ) = delete;
 		Rigidbody2D( Rigidbody2D&& ) = delete;
 		Rigidbody2D& operator=( const Rigidbody2D& ) = delete;
 		Rigidbody2D& operator=( Rigidbody2D&& ) = delete;
-
-		virtual ~Rigidbody2D() = default;
 
 		virtual void Create() override;
 		virtual void FixedUpdate()override;

@@ -6,14 +6,12 @@ namespace Balbino
 	{
 	public:
 		explicit LevelLoader( const GameObject* const origine );
-
+		virtual ~LevelLoader() = default;
 
 		LevelLoader( const LevelLoader& ) = delete;
 		LevelLoader( LevelLoader&& ) = delete;
 		LevelLoader& operator=( const LevelLoader& ) = delete;
 		LevelLoader& operator=( LevelLoader&& ) = delete;
-
-		~LevelLoader() = default;
 
 		virtual void Create() override;
 		virtual void Update() override;

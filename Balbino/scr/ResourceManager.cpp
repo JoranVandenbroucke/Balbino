@@ -110,7 +110,7 @@ Mix_Chunk* Balbino::ResourceManager::LoadAudio( const std::string& file )
 	return Get().ILoadAudio( file );
 }
 
-void Balbino::ResourceManager::Cleanup()
+void Balbino::ResourceManager::Fini()
 {
 	Get().ICleanup();
 }
@@ -273,6 +273,10 @@ void Balbino::ResourceManager::ICleanup()
 	for( auto& mix : m_Audio )
 	{
 		Mix_FreeChunk( mix.second );
+	}
+	for( auto& font : m_Fonts )
+	{
+		delete font.second;
 	}
 	for( auto& texture : m_Textures )
 	{

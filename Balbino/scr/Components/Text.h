@@ -12,14 +12,12 @@ namespace Balbino
 	{
 	public:
 		explicit Text( const GameObject* const origin );
-
+		virtual ~Text() = default;
 
 		Text( const Text& other ) = delete;
 		Text( Text&& other ) = delete;
 		Text& operator=( const Text& other ) = delete;
 		Text& operator=( Text&& other ) = delete;
-
-		virtual ~Text() = default;
 
 		virtual void Create() override;
 		virtual void Update() override;

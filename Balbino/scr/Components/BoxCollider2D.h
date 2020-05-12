@@ -10,14 +10,12 @@ namespace Balbino
 	{
 	public:
 		explicit BoxCollider( const Balbino::GameObject* const origine );
-
+		virtual ~BoxCollider() = default;
 
 		BoxCollider( const BoxCollider& ) = delete;
 		BoxCollider( BoxCollider&& ) = delete;
 		BoxCollider& operator=( const BoxCollider& ) = delete;
 		BoxCollider& operator=( BoxCollider&& ) = delete;
-
-		virtual ~BoxCollider() = default;
 
 		virtual void Create() override;
 		virtual void Update() override;

@@ -19,14 +19,12 @@ namespace Balbino
 		typedef unsigned int GLuint;
 	public:
 		explicit Camera( const GameObject* const origine, float aspectRatio, float w );
-
+		virtual ~Camera() = default;
 
 		Camera( const Camera& ) = delete;
 		Camera( Camera&& ) = delete;
 		Camera& operator= ( const Camera& ) = delete;
 		Camera& operator= ( const Camera&& ) = delete;
-
-		virtual ~Camera() = default;
 
 		virtual void Create() override;
 		virtual void Update() override;

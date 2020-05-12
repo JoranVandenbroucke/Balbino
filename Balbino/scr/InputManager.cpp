@@ -108,9 +108,9 @@ void Balbino::InputManager::ChangeButton( const std::string& functionName, const
 	}
 }
 
-Balbino::InputManager::~InputManager()
+void Balbino::InputManager::Fini()
 {
-	m_pButtons.clear();
+	Get().IFini();
 }
 
 void Balbino::InputManager::IInit()
@@ -210,4 +210,13 @@ bool Balbino::InputManager::IIsPressed( const ControllerButton& button ) const
 		return m_CurrentState.Gamepad.wButtons & XINPUT_GAMEPAD_Y;
 	default: return false;
 	}
+}
+
+void Balbino::InputManager::IFini()
+{
+	for( std::pair<const std::string, Button* const>& pButton : m_pButtons )
+	{
+		delete pButton.second;
+	}
+	m_pButtons.clear();
 }

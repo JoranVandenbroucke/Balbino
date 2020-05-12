@@ -23,7 +23,7 @@ namespace Balbino
 		void UpdateFT();
 		void LoadLevel();
 
-		~BTime() = default;
+		virtual ~BTime() = default;
 		BTime( BTime& ) = delete;
 		BTime( BTime&& ) = delete;
 		BTime& operator=( BTime& ) = delete;

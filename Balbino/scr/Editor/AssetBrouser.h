@@ -8,6 +8,7 @@ namespace Balbino
 	class AssetBrouser final : public Singleton<AssetBrouser>
 	{
 	public:
+		virtual ~AssetBrouser() = default;
 		void Draw();
 
 	private:

@@ -16,8 +16,12 @@ namespace Balbino
 	{
 	public:
 		explicit Transform( const GameObject* const origine );
-
 		virtual ~Transform();
+
+		Transform( const Transform& ) = delete;
+		Transform( Transform&& ) = delete;
+		Transform& operator= ( const Transform& ) = delete;
+		Transform& operator= ( const Transform&& ) = delete;
 
 		const Vector3& GetPosition() const { return m_Position; }
 		const Vector3& GetRotation() const { return m_Rotation; }
@@ -45,10 +49,6 @@ namespace Balbino
 		virtual void DrawHierarchy();
 #endif // _DEBUG
 
-		Transform( const Transform& ) = delete;
-		Transform( Transform&& ) = delete;
-		Transform& operator= ( const Transform& ) = delete;
-		Transform& operator= ( const Transform&& ) = delete;
 	private:
 		Vector3 m_Position;
 		Vector3 m_Rotation;

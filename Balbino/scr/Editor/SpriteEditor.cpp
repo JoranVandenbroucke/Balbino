@@ -6,9 +6,23 @@
 #include <fstream>
 #include <algorithm>
 
+Balbino::SpriteEditor::SpriteEditor()
+	:m_Image{}
+	, m_CountX{}
+	, m_CountY{}
+	, m_Widht{}
+	, m_Height{}
+	, m_OffsetX{}
+	, m_OffsetY{}
+	, m_PaddingX{}
+	, m_PaddingY{}
+	, m_PivotX{}
+	, m_PivotY{}
+{
+}
+
 void Balbino::SpriteEditor::Draw()
 {
-
 	static std::vector<Vector2> spriteUVs;
 	ImGui::Begin( "Sprite Editor" );
 	DrawOptoins( spriteUVs );
@@ -19,26 +33,24 @@ void Balbino::SpriteEditor::Draw()
 
 void Balbino::SpriteEditor::DrawOptoins( std::vector<Vector2>& sprites )
 {
-	const char* items[13] = { "Auto", "Grid By Cell Size", "Grid By Cell Count",
-						"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom" };
-	static const char* currentItem = items[0];
-	static const char* currentPivot = items[3];
+	static const char* currentItem = m_pItems[0];
+	static const char* currentPivot = m_pItems[3];
 
 	ImGui::BeginChild( "editor", { 350,-1 }, true );
 	if( ImGui::BeginCombo( "Mode", currentItem ) )
 	{
 		for( int i = 0; i < 3; i++ )
 		{
-			bool isSelected = ( currentItem == items[i] );
-			if( ImGui::Selectable( items[i], isSelected ) )
-				currentItem = items[i];
+			bool isSelected = ( currentItem == m_pItems[i] );
+			if( ImGui::Selectable( m_pItems[i], isSelected ) )
+				currentItem = m_pItems[i];
 			if( isSelected )
 				ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
 		}
 		ImGui::EndCombo();
 	}
 
-	if( currentItem == items[1] )
+	if( currentItem == m_pItems[1] )
 	{
 		ImGui::Columns( 3 );
 		ImGui::Text( "Pixel Size" ); ImGui::NextColumn();
@@ -60,7 +72,7 @@ void Balbino::SpriteEditor::DrawOptoins( std::vector<Vector2>& sprites )
 		( m_PaddingX < 0 ) ? m_PaddingX = 0 : 0;
 		( m_PaddingY < 0 ) ? m_PaddingY = 0 : 0;
 	}
-	else if( currentItem == items[2] )
+	else if( currentItem == m_pItems[2] )
 	{
 		ImGui::Columns( 3 );
 		ImGui::Text( "Column & Row" ); ImGui::NextColumn();
@@ -87,15 +99,15 @@ void Balbino::SpriteEditor::DrawOptoins( std::vector<Vector2>& sprites )
 	{
 		for( int i = 3; i < 13; i++ )
 		{
-			bool isSelected = ( currentPivot == items[i] );
-			if( ImGui::Selectable( items[i], isSelected ) )
-				currentPivot = items[i];
+			bool isSelected = ( currentPivot == m_pItems[i] );
+			if( ImGui::Selectable( m_pItems[i], isSelected ) )
+				currentPivot = m_pItems[i];
 			if( isSelected )
 				ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
 		}
 		ImGui::EndCombo();
 	}
-	if( currentPivot == items[12] )
+	if( currentPivot == m_pItems[12] )
 	{
 		ImGui::Columns( 3 );
 		ImGui::Text( "Pivot" ); ImGui::NextColumn();
@@ -109,12 +121,12 @@ void Balbino::SpriteEditor::DrawOptoins( std::vector<Vector2>& sprites )
 		std::string fullPath{ "../Data/" + m_Image.path.string() };
 		std::ofstream file{ fullPath + ".spr", std::ios::out | std::ios::binary };
 		SDL_Surface* pImage = IMG_Load( fullPath.c_str() );
-		if( currentItem == items[1] )
+		if( currentItem == m_pItems[1] )
 		{
 			m_CountX = ( pImage->w - m_OffsetX * 2 + m_PaddingX ) / ( m_Widht + m_PaddingX );
 			m_CountY = ( pImage->h - m_OffsetY * 2 + m_PaddingY ) / ( m_Height + m_PaddingY );
 		}
-		else if( currentItem == items[2] )
+		else if( currentItem == m_pItems[2] )
 		{
 			m_Widht = ( pImage->w - m_OffsetX * 2 - ( m_CountX ? m_CountX - 1 : 0 ) * m_PaddingX ) / m_CountX;
 			m_Height = ( pImage->h - m_OffsetY * 2 - ( m_CountY ? m_CountY - 1 : 0 ) * m_PaddingY ) / m_CountY;
@@ -133,6 +145,7 @@ void Balbino::SpriteEditor::DrawOptoins( std::vector<Vector2>& sprites )
 				BinaryReadWrite::Write( file, bottomRight );
 			}
 		}
+		SDL_FreeSurface( pImage );
 	}
 	ImGui::EndChild();
 }

@@ -38,6 +38,10 @@ Scene::Scene( const std::string& name )
 
 Scene::~Scene()
 {
+	for( GameObject* pGameObject : m_pGameObjects)
+	{
+		delete pGameObject;
+	}
 	m_pGameObjects.clear();
 }
 
@@ -100,6 +104,10 @@ void Balbino::Scene::LateUpdate()
 		if( !( *it )->IsDestroy() )
 		{
 			break;
+		}
+		else
+		{
+			delete* it;
 		}
 	}
 	m_pGameObjects.erase( it.base(), m_pGameObjects.end() );
@@ -445,7 +453,7 @@ void Balbino::Scene::DrawEditor()
 					{
 						--j;
 					}
-					while( endChildPos.size() && endChildPos.back() <= 0 )
+					while( endChildPos.size() && endChildPos.back() < 0 )
 					{
 						ImGui::TreePop();
 						endChildPos.pop_back();
@@ -488,7 +496,7 @@ void Balbino::Scene::DrawEditor()
 		{
 			for( int i = 0; i < 9; i++ )
 			{
-				if( ImGui::Selectable( m_ComponentsString[i] ) )
+				if( ImGui::Selectable( m_pComponentsString[i] ) )
 				{
 					switch( ComponentList( i ) )
 					{

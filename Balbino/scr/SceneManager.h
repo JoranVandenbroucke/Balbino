@@ -15,7 +15,11 @@ namespace Balbino
 	{
 	public:
 		Scene& CreateScene( const std::string& name );
-
+		virtual ~SceneManager() = default;
+		SceneManager( SceneManager& ) = delete;
+		SceneManager( SceneManager&& ) = delete;
+		SceneManager& operator=( SceneManager& ) = delete;
+		SceneManager& operator=( SceneManager&& ) = delete;
 		static void SetScene(const unsigned int sceneNr );
 		static GameObject* AddGameObjectToScene( GameObject* gameObject = nullptr);
 
@@ -24,16 +28,16 @@ namespace Balbino
 		void LateUpdate();
 		void Draw();
 		Scene* GetCurrentScene();
-
+		void Stop();
 #ifdef _DEBUG
 		void DrawEngine();
 #endif
 	private:
 		friend class Singleton<SceneManager>;
-		SceneManager() = default;
-		std::vector<Scene*> m_Scenes;
+		SceneManager();
+		std::vector<Scene*> m_pScenes;
 
-		Scene* m_CurrentScenes;
+		Scene* m_pCurrentScenes;
 	};
 }
 #pragma warning(pop)
