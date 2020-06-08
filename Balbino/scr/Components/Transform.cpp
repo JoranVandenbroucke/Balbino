@@ -27,7 +27,7 @@ void Balbino::Transform::Create()
 
 void Balbino::Transform::Update()
 {
-	glm::mat4x4 translate{ {1.f, 0.f, 0.f, m_Position.x}, {0.f, 1.f, 0.f, m_Position.y}, {0.f, 0.f, 1.f, m_Position.z}, {0.f, 0.f, 0.f, 1.f} };
+	glm::mat4x4 translate{ {1.f, 0.f, 0.f, m_Position.x}, {0.f, 1.f, 0.f, -m_Position.y}, {0.f, 0.f, 1.f, m_Position.z}, {0.f, 0.f, 0.f, 1.f} };
 	glm::mat4x4 scale{ {m_Scale.x, 0.f, 0.f, 0.f}, {0.f, m_Scale.y, 0.f, 0.f}, {0.f, 0.f, m_Scale.z, 0.f}, {0.f, 0.f, 0.f, 1.f} };
 	glm::mat4x4 rotateX{ {cos( m_Rotation.x ), 0.f, sin( m_Rotation.x ), 0.f},{0.f, 1.f, 0.f, 0.f}, {-sin( m_Rotation.x ), 0, cos( m_Rotation.x ), 0.f},{0.f, 0.f, 0.f, 1.f} };
 	glm::mat4x4 rotateY{ {1.f, 0.f, 0.f, 0.f},{0.f, cos( m_Rotation.y ), -sin( m_Rotation.y ), 0.f}, {0.f, sin( m_Rotation.y ), cos( m_Rotation.y ), 0.f},{0.f, 0.f, 0.f, 1.f} };
@@ -106,7 +106,7 @@ void Balbino::Transform::DrawInpector()
 	float yRot{ m_Rotation.y / float( M_PI ) * 180.f };
 	float zRot{ m_Rotation.z / float( M_PI ) * 180.f };
 
-	ImGui::BeginChild( "Transform Component", ImVec2{ 420, 128 }, true );
+	ImGui::BeginChild( "Transform Component", ImVec2{ -1, 128 }, true );
 	ImGui::Text( "Transformation" );
 	ImGui::Separator();
 
@@ -135,10 +135,6 @@ void Balbino::Transform::DrawInpector()
 	m_Rotation.x = xRot / 180.f * float( M_PI );
 	m_Rotation.y = yRot / 180.f * float( M_PI );
 	m_Rotation.z = zRot / 180.f * float( M_PI );
-}
-void Balbino::Transform::DrawHierarchy()
-{
-
 }
 #endif
 void Balbino::Transform::SetPosition( const float x, const float y, const float z )

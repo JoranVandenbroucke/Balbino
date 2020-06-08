@@ -1,10 +1,12 @@
 #pragma once
 #include "Audio.h"
 #include "Avatar.h"
+#include "BoxCollider2D.h"
 #include "Camera.h"
 #include "FPSScript.h"
 #include "LevelLoader.h"
+#include "Rigidbody2D.h"
 #include "Sprite.h"
 #include "Text.h"
-#include "Texture2D.h"
+//#include "Texture2D.h"
 #include "Transform.h"

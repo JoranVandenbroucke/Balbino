@@ -159,7 +159,7 @@ GLuint Balbino::Shader::Compile( const std::string& sourceCode, GLenum type )
 	{
 		int length{};
 		glGetShaderiv( id, GL_INFO_LOG_LENGTH, &length );
-		char* message = new char[length];
+		char* message = DBG_NEW char[length];
 		glGetShaderInfoLog( id, length, &length, message );
 		std::string ErrorSting{ "Shader compilation error: " };
 		ErrorSting += message;

@@ -4,71 +4,126 @@
 #include "Rigidbody2D.h"
 #include "../GameObject/GameObject.h"
 #include "../Math.h"
-
+#include "Sprite.h"
+#include "../PhysicsWorld.h"
+#include "../Editor/Debug.h"
+#include <Box2D.h>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
-Balbino::BoxCollider::BoxCollider( const Balbino::GameObject* const origine )
+Balbino::BoxCollider2D::BoxCollider2D( const Balbino::GameObject* const origine )
 	: Collider2D{ origine }
 	, m_Center{}
-	, m_Size{}
+	, m_Size{ 1.f, 1.f }
+	, m_BodyDef{}
+	, m_Colliser{}
+	, m_pFixture{ nullptr }
 {
 }
 
-void Balbino::BoxCollider::Create()
+void Balbino::BoxCollider2D::Create()
 {
 	this->Component::Create();
-	m_Collider.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
+	auto sprite = GetComponent<Sprite>();
+	if( sprite )
+		m_Size = { sprite->GetWidth(), sprite->GetHeight() };
+	m_Colliser.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
+
+	m_BodyDef.type = b2_kinematicBody;
+	m_pBody = PhysicsWorld::AddBody( &m_BodyDef );
+
+	m_pFixture = m_pBody->CreateFixture( &m_Colliser, 0 );
+	m_pFixture->SetUserData( this );
 }
 
-void Balbino::BoxCollider::Update()
+void Balbino::BoxCollider2D::Update()
 {
 }
 
-void Balbino::BoxCollider::Draw() const
+void Balbino::BoxCollider2D::Draw() const
 {
+	auto positoin = m_pTransform->GetPosition();
+	const Vector3 point[4] =
+	{
+		{positoin.x + m_Center.x - m_Size.x / 2.f,positoin.y + m_Center.y - m_Size.y / 2.f, 0.f},
+		{positoin.x + m_Center.x - m_Size.x / 2.f,positoin.y + m_Center.y + m_Size.y / 2.f, 0.f},
+		{positoin.x + m_Center.x + m_Size.x / 2.f,positoin.y + m_Center.y + m_Size.y / 2.f, 0.f},
+		{positoin.x + m_Center.x + m_Size.x / 2.f,positoin.y + m_Center.y - m_Size.y / 2.f, 0.f}
+	};
+	Debug::DrawLine( point[0], point[1], Color{ 0xC7EA46 } );
+	Debug::DrawLine( point[1], point[2], Color{ 0xC7EA46 } );
+	Debug::DrawLine( point[2], point[3], Color{ 0xC7EA46 } );
+	Debug::DrawLine( point[3], point[0], Color{ 0xC7EA46 } );
 }
 
-void Balbino::BoxCollider::Save( std::ostream& file )
+void Balbino::BoxCollider2D::Save( std::ostream& file )
 {
 	(void) file;
 }
 
-void Balbino::BoxCollider::Load( std::istream& file )
+void Balbino::BoxCollider2D::Load( std::istream& file )
 {
 	(void) file;
 }
 
-void Balbino::BoxCollider::DrawInpector()
+#ifdef _DEBUG
+void Balbino::BoxCollider2D::DrawInpector()
 {
-}
+	ImGui::BeginChild( "BoxCollider2D", ImVec2{ -1, 128 }, true );
+	ImGui::Text( "Box Collider 2D" );
+	float size[3]{ m_Size.x, m_Size.y, m_Size.z }, center[3]{ m_Center.x , m_Center.y, m_Center.z };
+	auto fixture = m_pBody->GetFixtureList();
+	bool trigger{ fixture->IsSensor() };
+	bool chaingedTrigger = ImGui::Checkbox( "isTrigger", &trigger );
+	bool chaingedCenter = ImGui::DragFloat3( "Center", center );
+	bool chaingedSize = ImGui::DragFloat3( "Size", size );
 
-const Balbino::Vector3& Balbino::BoxCollider::GetCenter() const
+	if( chaingedCenter )
+		SetCenter( Balbino::Vector3{ center[0], center[1], center[2] } );
+	if( chaingedSize )
+		SetSize( Balbino::Vector3{ size[0], size[1], size[2] } );
+	if( chaingedTrigger )
+		SetTrigger( trigger );
+	ImGui::EndChild();
+}
+#endif //_DEBUG
+
+const Balbino::Vector3& Balbino::BoxCollider2D::GetCenter() const
 {
 	return m_Center;
 }
 
-const Balbino::Vector3& Balbino::BoxCollider::GetSize() const
+const Balbino::Vector3& Balbino::BoxCollider2D::GetSize() const
 {
 	return m_Size;
 }
 
-void Balbino::BoxCollider::SetCenter( const Balbino::Vector3& newCenter )
+void Balbino::BoxCollider2D::SetCenter( const Balbino::Vector3& newCenter )
 {
 	m_Center = newCenter;
-	m_Collider.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
+	auto fixture = m_pBody->GetFixtureList();
+	auto colider = fixture->GetShape();
+	( (b2PolygonShape*) colider )->SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
 }
 
-void Balbino::BoxCollider::SetSize( const Balbino::Vector3& newSize )
+void Balbino::BoxCollider2D::SetSize( const Balbino::Vector3& newSize )
 {
 	m_Size = newSize;
-	m_Collider.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
+	auto fixture = m_pBody->GetFixtureList();
+	auto colider = fixture->GetShape();
+	( (b2PolygonShape*) colider )->SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
+}
+
+void Balbino::BoxCollider2D::SetTrigger( bool isTrigger )
+{
+	auto fixture = m_pBody->GetFixtureList();
+	fixture->SetSensor( isTrigger );
 }
 
 //https://web.archive.org/web/20141121091114/http://www.cs.utah.edu/~awilliam/box/box.pdf
 //https://noonat.github.io/intersect/
 // Optimizedmethod
-bool Balbino::BoxCollider::RayCast( const Balbino::Ray& ray, Balbino::RaycastHit& hitInfo, float size ) const
+bool Balbino::BoxCollider2D::RayCast( const Balbino::Ray& ray, Balbino::RaycastHit& hitInfo, float size ) const
 {
 	b2Transform transform;
 	transform.SetIdentity();
@@ -80,7 +135,9 @@ bool Balbino::BoxCollider::RayCast( const Balbino::Ray& ray, Balbino::RaycastHit
 	int32 childIndex = 0;
 
 	b2RayCastOutput output;
-	bool hit = m_Collider.RayCast( &output, input, transform, childIndex );
+	auto fixture = m_pBody->GetFixtureList();
+	auto colider = fixture->GetShape();
+	bool hit = colider->RayCast( &output, input, transform, childIndex );
 
 	if( hit )
 	{

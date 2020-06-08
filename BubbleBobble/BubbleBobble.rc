@@ -64,6 +64,12 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "Balbino.ico"
 
+IDI_ICON2               ICON                    "NoDrop.cur"
+
+IDI_ICON3               ICON                    "Cursor.cur"
+
+IDI_ICON4               ICON                    "WP7BusyBG.cur"
+
 #endif    // English (United Kingdom) resources
 /////////////////////////////////////////////////////////////////////////////
 

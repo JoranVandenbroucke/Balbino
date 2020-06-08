@@ -194,7 +194,7 @@ Balbino::Font* Balbino::ResourceManager::ILoadFont( const std::string& file, uns
 	{
 		return m_Fonts[std::make_pair( file, size )];
 	}
-	return m_Fonts[std::make_pair( file, size )] = new Font{ m_DataPath + file, size };
+	return m_Fonts[std::make_pair( file, size )] = DBG_NEW Font{ m_DataPath + file, size };
 }
 
 Mix_Chunk* Balbino::ResourceManager::ILoadAudio( const std::string& file )

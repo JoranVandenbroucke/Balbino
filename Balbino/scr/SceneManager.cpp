@@ -34,7 +34,7 @@ Balbino::GameObject* Balbino::SceneManager::AddGameObjectToScene( GameObject* ga
 
 	if( gameObject == nullptr )
 	{
-		gameObject = new GameObject;
+		gameObject = DBG_NEW GameObject;
 	}
 	Get().m_pCurrentScenes->Add( gameObject );
 	return gameObject;
@@ -102,7 +102,7 @@ void Balbino::SceneManager::DrawEngine()
 
 Balbino::Scene& Balbino::SceneManager::CreateScene( const std::string& name )
 {
-	Scene* scene = new Scene{ name };
+	Scene* scene = DBG_NEW Scene{ name };
 
 	m_pScenes.push_back( scene );
 	return *scene;

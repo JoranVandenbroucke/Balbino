@@ -6,6 +6,7 @@
 #include "Editor/AssetBrouser.h"
 #include "Editor/SpriteEditor.h"
 #include "Application.h"
+#include "Time.h"
 
 #include <windows.h>
 #include <commdlg.h>
@@ -22,99 +23,15 @@ Scene::Scene( const std::string& name )
 	: m_Name{ name }
 	, m_Saved{}
 {
-	GameObject* gameObject = new GameObject{};
+	GameObject* gameObject = DBG_NEW GameObject{};
 
 	gameObject->AddComponent<Camera>( 640.f / 480.f, 640.f );
-	gameObject->Create();
+	//gameObject->Create();
 	gameObject->SetName( "Maint Camera" );
 	Add( gameObject );
 }
-#else
-Scene::Scene( const std::string& name )
-	: m_Name{ name }
-{
-}
-#endif // _DEBUG
 
-Scene::~Scene()
-{
-	for( GameObject* pGameObject : m_pGameObjects)
-	{
-		delete pGameObject;
-	}
-	m_pGameObjects.clear();
-}
-
-#ifdef _DEBUG
-void Balbino::Scene::Add( GameObject* pObject, int pos )
-{
-
-	if( pos != -1 )
-	{
-		std::list<GameObject*>::iterator it{ m_pGameObjects.begin() };
-
-		for( int i = 0; i < pos; i++ ) ++it;
-
-		m_pGameObjects.insert( it, pObject );
-	}
-	else
-	{
-		m_pGameObjects.push_back( pObject );
-	}
-}
-#else
-void Balbino::Scene::Add( const GameObject*& object, int pos )
-
-{
-	std::list<GameObject>* ::iterator it{ m_GameObjects.begin() };
-
-	if( pos != -1 )
-		for( int i = 0; i < pos; i++ ) ++it, ++it2;
-
-	m_GameObjects.insert( it, object );
-}
-#endif // _DEBUG
-
-
-void Balbino::Scene::FixedUpdate()
-{
-	for( auto& object : m_pGameObjects )
-		object->LateUpdate();
-}
-
-void Scene::Update()
-{
-	for( auto& object : m_pGameObjects )
-		object->Update();
-}
-void Balbino::Scene::LateUpdate()
-{
-	for( auto& object : m_pGameObjects )
-		object->LateUpdate();
-
-	m_pGameObjects.sort( []( const GameObject* obj, const GameObject* obj2 )
-	{
-		return obj->IsDestroy() < obj2->IsDestroy();
-	} );
-
-	std::list<GameObject*>::reverse_iterator it{ m_pGameObjects.rbegin() };
-
-	for( it; it != m_pGameObjects.rend(); ++it )
-	{
-		if( !( *it )->IsDestroy() )
-		{
-			break;
-		}
-		else
-		{
-			delete* it;
-		}
-	}
-	m_pGameObjects.erase( it.base(), m_pGameObjects.end() );
-}
-#ifdef _DEBUG
-
-void Scene::Draw() const
+void Scene::Draw()
 {
 	//start ImGui
 	ImGui_ImplOpenGL3_NewFrame();
@@ -165,9 +82,13 @@ void Scene::Draw() const
 			ImVec2{ ImGui::GetCursorScreenPos() },
 			ImVec2{ ImGui::GetCursorScreenPos().x + 640, ImGui::GetCursorScreenPos().y + 480 } );
 	}
+	BTime::Get().SetTS( 1.f );
 	ImGui::EndChild();
+	if( !ImGui::IsWindowHovered() )
+	{
+		BTime::Get().SetTS( 0.f );
+	}
 	ImGui::End();
-
 	// Rendering Game
 	ImGui::Render();
 
@@ -204,7 +125,7 @@ void Balbino::Scene::DrawEditor()
 			if( ImGui::MenuItem( "New" ) )
 			{
 				m_Saved = false;
-				m_Name = "New Scene";
+				m_Name = "DBG_NEW Scene";
 				m_pGameObjects.clear();
 			}
 			if( ImGui::MenuItem( "Open" ) )
@@ -239,7 +160,7 @@ void Balbino::Scene::DrawEditor()
 					BinaryReadWrite::Read( saveFile, size );
 					for( int i = 0; i < size; i++ )
 					{
-						GameObject* gameObject = new GameObject{};
+						GameObject* gameObject = DBG_NEW GameObject{};
 
 						gameObject->Load( saveFile );
 						gameObject->Create();
@@ -297,7 +218,7 @@ void Balbino::Scene::DrawEditor()
 			ImGui::Text( "Add GameObject" );
 			if( ImGui::MenuItem( "Empty" ) )
 			{
-				GameObject* newObject{ new GameObject{} };
+				GameObject* newObject{ DBG_NEW GameObject{} };
 
 				newObject->Create();
 				newObject->SetName( "Empty" );
@@ -305,7 +226,7 @@ void Balbino::Scene::DrawEditor()
 			}
 			if( ImGui::MenuItem( "Image" ) )
 			{
-				GameObject* newObject{ new GameObject{} };
+				GameObject* newObject{ DBG_NEW GameObject{} };
 
 				newObject->AddComponent<Sprite>();
 				newObject->Create();
@@ -314,7 +235,7 @@ void Balbino::Scene::DrawEditor()
 			}
 			if( ImGui::MenuItem( "Text" ) )
 			{
-				GameObject* newObject{ new GameObject{} };
+				GameObject* newObject{ DBG_NEW GameObject{} };
 
 				newObject->AddComponent<Text>();
 				newObject->Create();
@@ -335,7 +256,7 @@ void Balbino::Scene::DrawEditor()
 	ImGui::Begin( "Hierarchy" );
 	if( ImGui::Button( "+" ) )
 	{
-		GameObject* newObject{ new GameObject{} };
+		GameObject* newObject{ DBG_NEW GameObject{} };
 
 		newObject->Create();
 		newObject->SetName( "Game Object" );
@@ -494,48 +415,45 @@ void Balbino::Scene::DrawEditor()
 		}
 		if( ImGui::BeginPopup( "Select Components" ) )
 		{
-			for( int i = 0; i < 9; i++ )
+			for( int i = 0; i < 11; i++ )
 			{
 				if( ImGui::Selectable( m_pComponentsString[i] ) )
 				{
 					switch( ComponentList( i ) )
 					{
 					case Balbino::ComponentList::Audio:
-						( *it )->AddComponent<ConsoleAudio>();
-						( *it )->GetComponent<ConsoleAudio>()->Create();
+						( *it )->AddComponent<ConsoleAudio>()->Create();
 						break;
 					case Balbino::ComponentList::LoggedAudio:
-						( *it )->AddComponent<LoggedAudio>();
-						( *it )->GetComponent<LoggedAudio>()->Create();
+						( *it )->AddComponent<LoggedAudio>()->Create();
 						break;
 					case Balbino::ComponentList::Avatar:
-						( *it )->AddComponent<Avatar>();
-						( *it )->GetComponent<Avatar>()->Create();
+						( *it )->AddComponent<Avatar>()->Create();
 						break;
 					case Balbino::ComponentList::Camera:
-						( *it )->AddComponent<Camera>( 640.f / 480.f, 640.f );
-						( *it )->GetComponent<Camera>()->Create();
+						( *it )->AddComponent<Camera>( 640.f / 480.f, 640.f )->Create();
 						break;
 					case Balbino::ComponentList::FPSScript:
-						( *it )->AddComponent<FPSScript>();
-						( *it )->GetComponent<FPSScript>()->Create();
+						( *it )->AddComponent<FPSScript>()->Create();
 						break;
 					case Balbino::ComponentList::Text:
-						( *it )->AddComponent<Text>();
-						( *it )->GetComponent<Text>()->Create();
+						( *it )->AddComponent<Text>()->Create();
 						break;
 					case Balbino::ComponentList::Sprite:
-						( *it )->AddComponent<Sprite>();
-						( *it )->GetComponent<Sprite>()->Create();
+						( *it )->AddComponent<Sprite>()->Create();
 						break;
 					case Balbino::ComponentList::Transform:
-						( *it )->AddComponent<Transform>();
-						( *it )->GetComponent<Transform>()->Create();
+						( *it )->AddComponent<Transform>()->Create();
 						break;
 					case Balbino::ComponentList::LevelLoader:
-						( *it )->AddComponent<LevelLoader>();
-						( *it )->GetComponent<LevelLoader>()->Create();
+						( *it )->AddComponent<LevelLoader>()->Create();
 
+					case Balbino::ComponentList::BoxCollider2D:
+						( *it )->AddComponent<BoxCollider2D>()->Create();
+						break;
+					case Balbino::ComponentList::Rigidbody2D:
+						( *it )->AddComponent<Rigidbody2D>()->Create();
+						break;
 					default:
 						break;
 					}
@@ -546,8 +464,111 @@ void Balbino::Scene::DrawEditor()
 		ImGui::End();
 	}
 }
+#else
+Scene::Scene( const std::string& name )
+	: m_Name{ name }
+{
+}
+void Scene::Draw() const
+{
+
+	auto allCameras = Camera::GetAllCameras();
+	if( allCameras.size() != 0 )
+	{
+		for( auto& camera : allCameras )
+		{
+			auto currentCam = camera;
+			if( currentCam )
+			{
+				Color clearColor = currentCam->GetClearColor();
+				glBindFramebuffer( GL_FRAMEBUFFER, currentCam->GetCameraIndex() );
+				glViewport( 0, 0, (int) 640, (int) 480 );
+				glClearColor( clearColor.r, clearColor.g, clearColor.b, 1.f );
+				glClear( GL_COLOR_BUFFER_BIT );
+				glEnable( GL_DEPTH_TEST );
+				Shader::SetCamera( *currentCam );
+				for( const auto& object : m_pGameObjects )
+					object->Draw();
+
+			}
+		}
+	}
+
+	auto mainCamera = Camera::GetMainCamera();
+	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
+	glViewport( 0, 0, (int) 1920, (int) 1080 );
+	glClearColor( 0.f, 0.f, 0.f, 1.f );
+	glClear( GL_COLOR_BUFFER_BIT );
+
+	SDL_GL_SwapWindow( Application::GetWindow() );
+}
 #endif // _DEBUG
 
+Scene::~Scene()
+{
+	for( GameObject* pGameObject : m_pGameObjects )
+	{
+		delete pGameObject;
+	}
+	m_pGameObjects.clear();
+}
+
+void Balbino::Scene::Add( GameObject* pObject, int pos )
+{
+	if( pos != -1 )
+	{
+		std::list<GameObject*>::iterator it{ m_pGameObjects.begin() };
+
+		for( int i = 0; i < pos; i++ ) ++it;
+
+		m_pGameObjects.insert( it, pObject );
+	}
+	else
+	{
+		m_pGameObjects.push_back( pObject );
+	}
+}
+
+void Balbino::Scene::FixedUpdate()
+{
+	if( BTime::TimeScale() )
+		for( auto& object : m_pGameObjects )
+		object->FixedUpdate();
+}
+
+void Scene::Update()
+{
+	if( BTime::TimeScale() )
+		for( auto& object : m_pGameObjects )
+			object->Update();
+}
+
+void Balbino::Scene::LateUpdate()
+{
+	if( BTime::TimeScale() )
+		for( auto& object : m_pGameObjects )
+		object->LateUpdate();
+
+	m_pGameObjects.sort( []( const GameObject* obj, const GameObject* obj2 )
+	{
+		return obj->IsDestroy() < obj2->IsDestroy();
+	} );
+
+	std::list<GameObject*>::reverse_iterator it{ m_pGameObjects.rbegin() };
+
+	for( it; it != m_pGameObjects.rend(); ++it )
+	{
+		if( !( *it )->IsDestroy() )
+		{
+			break;
+		}
+		else
+		{
+			delete* it;
+		}
+	}
+	m_pGameObjects.erase( it.base(), m_pGameObjects.end() );
+}
 
 void Balbino::Scene::Load()
 {

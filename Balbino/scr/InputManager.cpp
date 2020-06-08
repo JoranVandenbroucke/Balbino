@@ -44,6 +44,7 @@ Balbino::Button::Button()
 
 Balbino::Button::~Button()
 {
+	delete m_pCommand;
 	m_ButtonMap.clear();
 }
 
@@ -115,21 +116,21 @@ void Balbino::InputManager::Fini()
 
 void Balbino::InputManager::IInit()
 {
-	m_pButtons.emplace( std::pair{ "Fire", new Button{} } );
+	m_pButtons.emplace( std::pair{ "Fire", DBG_NEW Button{} } );
 	m_pButtons["Fire"]->SetName( "C_A" );
-	m_pButtons["Fire"]->SetCommand( new Fire{} );
+	m_pButtons["Fire"]->SetCommand( DBG_NEW Fire{} );
 
-	m_pButtons.emplace( std::pair{ "Duck", new Button{} } );
+	m_pButtons.emplace( std::pair{ "Duck", DBG_NEW Button{} } );
 	m_pButtons["Duck"]->SetName( "C_B" );
-	m_pButtons["Duck"]->SetCommand( new Duck{} );
+	m_pButtons["Duck"]->SetCommand( DBG_NEW Duck{} );
 
-	m_pButtons.emplace( std::pair{ "Jump", new Button{} } );
+	m_pButtons.emplace( std::pair{ "Jump", DBG_NEW Button{} } );
 	m_pButtons["Jump"]->SetName( "C_X" );
-	m_pButtons["Jump"]->SetCommand( new Jump{} );
+	m_pButtons["Jump"]->SetCommand( DBG_NEW Jump{} );
 
-	m_pButtons.emplace( std::pair{ "Fart", new Button{} } );
+	m_pButtons.emplace( std::pair{ "Fart", DBG_NEW Button{} } );
 	m_pButtons["Fart"]->SetName( "C_Y" );
-	m_pButtons["Fart"]->SetCommand( new Fart{} );
+	m_pButtons["Fart"]->SetCommand( DBG_NEW Fart{} );
 
 }
 

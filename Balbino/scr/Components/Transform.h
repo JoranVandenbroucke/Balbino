@@ -46,7 +46,6 @@ namespace Balbino
 
 #ifdef _DEBUG
 		virtual void DrawInpector() override;
-		virtual void DrawHierarchy();
 #endif // _DEBUG
 
 	private:

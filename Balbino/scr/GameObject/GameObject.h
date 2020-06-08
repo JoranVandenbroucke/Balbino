@@ -68,7 +68,7 @@ namespace Balbino
 	template<class T, class... Args>
 	inline T* GameObject::AddComponent( Args&&... args )
 	{
-		T* comp{ new T{ this, std::forward<Args>( args )... } };
+		T* comp{ DBG_NEW T{ this, std::forward<Args>( args )... } };
 		m_Components.push_back( comp );
 		return comp;
 	}

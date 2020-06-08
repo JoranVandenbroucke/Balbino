@@ -2,9 +2,9 @@
 #include "Debug.h"
 
 #ifdef _DEBUG
-#include "../Renderer/Renderer.h"
-#include "../ResourceManager.h"
-#include "../Components/Text.h" 
+#include "..\Renderer/Renderer.h"
+#include "..\ResourceManager.h"
+#include "..\Components/Text.h" 
 
 #include <cassert>
 #include <SDL.h>
@@ -17,8 +17,9 @@ void Balbino::Debug::Assert( bool argument )
 void Balbino::Debug::DrawLine( const Vector3& start, const Vector3& end, const Color& color )
 {
 #ifdef _DEBUG
-	SDL_SetRenderDrawColor( Renderer::Get().GetSDLRenderer(), color.r, color.g, color.b, color.a );
-	SDL_RenderDrawLine( Renderer::Get().GetSDLRenderer(), int( start.x ), int( start.y ), int( end.x ), int( end.y ) );
+	(void) start;
+	(void) end;
+	(void) color;
 #endif //_DEBUG
 }
 

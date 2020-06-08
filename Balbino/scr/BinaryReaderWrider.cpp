@@ -50,7 +50,7 @@ std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, std::string& v
 	int size{};
 	Read( file, size );
 	if ( size == 0 )return file;
-	char* pBuffer{ new char[size] };
+	char* pBuffer{ DBG_NEW char[size] };
 	file.read( pBuffer, size );
 	value.append( pBuffer, size );
 	delete[] pBuffer;

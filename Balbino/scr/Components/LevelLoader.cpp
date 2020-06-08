@@ -5,6 +5,7 @@
 #include "../BinaryReaderWrider.h"
 #include "../GameObject/GameObject.h"
 #include "../SceneManager.h"
+#include "BoxCollider2D.h"
 
 Balbino::LevelLoader::LevelLoader( const GameObject* const origine )
 
@@ -60,6 +61,7 @@ void Balbino::LevelLoader::SetLevelNr( int levelNr )
 			{
 				GameObject* newTile = SceneManager::AddGameObjectToScene();
 				auto image = newTile->AddComponent<Sprite>();
+				newTile->AddComponent<BoxCollider2D>();
 				newTile->Create();
 				newTile->SetName( ( std::string( "Tile " ) + std::to_string( i + ( j * 8 ) ) ).c_str() );
 				image->SetTexture( "Sprites/blocks.png" );

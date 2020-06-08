@@ -77,6 +77,16 @@ const std::vector<Balbino::Vector2>& Balbino::Sprite::uv() const
 	return m_UV;
 }
 
+const float Balbino::Sprite::GetWidth() const
+{
+	return m_Vert[2].u - m_Vert[0].u;
+}
+
+const float Balbino::Sprite::GetHeight() const
+{
+	return m_Vert[1	].v - m_Vert[0].v;
+}
+
 void Balbino::Sprite::Save( std::ostream& file )
 {
 	BinaryReadWrite::Write( file, m_SpriteIndex );

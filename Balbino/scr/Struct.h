@@ -161,11 +161,13 @@ namespace Balbino
 		Audio,
 		LoggedAudio,
 		Avatar,
+		BoxCollider2D,
 		Camera,
 		FPSScript,
 		LevelLoader,
-		Text,
+		Rigidbody2D,
 		Sprite,
+		Text,
 		Transform
 	};
 }

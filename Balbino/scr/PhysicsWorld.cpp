@@ -1,9 +1,10 @@
 #include "BalbinoPCH.h"
 #include "PhysicsWorld.h"
 #include "Time.h"
+#include "SceneManager.h"
 
 Balbino::PhysicsWorld::PhysicsWorld()
-	:m_World{ { 0.f, 9.80665f } }
+	:m_World{ { 0.f, -9.80665f } }
 {
 	m_World.SetAllowSleeping( true );
 	m_World.SetWarmStarting( true );
@@ -18,10 +19,14 @@ void Balbino::PhysicsWorld::Initialize()
 
 void Balbino::PhysicsWorld::IUpdate()
 {
-	while( BTime::FixedTime() + BTime::FixedDeltaTime() > BTime::Time()  )
+	if( BTime::TimeScale() && BTime::FixedTime() + BTime::FixedDeltaTime() < BTime::Time() )
 	{
-		m_World.Step( BTime::FixedDeltaTime(), 8, 3 );
-		BTime::Get().UpdateFT();
+		SceneManager::Get().FixedUpdate();
+		while( BTime::FixedTime() + BTime::FixedDeltaTime() < BTime::Time() )
+		{
+			m_World.Step( BTime::FixedDeltaTime(), 8, 3 );
+			BTime::Get().UpdateFT();
+		}
 	}
 }
 
@@ -34,7 +39,7 @@ void Balbino::PhysicsWorld::Update()
 	Get().IUpdate();
 }
 
-b2Body* Balbino::PhysicsWorld::AddBoddy( const b2BodyDef* body )
+b2Body* Balbino::PhysicsWorld::AddBody( const b2BodyDef* body )
 {
 	return Get().m_World.CreateBody( body );
 }
@@ -42,4 +47,9 @@ b2Body* Balbino::PhysicsWorld::AddBoddy( const b2BodyDef* body )
 b2World& Balbino::PhysicsWorld::GetWorld()
 {
 	return Get().m_World;
+}
+
+void Balbino::PhysicsWorld::RemoveBody( b2Body* body )
+{
+	Get().m_World.DestroyBody( body );
 }

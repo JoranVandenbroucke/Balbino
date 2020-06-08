@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
-#include <box2d/box2d.h>
+#include "Rigidbody2D.h"
+#include <box2d.h>
 
 namespace Balbino
 {
@@ -29,7 +30,6 @@ namespace Balbino
 
 		bool SweepTest( const Balbino::Vector3& direction, Balbino::RaycastHit& hitInfo, float maxDistance = std::numeric_limits<float>::infinity() );
 		Balbino::RaycastHit& SweepTestAll( const Balbino::Vector3& direction, int& hitInfoSize, float maxDistance = std::numeric_limits<float>::infinity() );
-
 #ifdef _DEBUG
 		virtual void DrawInpector();
 #endif // _DEBUG
@@ -41,12 +41,15 @@ namespace Balbino
 		float m_Drag;
 		float m_Mass;
 		float m_MaxAngularVelocity;
+
+		const int m_ppm = 8;
+
+		Balbino::Vector3 m_OldTransformPosition;
 		Balbino::Vector3 m_AngularVelocity;
 		Balbino::Vector3 m_CenterOfMass;
 		Balbino::Vector3 m_Velocity;
 		Balbino::RaycastHit m_Hits[128];
-
-		b2BodyDef m_BodyDef;
 		b2Body* m_pBody;
+
 	};
 }

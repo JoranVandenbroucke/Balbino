@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <vld.h>
+
 namespace BubbleBobble
 {
 	class BubbleBobbleGame: public Balbino::Application

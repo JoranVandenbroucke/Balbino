@@ -23,7 +23,8 @@ namespace Balbino
 		int GetSpriteIndex()const{ return m_SpriteIndex; }
 		const Vector2& GetPivot()const;
 		const std::vector<Vector2>& uv()const;
-
+		const float GetWidth()const;
+		const float GetHeight()const;
 #ifdef _DEBUG
 		virtual void DrawInpector() override;
 #endif // _DEBUG

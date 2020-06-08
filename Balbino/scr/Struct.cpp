@@ -122,11 +122,12 @@ bool Balbino::operator!=( Vector3 lhs, const Vector3& rhs )
 
 bool Balbino::operator==( Vector3 lhs, const Vector3& rhs )
 {
-	if( ( lhs.x + 0.001f > rhs.x && lhs.x - 0.001f < rhs.x ) && ( lhs.y + 0.001f > rhs.y && lhs.y - 0.001f < rhs.y ) )
-	{
-		true;
-	}
-	return false;
+	//if( ( lhs.x + 0.001f > rhs.x && lhs.x - 0.001f < rhs.x ) && ( lhs.y + 0.001f > rhs.y && lhs.y - 0.001f < rhs.y ) )
+	//{
+	//	true;
+	//}
+	//return false;
+	return ( lhs.x + 0.001f > rhs.x && lhs.x - 0.001f < rhs.x ) && ( lhs.y + 0.001f > rhs.y && lhs.y - 0.001f < rhs.y );
 }
 
 Balbino::Vector4::Vector4( float x, float y, float z, float w )

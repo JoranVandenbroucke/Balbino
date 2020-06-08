@@ -18,7 +18,6 @@ namespace Balbino
 		void FixedUpdate();
 		void Update();
 		void LateUpdate();
-		void Draw() const;
 		void Load();
 		void Unload();
 
@@ -34,24 +33,33 @@ namespace Balbino
 
 		std::string m_Name;
 		static unsigned int m_IdCounter;
-		const char* const m_pComponentsString[9]
+		const char* const m_pComponentsString[11]
 		{
 			"Audio",
 			"LoggedAudio",
 			"Avatar",
+			"BoxCollider2D",
 			"Camera",
 			"FPSScript",
 			"LevelLoader",
-			"Text",
+			"RigidBody2D",
 			"Sprite",
+			"Text",
 			"Transform"
 		};
+
 #ifdef _DEBUG
 	public:
 		void DrawEditor();
+		void Draw();
 	private:
 		bool m_Saved;
+		bool m_CanPlay;
 		std::string m_SavePosition;
+#else
+	public:
+		void Draw()const;
+
 #endif // _DEBUG
 	};
 }

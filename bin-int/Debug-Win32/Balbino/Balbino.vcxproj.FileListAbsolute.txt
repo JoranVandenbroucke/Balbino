@@ -1,0 +1,2 @@
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\bin\Debug-Win32\Balbino\Balbino.pdb
+C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\bin-int\Debug-Win32\Balbino\Balbino.pdb

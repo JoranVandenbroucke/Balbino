@@ -56,10 +56,10 @@ void Balbino::Avatar::Load( std::istream& file )
 }
 
 #ifdef _DEBUG
-#include "../imgui-1.75/imgui.h"
 void Balbino::Avatar::DrawInpector()
 {
 	ImGui::BeginChild( "Avatar Component", ImVec2{ -1, 128 }, true );
+	ImGui::Text( "Avatar Component" );
 	ImGui::EndChild();
 }
 #endif

@@ -1,6 +1,6 @@
 #pragma once
 #include "Singleton.h"
-#include <box2d/box2d.h>
+#include <box2d.h>
 namespace Balbino
 {
 	class PhysicsWorld : public Balbino::Singleton<PhysicsWorld>
@@ -9,8 +9,9 @@ namespace Balbino
 		~PhysicsWorld();
 
 		static void Update();
-		static b2Body* AddBoddy( const b2BodyDef* body );
+		static b2Body* AddBody( const b2BodyDef* body );
 		static b2World& GetWorld();
+		static void RemoveBody( b2Body* body );
 	private:
 		PhysicsWorld();
 		friend class Singleton<PhysicsWorld>;

@@ -13,7 +13,7 @@ Balbino::Camera::Camera( const GameObject* const origine, float aspectRatio, flo
 
 	:Component( origine )
 	, m_ProjectionMatrix{ glm::ortho( -w / 2.f, w / 2.f, -w / aspectRatio / 2.f, w / aspectRatio / 2.f, -1.f, 1.f ) }
-	, m_ClearColor{ 1, 0, 0, 0 }
+	, m_ClearColor{ 0, 0, 0, 1 }
 	, m_Depth{ -1 }
 	, m_ViewMatrix{ glm::mat4( 1.0 ) }
 	, m_IsMain{}
