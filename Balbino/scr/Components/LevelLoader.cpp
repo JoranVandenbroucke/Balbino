@@ -61,7 +61,7 @@ void Balbino::LevelLoader::SetLevelNr( int levelNr )
 			{
 				GameObject* newTile = SceneManager::AddGameObjectToScene();
 				auto image = newTile->AddComponent<Sprite>();
-				newTile->AddComponent<BoxCollider2D>();
+				auto collider = newTile->AddComponent<BoxCollider2D>();
 				newTile->Create();
 				newTile->SetName( ( std::string( "Tile " ) + std::to_string( i + ( j * 8 ) ) ).c_str() );
 				image->SetTexture( "Sprites/blocks.png" );
@@ -76,6 +76,7 @@ void Balbino::LevelLoader::SetLevelNr( int levelNr )
 				}
 				transform->SetPosition( x, y, 0 );
 				transform->SetParrent( m_pTransform );
+				collider->Reset();
 			}
 		}
 	}

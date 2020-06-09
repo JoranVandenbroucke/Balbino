@@ -533,20 +533,18 @@ void Balbino::Scene::FixedUpdate()
 {
 	if( BTime::TimeScale() )
 		for( auto& object : m_pGameObjects )
-		object->FixedUpdate();
+			object->FixedUpdate();
 }
 
 void Scene::Update()
 {
-	if( BTime::TimeScale() )
-		for( auto& object : m_pGameObjects )
-			object->Update();
+	for( auto& object : m_pGameObjects )
+		object->Update();
 }
 
 void Balbino::Scene::LateUpdate()
 {
-	if( BTime::TimeScale() )
-		for( auto& object : m_pGameObjects )
+	for( auto& object : m_pGameObjects )
 		object->LateUpdate();
 
 	m_pGameObjects.sort( []( const GameObject* obj, const GameObject* obj2 )

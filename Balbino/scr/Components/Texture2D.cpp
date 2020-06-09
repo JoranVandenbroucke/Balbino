@@ -15,7 +15,7 @@ Balbino::Texture2D::Texture2D( const GameObject* const origine )
 	, m_File{ "" }
 	, m_VertexBuff{ (void*) m_Vert, 4 }
 	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
-	, m_Shader{ "Shaders/Basic.vs", "Shaders/Basic.fs" }
+	, m_Shader{ "Shaders/Basic.vert", "Shaders/Basic.frag" }
 	, m_Color{ 255,255,255 }
 	, m_ColorUniformLocation{}
 	, m_TextureUniformLocation{}
@@ -45,7 +45,7 @@ Balbino::Texture2D::Texture2D( const GameObject* origine )
 	, m_File{ "" }
 	, m_VertexBuff{ (void*) m_Vert, 4 }
 	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
-	, m_Shader{ "Shaders/Basic.vs", "Shaders/Basic.fs" }
+	, m_Shader{ "Shaders/Basic.vert", "Shaders/Basic.frag" }
 	, m_Color{ 255,255,255 }
 {
 	m_VertexBuff.Unbind();

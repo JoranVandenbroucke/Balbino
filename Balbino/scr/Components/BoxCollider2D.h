@@ -18,7 +18,9 @@ namespace Balbino
 		BoxCollider2D& operator=( BoxCollider2D&& ) = delete;
 
 		virtual void Create() override;
+		virtual void FixedUpdate() override;
 		virtual void Update() override;
+		virtual void LateUpdate() override;
 		virtual void Draw() const override;
 
 		virtual void Save( std::ostream & file )override;
@@ -32,10 +34,15 @@ namespace Balbino
 		void SetCenter(const Balbino::Vector3& newCenter);
 		void SetSize( const Balbino::Vector3& newSize );
 		void SetTrigger( bool isTrigger );
+		void Reset();
 		virtual bool RayCast( const Balbino::Ray& ray, Balbino::RaycastHit& hitInfo, float size ) const override;
 	private:
+		const int m_ppm = 8;
 		Balbino::Vector3 m_Center;
 		Balbino::Vector3 m_Size;
+		Balbino::Vector3 m_OldTransformPosition;
+		Balbino::Vector3 m_OldTransformRotation;
+		Balbino::Vector3 m_OldTransformScale;
 		b2BodyDef m_BodyDef;
 		b2Fixture* m_pFixture;
 		b2PolygonShape m_Colliser;

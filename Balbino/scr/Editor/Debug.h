@@ -8,6 +8,8 @@
 namespace Balbino
 {
 	class Text;
+	struct VertexBuffer;
+	struct Shader;
 	class Debug : public Singleton<Debug>
 	{
 	public:
@@ -22,6 +24,11 @@ namespace Balbino
 		void Draw() const;
 		virtual ~Debug();
 	private:
+		Debug();
+		friend class Singleton<Debug>;
+
+		static VertexBuffer* m_pVertexBuff;
+		static Shader* m_pShader;
 		std::deque<std::pair<std::string, Color>> m_Log;
 
 		void ILog( const std::string& log );																				//Logs a message to the Unity Console.

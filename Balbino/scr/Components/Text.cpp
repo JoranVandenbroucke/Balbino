@@ -18,7 +18,7 @@ Balbino::Text::Text( const GameObject* const origin )
 	, m_NeedsUpdate{ true }
 	, m_VertexBuff{ (void*) m_Vert, 4 }
 	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
-	, m_Shader{ "Shaders/Font.vs", "Shaders/Font.fs" }
+	, m_Shader{ "Shaders/Font.vert", "Shaders/Font.frag" }
 	, m_FontPath{ "Lingua.otf" }
 	, m_FontSize{ 12 }
 {
@@ -68,9 +68,9 @@ void Balbino::Text::Draw() const
 	glActiveTexture( GL_TEXTURE0 );
 	glBindTexture( GL_TEXTURE_2D, m_Texture );
 	glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-	m_IndexBuff.Unbind();
-	m_VertexBuff.Unbind();
-	m_Shader.Unbind();
+	//m_IndexBuff.Unbind();
+	//m_VertexBuff.Unbind();
+	//m_Shader.Unbind();
 }
 
 void Balbino::Text::Save( std::ostream& file )

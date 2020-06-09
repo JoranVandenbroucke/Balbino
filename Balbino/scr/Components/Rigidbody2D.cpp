@@ -52,14 +52,14 @@ void Balbino::Rigidbody2D::Create()
 
 void Balbino::Rigidbody2D::FixedUpdate()
 {
-	auto positoin = m_pTransform->GetPosition();
-	auto rotation = m_pTransform->GetRotation();
-	if( m_OldTransformPosition != positoin )
-	{
-		m_pBody->SetTransform( { positoin.x / m_ppm, positoin.y / m_ppm }, rotation.z );
-		m_pBody->SetLinearVelocity( { 0, 0 } );
-		m_OldTransformPosition = positoin;
-	}
+	//auto positoin = m_pTransform->GetPosition();
+	//auto rotation = m_pTransform->GetRotation();
+	//if( m_OldTransformPosition != positoin )
+	//{
+	//	m_pBody->SetTransform( { positoin.x / m_ppm, positoin.y / m_ppm }, rotation.z );
+	//	m_pBody->SetLinearVelocity( { 0, 0 } );
+	//	m_OldTransformPosition = positoin;
+	//}
 }
 
 void Balbino::Rigidbody2D::Update()
@@ -68,17 +68,7 @@ void Balbino::Rigidbody2D::Update()
 
 void Balbino::Rigidbody2D::LateUpdate()
 {
-	auto positoin = m_pTransform->GetPosition();
-	auto rotation = m_pTransform->GetRotation();
-	std::cout << m_pBody->GetLinearVelocity().x << '\t' << m_pBody->GetLinearVelocity().y << '\t' << std::boolalpha << m_pBody->IsAwake()<< '\n';
-	if( m_OldTransformPosition == positoin )
-	{
-		auto bodyPos = m_pBody->GetPosition();
-		float bodyAngle = m_pBody->GetAngle();
-		m_pTransform->SetPosition( bodyPos.x * m_ppm, bodyPos.y * m_ppm, positoin.z );
-		m_pTransform->SetRotation( rotation.x, rotation.y, bodyAngle );
-		m_OldTransformPosition = m_pTransform->GetPosition();
-	}
+
 }
 
 void Balbino::Rigidbody2D::Draw() const

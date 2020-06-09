@@ -79,12 +79,12 @@ const std::vector<Balbino::Vector2>& Balbino::Sprite::uv() const
 
 const float Balbino::Sprite::GetWidth() const
 {
-	return m_Vert[2].u - m_Vert[0].u;
+	return m_Vert[2].x - m_Vert[0].x;
 }
 
 const float Balbino::Sprite::GetHeight() const
 {
-	return m_Vert[1	].v - m_Vert[0].v;
+	return m_Vert[1].y - m_Vert[0].y;
 }
 
 void Balbino::Sprite::Save( std::ostream& file )

@@ -228,10 +228,18 @@ move $(OutDir)BubbleBobble.exe $(OutDir)System\BubbleBobble.exe</Command>
   <ItemGroup>
     <None Include="Cursor.cur" />
     <None Include="NoDrop.cur" />
+    <None Include="Shaders\Basic.frag" />
     <None Include="Shaders\Basic.fs" />
+    <None Include="Shaders\Basic.vert" />
     <None Include="Shaders\Basic.vs" />
+    <None Include="Shaders\Font.frag" />
     <None Include="Shaders\Font.fs" />
+    <None Include="Shaders\Font.vert" />
     <None Include="Shaders\Font.vs" />
+    <None Include="Shaders\Line.frag" />
+    <None Include="Shaders\Line.fs" />
+    <None Include="Shaders\Line.vert" />
+    <None Include="Shaders\Line.vs" />
     <None Include="WP7BusyBG.cur" />
   </ItemGroup>
   <ItemGroup>

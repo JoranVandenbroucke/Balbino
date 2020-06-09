@@ -24,31 +24,69 @@ Balbino::BoxCollider2D::BoxCollider2D( const Balbino::GameObject* const origine 
 void Balbino::BoxCollider2D::Create()
 {
 	this->Component::Create();
-	auto sprite = GetComponent<Sprite>();
-	if( sprite )
-		m_Size = { sprite->GetWidth(), sprite->GetHeight() };
-	m_Colliser.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
+	Reset();
+	//auto sprite = GetComponent<Sprite>();
+	//if( sprite )
+	//	m_Size = { sprite->GetWidth() / 8.f, sprite->GetHeight() / 8.f };
+	//m_Colliser.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
 
-	m_BodyDef.type = b2_kinematicBody;
-	m_pBody = PhysicsWorld::AddBody( &m_BodyDef );
+	//m_BodyDef.type = b2_staticBody;
+	//m_pBody = PhysicsWorld::AddBody( &m_BodyDef );
 
-	m_pFixture = m_pBody->CreateFixture( &m_Colliser, 0 );
-	m_pFixture->SetUserData( this );
+	//m_pFixture = m_pBody->CreateFixture( &m_Colliser, 0 );
+	//m_pFixture->SetUserData( this );
+}
+
+void Balbino::BoxCollider2D::FixedUpdate()
+{
+	auto positoin = m_pTransform->GetPosition();
+	auto rotation = m_pTransform->GetRotation();
+	auto scale = m_pTransform->GetScale();
+	if( m_OldTransformPosition != positoin || m_OldTransformRotation != rotation )
+	{
+		m_pBody->SetTransform( { positoin.x / m_ppm, positoin.y / m_ppm }, rotation.z );
+		m_pBody->SetLinearVelocity( { 0, 0 } );
+		m_OldTransformPosition = positoin;
+		m_OldTransformRotation = rotation;
+		m_pBody->SetAwake( true );
+	}
+	if( m_OldTransformScale != scale )
+	{
+		m_Colliser.SetAsBox( m_Size.x * scale.x, m_Size.y * scale.y, { m_Center.x, m_Center.y }, rotation.z );
+		m_OldTransformScale = scale;
+		m_pBody->SetAwake( true );
+	}
 }
 
 void Balbino::BoxCollider2D::Update()
 {
 }
 
+void Balbino::BoxCollider2D::LateUpdate()
+{
+	auto positoin = m_pTransform->GetPosition();
+	auto rotation = m_pTransform->GetRotation();
+	std::cout << m_pBody->GetLinearVelocity().x << '\t' << m_pBody->GetLinearVelocity().y << '\t' << std::boolalpha << m_pBody->IsAwake() << '\n';
+	if( m_OldTransformPosition == positoin )
+	{
+		auto bodyPos = m_pBody->GetPosition();
+		float bodyAngle = m_pBody->GetAngle();
+		m_pTransform->SetPosition( bodyPos.x * m_ppm, bodyPos.y * m_ppm, positoin.z );
+		m_pTransform->SetRotation( rotation.x, rotation.y, bodyAngle );
+		m_OldTransformPosition = m_pTransform->GetPosition();
+	}
+}
+
 void Balbino::BoxCollider2D::Draw() const
 {
 	auto positoin = m_pTransform->GetPosition();
+	auto scale = m_pTransform->GetScale();
 	const Vector3 point[4] =
 	{
-		{positoin.x + m_Center.x - m_Size.x / 2.f,positoin.y + m_Center.y - m_Size.y / 2.f, 0.f},
-		{positoin.x + m_Center.x - m_Size.x / 2.f,positoin.y + m_Center.y + m_Size.y / 2.f, 0.f},
-		{positoin.x + m_Center.x + m_Size.x / 2.f,positoin.y + m_Center.y + m_Size.y / 2.f, 0.f},
-		{positoin.x + m_Center.x + m_Size.x / 2.f,positoin.y + m_Center.y - m_Size.y / 2.f, 0.f}
+		{positoin.x + m_Center.x - m_Size.x * m_ppm * scale.x,-positoin.y + m_Center.y - m_Size.y * m_ppm * scale.y, 0.f},
+		{positoin.x + m_Center.x - m_Size.x * m_ppm * scale.x,-positoin.y + m_Center.y + m_Size.y * m_ppm * scale.y, 0.f},
+		{positoin.x + m_Center.x + m_Size.x * m_ppm * scale.x,-positoin.y + m_Center.y + m_Size.y * m_ppm * scale.y, 0.f},
+		{positoin.x + m_Center.x + m_Size.x * m_ppm * scale.x,-positoin.y + m_Center.y - m_Size.y * m_ppm * scale.y, 0.f}
 	};
 	Debug::DrawLine( point[0], point[1], Color{ 0xC7EA46 } );
 	Debug::DrawLine( point[1], point[2], Color{ 0xC7EA46 } );
@@ -118,6 +156,21 @@ void Balbino::BoxCollider2D::SetTrigger( bool isTrigger )
 {
 	auto fixture = m_pBody->GetFixtureList();
 	fixture->SetSensor( isTrigger );
+}
+
+void Balbino::BoxCollider2D::Reset()
+{
+	m_Size = { 1.f, 1.f, 1.f };
+	auto sprite = GetComponent<Sprite>();
+	if( sprite )
+		m_Size = { sprite->GetWidth() / ( m_ppm * 2.f), sprite->GetHeight() / ( m_ppm * 2.f ) };
+	m_Colliser.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
+
+	m_BodyDef.type = b2_staticBody;
+	m_pBody = PhysicsWorld::AddBody( &m_BodyDef );
+
+	m_pFixture = m_pBody->CreateFixture( &m_Colliser, 0 );
+	m_pFixture->SetUserData( this );
 }
 
 //https://web.archive.org/web/20141121091114/http://www.cs.utah.edu/~awilliam/box/box.pdf

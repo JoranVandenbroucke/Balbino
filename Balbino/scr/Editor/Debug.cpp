@@ -7,8 +7,14 @@
 #include "..\Components/Text.h" 
 
 #include <cassert>
-#include <SDL.h>
 
+Balbino::VertexBuffer* Balbino::Debug::m_pVertexBuff{ nullptr };
+Balbino::Shader* Balbino::Debug::m_pShader{ nullptr };
+Balbino::Debug::Debug()
+{
+	m_pVertexBuff = new VertexBuffer{ nullptr, 2 };
+	m_pShader = new Shader{ "Shaders/Line.vert", "Shaders/Line.frag" };
+}
 void Balbino::Debug::Assert( bool argument )
 {
 	assert( argument );
@@ -17,9 +23,20 @@ void Balbino::Debug::Assert( bool argument )
 void Balbino::Debug::DrawLine( const Vector3& start, const Vector3& end, const Color& color )
 {
 #ifdef _DEBUG
-	(void) start;
-	(void) end;
-	(void) color;
+	( void )color;
+	vertex vert[2]{};
+	vert[0].x = start.x;
+	vert[0].y = start.y;
+	vert[0].z = start.z;
+	vert[1].x = end.x;
+	vert[1].y = end.y;
+	vert[1].z = end.z;
+	m_pVertexBuff->Update( vert, 2 );
+	m_pShader->Bind();
+	glUniform4f( glGetUniformLocation( m_pShader->GetID(), "u_Color" ), color.r / 255.f, color.g / 255.f, color.b / 255.f, color.a / 255.f );
+	m_pVertexBuff->Bind();
+	glDrawArrays( GL_LINES, 0, 2 );
+	m_pVertexBuff->Unbind();
 #endif //_DEBUG
 }
 
