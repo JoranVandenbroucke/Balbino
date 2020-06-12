@@ -40,6 +40,8 @@ namespace Balbino
 
 		void Save( std::ostream& file );
 		void Load( std::istream& file );
+		void SetActive(bool active);
+		bool ActiveInHierarchy()const;
 
 		GameObject( const GameObject& ) = delete;
 		GameObject( GameObject&& ) = delete;
@@ -49,6 +51,7 @@ namespace Balbino
 		std::vector<Component*> m_Components;
 		std::string m_Name;
 		bool m_IsDestroyed;
+		bool m_IsActive;
 	};
 
 	template<class T>

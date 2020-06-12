@@ -4,6 +4,7 @@
 #include "BoxCollider2D.h"
 #include "Transform.h"
 #include "../PhysicsWorld.h"
+#include "../BinaryReaderWrider.h"
 #include <Box2D.h>
 
 Balbino::Rigidbody2D::Rigidbody2D( const GameObject* const origine )
@@ -12,12 +13,10 @@ Balbino::Rigidbody2D::Rigidbody2D( const GameObject* const origine )
 	, m_IsKinematic{ false }
 	, m_FreezRotation{ false }
 	, m_UseGravity{ true }
-	, m_AngularDrag{}
-	, m_MaxAngularVelocity{ 7 }
-	, m_AngularVelocity{}
-	, m_CenterOfMass{}
-	, m_Velocity{}
+	, m_AngularDrag{ 0.05f }
+	, m_Drag{ 0.0f }
 	, m_Hits{}
+	, m_Mass{ 1.f }
 {
 
 }
@@ -32,16 +31,15 @@ void Balbino::Rigidbody2D::Create()
 		pCollider->Create();
 	}
 
-	m_pBody =  pCollider->m_pBody;
-	m_pBody->SetType( b2BodyType::b2_dynamicBody );
+	m_pBody = pCollider->m_pBody;
+	m_pBody->SetType( m_IsKinematic ? b2BodyType::b2_kinematicBody : b2BodyType::b2_dynamicBody );
 	auto fixture = m_pBody->GetFixtureList();
-	fixture->SetDensity( 1.f );
+	fixture->SetDensity( m_Mass );
 	fixture->SetFriction( 0.3f );
 	fixture->SetUserData( this );
-	m_pBody->ApplyForce( { 5.5f,1.f }, { 5.5f,5.f }, true );
 	m_pBody->ResetMassData();
-	m_pBody->SetLinearDamping( 0.0f );
-	m_pBody->SetAngularDamping( 0.01f );
+	m_pBody->SetLinearDamping( m_Drag );
+	m_pBody->SetAngularDamping( m_AngularDrag );
 	m_pBody->SetGravityScale( 1.f );
 
 	m_pBody->SetSleepingAllowed( true );
@@ -52,14 +50,6 @@ void Balbino::Rigidbody2D::Create()
 
 void Balbino::Rigidbody2D::FixedUpdate()
 {
-	//auto positoin = m_pTransform->GetPosition();
-	//auto rotation = m_pTransform->GetRotation();
-	//if( m_OldTransformPosition != positoin )
-	//{
-	//	m_pBody->SetTransform( { positoin.x / m_ppm, positoin.y / m_ppm }, rotation.z );
-	//	m_pBody->SetLinearVelocity( { 0, 0 } );
-	//	m_OldTransformPosition = positoin;
-	//}
 }
 
 void Balbino::Rigidbody2D::Update()
@@ -78,18 +68,31 @@ void Balbino::Rigidbody2D::Draw() const
 void Balbino::Rigidbody2D::Save( std::ostream& file )
 {
 	(void) file;
+	BinaryReadWrite::Write( file, int( ComponentList::Rigidbody2D ) );
+	BinaryReadWrite::Write( file, m_IsKinematic );
+	BinaryReadWrite::Write( file, m_FreezRotation );
+	BinaryReadWrite::Write( file, m_UseGravity );
+	BinaryReadWrite::Write( file, m_AngularDrag );
+	BinaryReadWrite::Write( file, m_Drag );
+	BinaryReadWrite::Write( file, m_Mass );
 }
 
 void Balbino::Rigidbody2D::Load( std::istream& file )
 {
 	(void) file;
+	BinaryReadWrite::Read( file, m_IsKinematic );
+	BinaryReadWrite::Read( file, m_FreezRotation );
+	BinaryReadWrite::Read( file, m_UseGravity );
+	BinaryReadWrite::Read( file, m_AngularDrag );
+	BinaryReadWrite::Read( file, m_Drag );
+	BinaryReadWrite::Read( file, m_Mass );
 }
 
 bool Balbino::Rigidbody2D::SweepTest( const Balbino::Vector3& direction, Balbino::RaycastHit& hitInfo, float maxDistance )
 {
-	hitInfo.point.x = m_CenterOfMass.x + direction.x * maxDistance;
-	hitInfo.point.y = m_CenterOfMass.y + direction.y * maxDistance;
-
+	(void) direction;
+	(void) hitInfo;
+	(void) maxDistance;
 	return true;
 }
 
@@ -99,6 +102,27 @@ Balbino::RaycastHit& Balbino::Rigidbody2D::SweepTestAll( const Balbino::Vector3&
 	(void) hitInfoSize;
 	(void) maxDistance;
 	return m_Hits[0];
+}
+
+void Balbino::Rigidbody2D::AddForce( const Balbino::Vector2& force )
+{
+	m_pBody->ApplyForceToCenter( { force.x, force.y }, true );
+}
+
+void Balbino::Rigidbody2D::AddForceAtPosition( const Balbino::Vector2& force, const Balbino::Vector2& position )
+{
+	m_pBody->ApplyForce( { force.x, force.y }, { position.x, position.y }, true );
+}
+
+Balbino::Vector2 Balbino::Rigidbody2D::GetVelocity() const
+{
+	auto velocity = m_pBody->GetLinearVelocity();
+	return Balbino::Vector2{ velocity.x, velocity.y };
+}
+
+void Balbino::Rigidbody2D::SetVelocity( Balbino::Vector2& velocity ) const
+{
+	m_pBody->SetLinearVelocity( { velocity.x, velocity.y } );
 }
 
 void Balbino::Rigidbody2D::DrawInpector()

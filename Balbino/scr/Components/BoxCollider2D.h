@@ -10,7 +10,7 @@ namespace Balbino
 	{
 	public:
 		explicit BoxCollider2D( const Balbino::GameObject* const origine );
-		virtual ~BoxCollider2D() = default;
+		virtual ~BoxCollider2D();
 
 		BoxCollider2D( const BoxCollider2D& ) = delete;
 		BoxCollider2D( BoxCollider2D&& ) = delete;

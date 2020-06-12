@@ -40,7 +40,7 @@ Balbino::Text::Text( const GameObject* const origin )
 
 void Balbino::Text::Create()
 {
-	m_pTransform = GetComponent<Transform>();
+	this->Component::Create();
 	SetFont( m_FontPath, m_FontSize );
 }
 

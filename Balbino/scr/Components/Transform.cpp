@@ -2,15 +2,18 @@
 #include "Transform.h"
 #include "../GameObject/GameObject.h"
 #include "../BinaryReaderWrider.h"
+#include "../SceneManager.h"
+
 #define _USE_MATH_DEFINES
 #include <cmath> 
+
 Balbino::Transform::Transform( const GameObject* const origine )
 
 	:Component{ origine }
 	, m_Position{ 0.f, 0.f, 0.f }
 	, m_Rotation{ 0.f, 0.f, 0.f }
 	, m_Scale{ 1.f, 1.f, 1.f }
-	, m_Parent{}
+	, m_pParent{}
 	, m_pChilderen{}
 {
 }
@@ -35,7 +38,7 @@ void Balbino::Transform::Update()
 	glm::mat4x4 rotate{ rotateX * rotateY * rotateZ };
 	TransfomationMatrix = scale * rotate * translate;
 
-	auto parent = m_Parent;
+	auto parent = m_pParent;
 	if( parent )
 	{
 		TransfomationMatrix *= parent->TransfomationMatrix;
@@ -53,38 +56,54 @@ void Balbino::Transform::Draw() const
 }
 void Balbino::Transform::Save( std::ostream& file )
 {
+	std::string parrent{};
+	if( m_pParent )
+		parrent = m_pParent->GetGameObject()->GetName();
+	else
+		parrent = "\a";
+
 	BinaryReadWrite::Write( file, int( ComponentList::Transform ) );
 	BinaryReadWrite::Write( file, m_Position );
 	BinaryReadWrite::Write( file, m_Rotation );
 	BinaryReadWrite::Write( file, m_Scale );
-	//BinaryReadWrite::Write( file, int( m_Childeren.size() ) );
-
+		BinaryReadWrite::Write( file, parrent );
 }
 void Balbino::Transform::Load( std::istream& file )
 {
 	BinaryReadWrite::Read( file, m_Position );
 	BinaryReadWrite::Read( file, m_Rotation );
 	BinaryReadWrite::Read( file, m_Scale );
+	std::string parentName{};
+	BinaryReadWrite::Read( file, parentName );
+	GameObject* parent = SceneManager::GetGameObjectByName( parentName );
+	if( parent )
+	{
+		SetParrent( parent->GetComponent<Transform>() );
+	}
 }
 void Balbino::Transform::SetParrent( Transform* parent )
 {
-	if( m_Parent == parent )
+	if( m_pParent == parent )
 	{
 		return;
 	}
-	if( m_Parent )
+	if( m_pParent )
 	{
-		m_Parent->m_pChilderen.erase( std::remove( m_Parent->m_pChilderen.begin(), m_Parent->m_pChilderen.end(), this ) );
+		m_pParent->m_pChilderen.erase( std::remove( m_pParent->m_pChilderen.begin(), m_pParent->m_pChilderen.end(), this ) );
 	}
 	if( parent )
 	{
 		parent->m_pChilderen.push_back( this );
 	}
-	m_Parent = parent;
+	m_pParent = parent;
 }
 int Balbino::Transform::GetNumberOfChilderen()
 {
 	return int( m_pChilderen.size() );
+}
+const std::vector<Balbino::Transform*>& Balbino::Transform::GetChildren() const
+{
+	return m_pChilderen;
 }
 void Balbino::Transform::RemoveChild( int index )
 {

@@ -24,9 +24,6 @@
     <ClInclude Include="scr\Components\Audio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\Avatar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scr\Components\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -165,12 +162,15 @@
     <ClInclude Include="scr\Editor\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scr\Components\CharacterController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Animation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scr\Components\Audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Components\Avatar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\Components\Camera.cpp">
@@ -285,6 +285,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\Editor\Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\CharacterController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

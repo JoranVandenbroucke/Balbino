@@ -32,12 +32,12 @@ void Balbino::Avatar::Create()
 
 void Balbino::Avatar::Update()
 {
-	Balbino::Command* const cmd = InputManager::IsPressed();
+	//Balbino::Command* const cmd = InputManager::IsPressed();
 
-	if( cmd )
-	{
-		cmd->Execute( *this );
-	}
+	//if( cmd )
+	//{
+		//cmd->Execute( this );
+	//}
 }
 
 void Balbino::Avatar::Draw() const

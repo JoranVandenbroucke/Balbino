@@ -7,6 +7,7 @@
 #include "Sprite.h"
 #include "../PhysicsWorld.h"
 #include "../Editor/Debug.h"
+#include "../BinaryReaderWrider.h"
 #include <Box2D.h>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -21,20 +22,15 @@ Balbino::BoxCollider2D::BoxCollider2D( const Balbino::GameObject* const origine 
 {
 }
 
+Balbino::BoxCollider2D::~BoxCollider2D()
+{
+	PhysicsWorld::RemoveBody( m_pBody );
+}
+
 void Balbino::BoxCollider2D::Create()
 {
 	this->Component::Create();
 	Reset();
-	//auto sprite = GetComponent<Sprite>();
-	//if( sprite )
-	//	m_Size = { sprite->GetWidth() / 8.f, sprite->GetHeight() / 8.f };
-	//m_Colliser.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
-
-	//m_BodyDef.type = b2_staticBody;
-	//m_pBody = PhysicsWorld::AddBody( &m_BodyDef );
-
-	//m_pFixture = m_pBody->CreateFixture( &m_Colliser, 0 );
-	//m_pFixture->SetUserData( this );
 }
 
 void Balbino::BoxCollider2D::FixedUpdate()
@@ -66,7 +62,7 @@ void Balbino::BoxCollider2D::LateUpdate()
 {
 	auto positoin = m_pTransform->GetPosition();
 	auto rotation = m_pTransform->GetRotation();
-	std::cout << m_pBody->GetLinearVelocity().x << '\t' << m_pBody->GetLinearVelocity().y << '\t' << std::boolalpha << m_pBody->IsAwake() << '\n';
+	//std::cout << m_pBody->GetLinearVelocity().x << '\t' << m_pBody->GetLinearVelocity().y << '\t' << std::boolalpha << m_pBody->IsAwake() << '\n';
 	if( m_OldTransformPosition == positoin )
 	{
 		auto bodyPos = m_pBody->GetPosition();
@@ -97,11 +93,16 @@ void Balbino::BoxCollider2D::Draw() const
 void Balbino::BoxCollider2D::Save( std::ostream& file )
 {
 	(void) file;
+	BinaryReadWrite::Write( file, int( ComponentList::BoxCollider2D ) );
+	BinaryReadWrite::Write( file, m_Center );
+	BinaryReadWrite::Write( file, m_Size );
 }
 
 void Balbino::BoxCollider2D::Load( std::istream& file )
 {
 	(void) file;
+	BinaryReadWrite::Read( file, m_Center );
+	BinaryReadWrite::Read( file, m_Size );
 }
 
 #ifdef _DEBUG
@@ -167,6 +168,10 @@ void Balbino::BoxCollider2D::Reset()
 	m_Colliser.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
 
 	m_BodyDef.type = b2_staticBody;
+	if( m_pBody )
+	{
+		PhysicsWorld::RemoveBody( m_pBody );
+	}
 	m_pBody = PhysicsWorld::AddBody( &m_BodyDef );
 
 	m_pFixture = m_pBody->CreateFixture( &m_Colliser, 0 );

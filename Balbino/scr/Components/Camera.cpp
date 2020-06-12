@@ -39,6 +39,15 @@ Balbino::Camera::Camera( const GameObject* const origine, float aspectRatio, flo
 	m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 }
 
+Balbino::Camera::~Camera()
+{
+	if( m_pMainCamera == this )
+	{
+		m_pMainCamera = nullptr;
+	}
+	m_pAllCameras.erase( std::remove( m_pAllCameras.begin(), m_pAllCameras.end(), this ) );
+}
+
 void Balbino::Camera::Create()
 {
 	this->Component::Create();

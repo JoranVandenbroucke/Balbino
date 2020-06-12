@@ -40,6 +40,16 @@ Balbino::GameObject* Balbino::SceneManager::AddGameObjectToScene( GameObject* ga
 	return gameObject;
 }
 
+Balbino::GameObject* Balbino::SceneManager::GetGameObjectByName( const std::string name )
+{
+	if( !Get().m_pCurrentScenes )
+	{
+		return nullptr;
+	}
+
+	return Get().m_pCurrentScenes->GetGameObject( name );
+}
+
 void Balbino::SceneManager::FixedUpdate()
 {
 	auto currentScene = m_pCurrentScenes;

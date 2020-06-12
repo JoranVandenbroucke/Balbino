@@ -28,5 +28,6 @@ namespace Balbino
 
 	private:
 		int m_LevelNr;
+		bool m_OverSave;
 	};
 }

@@ -34,25 +34,28 @@ void Balbino::GameObject::Create()
 		}
 	}
 
-	for( Component* comp : m_Components )
-	{
-		comp->Create();
-	}
+	LoadComponents();
 }
 
 void Balbino::GameObject::FixedUpdate()
 {
-	for( Component* comp : m_Components )
+	if( m_IsActive )
 	{
-		comp->FixedUpdate();
+		for( Component* comp : m_Components )
+		{
+			comp->FixedUpdate();
+		}
 	}
 }
 
 void Balbino::GameObject::Update()
 {
-	for( Component* comp : m_Components )
+	if( m_IsActive )
 	{
-		comp->Update();
+		for( Component* comp : m_Components )
+		{
+			comp->Update();
+		}
 	}
 }
 
@@ -66,9 +69,12 @@ void Balbino::GameObject::LateUpdate()
 
 void Balbino::GameObject::Draw() const
 {
-	for( Component* comp : m_Components )
+	if( m_IsActive )
 	{
-		comp->Draw();
+		for( Component* comp : m_Components )
+		{
+			comp->Draw();
+		}
 	}
 }
 
@@ -84,7 +90,12 @@ void Balbino::GameObject::DrawInspector()
 
 void Balbino::GameObject::Destroy()
 {
-	m_IsDestroyed = true; 
+	m_IsDestroyed = true;
+	auto transform = GetComponent<Transform>();
+	if( transform )
+	{
+		transform->DestroyChilderen();
+	}
 }
 
 bool Balbino::GameObject::IsDestroy() const
@@ -140,10 +151,10 @@ void Balbino::GameObject::Load( std::istream& file )
 			AddComponent<LoggedAudio>()->Load( file );
 			break;
 		case Balbino::ComponentList::Avatar:
-			AddComponent<Avatar>()->Load( file );
+			AddComponent<CharacterController>()->Load( file );
 			break;
 		case Balbino::ComponentList::Camera:
-			AddComponent<Camera>( .75f, 640.f );
+			AddComponent<Camera>( 640.f / 480.f, 640.f )->Load( file );
 			break;
 		case Balbino::ComponentList::FPSScript:
 			AddComponent<FPSScript>()->Load( file );
@@ -157,9 +168,30 @@ void Balbino::GameObject::Load( std::istream& file )
 		case Balbino::ComponentList::Transform:
 			AddComponent<Transform>()->Load( file );
 			break;
+		case Balbino::ComponentList::LevelLoader:
+			AddComponent<LevelLoader>()->Load( file );
+			break;
+		case Balbino::ComponentList::BoxCollider2D:
+			AddComponent<BoxCollider2D>()->Load( file );
+			break;
+		case Balbino::ComponentList::Rigidbody2D:
+			AddComponent<Rigidbody2D>()->Load( file );
+			break;
+		case Balbino::ComponentList::Animation:
+			AddComponent<Animation>()->Load( file );
+			break;
 		default:
 			break;
 		}
 	}
-	//std::reverse( m_Components.begin(), m_Components.end() );
+}
+
+void Balbino::GameObject::SetActive( bool active )
+{
+	m_IsActive = active;
+}
+
+bool Balbino::GameObject::ActiveInHierarchy()const
+{
+	return m_IsActive;
 }

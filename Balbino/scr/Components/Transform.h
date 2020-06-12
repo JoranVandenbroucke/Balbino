@@ -40,6 +40,7 @@ namespace Balbino
 		
 		void SetParrent( Transform* parent);
 		int GetNumberOfChilderen();
+		const std::vector<Transform*>& GetChildren()const;
 		void RemoveChild(int index);
 		void DestroyChilderen();
 		glm::mat4x4 TransfomationMatrix{ 1.f };
@@ -53,9 +54,8 @@ namespace Balbino
 		Vector3 m_Rotation;
 		Vector3 m_Scale;
 
-		Transform* m_Parent;
+		Transform* m_pParent;
 
 		std::vector<Transform*> m_pChilderen;
-
 	};
 }

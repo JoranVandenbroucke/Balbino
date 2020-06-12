@@ -1,4 +1,6 @@
 ﻿  BalbinoPCH.cpp
+  Animation.cpp
+  CharacterController.cpp
   Rigidbody2D.cpp
   BoxCollider2D.cpp
   Collider2D.cpp
@@ -7,7 +9,6 @@
   Application.cpp
   BinaryReaderWrider.cpp
   Audio.cpp
-  Avatar.cpp
   Camera.cpp
   Component.cpp
   FPSScript.cpp
@@ -18,9 +19,9 @@
   Transform.cpp
   Font.cpp
   GameObject.cpp
-  InputManager.cpp
   Generating Code...
   Compiling...
+  InputManager.cpp
   PhysicsWorld.cpp
   Renderer.cpp
   ResourceManager.cpp

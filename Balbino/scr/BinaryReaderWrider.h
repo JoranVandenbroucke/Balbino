@@ -16,6 +16,7 @@
 #include <unordered_map>
 #include <iterator>
 #include "Struct.h"
+#include "Components/Animation.h"
 
 /*
 a lot of the code is inspired bey
@@ -73,6 +74,8 @@ namespace Balbino
 		std::ostream& Write( std::ostream& file, const Balbino::Vector2& value );
 		std::ostream& Write( std::ostream& file, const Balbino::Vector3& value );
 		std::ostream& Write( std::ostream& file, const Balbino::Vector4& value );
+		std::ostream& Write( std::ostream& file, const Balbino::AnimatorTransition& value );
+		std::ostream& Write( std::ostream& file, const Balbino::AnimatorCondition& value );
 
 		//read
 		template<typename T>
@@ -122,6 +125,8 @@ namespace Balbino
 		std::istream& Read( std::istream& file, Balbino::Vector2& value );
 		std::istream& Read( std::istream& file, Balbino::Vector3& value );
 		std::istream& Read( std::istream& file, Balbino::Vector4& value );
+		std::istream& Read( std::istream& file, Balbino::AnimatorTransition& value );
+		std::istream& Read( std::istream& file, Balbino::AnimatorCondition& value );
 
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		//write

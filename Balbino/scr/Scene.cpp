@@ -7,6 +7,7 @@
 #include "Editor/SpriteEditor.h"
 #include "Application.h"
 #include "Time.h"
+#include "InputManager.h"
 
 #include <windows.h>
 #include <commdlg.h>
@@ -72,6 +73,7 @@ void Scene::Draw()
 	Debug::Get().Draw();
 	AssetBrouser::Get().Draw();
 	SpriteEditor::Get().Draw();
+	InputManager::DrawInspector();
 
 	ImGui::Begin( "GameView" );
 	ImGui::BeginChild( "game", ImVec2{ 640,480 } );
@@ -155,6 +157,10 @@ void Balbino::Scene::DrawEditor()
 				saveFile.open( m_SavePosition, std::ios::in | std::ios::binary );
 				if( saveFile.is_open() )
 				{
+					for( GameObject* pObject: m_pGameObjects)
+					{
+						delete pObject;
+					}
 					m_pGameObjects.clear();
 					int size{};
 					BinaryReadWrite::Read( saveFile, size );
@@ -163,10 +169,11 @@ void Balbino::Scene::DrawEditor()
 						GameObject* gameObject = DBG_NEW GameObject{};
 
 						gameObject->Load( saveFile );
-						gameObject->Create();
+						//gameObject->Create();
 						Add( gameObject );
 					}
-					m_pGameObjects.reverse();
+					Load();
+					//m_pGameObjects.reverse();
 					m_Saved = true;
 				}
 				saveFile.close();
@@ -415,7 +422,7 @@ void Balbino::Scene::DrawEditor()
 		}
 		if( ImGui::BeginPopup( "Select Components" ) )
 		{
-			for( int i = 0; i < 11; i++ )
+			for( int i = 0; i < 12; i++ )
 			{
 				if( ImGui::Selectable( m_pComponentsString[i] ) )
 				{
@@ -428,7 +435,7 @@ void Balbino::Scene::DrawEditor()
 						( *it )->AddComponent<LoggedAudio>()->Create();
 						break;
 					case Balbino::ComponentList::Avatar:
-						( *it )->AddComponent<Avatar>()->Create();
+						( *it )->AddComponent<CharacterController>()->Create();
 						break;
 					case Balbino::ComponentList::Camera:
 						( *it )->AddComponent<Camera>( 640.f / 480.f, 640.f )->Create();
@@ -447,12 +454,15 @@ void Balbino::Scene::DrawEditor()
 						break;
 					case Balbino::ComponentList::LevelLoader:
 						( *it )->AddComponent<LevelLoader>()->Create();
-
+						break;
 					case Balbino::ComponentList::BoxCollider2D:
 						( *it )->AddComponent<BoxCollider2D>()->Create();
 						break;
 					case Balbino::ComponentList::Rigidbody2D:
 						( *it )->AddComponent<Rigidbody2D>()->Create();
+						break;
+					case Balbino::ComponentList::Animation:
+						( *it )->AddComponent<Animation>()->Create();
 						break;
 					default:
 						break;
@@ -529,6 +539,17 @@ void Balbino::Scene::Add( GameObject* pObject, int pos )
 	}
 }
 
+GameObject* Balbino::Scene::GetGameObject( const std::string name )
+{
+	auto it = std::find_if( m_pGameObjects.cbegin(), m_pGameObjects.cend(), [name]( const GameObject* pGameObject )
+	{
+		return pGameObject->GetName() == name;
+	} );
+	if( it == m_pGameObjects.cend() )
+		return nullptr;
+	return (*it);
+}
+
 void Balbino::Scene::FixedUpdate()
 {
 	if( BTime::TimeScale() )
@@ -566,6 +587,10 @@ void Balbino::Scene::LateUpdate()
 		}
 	}
 	m_pGameObjects.erase( it.base(), m_pGameObjects.end() );
+	//m_pGameObjects.sort([]( const GameObject* obj, const GameObject* obj2 )
+	//{
+	//	return obj->ActiveInHierarchy() > obj2->ActiveInHierarchy();
+	//} );
 }
 
 void Balbino::Scene::Load()

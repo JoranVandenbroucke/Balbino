@@ -22,7 +22,7 @@ namespace Balbino
 		SceneManager& operator=( SceneManager&& ) = delete;
 		static void SetScene(const unsigned int sceneNr );
 		static GameObject* AddGameObjectToScene( GameObject* gameObject = nullptr);
-
+		static GameObject* GetGameObjectByName( const std::string name );
 		void FixedUpdate();
 		void Update();
 		void LateUpdate();

@@ -43,6 +43,24 @@ std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino
 	return file;
 }
 
+std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino::AnimatorTransition& value )
+{
+	std::vector<AnimatorCondition> animatorConditons = value.GetConditions();
+	Write( file, value.SourceState );
+	Write( file, value.DestinationState );
+	Write( file, animatorConditons );
+	return file;
+}
+
+std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino::AnimatorCondition& value )
+{
+	Write( file, int(value.type) );
+	Write( file, int(value.mode) );
+	Write( file, value.type );
+	Write( file, value.threshold );
+	return file;
+}
+
 
 std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, std::string& value )
 {
@@ -88,4 +106,30 @@ std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::Vecto
 	Read( file, value.z );
 	Read( file, value.w );
 	return file;
+}
+
+std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::AnimatorTransition& value )
+{
+	std::vector<AnimatorCondition> animatorConditons;
+	Read( file, value.SourceState );
+	Read( file, value.DestinationState );
+	Read( file, animatorConditons );
+	for( auto condition : animatorConditons )
+	{
+		value.AddCondition( condition.type, condition.mode, condition.threshold, condition.parameter );
+	}
+	return file;
+}
+
+std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::AnimatorCondition& value )
+{
+	int type{};
+	int mode{};
+	Read( file, type );
+	Read( file, mode );
+	Read( file, value.type );
+	Read( file, value.threshold );
+	value.type = AnimatorControllerParameterType( type );
+	value.mode = AnimatorConditionMode( mode );
+	return file; 
 }

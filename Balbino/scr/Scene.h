@@ -10,10 +10,9 @@ namespace Balbino
 {
 	class BALBINO_API Scene
 	{
-		friend Scene& SceneManager::CreateScene( const std::string& name );
 	public:
 		void Add( GameObject* pObject, int pos = -1 );
-
+		GameObject* GetGameObject( const std::string name );
 
 		void FixedUpdate();
 		void Update();
@@ -29,20 +28,22 @@ namespace Balbino
 
 	private:
 		explicit Scene( const std::string& name );
+		friend Scene& SceneManager::CreateScene( const std::string& name );
 		std::list<GameObject*> m_pGameObjects;
 
 		std::string m_Name;
 		static unsigned int m_IdCounter;
-		const char* const m_pComponentsString[11]
+		const char* const m_pComponentsString[12]
 		{
 			"Audio",
 			"LoggedAudio",
 			"Avatar",
+			"Animation",
 			"BoxCollider2D",
 			"Camera",
 			"FPSScript",
 			"LevelLoader",
-			"RigidBody2D",
+			"Rigidbody2D",
 			"Sprite",
 			"Text",
 			"Transform"

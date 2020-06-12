@@ -161,6 +161,7 @@ namespace Balbino
 		Audio,
 		LoggedAudio,
 		Avatar,
+		Animation,
 		BoxCollider2D,
 		Camera,
 		FPSScript,

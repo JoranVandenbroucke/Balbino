@@ -1,6 +1,7 @@
 #pragma once
+#include "Animation.h"
 #include "Audio.h"
-#include "Avatar.h"
+#include "CharacterController.h"
 #include "BoxCollider2D.h"
 #include "Camera.h"
 #include "FPSScript.h"
