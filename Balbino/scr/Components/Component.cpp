@@ -5,11 +5,13 @@
 
 Balbino::Component::Component( const GameObject* const origin )
 	:m_pOrigin{ const_cast<GameObject* const>( origin ) }
+	, m_Created{ false }
 {
 }
 
 void Balbino::Component::Create()
 {
+	m_Created = true;
 	m_pTransform = GetComponent<Transform>();
 }
 

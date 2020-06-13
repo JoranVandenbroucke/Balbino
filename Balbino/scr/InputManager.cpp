@@ -54,6 +54,15 @@ Balbino::Button::~Button()
 	m_ButtonMap.clear();
 }
 
+Balbino::Button::Button( const Button& other )
+{
+	if( &other != this )
+	{
+		this->m_Name = other.m_Name;
+		this->m_pCommand = other.m_pCommand;
+	}
+}
+
 Balbino::Command* Balbino::Button::GetCommand() const
 {
 	return m_pCommand;
@@ -129,7 +138,7 @@ void Balbino::InputManager::ChangeButton( const std::string device, const std::s
 	{
 		if( SDL_WaitEvent( &e ) )
 		{
-			if( device == Get().m_keyboard && e.type == SDL_KEYDOWN )
+			if( device == Get().m_Keyboard && e.type == SDL_KEYDOWN )
 			{
 				SDL_KeyboardEvent& keyEvent = e.key;
 				if( keyEvent.keysym.sym == SDLK_ESCAPE )
@@ -185,6 +194,28 @@ std::vector<std::string> Balbino::InputManager::GetAllInputDevices()
 
 void Balbino::InputManager::IScanDevices()
 {
+	const char* extention{ ".bcc" };
+	std::string fileName{ "ButtonProfiles/" };
+	fileName += m_Keyboard;
+	fileName += extention;
+	std::transform( fileName.begin(), fileName.end(), fileName.begin(), []( char ch )
+	{
+		return ch == ' ' ? '_' : ch;
+	} );
+	std::ifstream file{ fileName };
+	if( file.is_open() )
+	{
+		std::string line{};
+		while( std::getline( file, line ) )
+		{
+			std::regex functionKeyName{ R"(^([a-zA-Z]+):([a-zA-Z ]+)$)" };
+			std::smatch match;
+			if( std::regex_match( line, match, functionKeyName ) )
+			{
+				ChangeButton( m_Keyboard, match[1].str(), match[2].str() );
+			}
+		}
+	}
 	std::string uID = JoystickGUIDToID( SDL_JoystickGUID{ Uint8( -1 ) } );
 	std::map<std::string, Button* const> keyboard = m_pButtons[uID];
 	for( auto controller : m_ControllerList )
@@ -211,26 +242,34 @@ void Balbino::InputManager::IScanDevices()
 				uID = JoystickGUIDToID( SDL_JoystickGetGUID( SDL_GameControllerGetJoystick( controller ) ) );
 				std::string deviceName = SDL_GameControllerName( controller );
 				m_ControllerList.insert( std::make_pair( SDL_GameControllerName( controller ), controller ) );
-				m_pButtons.insert( std::make_pair( uID, keyboard ) );
 
-				const char* extention{ ".bcc" };
-				std::string fileName{ "ButtonProfiles/" };
-				fileName += m_Current;
+				decltype( keyboard ) boards{};
+				for( auto key : keyboard )
+				{
+					boards.insert( std::make_pair(key.first, new Button(*key.second)) );
+				}
+				m_pButtons.insert( std::make_pair( uID, boards ) );
+
+				//const char* extention{ ".bcc" };
+				fileName = "ButtonProfiles/";
+				fileName += deviceName;
 				fileName += extention;
 				std::transform( fileName.begin(), fileName.end(), fileName.begin(), []( char ch )
 				{
 					return ch == ' ' ? '_' : ch;
 				} );
-				std::ifstream file{ fileName };
-				if( file.is_open() )
+				std::ifstream controllerFile{ fileName };
+				if( controllerFile.is_open() )
 				{
 					std::string line{};
-					while( std::getline( file, line ) )
+					while( std::getline( controllerFile, line ) )
 					{
 						std::regex functionKeyName{ R"(^([a-zA-Z]+):([a-zA-Z ]+)$)" };
 						std::smatch match;
 						if( std::regex_match( line, match, functionKeyName ) )
+						{
 							ChangeButton( deviceName, match[1].str(), match[2].str() );
+						}
 					}
 				}
 			}
@@ -248,24 +287,25 @@ void Balbino::InputManager::IScanDevices()
 				m_JoystickList.insert( std::make_pair( deviceName.c_str(), joystick ) );
 				m_pButtons.insert( std::make_pair( uID, keyboard ) );
 
-				const char* extention{ ".bcc" };
-				std::string fileName{ "ButtonProfiles/" };
-				fileName += m_Current;
+				fileName = "ButtonProfiles/";
+				fileName += deviceName;
 				fileName += extention;
 				std::transform( fileName.begin(), fileName.end(), fileName.begin(), []( char ch )
 				{
 					return ch == ' ' ? '_' : ch;
 				} );
-				std::ifstream file{ fileName };
-				if( file.is_open() )
+				std::ifstream joystickFile{ fileName };
+				if( joystickFile.is_open() )
 				{
 					std::string line{};
-					while( std::getline( file, line ) )
+					while( std::getline( joystickFile, line ) )
 					{
 						std::regex functionKeyName{ R"(^([a-zA-Z]+):([a-zA-Z ]+)$)" };
 						std::smatch match;
 						if( std::regex_match( line, match, functionKeyName ) )
+						{
 							ChangeButton( deviceName, match[1].str(), match[2].str() );
+						}
 					}
 				}
 			}
@@ -354,7 +394,7 @@ Balbino::Command* const Balbino::InputManager::IIsPressed( const std::string& de
 {
 	std::string uID = DeviceToID( device );
 
-	if( device == m_keyboard )
+	if( device == m_Keyboard )
 	{
 		const Uint8* pStates = SDL_GetKeyboardState( nullptr );
 		for( auto button : m_pButtons.at( uID ) )
@@ -385,14 +425,15 @@ Balbino::Command* const Balbino::InputManager::IIsPressed( const std::string& de
 
 void Balbino::InputManager::IAddButton( const std::string& functionName, Command* command, const std::string device )
 {
-	if( m_pButtons[0].find(functionName) != m_pButtons[0].end() )
+	std::string uID = DeviceToID( device );
+	if( m_pButtons[uID].find(functionName) != m_pButtons[uID].end() )
 		return;
 
 	if( device == "" )
 	{
 		for( auto buttonMap : m_pButtons )
 		{
-			std::string uID = buttonMap.first;
+			uID = buttonMap.first;
 			m_pButtons[uID].insert( std::make_pair( functionName, new Button{} ) );
 			m_pButtons[uID][functionName]->SetCommand( command );
 			m_pButtons[uID][functionName]->SetName( "Space" );
@@ -400,17 +441,17 @@ void Balbino::InputManager::IAddButton( const std::string& functionName, Command
 	}
 	else
 	{
-		std::string uID = DeviceToID( device );
 		m_pButtons[uID].insert( std::make_pair( functionName, new Button{} ) );
 		m_pButtons[uID][functionName]->SetCommand( command );
 		m_pButtons[uID][functionName]->SetName( "Space" );
 	}
+	ScanDevices();
 }
 
 std::vector<std::string> Balbino::InputManager::IGetAllInputDevices()
 {
 	int deviceNr{};
-	std::vector<std::string> devices{ std::to_string( ++deviceNr ) + ": " + m_keyboard };
+	std::vector<std::string> devices{ std::to_string( ++deviceNr ) + ": " + m_Keyboard };
 	for( auto controller : m_ControllerList )
 	{
 		devices.push_back( std::to_string( ++deviceNr ) + ": " + controller.first );
@@ -428,10 +469,10 @@ void Balbino::InputManager::IDrawInspector()
 	ImGui::Begin( "Input Manager" );
 	if( ImGui::BeginCombo( "input", m_Current.c_str() ) )
 	{
-		bool isSelected{ m_Current == m_keyboard };
-		if( ImGui::Selectable( m_keyboard.c_str() ) )
+		bool isSelected{ m_Current == m_Keyboard };
+		if( ImGui::Selectable( m_Keyboard.c_str() ) )
 		{
-			m_Current = m_keyboard;
+			m_Current = m_Keyboard;
 		}
 		if( isSelected )
 			ImGui::SetItemDefaultFocus();

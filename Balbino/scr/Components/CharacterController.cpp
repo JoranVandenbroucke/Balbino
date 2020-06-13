@@ -1,6 +1,7 @@
 #include "BalbinoPCH.h"
 #include "CharacterController.h"
 #include "Rigidbody2D.h"
+#include "Animation.h"
 #include "../BinaryReaderWrider.h"
 #include <regex>
 
@@ -13,12 +14,18 @@ Balbino::CharacterController::CharacterController( const GameObject* const origi
 
 void Balbino::CharacterController::Create()
 {
-	this->Component::Create();
+	if( m_Created ) return; this->Component::Create();
 	m_pRigidbody = GetComponent<Rigidbody2D>();
+	m_pAnimation = GetComponent<Animation>();
 	if( !m_pRigidbody )
 	{
 		m_pRigidbody = AddComponent<Rigidbody2D>();
 		m_pRigidbody->Create();
+	}
+	if( !m_pAnimation )
+	{
+		m_pAnimation = AddComponent<Animation>();
+		m_pAnimation->Create();
 	}
 
 	//Command
@@ -44,6 +51,8 @@ void Balbino::CharacterController::FixedUpdate()
 
 void Balbino::CharacterController::Update()
 {
+	Balbino::Vector2 velocity = m_pRigidbody->GetVelocity();
+	m_pAnimation->SetFloat( "VelocityX", velocity.x );
 }
 
 void Balbino::CharacterController::Draw() const
@@ -53,7 +62,7 @@ void Balbino::CharacterController::Draw() const
 void Balbino::CharacterController::Save( std::ostream& file )
 {
 	(void) file;
-	BinaryReadWrite::Write( file, int( ComponentList::LevelLoader ) );
+	BinaryReadWrite::Write( file, int( ComponentList::Avatar ) );
 	BinaryReadWrite::Write( file, m_CurrentDevice );
 }
 
@@ -111,6 +120,7 @@ void Balbino::CharacterController::GoRight()
 	Balbino::Vector2 velocity = m_pRigidbody->GetVelocity();
 	velocity.x = 10.f;
 	m_pRigidbody->SetVelocity( velocity );
+	m_pAnimation->SetFloat( "VelocityX", velocity.x );
 }
 
 void Balbino::CharacterController::LookLeft()

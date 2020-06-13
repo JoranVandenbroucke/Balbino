@@ -6,6 +6,8 @@ namespace Balbino
 {
 	class GameObject;
 	class Rigidbody2D;
+	class Animation;
+
 	class CharacterController : public Component
 	{
 	public:
@@ -36,7 +38,9 @@ namespace Balbino
 		void Shoot();
 	private:
 		std::string m_CurrentDevice;
+
 		Rigidbody2D* m_pRigidbody;
+		Animation* m_pAnimation;
 		bool m_IsJumping;
 	};
 

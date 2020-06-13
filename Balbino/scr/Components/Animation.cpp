@@ -41,7 +41,7 @@ Balbino::Animation::Animation( const GameObject* const origine )
 
 void Balbino::Animation::Create()
 {
-	this->Component::Create();
+	if( m_Created ) return; this->Component::Create();
 	m_pSprite = GetComponent<Sprite>();
 	if( !m_pSprite )
 	{
@@ -146,7 +146,7 @@ void Balbino::Animation::Update()
 				if( !success )
 					break;
 			}
-			if( success )
+			if( success && m_CurrentAnimationState != transition.DestinationState )
 			{
 				m_CurrentAnimationState = transition.DestinationState;
 				if( ( *m_pCurrrentAnimation )[0].second != m_Animations[m_CurrentAnimationState][0].second )
@@ -300,9 +300,9 @@ void Balbino::Animation::AddInt( const std::string& name )
 
 void Balbino::Animation::AddFloat( const std::string& name )
 {
-	if( m_IntTypes.find( name ) == m_IntTypes.end() )
+	if( m_FloatTypes.find( name ) == m_FloatTypes.end() )
 	{
-		m_IntTypes.insert( std::make_pair( name, false ) );
+		m_FloatTypes.insert( std::make_pair( name, 0.f ) );
 	}
 }
 
@@ -332,9 +332,9 @@ void Balbino::Animation::RemoveInt( const std::string& name )
 
 void Balbino::Animation::RemoveFloat( const std::string& name )
 {
-	if( m_IntTypes.find( name ) == m_IntTypes.end() )
+	if( m_FloatTypes.find( name ) == m_FloatTypes.end() )
 	{
-		m_IntTypes.erase( name );
+		m_FloatTypes.erase( name );
 	}
 }
 

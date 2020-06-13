@@ -44,6 +44,7 @@ namespace Balbino
 	protected:
 		Balbino::GameObject* const m_pOrigin;
 		Balbino::Transform* m_pTransform;
+		bool m_Created;
 	};
 
 

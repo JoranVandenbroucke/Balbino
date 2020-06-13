@@ -17,7 +17,7 @@ Balbino::LevelLoader::LevelLoader( const GameObject* const origine )
 
 void Balbino::LevelLoader::Create()
 {
-	this->Component::Create();
+	if( m_Created ) return; this->Component::Create();
 	if( !m_OverSave )
 	{
 		for( int y = 0; y < 25; y++ )

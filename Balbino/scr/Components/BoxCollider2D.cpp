@@ -29,6 +29,7 @@ Balbino::BoxCollider2D::~BoxCollider2D()
 
 void Balbino::BoxCollider2D::Create()
 {
+	if( m_Created ) return;
 	this->Component::Create();
 	Reset();
 }
@@ -165,6 +166,14 @@ void Balbino::BoxCollider2D::Reset()
 	auto sprite = GetComponent<Sprite>();
 	if( sprite )
 		m_Size = { sprite->GetWidth() / ( m_ppm * 2.f), sprite->GetHeight() / ( m_ppm * 2.f ) };
+	if( m_Size.x < 0.001f )
+	{
+		m_Size.x = 1.f;
+	}
+	if( m_Size.y < 0.001f )
+	{
+		m_Size.y = 1.f;
+	}
 	m_Colliser.SetAsBox( m_Size.x, m_Size.y, { m_Center.x, m_Center.y }, m_pTransform->GetRotation().z );
 
 	m_BodyDef.type = b2_staticBody;

@@ -15,7 +15,7 @@ Balbino::FPSScript::FPSScript( const GameObject* const origine )
 
 void Balbino::FPSScript::Create()
 {
-	this->Component::Create();
+	if( m_Created ) return; this->Component::Create();
 	m_Text = GetComponent<Text>();
 	if( m_Text )
 	{

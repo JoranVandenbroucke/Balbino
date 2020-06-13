@@ -20,6 +20,11 @@ namespace Balbino
 	public:
 		Button();
 		~Button();
+		Button( const Button& other );
+		Button( Button&& other ) = delete;
+		Button& operator=( const Button& other ) = delete;
+		Button& operator=( Button&& other ) = delete;
+
 		Balbino::Command* GetCommand()const;
 		const std::string& GetName()const;
 		void SetCommand( Command* const pNewCommand );
@@ -68,7 +73,7 @@ namespace Balbino
 
 		std::string m_Current{ "keyboard" };
 		std::map<std::string,std::map<std::string, Button* const>> m_pButtons;
-		const std::string m_keyboard{ "keyboard" };
+		const std::string m_Keyboard{ "keyboard" };
 		std::map<std::string, SDL_GameController*> m_ControllerList;
 		std::map<std::string, SDL_Joystick*> m_JoystickList;
 	};

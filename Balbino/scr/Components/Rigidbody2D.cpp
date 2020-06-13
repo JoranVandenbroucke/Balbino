@@ -23,13 +23,13 @@ Balbino::Rigidbody2D::Rigidbody2D( const GameObject* const origine )
 
 void Balbino::Rigidbody2D::Create()
 {
-	this->Component::Create();
+	if( m_Created ) return; this->Component::Create();
 	Collider2D* pCollider = GetComponent<Collider2D>();
 	if( !pCollider )
 	{
 		pCollider = AddComponent<BoxCollider2D>();
-		pCollider->Create();
 	}
+	pCollider->Create();
 
 	m_pBody = pCollider->m_pBody;
 	m_pBody->SetType( m_IsKinematic ? b2BodyType::b2_kinematicBody : b2BodyType::b2_dynamicBody );

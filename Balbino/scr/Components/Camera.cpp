@@ -50,7 +50,7 @@ Balbino::Camera::~Camera()
 
 void Balbino::Camera::Create()
 {
-	this->Component::Create();
+	if( m_Created ) return; this->Component::Create();
 	if( !m_pMainCamera )
 	{
 		m_pMainCamera = this;

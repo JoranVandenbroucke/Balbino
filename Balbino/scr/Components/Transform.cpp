@@ -25,7 +25,7 @@ Balbino::Transform::~Transform()
 
 void Balbino::Transform::Create()
 {
-	this->Component::Create();
+	if( m_Created ) return; this->Component::Create();
 }
 
 void Balbino::Transform::Update()
