@@ -78,7 +78,7 @@ void Balbino::BubbleManager::Load( std::istream& file )
 	m_OverSave = true;
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::BubbleManager::DrawInpector()
 {
 	ImGui::BeginChild( "BubbleManager", ImVec2{ -1, 128 }, true );

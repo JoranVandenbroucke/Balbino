@@ -13,7 +13,7 @@ namespace Balbino
 	{
 	public:
 		void Add( GameObject* pObject, int pos = -1 );
-		GameObject* GetGameObject( const std::string name );
+		GameObject* GetGameObject( const std::string name )const;
 
 		void FixedUpdate();
 		void Update();

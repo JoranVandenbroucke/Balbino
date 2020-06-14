@@ -10,3 +10,6 @@ don't like a level?
 go to the Level Game Object and nudge the slider
 
 everything, within the limits of my components, is posible
+
+the game itself has some extras
+

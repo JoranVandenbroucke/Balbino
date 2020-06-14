@@ -207,6 +207,16 @@ void Balbino::CharacterController::SetDead( bool isDead )
 	m_IsDead = isDead;
 }
 
+const std::string& Balbino::CharacterController::GetCurrentDevice() const
+{
+	return m_CurrentDevice;
+}
+
+void Balbino::CharacterController::SetCurrentDevice( const std::string& newDevice )
+{
+	m_CurrentDevice = newDevice;
+}
+
 bool Balbino::CharacterController::GetDeadState()
 {
 	return m_IsDead;

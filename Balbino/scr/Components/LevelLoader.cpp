@@ -38,7 +38,7 @@ void Balbino::LevelLoader::Create()
 				transform->SetPosition( x * 8.f, (24-y) * 8.f, 0 );
 				transform->SetParrent( m_pTransform );
 				collider->Reset();
-				if( x == 0 || x == 1 || x == 30 || x == 31 || y == 0 )
+				if( x == 0 || x == 1 || x == 30 || x == 31 || y == 0 || y == 24)
 				{
 					newTile->SetTag( "Wall" );
 				}

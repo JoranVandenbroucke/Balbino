@@ -38,6 +38,8 @@ namespace Balbino
 		void Fall();
 		void Shoot();
 		void SetDead(bool isDead);
+		const std::string& GetCurrentDevice()const;
+		void SetCurrentDevice( const std::string& newDevice );
 		bool GetDeadState();
 		Direction GetDirection();
 	private:

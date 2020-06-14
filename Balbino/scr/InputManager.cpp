@@ -3,36 +3,13 @@
 #include <SDL.h>
 #include <SDL_gamecontroller.h>
 
-//#include "imgui-1.75/imgui.h"
-//#include "imgui-1.75/imgui_impl_sdl.h"
 #include <regex>
 #include <fstream>
-//#include <SDL_opengl.h>
-//#include "Application.h"
 
 std::map<std::string, uint16_t> Balbino::Button::m_ButtonMap{};
 
 Balbino::Button::Button()
 {
-	//m_ButtonMap.insert( std::make_pair( "C_A", uint16_t( XINPUT_GAMEPAD_A ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_B", uint16_t( XINPUT_GAMEPAD_B ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_X", uint16_t( XINPUT_GAMEPAD_X ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_Y", uint16_t( XINPUT_GAMEPAD_Y ) ) );
-
-	//m_ButtonMap.insert( std::make_pair( "C_D_UP", uint16_t( XINPUT_GAMEPAD_DPAD_UP ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_D_DOWN", uint16_t( XINPUT_GAMEPAD_DPAD_DOWN ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_D_LEFT", uint16_t( XINPUT_GAMEPAD_DPAD_LEFT ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_D_RIGHT", uint16_t( XINPUT_GAMEPAD_DPAD_RIGHT ) ) );
-
-	//m_ButtonMap.insert( std::make_pair( "C_START", uint16_t( XINPUT_GAMEPAD_START ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_BACK", uint16_t( XINPUT_GAMEPAD_BACK ) ) );
-
-	//m_ButtonMap.insert( std::make_pair( "C_L_THUMB", uint16_t( XINPUT_GAMEPAD_LEFT_THUMB ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_R_THUMB", uint16_t( XINPUT_GAMEPAD_RIGHT_THUMB ) ) );
-
-	//m_ButtonMap.insert( std::make_pair( "C_L_THUMB", uint16_t( XINPUT_GAMEPAD_LEFT_SHOULDER ) ) );
-	//m_ButtonMap.insert( std::make_pair( "C_R_THUMB", uint16_t( XINPUT_GAMEPAD_RIGHT_SHOULDER ) ) );
-
 	for( int scan = SDL_SCANCODE_UNKNOWN; scan <= SDL_NUM_SCANCODES; scan++ )
 	{
 		SDL_Keycode code = SDL_GetKeyFromScancode( SDL_Scancode( scan ) );
@@ -320,7 +297,6 @@ void Balbino::InputManager::IInit()
 	IScanDevices();
 }
 
-#ifdef BALBINO_DEBUG
 bool Balbino::InputManager::IProcessInput()
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -390,55 +366,6 @@ bool Balbino::InputManager::IProcessInput()
 	io.MouseWheel = static_cast<float>( wheel );
 	return true;
 }
-#else
-bool Balbino::InputManager::IProcessInput()
-{
-	SDL_Event e;
-	while( SDL_PollEvent( &e ) )
-	{
-		if( e.type == SDL_QUIT )
-		{
-			return false;
-		}
-		else if( e.type == SDL_KEYDOWN )
-		{
-
-		}
-		else if( e.type == SDL_KEYUP )
-		{
-
-		}
-		else if( e.type == SDL_MOUSEBUTTONUP )
-		{
-		}
-		else if( e.type == SDL_MOUSEBUTTONDOWN )
-		{
-		}
-		else if( e.type == SDL_MOUSEWHEEL )
-		{
-		}
-		else if( e.type == SDL_MOUSEMOTION )
-		{
-		}
-		else if( e.type == SDL_CONTROLLERBUTTONDOWN )
-		{
-		}
-		else if( e.type == SDL_CONTROLLERBUTTONUP )
-		{
-		}
-		else if( e.type == SDL_CONTROLLERDEVICEADDED )
-		{
-			IScanDevices();
-		}
-		else if( e.type == SDL_CONTROLLERDEVICEREMOVED )
-		{
-			IScanDevices();
-		}
-	}
-	return true;
-}
-#endif // BALBINO_DEBUG
-
 
 Balbino::Command* const Balbino::InputManager::IIsPressed( const std::string& device ) const
 {
@@ -515,7 +442,6 @@ std::vector<std::string> Balbino::InputManager::IGetAllInputDevices()
 
 void Balbino::InputManager::IDrawInspector()
 {
-#ifdef BALBINO_DEBUG
 	auto old = std::string( m_Current );
 	ImGui::Begin( "Input Manager" );
 	if( ImGui::BeginCombo( "input", m_Current.c_str() ) )
@@ -579,7 +505,6 @@ void Balbino::InputManager::IDrawInspector()
 		ImGui::PopID();
 	}
 	ImGui::End();
-#endif // BALBINO_DEBUG
 }
 
 

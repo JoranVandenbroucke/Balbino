@@ -76,9 +76,9 @@ void Scene::Draw()
 	//ImGui::Image( (ImTextureID) (intptr_t) m_RenderedTexture, ImVec2{ 640,480 } );
 	if( mainCamera )
 	{
-	/*	ImGui::GetWindowDrawList()->AddImage( (void*) (uint64_t) mainCamera->GetTargetTexture(),
-			ImVec2{ ImGui::GetCursorScreenPos() },
-			ImVec2{ ImGui::GetCursorScreenPos().x + 640, ImGui::GetCursorScreenPos().y + 480 } );*/
+		/*	ImGui::GetWindowDrawList()->AddImage( (void*) (uint64_t) mainCamera->GetTargetTexture(),
+				ImVec2{ ImGui::GetCursorScreenPos() },
+				ImVec2{ ImGui::GetCursorScreenPos().x + 640, ImGui::GetCursorScreenPos().y + 480 } );*/
 		ImGui::Image( (void*) (uint64_t) mainCamera->GetTargetTexture(), { 640.f,480.f } );
 	}
 	BTime::Get().SetTS( 1.f );
@@ -505,6 +505,11 @@ Scene::Scene( const std::string& name )
 }
 void Scene::Draw() const
 {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplSDL2_NewFrame( Application::GetWindow() );
+	ImGui::NewFrame();
+
+
 	auto allCameras = Camera::GetAllCameras();
 	if( allCameras.size() != 0 )
 	{
@@ -542,6 +547,84 @@ void Scene::Draw() const
 		//glBindTexture( GL_TEXTURE_2D, mainCamera->GetTargetTexture() );	// use the color attachment texture as the texture of the quad plane
 		//glDrawArrays( GL_TRIANGLES, 0, 6 );
 	}
+	InputManager::DrawInspector();
+	ImGui::Begin( "GameOptions" );
+	GameObject* pBub = GetGameObject( "Bub" );
+	GameObject* pBob = GetGameObject( "Bob" );
+	if( pBub && pBob )
+	{
+		const auto allDevices = InputManager::GetAllInputDevices();
+		bool playBub = pBub->ActiveInHierarchy();
+		bool playBob = pBob->ActiveInHierarchy();
+		std::string currentDeviceBub = pBub->GetComponent<CharacterController>()->GetCurrentDevice();
+		std::string currentDeviceBob = pBub->GetComponent<CharacterController>()->GetCurrentDevice();
+		ImGui::Text( "Character Settings:" );
+		ImGui::PushID( 1 );
+		ImGui::Text( "Bub:" );
+		if( ImGui::Checkbox( "Enable", &playBub ) )
+		{
+			pBub->SetActive( playBub );
+		}
+		if( ImGui::BeginCombo( "CurrentDevice", currentDeviceBub.c_str() ) )
+		{
+			for( const std::string& device : allDevices )
+			{
+				bool isSelected = device == currentDeviceBub;
+				if( ImGui::Selectable( device.c_str() ) )
+				{
+					std::regex numberRemover{ R"(^\d: (.+)$)" };
+					std::smatch match;
+					if( std::regex_match( device, match, numberRemover ) )
+					{
+						pBub->GetComponent<CharacterController>()->SetCurrentDevice( match[1] );
+					}
+				}
+				if( isSelected )
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::PopID();
+
+		ImGui::PushID( 1 );
+		ImGui::Text( "Bob:" );
+		if( ImGui::Checkbox( "Enable", &playBob ) )
+		{
+			pBub->SetActive( playBob );
+		}
+		if( ImGui::BeginCombo( "CurrentDevice", currentDeviceBob.c_str() ) )
+		{
+			for( const std::string& device : allDevices )
+			{
+				bool isSelected = device == currentDeviceBob;
+				if( ImGui::Selectable( device.c_str() ) )
+				{
+					std::regex numberRemover{ R"(^\d: (.+)$)" };
+					std::smatch match;
+					if( std::regex_match( device, match, numberRemover ) )
+					{
+						pBob->GetComponent<CharacterController>()->SetCurrentDevice( match[1] );
+					}
+				}
+				if( isSelected )
+					ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::PopID();
+		ImGui::End();
+		ImGui::Render();
+	}
+	ImGui_ImplOpenGL3_RenderDrawData( ImGui::GetDrawData() );
+	ImGuiIO& io = ImGui::GetIO();
+	if( io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable )
+	{
+		SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+		SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SDL_GL_MakeCurrent( backup_current_window, backup_current_context );
+	}
 	SDL_GL_SwapWindow( Application::GetWindow() );
 }
 #endif // BALBINO_DEBUG
@@ -571,7 +654,7 @@ void Balbino::Scene::Add( GameObject* pObject, int pos )
 	}
 }
 
-GameObject* Balbino::Scene::GetGameObject( const std::string name )
+GameObject* Balbino::Scene::GetGameObject( const std::string name )const
 {
 	auto it = std::find_if( m_pGameObjects.cbegin(), m_pGameObjects.cend(), [name]( const GameObject* pGameObject )
 	{

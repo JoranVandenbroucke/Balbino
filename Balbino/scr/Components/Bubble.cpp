@@ -78,7 +78,7 @@ void Balbino::Bubble::Load( std::istream& file )
 	(void) file;
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::Bubble::DrawInpector()
 {
 	ImGui::BeginChild( "Bubble", ImVec2{ -1, 128 }, true );

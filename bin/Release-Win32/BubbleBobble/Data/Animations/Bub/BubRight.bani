@@ -1,27 +1,27 @@
 - time: 0
 	value: 0
 	Sprite: Sprites/Sprites0.png
-- time: 0.125
+- time: 0.0625
 	value: 1
 	Sprite: Sprites/Sprites0.png
-- time: 0.25
+- time: 0.125
 	value: 2
 	Sprite: Sprites/Sprites0.png
-- time: 0.375
+- time: 0.1875
 	value: 3
 	Sprite: Sprites/Sprites0.png
-- time: 0.5
+- time: 0.25
 	value: 4
 	Sprite: Sprites/Sprites0.png
-- time: 0.625
+- time: 0.3125
 	value: 5
 	Sprite: Sprites/Sprites0.png
-- time: 0.75
+- time: 0.375
 	value: 6
 	Sprite: Sprites/Sprites0.png
-- time: 0.875
+- time: 0.4375
 	value: 7
 	Sprite: Sprites/Sprites0.png
-- time: 1
+- time: 0.5
 	value: 0
 	Sprite: Sprites/Sprites0.png
