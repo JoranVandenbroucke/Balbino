@@ -1,0 +1,50 @@
+﻿  BalbinoPCH.cpp
+  Bubble.cpp
+  BubbleManager.cpp
+  Enemy.cpp
+  Animation.cpp
+  CharacterController.cpp
+  Rigidbody2D.cpp
+  BoxCollider2D.cpp
+  Collider2D.cpp
+  Debug.cpp
+  AssetBrouser.cpp
+  Application.cpp
+  BinaryReaderWrider.cpp
+  Audio.cpp
+  Camera.cpp
+  Component.cpp
+  FPSScript.cpp
+  LevelLoader.cpp
+  Sprite.cpp
+  Text.cpp
+  Texture2D.cpp
+  Compiling...
+  Transform.cpp
+  Font.cpp
+  GameObject.cpp
+  InputManager.cpp
+  PhysicsWorld.cpp
+  Renderer.cpp
+  ResourceManager.cpp
+  Scene.cpp
+  SceneManager.cpp
+  SceneObject.cpp
+  Struct.cpp
+  Time.cpp
+  SpriteEditor.cpp
+  imgui_extra.cpp
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_impl_sdl.cpp
+  imgui_sdl.cpp
+  imgui_widgets.cpp
+  gl3w.c
+SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
+SDL2_ttf.lib(SDL2_ttf.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
+SDL2_mixer.lib(SDL2_mixer.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
+xinput.lib(XINPUT1_4.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
+vld.lib(vld_x86.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
+  Balbino.vcxproj -> C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\bin\Release-Win32\Balbino\Balbino.lib

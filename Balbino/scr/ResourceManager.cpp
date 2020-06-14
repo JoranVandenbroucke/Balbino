@@ -121,6 +121,7 @@ Balbino::ResourceManager::~ResourceManager()
 
 GLuint Balbino::ResourceManager::ILoadTexture( const std::string& file, vertex* vert )
 {
+	if( file == "" ) return GLuint(-1);
 	if( m_Textures.find( file ) != m_Textures.cend() )
 	{
 		auto fullPath = m_DataPath + file;

@@ -23,6 +23,11 @@ Balbino::Vector2::Vector2( float x, float y )
 	, y{ y }
 {
 }
+Balbino::Vector2::Vector2( const Balbino::Vector3& other )
+	: x{ other.x }
+	, y{ other.y }
+{
+}
 
 Vector2& Balbino::Vector2::operator+=( const Vector2& rhs )
 {

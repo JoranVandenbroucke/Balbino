@@ -117,7 +117,7 @@ void Balbino::Transform::DestroyChilderen()
 	}
 	m_pChilderen.clear();
 }
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 #include "../imgui-1.75/imgui.h"
 void Balbino::Transform::DrawInpector()
 {

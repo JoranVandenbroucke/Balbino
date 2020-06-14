@@ -28,15 +28,16 @@ namespace Balbino
 		virtual void Save( std::ostream& file ) override;
 		virtual void Load( std::istream& file ) override;
 
-		bool SweepTest( const Balbino::Vector3& direction, Balbino::RaycastHit& hitInfo, float maxDistance = std::numeric_limits<float>::infinity() ); //this is not working yet
+		bool SweepTest( const Balbino::Vector2& direction, Balbino::RaycastHit& hitInfo, float maxDistance = std::numeric_limits<float>::infinity() ); //this is not working yet
 		Balbino::RaycastHit& SweepTestAll( const Balbino::Vector3& direction, int& hitInfoSize, float maxDistance = std::numeric_limits<float>::infinity() );
 		void AddForce(const Balbino::Vector2& force);
 		void AddForceAtPosition(const Balbino::Vector2& force, const Balbino::Vector2& position);
 		Balbino::Vector2 GetVelocity()const;
 		void SetVelocity(Balbino::Vector2& velocity )const;
-#ifdef _DEBUG
+		void UseGravity( bool useGravity );
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector();
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 	private:
 		bool m_IsKinematic;
 		bool m_FreezRotation;
@@ -49,6 +50,6 @@ namespace Balbino
 
 		Balbino::RaycastHit m_Hits[128];
 		b2Body* m_pBody;
-
+		Balbino::Vector2 m_Velocity;
 	};
 }

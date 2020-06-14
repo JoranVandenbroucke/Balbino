@@ -72,9 +72,6 @@
     <ClInclude Include="scr\imgui-1.75\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\imgui-1.75\imgui_plot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scr\imgui-1.75\imgui_sdl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -168,6 +165,15 @@
     <ClInclude Include="scr\Components\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scr\Components\Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\BubbleManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Bubble.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scr\Components\Audio.cpp">
@@ -245,9 +251,6 @@
     <ClCompile Include="scr\imgui-1.75\imgui_sdl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_plot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -291,6 +294,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\Components\Animation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\BubbleManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Bubble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include <fstream>
 #include <algorithm>
 
+#ifdef BALBINO_DEBUG
 Balbino::SpriteEditor::SpriteEditor()
 	:m_Image{}
 	, m_CountX{}
@@ -193,3 +194,5 @@ void Balbino::SpriteEditor::DrawImageSlicer( std::vector<Vector2>& sprites )
 		ImGui::EndDragDropTarget();
 	}
 }
+
+#endif // DEBUG

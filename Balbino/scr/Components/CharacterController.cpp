@@ -2,13 +2,18 @@
 #include "CharacterController.h"
 #include "Rigidbody2D.h"
 #include "Animation.h"
+#include "BubbleManager.h"
+#include "Transform.h"
 #include "../BinaryReaderWrider.h"
+#include "../PhysicsWorld.h"
+#include "../SceneManager.h"
 #include <regex>
 
 Balbino::CharacterController::CharacterController( const GameObject* const origine )
 	:Component{ origine }
 	, m_CurrentDevice{ "keyboard" }
 	, m_pRigidbody{ nullptr }
+	, m_WantsToDropDown{}
 {
 }
 
@@ -27,7 +32,13 @@ void Balbino::CharacterController::Create()
 		m_pAnimation = AddComponent<Animation>();
 		m_pAnimation->Create();
 	}
+	m_pOrigin->SetTag( "Player" );
 
+	GameObject* pBubbleManagerObject = SceneManager::GetGameObjectByName( "Bubble Manager" );
+	if( pBubbleManagerObject )
+	{
+		m_pManager = pBubbleManagerObject->GetComponent<BubbleManager>();
+	}
 	//Command
 	InputManager::AddButton( "left", new GoLeftCommand );
 	InputManager::AddButton( "right", new GoRightCommand );
@@ -43,14 +54,20 @@ void Balbino::CharacterController::FixedUpdate()
 	{
 		command->Execute( this );
 	}
-	if( m_pRigidbody->GetVelocity().y < 0.001f )
-	{
-		m_IsJumping = false;
-	}
 }
 
 void Balbino::CharacterController::Update()
 {
+	if( !m_pManager )
+	{
+		GameObject* pBubbleManagerObject = SceneManager::GetGameObjectByName( "Bubble Manager" );
+		if( pBubbleManagerObject )
+		{
+			m_pManager = pBubbleManagerObject->GetComponent<BubbleManager>();
+		}
+		return;
+	}
+	m_WantsToDropDown = false;
 	Balbino::Vector2 velocity = m_pRigidbody->GetVelocity();
 	m_pAnimation->SetFloat( "VelocityX", velocity.x );
 }
@@ -72,11 +89,13 @@ void Balbino::CharacterController::Load( std::istream& file )
 	BinaryReadWrite::Read( file, m_CurrentDevice );
 }
 
+#ifdef BALBINO_DEBUG
 void Balbino::CharacterController::DrawInpector()
 {
 	const auto allDevices = InputManager::GetAllInputDevices();
 	ImGui::BeginChild( "CharacterController", ImVec2{ -1, 128 }, true );
 	ImGui::Text( "Character Controller" );
+	ImGui::Checkbox( "Is Dead", &m_IsDead );
 	if( ImGui::BeginCombo( "CurrentDevice", m_CurrentDevice.c_str() ) )
 	{
 		for( const std::string& device : allDevices )
@@ -86,7 +105,7 @@ void Balbino::CharacterController::DrawInpector()
 			{
 				std::regex numberRemover{ R"(^\d: (.+)$)" };
 				std::smatch match;
-				if( std::regex_match( device, match, numberRemover ))
+				if( std::regex_match( device, match, numberRemover ) )
 				{
 					m_CurrentDevice = match[1].str();
 				}
@@ -98,10 +117,43 @@ void Balbino::CharacterController::DrawInpector()
 	}
 	ImGui::EndChild();
 }
+#endif // BALBINO_DEBUG
+
+
+void Balbino::CharacterController::OnCollisionEnter( GameObject* pGameObject )
+{
+	std::string tag = pGameObject->GetTag();
+	if( tag == "Enemy" )
+	{
+		if( m_pManager)
+		{
+			m_pManager->Notify( this, Event::HIT_ENEMY );
+		}
+	}
+	else if( tag == "Item" )
+	{
+		if( m_pManager )
+		{
+			m_pManager->Notify( this, Event::HIT_ITEM );
+		}
+	}
+	else
+	{
+		if( m_pManager )
+		{
+			m_pManager->Notify( this, Event::HIT_BUBBLE );
+		}
+	}
+}
 
 void Balbino::CharacterController::SetInput( const char* const device )
 {
 	m_CurrentDevice = device;
+}
+
+bool Balbino::CharacterController::WantsToDropDown() const
+{
+	return m_WantsToDropDown;
 }
 
 void Balbino::CharacterController::GoLeft()
@@ -109,8 +161,9 @@ void Balbino::CharacterController::GoLeft()
 	std::cout << "Go Left\n";
 	//m_pRigidbody->AddForce( Balbino::Vector2{-512,0} );
 	Balbino::Vector2 velocity = m_pRigidbody->GetVelocity();
-	velocity.x = -10.f;
+	velocity.x = -8.f;
 	m_pRigidbody->SetVelocity( velocity );
+	m_Direction = Direction::LEFT;
 }
 
 void Balbino::CharacterController::GoRight()
@@ -118,39 +171,48 @@ void Balbino::CharacterController::GoRight()
 	std::cout << "Go Right\n";
 	//m_pRigidbody->AddForce( Balbino::Vector2{ 512,0 } );
 	Balbino::Vector2 velocity = m_pRigidbody->GetVelocity();
-	velocity.x = 10.f;
+	velocity.x = 8.f;
 	m_pRigidbody->SetVelocity( velocity );
 	m_pAnimation->SetFloat( "VelocityX", velocity.x );
-}
-
-void Balbino::CharacterController::LookLeft()
-{
-	std::cout << "Look Left\n";
-}
-
-void Balbino::CharacterController::LookRight()
-{
-	std::cout << "Look Right\n";
+	m_Direction = Direction::RIGHT;
 }
 
 void Balbino::CharacterController::Jump()
 {
 	std::cout << "Jump\n";
-	if( !m_IsJumping )
+	Balbino::RaycastHit hitinfo;
+	if( PhysicsWorld::Raycast2D( m_pTransform->GetPosition(), Balbino::Vector2{ 0.f,-1.f }, hitinfo, 2.f ) )
 	{
-		m_pRigidbody->AddForce( Balbino::Vector2{ 0, 1024 } );
-		m_IsJumping = true;
+		m_pRigidbody->AddForce( Balbino::Vector2{ 0, 256 } );
 	}
 }
 
 void Balbino::CharacterController::Fall()
 {
-	std::cout << "Fall\n";
+	m_WantsToDropDown = true;
 }
 
 void Balbino::CharacterController::Shoot()
 {
-	std::cout << "Shoot\n";
+	if( m_pManager )
+	{
+		m_pManager->Notify( this, Event::SHOOT_BUBBLE );
+	}
+}
+
+void Balbino::CharacterController::SetDead( bool isDead )
+{
+	m_IsDead = isDead;
+}
+
+bool Balbino::CharacterController::GetDeadState()
+{
+	return m_IsDead;
+}
+
+Balbino::Direction Balbino::CharacterController::GetDirection()
+{
+	return m_Direction;
 }
 
 void Balbino::JumpCommand::Execute( CharacterController* actor )

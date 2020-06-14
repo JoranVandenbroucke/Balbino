@@ -45,9 +45,9 @@ namespace Balbino
 		void DestroyChilderen();
 		glm::mat4x4 TransfomationMatrix{ 1.f };
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 	private:
 		Vector3 m_Position;

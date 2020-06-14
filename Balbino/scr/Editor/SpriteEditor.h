@@ -5,6 +5,7 @@ namespace Balbino
 {
 	class SpriteEditor :public Singleton<SpriteEditor>
 	{
+#ifdef BALBINO_DEBUG
 	public:
 		void Draw();
 	private:
@@ -29,5 +30,7 @@ namespace Balbino
 						"Center", "Top Left", "Top", "Top Right", "Left", "Right", "Bottom Left", "Bottom", "Bottom Right", "Custom" };
 		const char* m_CurrentItem{ m_pItems[0] };
 		const char* m_CurrentPivot{ m_pItems[3] };
+#endif // DEBUG
+
 	};
 }

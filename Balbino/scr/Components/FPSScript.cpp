@@ -17,7 +17,7 @@ void Balbino::FPSScript::Create()
 {
 	if( m_Created ) return; this->Component::Create();
 	m_Text = GetComponent<Text>();
-	if( m_Text )
+	if( !m_Text )
 	{
 		m_Text = AddComponent<Text>();
 		m_Text->Create();
@@ -45,7 +45,7 @@ void Balbino::FPSScript::Load( std::istream& file )
 	(void) file;
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 #include "../imgui-1.75/imgui.h"
 void Balbino::FPSScript::DrawInpector()
 {

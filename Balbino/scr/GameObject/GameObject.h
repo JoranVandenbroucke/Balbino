@@ -22,9 +22,9 @@ namespace Balbino
 		virtual void Update() override;
 		virtual void LateUpdate() override;
 		virtual void Draw() const override;
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInspector() override;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 		void Destroy();
 		bool IsDestroy()const;
@@ -32,7 +32,10 @@ namespace Balbino
 		void LoadComponents();
 		void SetName( const char* newName );
 		const char* GetName()const;
-
+		void OnTriggerEnter(GameObject* pGameObject);
+		void OnTriggerExit(GameObject* pGameObject);
+		void OnCollisionEnter(GameObject* pGameObject);
+		void OnCollisionExit(GameObject* pGameObject);
 		template <class T>
 		T* GetComponent() const;
 		template <class T, class... Args>
@@ -43,6 +46,9 @@ namespace Balbino
 		void SetActive(bool active);
 		bool ActiveInHierarchy()const;
 
+		void SetTag( const std::string& newTag );
+		const std::string& GetTag()const;
+
 		GameObject( const GameObject& ) = delete;
 		GameObject( GameObject&& ) = delete;
 		GameObject& operator= ( const GameObject& ) = delete;
@@ -50,6 +56,7 @@ namespace Balbino
 	private:
 		std::vector<Component*> m_Components;
 		std::string m_Name;
+		std::string m_Tag;
 		bool m_IsDestroyed;
 		bool m_IsActive;
 	};

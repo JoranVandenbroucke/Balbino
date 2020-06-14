@@ -17,10 +17,10 @@ int main( int arc, char* argv[] )
 	(void) argv;
 
 	StartHeapControl();
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	_CrtMemState s1, s2, s3;
 	_CrtMemCheckpoint( &s1 );
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 	auto bubble = Balbino::CreateApplication();
 	try
 	{
@@ -31,10 +31,10 @@ int main( int arc, char* argv[] )
 		std::cout << e.what();
 	}
 	delete bubble;
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	if( _CrtMemDifference( &s3, &s1, &s2 ) )
 		_CrtMemDumpStatistics( &s3 );
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 	DumpMemoryLeaks();
 
@@ -43,7 +43,7 @@ int main( int arc, char* argv[] )
 
 void StartHeapControl()
 {
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(BALBINO_DEBUG)
 	// Notify user if heap is corrupt
 	//HeapSetInformation( NULL, HeapEnableTerminationOnCorruption, NULL, 0 );
 
@@ -57,7 +57,7 @@ void StartHeapControl()
 
 void DumpMemoryLeaks()
 {
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(DEBUG) | defined(BALBINO_DEBUG)
 	_CrtDumpMemoryLeaks();
 #endif
 }

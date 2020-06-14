@@ -57,7 +57,7 @@ namespace Balbino
 		std::string m_FontPath;
 		Font* m_Font;
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	public:
 		virtual void DrawInpector() override;
 	private:

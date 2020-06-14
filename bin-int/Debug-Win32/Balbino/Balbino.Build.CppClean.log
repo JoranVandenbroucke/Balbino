@@ -2,9 +2,6 @@ c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\bal
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\balbino.pdb
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\balbino.idb
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\balbinopch.obj
-c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\gameobject.obj
-c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\font.obj
-c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\transform.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\texture2d.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\text.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\sprite.obj
@@ -22,6 +19,9 @@ c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\box
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\rigidbody2d.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\charactercontroller.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\animation.obj
+c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\enemy.obj
+c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\bubblemanager.obj
+c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\bubble.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\spriteeditor.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\time.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\struct.obj
@@ -32,9 +32,11 @@ c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\res
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\renderer.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\physicsworld.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\inputmanager.obj
+c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\gameobject.obj
+c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\font.obj
+c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\transform.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\imgui_widgets.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\imgui_sdl.obj
-c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\imgui_plot.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\imgui_impl_sdl.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\imgui_impl_opengl3.obj
 c:\users\joran\source\repos\terstarboy55\balbino\bin-int\debug-win32\balbino\imgui_draw.obj

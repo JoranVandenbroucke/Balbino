@@ -232,7 +232,7 @@ GLuint Balbino::Shader::CreateShader( const char* vertexShader, const char* frag
 	glAttachShader( program, fs );
 	glLinkProgram( program );
 
-#ifndef _DEBUG
+#ifndef BALBINO_DEBUG
 	glDetachShader( program, vs );
 	glDetachShader( program, fs );
 

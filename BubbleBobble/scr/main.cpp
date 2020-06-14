@@ -12,7 +12,7 @@ namespace BubbleBobble
 
 	void BubbleBobbleGame::LoadGame() const
 	{
-		Balbino::SceneManager::Get().CreateScene( "First Scene" );
+		Balbino::SceneManager::Get().CreateScene( "..\\Data\\Scene\\FinalLevel.Balbino" );
 	}
 }
 

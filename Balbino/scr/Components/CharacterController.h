@@ -7,6 +7,7 @@ namespace Balbino
 	class GameObject;
 	class Rigidbody2D;
 	class Animation;
+	class BubbleManager;;
 
 	class CharacterController : public Component
 	{
@@ -25,23 +26,30 @@ namespace Balbino
 		virtual void Draw() const override;
 		virtual void Save( std::ostream& file ) override;
 		virtual void Load( std::istream& file ) override;
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override;
-
+#endif // BALBINO_DEBUG
+		virtual void OnCollisionEnter( GameObject* pGameObject );
 		void SetInput( const char* const device );
-
+		bool WantsToDropDown()const;
 		void GoLeft();
 		void GoRight();
-		void LookLeft();
-		void LookRight();
 		void Jump();
 		void Fall();
 		void Shoot();
+		void SetDead(bool isDead);
+		bool GetDeadState();
+		Direction GetDirection();
 	private:
+		bool m_WantsToDropDown;
+		bool m_IsDead;
+		Direction m_Direction;
+
 		std::string m_CurrentDevice;
 
 		Rigidbody2D* m_pRigidbody;
 		Animation* m_pAnimation;
-		bool m_IsJumping;
+		BubbleManager* m_pManager;
 	};
 
 	class GoLeftCommand : public Command

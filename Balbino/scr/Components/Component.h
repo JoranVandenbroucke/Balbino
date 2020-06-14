@@ -11,7 +11,7 @@ namespace Balbino
 	{
 	public:
 		Component( const GameObject* const origin );
-		virtual ~Component() = default;
+		virtual ~Component();
 
 		Component( const Component& ) = delete;
 		Component( Component&& ) = delete;
@@ -27,13 +27,16 @@ namespace Balbino
 		{
 		};
 		virtual void Draw() const = 0;
-
+		virtual void OnTriggerEnter( GameObject* pGameObject );
+		virtual void OnTriggerExit( GameObject* pGameObject );
+		virtual void OnCollisionEnter( GameObject* pGameObject );
+		virtual void OnCollisionExit( GameObject* pGameObject );
 		virtual void Save( std::ostream& file ) = 0;
 		virtual void Load( std::istream& file ) = 0;
 		virtual GameObject* const GetGameObject() const;
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() = 0;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 		template <class T>
 		T* GetComponent() const;
@@ -41,8 +44,9 @@ namespace Balbino
 		template <class T, class... Args>
 		T* AddComponent( Args&&... args );
 
+		bool eneable;
 	protected:
-		Balbino::GameObject* const m_pOrigin;
+		Balbino::GameObject* m_pOrigin;
 		Balbino::Transform* m_pTransform;
 		bool m_Created;
 	};

@@ -19,11 +19,13 @@ Balbino::BoxCollider2D::BoxCollider2D( const Balbino::GameObject* const origine 
 	, m_BodyDef{}
 	, m_Colliser{}
 	, m_pFixture{ nullptr }
+	, m_IsTrigger{}
 {
 }
 
 Balbino::BoxCollider2D::~BoxCollider2D()
 {
+	m_pFixture->SetUserData( nullptr );
 	PhysicsWorld::RemoveBody( m_pBody );
 }
 
@@ -97,6 +99,7 @@ void Balbino::BoxCollider2D::Save( std::ostream& file )
 	BinaryReadWrite::Write( file, int( ComponentList::BoxCollider2D ) );
 	BinaryReadWrite::Write( file, m_Center );
 	BinaryReadWrite::Write( file, m_Size );
+	BinaryReadWrite::Write( file, m_IsTrigger );
 }
 
 void Balbino::BoxCollider2D::Load( std::istream& file )
@@ -104,17 +107,16 @@ void Balbino::BoxCollider2D::Load( std::istream& file )
 	(void) file;
 	BinaryReadWrite::Read( file, m_Center );
 	BinaryReadWrite::Read( file, m_Size );
+	BinaryReadWrite::Read( file, m_IsTrigger );
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::BoxCollider2D::DrawInpector()
 {
 	ImGui::BeginChild( "BoxCollider2D", ImVec2{ -1, 128 }, true );
 	ImGui::Text( "Box Collider 2D" );
 	float size[3]{ m_Size.x, m_Size.y, m_Size.z }, center[3]{ m_Center.x , m_Center.y, m_Center.z };
-	auto fixture = m_pBody->GetFixtureList();
-	bool trigger{ fixture->IsSensor() };
-	bool chaingedTrigger = ImGui::Checkbox( "isTrigger", &trigger );
+	bool chaingedTrigger = ImGui::Checkbox( "isTrigger", &m_IsTrigger );
 	bool chaingedCenter = ImGui::DragFloat3( "Center", center );
 	bool chaingedSize = ImGui::DragFloat3( "Size", size );
 
@@ -123,10 +125,10 @@ void Balbino::BoxCollider2D::DrawInpector()
 	if( chaingedSize )
 		SetSize( Balbino::Vector3{ size[0], size[1], size[2] } );
 	if( chaingedTrigger )
-		SetTrigger( trigger );
+		SetTrigger( m_IsTrigger );
 	ImGui::EndChild();
 }
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 
 const Balbino::Vector3& Balbino::BoxCollider2D::GetCenter() const
 {
@@ -156,8 +158,8 @@ void Balbino::BoxCollider2D::SetSize( const Balbino::Vector3& newSize )
 
 void Balbino::BoxCollider2D::SetTrigger( bool isTrigger )
 {
-	auto fixture = m_pBody->GetFixtureList();
-	fixture->SetSensor( isTrigger );
+	m_IsTrigger = isTrigger;
+	m_pFixture->SetSensor( isTrigger );
 }
 
 void Balbino::BoxCollider2D::Reset()

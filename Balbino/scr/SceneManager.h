@@ -29,7 +29,7 @@ namespace Balbino
 		void Draw();
 		Scene* GetCurrentScene();
 		void Stop();
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		void DrawEngine();
 #endif
 	private:

@@ -5,6 +5,7 @@
 Balbino::GameObject::GameObject()
 	: SceneObject{}
 	, m_IsDestroyed{ false }
+	, m_IsActive{ true }
 {
 }
 
@@ -78,7 +79,7 @@ void Balbino::GameObject::Draw() const
 	}
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::GameObject::DrawInspector()
 {
 	for( Component* comp : m_Components )
@@ -86,7 +87,7 @@ void Balbino::GameObject::DrawInspector()
 		comp->DrawInpector();
 	}
 }
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 void Balbino::GameObject::Destroy()
 {
@@ -121,10 +122,43 @@ const char* Balbino::GameObject::GetName() const
 	return m_Name.c_str();
 }
 
+void Balbino::GameObject::OnTriggerEnter( GameObject* pGameObject )
+{
+	for( Component* comp : m_Components )
+	{
+		comp->OnTriggerEnter(pGameObject);
+	}
+}
+
+void Balbino::GameObject::OnTriggerExit( GameObject* pGameObject )
+{
+	for( Component* comp : m_Components )
+	{
+		comp->OnTriggerExit( pGameObject );
+	}
+}
+
+void Balbino::GameObject::OnCollisionEnter( GameObject* pGameObject )
+{
+	for( Component* comp : m_Components )
+	{
+		comp->OnCollisionEnter( pGameObject );
+	}
+}
+
+void Balbino::GameObject::OnCollisionExit( GameObject* pGameObject )
+{
+	for( Component* comp : m_Components )
+	{
+		comp->OnCollisionExit( pGameObject );
+	}
+}
+
 void Balbino::GameObject::Save( std::ostream& file )
 {
 	BinaryReadWrite::Write( file, m_Name );
 	int size{ int( m_Components.size() ) };
+	BinaryReadWrite::Write( file, m_Tag );
 	BinaryReadWrite::Write( file, size );
 	for( int i = 0; i < size; i++ )
 	{
@@ -137,6 +171,7 @@ void Balbino::GameObject::Load( std::istream& file )
 {
 	int size{};
 	BinaryReadWrite::Read( file, m_Name );
+	BinaryReadWrite::Read( file, m_Tag );
 	BinaryReadWrite::Read( file, size );
 	for( int i = 0; i < size; i++ )
 	{
@@ -180,6 +215,15 @@ void Balbino::GameObject::Load( std::istream& file )
 		case Balbino::ComponentList::Animation:
 			AddComponent<Animation>()->Load( file );
 			break;
+		case Balbino::ComponentList::Enemy:
+			AddComponent<Enemy>()->Load( file );
+			break;
+		case Balbino::ComponentList::Bubble:
+			AddComponent<Bubble>()->Load( file );
+			break;
+		case Balbino::ComponentList::BubbleManager:
+			AddComponent<BubbleManager>()->Load( file );
+			break;
 		default:
 			break;
 		}
@@ -194,4 +238,14 @@ void Balbino::GameObject::SetActive( bool active )
 bool Balbino::GameObject::ActiveInHierarchy()const
 {
 	return m_IsActive;
+}
+
+void Balbino::GameObject::SetTag( const std::string& newTag )
+{
+	m_Tag = newTag;
+}
+
+const std::string& Balbino::GameObject::GetTag() const
+{
+	return m_Tag;
 }

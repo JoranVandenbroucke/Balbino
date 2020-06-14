@@ -1,7 +1,7 @@
 #include "BalbinoPCH.h"
 #include "Debug.h"
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 #include "..\Renderer/Renderer.h"
 #include "..\ResourceManager.h"
 #include "..\Components/Text.h" 
@@ -22,7 +22,7 @@ void Balbino::Debug::Assert( bool argument )
 
 void Balbino::Debug::DrawLine( const Vector3& start, const Vector3& end, const Color& color )
 {
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	( void )color;
 	vertex vert[2]{};
 	vert[0].x = start.x;
@@ -37,42 +37,42 @@ void Balbino::Debug::DrawLine( const Vector3& start, const Vector3& end, const C
 	m_pVertexBuff->Bind();
 	glDrawArrays( GL_LINES, 0, 2 );
 	m_pVertexBuff->Unbind();
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 }
 
 void Balbino::Debug::DrawRay( const Vector3& start, const Vector3& direction, const Color& color )
 {
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	DrawLine( start, start + direction, color );
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 }
 
 void Balbino::Debug::Log( const std::string& log )
 {
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	Get().ILog( log );
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 }
 
 void Balbino::Debug::LogError( const std::string& error )
 {
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	Get().ILogError( error );
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 }
 
 void Balbino::Debug::LogException( const std::string& exeption )
 {
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	Get().ILogException( exeption );
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 }
 
 void Balbino::Debug::LogWarning( const std::string& warning )
 {
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 	Get().ILogWarning( warning );
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 }
 
 void Balbino::Debug::Draw() const

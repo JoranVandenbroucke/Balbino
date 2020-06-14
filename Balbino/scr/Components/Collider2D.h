@@ -22,9 +22,9 @@ namespace Balbino
 		virtual void Draw() const override = 0;
 		virtual void Save( std::ostream& file ) override = 0;
 		virtual void Load( std::istream& file ) override = 0;
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override = 0;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 	protected:
 		friend class Rigidbody2D;

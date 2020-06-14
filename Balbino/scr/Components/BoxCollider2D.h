@@ -25,9 +25,9 @@ namespace Balbino
 
 		virtual void Save( std::ostream & file )override;
 		virtual void Load( std::istream & file )override;
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 		const Balbino::Vector3& GetCenter() const;
 		const Balbino::Vector3& GetSize() const;
@@ -38,6 +38,7 @@ namespace Balbino
 		virtual bool RayCast( const Balbino::Ray& ray, Balbino::RaycastHit& hitInfo, float size ) const override;
 	private:
 		const int m_ppm = 8;
+		bool m_IsTrigger;
 		Balbino::Vector3 m_Center;
 		Balbino::Vector3 m_Size;
 		Balbino::Vector3 m_OldTransformPosition;

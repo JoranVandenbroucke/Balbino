@@ -20,9 +20,8 @@ void Balbino::SceneManager::SetScene( const unsigned int sceneNr )
 		{
 			current->Unload();
 		}
-		current = Get().m_pScenes[sceneNr];
-		current->Load();
-		Get().m_pCurrentScenes = current;
+		Get().m_pCurrentScenes = Get().m_pScenes[sceneNr];
+		Get().m_pCurrentScenes->Load();
 	}
 }
 Balbino::GameObject* Balbino::SceneManager::AddGameObjectToScene( GameObject* gameObject )
@@ -99,7 +98,7 @@ void Balbino::SceneManager::Stop()
 	}
 	m_pScenes.clear();
 }
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::SceneManager::DrawEngine()
 {
 	auto currentScene = m_pCurrentScenes;
@@ -108,7 +107,7 @@ void Balbino::SceneManager::DrawEngine()
 		currentScene->DrawEditor();
 	}
 }
-#endif //_DEBUG
+#endif //BALBINO_DEBUG
 
 Balbino::Scene& Balbino::SceneManager::CreateScene( const std::string& name )
 {

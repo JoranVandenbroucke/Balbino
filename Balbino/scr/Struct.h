@@ -7,7 +7,8 @@ namespace Balbino
 	class Transform;
 	class Rigidbody2D;
 	class Collider2D;
-
+	struct Vector3;
+		
 	struct comp
 	{
 		template<typename T1, typename T2>
@@ -28,6 +29,7 @@ namespace Balbino
 	struct Vector2
 	{
 		Vector2( float x = 0.f, float y = 0.f );
+		Vector2( const Vector3& other );
 		float x, y;
 
 		Vector2& operator+=( const Vector2& rhs );
@@ -149,7 +151,7 @@ namespace Balbino
 	{
 		const Collider2D* collider;
 
-		Vector3 distance;
+		float distance;
 		Vector3 point;
 		Rigidbody2D* rigidbody;
 
@@ -162,13 +164,21 @@ namespace Balbino
 		LoggedAudio,
 		Avatar,
 		Animation,
+		Bubble,
+		BubbleManager,
 		BoxCollider2D,
 		Camera,
+		Enemy,
 		FPSScript,
 		LevelLoader,
 		Rigidbody2D,
 		Sprite,
 		Text,
 		Transform
+	};
+	enum class Direction
+	{
+		LEFT,
+		RIGHT
 	};
 }

@@ -87,6 +87,16 @@ const float Balbino::Sprite::GetHeight() const
 	return ( m_UV[1].y - m_UV[0].y ) * m_Dimentions.y;
 }
 
+void Balbino::Sprite::Create()
+{
+	if( m_Created ) return;
+	this->Component::Create();
+
+	LoadUV();
+	SetTexture( m_File );
+	SetSpriteIndex( m_SpriteIndex );
+}
+
 void Balbino::Sprite::Save( std::ostream& file )
 {
 	BinaryReadWrite::Write( file, int( ComponentList::Sprite ) );
@@ -100,12 +110,9 @@ void Balbino::Sprite::Load( std::istream& file )
 	BinaryReadWrite::Read( file, m_SpriteIndex );
 	BinaryReadWrite::Read( file, m_Color );
 	BinaryReadWrite::Read( file, m_File );
-	LoadUV();
-	SetTexture( m_File );
-	SetSpriteIndex( m_SpriteIndex );
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::Sprite::DrawInpector()
 {
 	//set variables
@@ -169,5 +176,4 @@ void Balbino::Sprite::DrawInpector()
 
 	ImGui::EndChild();
 }
-#endif // _DEBUG
-
+#endif // BALBINO_DEBUG

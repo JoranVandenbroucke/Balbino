@@ -17,6 +17,8 @@ Balbino::Rigidbody2D::Rigidbody2D( const GameObject* const origine )
 	, m_Drag{ 0.0f }
 	, m_Hits{}
 	, m_Mass{ 1.f }
+	, m_Velocity{}
+	, m_pBody{nullptr}
 {
 
 }
@@ -58,7 +60,9 @@ void Balbino::Rigidbody2D::Update()
 
 void Balbino::Rigidbody2D::LateUpdate()
 {
-
+	auto velocity = m_pBody->GetLinearVelocity();
+	m_Velocity.x = velocity.x;
+	m_Velocity.y = velocity.y;
 }
 
 void Balbino::Rigidbody2D::Draw() const
@@ -88,7 +92,7 @@ void Balbino::Rigidbody2D::Load( std::istream& file )
 	BinaryReadWrite::Read( file, m_Mass );
 }
 
-bool Balbino::Rigidbody2D::SweepTest( const Balbino::Vector3& direction, Balbino::RaycastHit& hitInfo, float maxDistance )
+bool Balbino::Rigidbody2D::SweepTest( const Balbino::Vector2& direction, Balbino::RaycastHit& hitInfo, float maxDistance )
 {
 	(void) direction;
 	(void) hitInfo;
@@ -116,8 +120,7 @@ void Balbino::Rigidbody2D::AddForceAtPosition( const Balbino::Vector2& force, co
 
 Balbino::Vector2 Balbino::Rigidbody2D::GetVelocity() const
 {
-	auto velocity = m_pBody->GetLinearVelocity();
-	return Balbino::Vector2{ velocity.x, velocity.y };
+	return m_Velocity;
 }
 
 void Balbino::Rigidbody2D::SetVelocity( Balbino::Vector2& velocity ) const
@@ -125,9 +128,21 @@ void Balbino::Rigidbody2D::SetVelocity( Balbino::Vector2& velocity ) const
 	m_pBody->SetLinearVelocity( { velocity.x, velocity.y } );
 }
 
+void Balbino::Rigidbody2D::UseGravity( bool useGravity )
+{
+	if( m_pBody )
+	{
+		m_pBody->SetGravityScale( useGravity ? 1.f : 0.f );
+	}
+	m_UseGravity = useGravity;
+}
+
+#ifdef BALBINO_DEBUG
 void Balbino::Rigidbody2D::DrawInpector()
 {
 	ImGui::BeginChild( "RigidBody2D Component", ImVec2{ -1, 128 }, true );
 	ImGui::Text( "RigidBody2D" );
 	ImGui::EndChild();
 }
+#endif // BALBINO_DEBUG
+

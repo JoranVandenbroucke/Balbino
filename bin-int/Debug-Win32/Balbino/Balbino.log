@@ -1,48 +1,4 @@
-﻿  BalbinoPCH.cpp
-  Animation.cpp
-  CharacterController.cpp
-  Rigidbody2D.cpp
-  BoxCollider2D.cpp
-  Collider2D.cpp
-  Debug.cpp
-  AssetBrouser.cpp
-  Application.cpp
-  BinaryReaderWrider.cpp
-  Audio.cpp
-  Camera.cpp
-  Component.cpp
-  FPSScript.cpp
-  LevelLoader.cpp
-  Sprite.cpp
-  Text.cpp
-  Texture2D.cpp
-  Transform.cpp
-  Font.cpp
-  GameObject.cpp
-  Generating Code...
-  Compiling...
-  InputManager.cpp
-  PhysicsWorld.cpp
-  Renderer.cpp
-  ResourceManager.cpp
-  Scene.cpp
-  SceneManager.cpp
-  SceneObject.cpp
-  Struct.cpp
-  Time.cpp
-  SpriteEditor.cpp
-  Generating Code...
-  imgui_extra.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_impl_sdl.cpp
-  imgui_plot.cpp
-  imgui_sdl.cpp
-  imgui_widgets.cpp
-  Generating Code...
-  gl3w.c
+﻿  CharacterController.cpp
 SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
 SDL2_ttf.lib(SDL2_ttf.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
 SDL2_mixer.lib(SDL2_mixer.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored

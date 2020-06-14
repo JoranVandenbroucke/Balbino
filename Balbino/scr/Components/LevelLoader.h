@@ -2,6 +2,8 @@
 #include "Component.h"
 namespace Balbino
 {
+	class GameObject;
+	class Enemy;
 	class LevelLoader :	public Component
 	{
 	public:
@@ -22,12 +24,14 @@ namespace Balbino
 
 		void SetLevelNr( int levelNr );
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 	private:
 		int m_LevelNr;
 		bool m_OverSave;
+		static const char m_MaxEnemeis{ 6 };
+		Enemy* m_pEnemys[m_MaxEnemeis];
 	};
 }

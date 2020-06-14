@@ -70,6 +70,8 @@ namespace Balbino
 		void SetInt( const std::string& name, int value );
 		void SetFloat( const std::string& name, float value );
 
+		bool SetAnimation( int animationNr, const std::string& path );
+
 		bool GetBool( const std::string& name )const;
 		bool GetTrigger( const std::string& name )const;
 		int GetInt( const std::string& name )const;
@@ -85,7 +87,7 @@ namespace Balbino
 		void RemoveInt( const std::string& name );
 		void RemoveFloat( const std::string& name );
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override;
 #endif // !DEBUG
 	private:

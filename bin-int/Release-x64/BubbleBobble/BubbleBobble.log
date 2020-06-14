@@ -1,0 +1,105 @@
+﻿  pch.cpp
+  main.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 3149 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  BubbleBobble.vcxproj -> C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\bin\Release-x64\BubbleBobble\BubbleBobble.exe
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\background.jpg
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Duck.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Fart.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Fire.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Jump.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Lingua.otf
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\logo.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Mermade Tom.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\Bob\BobLeft.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\Bob\BobRight.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\Bub\BubLeft.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\Bub\BubRight.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\Maita\MaitaLeft.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\Maita\MaitaRight.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\ZenChan\ZenChanLeft.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Animations\ZenChan\ZenChanRight.bani
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Fonts\Coder's Crux.ttf
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Fonts\COMIC.TTF
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Fonts\DIN-Light.otf
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Fonts\dontmix.ttf
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Fonts\Western Bang Bang.ttf
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\LevelData\leveldata.dat
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Scene\FinalScene.Balbino
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\BubbleBobbleOrchestra.mp3
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Duck.ogg
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Fart.ogg
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Fire.ogg
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Jump.ogg
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Channel Intro (Coin Sound).wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Drunk Fire.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Electric Ball Bounce.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Electric Shock.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Enter Secret Room.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Explosion.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Extra Life.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Food Pickup.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Hammer Bounce.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Item Collect 3.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Item Pickup 1.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Item Pickup 2.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Item Pickup 3.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Item Pickup.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Jump.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Large Item Fall.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Laser Shoot.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Letter Bubble Pop.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Player Death(Deep).wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Player Death.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Pop Bubble (Many Enemies).wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Pop Bubble (Single Enemy).wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Pop Bubble Couple Enemies).wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Ringing(Pause).wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Shark Ghost Appear.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Shoot Bubble.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Shoot Fireball.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Unknown.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Unknown2.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\SoundEffects\Converted Sounds\Water Flow.wav
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Arcade.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\blocks.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\blocks.png.spr
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites0.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites0.png.spr
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites1.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites1.png.spr
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites2.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites2.png.spr
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites3.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites3.png.spr
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites4.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites4.png.spr
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites5.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Data\Sprites\Sprites5.png.spr
+  73 File(s) copied
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\AudioFile.ico
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\AudioFile.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\Balbino.ico
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\Balbino.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\CppChFile.ico
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\CppChFile.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\Folder.ico
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\Folder.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\FontFile.png
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\UnknownFile.ico
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\Balbino\AssetBrousetIcons\UnknownFile.png
+  11 File(s) copied
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\BubbleBobble\Shaders\Basic.frag
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\BubbleBobble\Shaders\Basic.vert
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\BubbleBobble\Shaders\Font.frag
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\BubbleBobble\Shaders\Font.vert
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\BubbleBobble\Shaders\Line.frag
+  C:\Users\joran\Source\Repos\TerSTARboy55\Balbino\BubbleBobble\Shaders\Line.vert
+  6 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+  0 File(s) copied
+          1 file(s) moved.

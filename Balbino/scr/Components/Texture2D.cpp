@@ -7,7 +7,7 @@
 #include "../Editor/File.h"
 #include <SDL.h>
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 #include "../imgui-1.75/imgui.h"
 Balbino::Texture2D::Texture2D( const GameObject* const origine )
 	: Component{ origine }
@@ -47,12 +47,13 @@ Balbino::Texture2D::Texture2D( const GameObject* origine )
 	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
 	, m_Shader{ "Shaders/Basic.vert", "Shaders/Basic.frag" }
 	, m_Color{ 255,255,255 }
+	, m_ModelMatricLocation{}
 {
 	m_VertexBuff.Unbind();
-	m_Shader.Bind();
 
 	m_ColorUniformLocation = glGetUniformLocation( m_Shader.GetID(), "u_Color" );
 	m_TextureUniformLocation = glGetUniformLocation( m_Shader.GetID(), "u_Texture" );
+	m_ModelMatricLocation = glGetUniformLocation( m_Shader.GetID(), "u_Model" );
 	if( !( m_ColorUniformLocation != -1 ) )
 	{
 		glUniform4f( m_ColorUniformLocation, 1.f, 0.f, 1.f, 1.f );

@@ -1,6 +1,6 @@
 #pragma once
 #include "../Singleton.h"
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 #include "../Struct.h"
 #include <deque>
 #include <memory>
@@ -81,4 +81,4 @@ namespace Balbino
 		}
 	};
 }
-#endif // _DEBUG
+#endif // BALBINO_DEBUG

@@ -57,14 +57,14 @@ void Balbino::ConsoleAudio::Load( std::istream& file )
 {
 	(void) file;
 }
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::ConsoleAudio::DrawInpector()
 {
 	ImGui::BeginChild( "LoggedAudio", ImVec2{ -1, 128 }, true );
 	ImGui::Text( "Audio Component" );
 	ImGui::EndChild();
 }
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 void Balbino::ConsoleAudio::PlaySound( int soundID )
 {
@@ -114,7 +114,7 @@ void Balbino::LoggedAudio::Load( std::istream& file )
 	(void) file;
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::LoggedAudio::DrawInpector()
 {
 	ImGui::BeginChild( "LoggedAudio", ImVec2{ -1, 128 }, true );

@@ -3,6 +3,7 @@
 
 #include "../ResourceManager.h"
 
+#ifdef BALBINO_DEBUG
 Balbino::AssetBrouser::AssetBrouser()
 	: m_BalbinoTexture{ (unsigned int) ResourceManager::LoadTexture( "../Balbino/AssetBrousetIcons/Balbino.png" ) }
 	, m_AudioTexture{ (unsigned int) ResourceManager::LoadTexture( "../Balbino/AssetBrousetIcons/AudioFile.png" ) }
@@ -191,3 +192,4 @@ void Balbino::AssetBrouser::Draw()
 	ImGui::End();
 	std::filesystem::current_path( m_GameStart );
 }
+#endif // DEBUG

@@ -91,7 +91,7 @@ void Balbino::Animation::Update()
 			bool success{ true };
 			for( AnimatorCondition condition : transitionConditions )
 			{
-				switch( AnimatorControllerParameterType(condition.type) )
+				switch( AnimatorControllerParameterType( condition.type ) )
 				{
 				case AnimatorControllerParameterType::Trigger:
 				{
@@ -146,7 +146,7 @@ void Balbino::Animation::Update()
 				if( !success )
 					break;
 			}
-			if( success && m_CurrentAnimationState != transition.DestinationState )
+			if( success && m_CurrentAnimationState == transition.SourceState )
 			{
 				m_CurrentAnimationState = transition.DestinationState;
 				if( ( *m_pCurrrentAnimation )[0].second != m_Animations[m_CurrentAnimationState][0].second )
@@ -175,14 +175,14 @@ void Balbino::Animation::Save( std::ostream& file )
 	BinaryReadWrite::Write( file, m_CurrentAnimationFrame );
 	BinaryReadWrite::Write( file, m_Time );
 
-	BinaryReadWrite::Write( file, m_AnimationsFiles);
-	BinaryReadWrite::Write( file, m_AnimationTransitions);
-	BinaryReadWrite::Write( file, m_Animations);
+	BinaryReadWrite::Write( file, m_AnimationsFiles );
+	BinaryReadWrite::Write( file, m_AnimationTransitions );
+	BinaryReadWrite::Write( file, m_Animations );
 
-	BinaryReadWrite::Write( file, m_BoolTypes);
-	BinaryReadWrite::Write( file, m_TriggerTypes);
-	BinaryReadWrite::Write( file, m_FloatTypes);
-	BinaryReadWrite::Write( file, m_IntTypes);
+	BinaryReadWrite::Write( file, m_BoolTypes );
+	BinaryReadWrite::Write( file, m_TriggerTypes );
+	BinaryReadWrite::Write( file, m_FloatTypes );
+	BinaryReadWrite::Write( file, m_IntTypes );
 }
 
 void Balbino::Animation::Load( std::istream& file )
@@ -232,6 +232,65 @@ void Balbino::Animation::SetFloat( const std::string& name, float value )
 	{
 		m_FloatTypes[name] = value;
 	}
+}
+
+bool Balbino::Animation::SetAnimation( int animationNr, const std::string& path )
+{
+	if( animationNr < int( m_AnimationsFiles.size() ) )
+	{
+		m_AnimationsFiles[animationNr] = path;
+		std::ifstream file{ "../Data/" + m_AnimationsFiles[animationNr] };
+		if( file.is_open() )
+		{
+			std::string line;
+			std::regex timeRegex{ R"(^- time:\s(\d+\.?\d*)$)" };
+			std::regex valueRegex{ R"(^\svalue:\s(\d+)$)" };
+			std::regex spriteRegex{ R"(^\sSprite:\s(.+)$)" };
+			std::smatch match;
+			std::vector < std::pair<std::pair<float, int>, std::string>> animation;
+			while( true )
+			{
+				float time{};
+				int spritePos{};
+				std::string fileName{};
+				std::getline( file, line );
+				if( std::regex_match( line, match, timeRegex ) )
+				{
+					time = std::stof( match[1].str() );
+				}
+				else
+				{
+					break;
+				}
+				std::getline( file, line );
+				if( std::regex_match( line, match, valueRegex ) )
+				{
+					spritePos = std::stoi( match[1].str() );
+				}
+				else
+				{
+					break;
+				}
+				std::getline( file, line );
+				if( std::regex_match( line, match, spriteRegex ) )
+				{
+					fileName = match[1].str();
+				}
+				else
+				{
+					break;
+				}
+				animation.push_back( std::make_pair( std::make_pair( time, spritePos ), fileName ) );
+				if( file.eof() )
+				{
+					break;
+				}
+			}
+			m_Animations[animationNr] = animation;
+			return true;
+		}
+	}
+	return false;
 }
 
 int Balbino::Animation::GetInt( const std::string& name ) const
@@ -338,7 +397,7 @@ void Balbino::Animation::RemoveFloat( const std::string& name )
 	}
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::Animation::DrawInpector()
 {
 	int animationSize{ int( m_Animations.size() ) };
@@ -552,4 +611,4 @@ void Balbino::Animation::DrawInpector()
 		m_pCurrrentAnimation = nullptr;
 	}
 }
-#endif // _DEBUG
+#endif // BALBINO_DEBUG

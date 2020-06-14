@@ -91,7 +91,7 @@ void Balbino::Text::Load( std::istream& file )
 	SetFont( m_FontPath, m_FontSize );
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 #include "../imgui-1.75/imgui.h"
 #include <algorithm>
 void Balbino::Text::DrawInpector()

@@ -93,7 +93,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;BL_BUILD_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BALBINO_DEBUG;_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;BL_BUILD_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>BalbinoPCH.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -121,7 +121,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;BL_BUILD_LIB;_DEBUG;_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BALBINO_DEBUG;_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;BL_BUILD_LIB;_DEBUG;_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glm;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\box2d\include;$(SolutionDir)3rdParty\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -210,6 +210,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Components\Bubble.h" />
+    <ClInclude Include="scr\Components\BubbleManager.h" />
+    <ClInclude Include="scr\Components\Enemy.h" />
     <ClInclude Include="scr\Components\Animation.h" />
     <ClInclude Include="scr\Components\CharacterController.h" />
     <ClInclude Include="scr\Components\Rigidbody2D.h" />
@@ -245,7 +248,6 @@
     <ClInclude Include="scr\imgui-1.75\imgui_impl_opengl3.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_internal.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_plot.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_sdl.h" />
     <ClInclude Include="scr\imgui-1.75\imstb_rectpack.h" />
     <ClInclude Include="scr\imgui-1.75\imstb_textedit.h" />
@@ -263,6 +265,9 @@
     <ClInclude Include="scr\Editor\SpriteEditor.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Components\Bubble.cpp" />
+    <ClCompile Include="scr\Components\BubbleManager.cpp" />
+    <ClCompile Include="scr\Components\Enemy.cpp" />
     <ClCompile Include="scr\Components\Animation.cpp" />
     <ClCompile Include="scr\Components\CharacterController.cpp" />
     <ClCompile Include="scr\Components\Rigidbody2D.cpp" />
@@ -273,6 +278,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="scr\Editor\AssetBrouser.cpp" />
     <ClCompile Include="scr\Application.cpp" />
@@ -325,12 +331,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_plot.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

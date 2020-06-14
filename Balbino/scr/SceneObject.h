@@ -10,9 +10,9 @@ namespace Balbino
 		virtual void Update() = 0;
 		virtual void LateUpdate() = 0;
 		virtual void Draw() const = 0;
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInspector() = 0;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 		virtual void Destroy() = 0;
 

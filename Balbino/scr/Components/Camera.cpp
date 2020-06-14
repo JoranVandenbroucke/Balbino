@@ -151,7 +151,7 @@ std::vector<Balbino::Camera*>& Balbino::Camera::GetAllCameras()
 	return m_pAllCameras;
 }
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 void Balbino::Camera::DrawInpector()
 {
 	float color[3]{ m_ClearColor.r / 255.f, m_ClearColor.g / 255.f, m_ClearColor.b / 255.f };

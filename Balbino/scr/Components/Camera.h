@@ -47,9 +47,9 @@ namespace Balbino
 		static std::vector<Camera*>& GetAllCameras();
 
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 	private:
 		int m_Depth;
 		glm::mat4 m_ProjectionMatrix;

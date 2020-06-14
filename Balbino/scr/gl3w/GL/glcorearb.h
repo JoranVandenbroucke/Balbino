@@ -1285,35 +1285,35 @@ typedef void GLvoid;
 /* reuse GL_DISPATCH_INDIRECT_BUFFER */
 /* reuse GL_DISPATCH_INDIRECT_BUFFER_BINDING */
 /* Reuse tokens from ARB_copy_image (none) */
-/* Reuse tokens from KHR_debug */
-/* reuse GL_DEBUG_OUTPUT_SYNCHRONOUS */
-/* reuse GL_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH */
-/* reuse GL_DEBUG_CALLBACK_FUNCTION */
-/* reuse GL_DEBUG_CALLBACK_USER_PARAM */
-/* reuse GL_DEBUG_SOURCE_API */
-/* reuse GL_DEBUG_SOURCE_WINDOW_SYSTEM */
-/* reuse GL_DEBUG_SOURCE_SHADER_COMPILER */
-/* reuse GL_DEBUG_SOURCE_THIRD_PARTY */
-/* reuse GL_DEBUG_SOURCE_APPLICATION */
-/* reuse GL_DEBUG_SOURCE_OTHER */
-/* reuse GL_DEBUG_TYPE_ERROR */
-/* reuse GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR */
-/* reuse GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR */
-/* reuse GL_DEBUG_TYPE_PORTABILITY */
-/* reuse GL_DEBUG_TYPE_PERFORMANCE */
-/* reuse GL_DEBUG_TYPE_OTHER */
-/* reuse GL_MAX_DEBUG_MESSAGE_LENGTH */
-/* reuse GL_MAX_DEBUG_LOGGED_MESSAGES */
-/* reuse GL_DEBUG_LOGGED_MESSAGES */
-/* reuse GL_DEBUG_SEVERITY_HIGH */
-/* reuse GL_DEBUG_SEVERITY_MEDIUM */
-/* reuse GL_DEBUG_SEVERITY_LOW */
-/* reuse GL_DEBUG_TYPE_MARKER */
-/* reuse GL_DEBUG_TYPE_PUSH_GROUP */
-/* reuse GL_DEBUG_TYPE_POP_GROUP */
-/* reuse GL_DEBUG_SEVERITY_NOTIFICATION */
-/* reuse GL_MAX_DEBUG_GROUP_STACK_DEPTH */
-/* reuse GL_DEBUG_GROUP_STACK_DEPTH */
+/* Reuse tokens from KHRBALBINO_DEBUG */
+/* reuse GLBALBINO_DEBUG_OUTPUT_SYNCHRONOUS */
+/* reuse GLBALBINO_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH */
+/* reuse GLBALBINO_DEBUG_CALLBACK_FUNCTION */
+/* reuse GLBALBINO_DEBUG_CALLBACK_USER_PARAM */
+/* reuse GLBALBINO_DEBUG_SOURCE_API */
+/* reuse GLBALBINO_DEBUG_SOURCE_WINDOW_SYSTEM */
+/* reuse GLBALBINO_DEBUG_SOURCE_SHADER_COMPILER */
+/* reuse GLBALBINO_DEBUG_SOURCE_THIRD_PARTY */
+/* reuse GLBALBINO_DEBUG_SOURCE_APPLICATION */
+/* reuse GLBALBINO_DEBUG_SOURCE_OTHER */
+/* reuse GLBALBINO_DEBUG_TYPE_ERROR */
+/* reuse GLBALBINO_DEBUG_TYPE_DEPRECATED_BEHAVIOR */
+/* reuse GLBALBINO_DEBUG_TYPE_UNDEFINED_BEHAVIOR */
+/* reuse GLBALBINO_DEBUG_TYPE_PORTABILITY */
+/* reuse GLBALBINO_DEBUG_TYPE_PERFORMANCE */
+/* reuse GLBALBINO_DEBUG_TYPE_OTHER */
+/* reuse GL_MAXBALBINO_DEBUG_MESSAGE_LENGTH */
+/* reuse GL_MAXBALBINO_DEBUG_LOGGED_MESSAGES */
+/* reuse GLBALBINO_DEBUG_LOGGED_MESSAGES */
+/* reuse GLBALBINO_DEBUG_SEVERITY_HIGH */
+/* reuse GLBALBINO_DEBUG_SEVERITY_MEDIUM */
+/* reuse GLBALBINO_DEBUG_SEVERITY_LOW */
+/* reuse GLBALBINO_DEBUG_TYPE_MARKER */
+/* reuse GLBALBINO_DEBUG_TYPE_PUSH_GROUP */
+/* reuse GLBALBINO_DEBUG_TYPE_POP_GROUP */
+/* reuse GLBALBINO_DEBUG_SEVERITY_NOTIFICATION */
+/* reuse GL_MAXBALBINO_DEBUG_GROUP_STACK_DEPTH */
+/* reuse GLBALBINO_DEBUG_GROUP_STACK_DEPTH */
 /* reuse GL_BUFFER */
 /* reuse GL_SHADER */
 /* reuse GL_PROGRAM */
@@ -1322,8 +1322,8 @@ typedef void GLvoid;
 /* reuse GL_SAMPLER */
 /* reuse GL_DISPLAY_LIST */
 /* reuse GL_MAX_LABEL_LENGTH */
-/* reuse GL_DEBUG_OUTPUT */
-/* reuse GL_CONTEXT_FLAG_DEBUG_BIT */
+/* reuse GLBALBINO_DEBUG_OUTPUT */
+/* reuse GL_CONTEXT_FLAGBALBINO_DEBUG_BIT */
 /* reuse GL_STACK_UNDERFLOW */
 /* reuse GL_STACK_OVERFLOW */
 /* Reuse tokens from ARB_explicit_uniform_location */
@@ -2044,29 +2044,29 @@ typedef void GLvoid;
 #define GL_SYNC_CL_EVENT_COMPLETE_ARB     0x8241
 #endif
 
-#ifndef GL_ARB_debug_output
-#define GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB   0x8242
-#define GL_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH_ARB 0x8243
-#define GL_DEBUG_CALLBACK_FUNCTION_ARB    0x8244
-#define GL_DEBUG_CALLBACK_USER_PARAM_ARB  0x8245
-#define GL_DEBUG_SOURCE_API_ARB           0x8246
-#define GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB 0x8247
-#define GL_DEBUG_SOURCE_SHADER_COMPILER_ARB 0x8248
-#define GL_DEBUG_SOURCE_THIRD_PARTY_ARB   0x8249
-#define GL_DEBUG_SOURCE_APPLICATION_ARB   0x824A
-#define GL_DEBUG_SOURCE_OTHER_ARB         0x824B
-#define GL_DEBUG_TYPE_ERROR_ARB           0x824C
-#define GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB 0x824D
-#define GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB 0x824E
-#define GL_DEBUG_TYPE_PORTABILITY_ARB     0x824F
-#define GL_DEBUG_TYPE_PERFORMANCE_ARB     0x8250
-#define GL_DEBUG_TYPE_OTHER_ARB           0x8251
-#define GL_MAX_DEBUG_MESSAGE_LENGTH_ARB   0x9143
-#define GL_MAX_DEBUG_LOGGED_MESSAGES_ARB  0x9144
-#define GL_DEBUG_LOGGED_MESSAGES_ARB      0x9145
-#define GL_DEBUG_SEVERITY_HIGH_ARB        0x9146
-#define GL_DEBUG_SEVERITY_MEDIUM_ARB      0x9147
-#define GL_DEBUG_SEVERITY_LOW_ARB         0x9148
+#ifndef GL_ARBBALBINO_DEBUG_output
+#define GLBALBINO_DEBUG_OUTPUT_SYNCHRONOUS_ARB   0x8242
+#define GLBALBINO_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH_ARB 0x8243
+#define GLBALBINO_DEBUG_CALLBACK_FUNCTION_ARB    0x8244
+#define GLBALBINO_DEBUG_CALLBACK_USER_PARAM_ARB  0x8245
+#define GLBALBINO_DEBUG_SOURCE_API_ARB           0x8246
+#define GLBALBINO_DEBUG_SOURCE_WINDOW_SYSTEM_ARB 0x8247
+#define GLBALBINO_DEBUG_SOURCE_SHADER_COMPILER_ARB 0x8248
+#define GLBALBINO_DEBUG_SOURCE_THIRD_PARTY_ARB   0x8249
+#define GLBALBINO_DEBUG_SOURCE_APPLICATION_ARB   0x824A
+#define GLBALBINO_DEBUG_SOURCE_OTHER_ARB         0x824B
+#define GLBALBINO_DEBUG_TYPE_ERROR_ARB           0x824C
+#define GLBALBINO_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB 0x824D
+#define GLBALBINO_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB 0x824E
+#define GLBALBINO_DEBUG_TYPE_PORTABILITY_ARB     0x824F
+#define GLBALBINO_DEBUG_TYPE_PERFORMANCE_ARB     0x8250
+#define GLBALBINO_DEBUG_TYPE_OTHER_ARB           0x8251
+#define GL_MAXBALBINO_DEBUG_MESSAGE_LENGTH_ARB   0x9143
+#define GL_MAXBALBINO_DEBUG_LOGGED_MESSAGES_ARB  0x9144
+#define GLBALBINO_DEBUG_LOGGED_MESSAGES_ARB      0x9145
+#define GLBALBINO_DEBUG_SEVERITY_HIGH_ARB        0x9146
+#define GLBALBINO_DEBUG_SEVERITY_MEDIUM_ARB      0x9147
+#define GLBALBINO_DEBUG_SEVERITY_LOW_ARB         0x9148
 #endif
 
 #ifndef GL_ARB_robustness
@@ -2251,29 +2251,29 @@ typedef void GLvoid;
 #define GL_COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR 0x93DD
 #endif
 
-#ifndef GL_KHR_debug
-#define GL_DEBUG_OUTPUT_SYNCHRONOUS       0x8242
-#define GL_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH 0x8243
-#define GL_DEBUG_CALLBACK_FUNCTION        0x8244
-#define GL_DEBUG_CALLBACK_USER_PARAM      0x8245
-#define GL_DEBUG_SOURCE_API               0x8246
-#define GL_DEBUG_SOURCE_WINDOW_SYSTEM     0x8247
-#define GL_DEBUG_SOURCE_SHADER_COMPILER   0x8248
-#define GL_DEBUG_SOURCE_THIRD_PARTY       0x8249
-#define GL_DEBUG_SOURCE_APPLICATION       0x824A
-#define GL_DEBUG_SOURCE_OTHER             0x824B
-#define GL_DEBUG_TYPE_ERROR               0x824C
-#define GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR 0x824D
-#define GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR  0x824E
-#define GL_DEBUG_TYPE_PORTABILITY         0x824F
-#define GL_DEBUG_TYPE_PERFORMANCE         0x8250
-#define GL_DEBUG_TYPE_OTHER               0x8251
-#define GL_DEBUG_TYPE_MARKER              0x8268
-#define GL_DEBUG_TYPE_PUSH_GROUP          0x8269
-#define GL_DEBUG_TYPE_POP_GROUP           0x826A
-#define GL_DEBUG_SEVERITY_NOTIFICATION    0x826B
-#define GL_MAX_DEBUG_GROUP_STACK_DEPTH    0x826C
-#define GL_DEBUG_GROUP_STACK_DEPTH        0x826D
+#ifndef GL_KHRBALBINO_DEBUG
+#define GLBALBINO_DEBUG_OUTPUT_SYNCHRONOUS       0x8242
+#define GLBALBINO_DEBUG_NEXT_LOGGED_MESSAGE_LENGTH 0x8243
+#define GLBALBINO_DEBUG_CALLBACK_FUNCTION        0x8244
+#define GLBALBINO_DEBUG_CALLBACK_USER_PARAM      0x8245
+#define GLBALBINO_DEBUG_SOURCE_API               0x8246
+#define GLBALBINO_DEBUG_SOURCE_WINDOW_SYSTEM     0x8247
+#define GLBALBINO_DEBUG_SOURCE_SHADER_COMPILER   0x8248
+#define GLBALBINO_DEBUG_SOURCE_THIRD_PARTY       0x8249
+#define GLBALBINO_DEBUG_SOURCE_APPLICATION       0x824A
+#define GLBALBINO_DEBUG_SOURCE_OTHER             0x824B
+#define GLBALBINO_DEBUG_TYPE_ERROR               0x824C
+#define GLBALBINO_DEBUG_TYPE_DEPRECATED_BEHAVIOR 0x824D
+#define GLBALBINO_DEBUG_TYPE_UNDEFINED_BEHAVIOR  0x824E
+#define GLBALBINO_DEBUG_TYPE_PORTABILITY         0x824F
+#define GLBALBINO_DEBUG_TYPE_PERFORMANCE         0x8250
+#define GLBALBINO_DEBUG_TYPE_OTHER               0x8251
+#define GLBALBINO_DEBUG_TYPE_MARKER              0x8268
+#define GLBALBINO_DEBUG_TYPE_PUSH_GROUP          0x8269
+#define GLBALBINO_DEBUG_TYPE_POP_GROUP           0x826A
+#define GLBALBINO_DEBUG_SEVERITY_NOTIFICATION    0x826B
+#define GL_MAXBALBINO_DEBUG_GROUP_STACK_DEPTH    0x826C
+#define GLBALBINO_DEBUG_GROUP_STACK_DEPTH        0x826D
 #define GL_BUFFER                         0x82E0
 #define GL_SHADER                         0x82E1
 #define GL_PROGRAM                        0x82E2
@@ -2283,14 +2283,14 @@ typedef void GLvoid;
 #define GL_DISPLAY_LIST                   0x82E7
 /* DISPLAY_LIST used in compatibility profile only */
 #define GL_MAX_LABEL_LENGTH               0x82E8
-#define GL_MAX_DEBUG_MESSAGE_LENGTH       0x9143
-#define GL_MAX_DEBUG_LOGGED_MESSAGES      0x9144
-#define GL_DEBUG_LOGGED_MESSAGES          0x9145
-#define GL_DEBUG_SEVERITY_HIGH            0x9146
-#define GL_DEBUG_SEVERITY_MEDIUM          0x9147
-#define GL_DEBUG_SEVERITY_LOW             0x9148
-#define GL_DEBUG_OUTPUT                   0x92E0
-#define GL_CONTEXT_FLAG_DEBUG_BIT         0x00000002
+#define GL_MAXBALBINO_DEBUG_MESSAGE_LENGTH       0x9143
+#define GL_MAXBALBINO_DEBUG_LOGGED_MESSAGES      0x9144
+#define GLBALBINO_DEBUG_LOGGED_MESSAGES          0x9145
+#define GLBALBINO_DEBUG_SEVERITY_HIGH            0x9146
+#define GLBALBINO_DEBUG_SEVERITY_MEDIUM          0x9147
+#define GLBALBINO_DEBUG_SEVERITY_LOW             0x9148
+#define GLBALBINO_DEBUG_OUTPUT                   0x92E0
+#define GL_CONTEXT_FLAGBALBINO_DEBUG_BIT         0x00000002
 /* reuse GL_STACK_UNDERFLOW */
 /* reuse GL_STACK_OVERFLOW */
 #endif
@@ -2691,15 +2691,15 @@ struct _cl_context;
 struct _cl_event;
 #endif
 
-#ifndef GL_ARB_debug_output
+#ifndef GL_ARBBALBINO_DEBUG_output
 typedef void (APIENTRY *GLDEBUGPROCARB)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,GLvoid *userParam);
 #endif
 
-#ifndef GL_AMD_debug_output
+#ifndef GL_AMDBALBINO_DEBUG_output
 typedef void (APIENTRY *GLDEBUGPROCAMD)(GLuint id,GLenum category,GLenum severity,GLsizei length,const GLchar *message,GLvoid *userParam);
 #endif
 
-#ifndef GL_KHR_debug
+#ifndef GL_KHRBALBINO_DEBUG
 typedef void (APIENTRY *GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,GLvoid *userParam);
 #endif
 
@@ -3402,7 +3402,7 @@ typedef void (APIENTRYP PFNGLBLENDFUNCSEPARATEIPROC) (GLuint buf, GLenum srcRGB,
 /* ARB_clear_buffer_object */
 /* ARB_compute_shader */
 /* ARB_copy_image */
-/* KHR_debug (includes ARB_debug_output commands promoted to KHR without suffixes) */
+/* KHRBALBINO_DEBUG (includes ARBBALBINO_DEBUG_output commands promoted to KHR without suffixes) */
 /* ARB_explicit_uniform_location (no entry points) */
 /* ARB_framebuffer_no_attachments */
 /* ARB_internalformat_query2 */
@@ -4163,8 +4163,8 @@ GLAPI GLsync APIENTRY glCreateSyncFromCLeventARB (struct _cl_context * context, 
 typedef GLsync (APIENTRYP PFNGLCREATESYNCFROMCLEVENTARBPROC) (struct _cl_context * context, struct _cl_event * event, GLbitfield flags);
 #endif
 
-#ifndef GL_ARB_debug_output
-#define GL_ARB_debug_output 1
+#ifndef GL_ARBBALBINO_DEBUG_output
+#define GL_ARBBALBINO_DEBUG_output 1
 #ifdef GLCOREARB_PROTOTYPES
 GLAPI void APIENTRY glDebugMessageControlARB (GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled);
 GLAPI void APIENTRY glDebugMessageInsertARB (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf);
@@ -4293,8 +4293,8 @@ typedef void (APIENTRYP PFNGLTEXTURESTORAGE3DEXTPROC) (GLuint texture, GLenum ta
 #define GL_KHR_texture_compression_astc_ldr 1
 #endif
 
-#ifndef GL_KHR_debug
-#define GL_KHR_debug 1
+#ifndef GL_KHRBALBINO_DEBUG
+#define GL_KHRBALBINO_DEBUG 1
 #ifdef GLCOREARB_PROTOTYPES
 GLAPI void APIENTRY glDebugMessageControl (GLenum source, GLenum type, GLenum severity, GLsizei count, const GLuint *ids, GLboolean enabled);
 GLAPI void APIENTRY glDebugMessageInsert (GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *buf);

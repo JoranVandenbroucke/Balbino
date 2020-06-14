@@ -14,6 +14,7 @@ namespace Balbino
 		Sprite& operator=( const Sprite& ) = delete;
 		Sprite& operator=( Sprite&& ) = delete;
 
+		virtual void Create();
 		virtual void Save( std::ostream& file )override;
 		virtual void Load( std::istream& file )override;
 
@@ -25,9 +26,9 @@ namespace Balbino
 		const std::vector<Vector2>& uv()const;
 		const float GetWidth()const;
 		const float GetHeight()const;
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 		virtual void DrawInpector() override;
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 
 	private:

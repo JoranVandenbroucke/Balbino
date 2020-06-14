@@ -52,6 +52,8 @@
     <None Include="Shaders\Font.vert" />
     <None Include="Shaders\Line.frag" />
     <None Include="Shaders\Line.vert" />
+    <None Include="Shaders\Screen.frag" />
+    <None Include="Shaders\Screen.vert" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BubbleBobble.rc">

@@ -19,17 +19,13 @@ using namespace Balbino;
 
 unsigned int Scene::m_IdCounter = 0;
 
-#ifdef _DEBUG
+#ifdef BALBINO_DEBUG
 Scene::Scene( const std::string& name )
-	: m_Name{ name }
+	: m_Name{}
 	, m_Saved{}
+	, m_CanPlay{}
+	, m_SavePosition{ name }
 {
-	GameObject* gameObject = DBG_NEW GameObject{};
-
-	gameObject->AddComponent<Camera>( 640.f / 480.f, 640.f );
-	//gameObject->Create();
-	gameObject->SetName( "Maint Camera" );
-	Add( gameObject );
 }
 
 void Scene::Draw()
@@ -76,13 +72,14 @@ void Scene::Draw()
 	InputManager::DrawInspector();
 
 	ImGui::Begin( "GameView" );
-	ImGui::BeginChild( "game", ImVec2{ 640,480 } );
+	ImGui::BeginChild( "game", ImVec2{ 640, 500 }, true );
 	//ImGui::Image( (ImTextureID) (intptr_t) m_RenderedTexture, ImVec2{ 640,480 } );
 	if( mainCamera )
 	{
-		ImGui::GetWindowDrawList()->AddImage( (void*) (uint64_t) mainCamera->GetTargetTexture(),
+	/*	ImGui::GetWindowDrawList()->AddImage( (void*) (uint64_t) mainCamera->GetTargetTexture(),
 			ImVec2{ ImGui::GetCursorScreenPos() },
-			ImVec2{ ImGui::GetCursorScreenPos().x + 640, ImGui::GetCursorScreenPos().y + 480 } );
+			ImVec2{ ImGui::GetCursorScreenPos().x + 640, ImGui::GetCursorScreenPos().y + 480 } );*/
+		ImGui::Image( (void*) (uint64_t) mainCamera->GetTargetTexture(), { 640.f,480.f } );
 	}
 	BTime::Get().SetTS( 1.f );
 	ImGui::EndChild();
@@ -148,35 +145,36 @@ void Balbino::Scene::DrawEditor()
 					m_SavePosition = std::filesystem::relative( fileName, currentPath ).u8string();
 				}
 				std::filesystem::current_path( currentPath );
-				std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
-				std::smatch match;
-				if( std::regex_match( m_SavePosition, match, sceneName ) )
-					m_Name = match[1].str();
+				Load();
+				//std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
+				//std::smatch match;
+				//if( std::regex_match( m_SavePosition, match, sceneName ) )
+				//	m_Name = match[1].str();
 
-				std::ifstream saveFile{};
-				saveFile.open( m_SavePosition, std::ios::in | std::ios::binary );
-				if( saveFile.is_open() )
-				{
-					for( GameObject* pObject: m_pGameObjects)
-					{
-						delete pObject;
-					}
-					m_pGameObjects.clear();
-					int size{};
-					BinaryReadWrite::Read( saveFile, size );
-					for( int i = 0; i < size; i++ )
-					{
-						GameObject* gameObject = DBG_NEW GameObject{};
+				//std::ifstream saveFile{};
+				//saveFile.open( m_SavePosition, std::ios::in | std::ios::binary );
+				//if( saveFile.is_open() )
+				//{
+				//	for( GameObject* pObject: m_pGameObjects)
+				//	{
+				//		delete pObject;
+				//	}
+				//	m_pGameObjects.clear();
+				//	int size{};
+				//	BinaryReadWrite::Read( saveFile, size );
+				//	for( int i = 0; i < size; i++ )
+				//	{
+				//		GameObject* gameObject = DBG_NEW GameObject{};
 
-						gameObject->Load( saveFile );
-						//gameObject->Create();
-						Add( gameObject );
-					}
-					Load();
-					//m_pGameObjects.reverse();
-					m_Saved = true;
-				}
-				saveFile.close();
+				//		gameObject->Load( saveFile );
+				//		//gameObject->Create();
+				//		Add( gameObject );
+				//	}
+				//	Load();
+				//	//m_pGameObjects.reverse();
+				//	m_Saved = true;
+				//}
+				//saveFile.close();
 			}
 			if( ImGui::MenuItem( "Save Scene" ) )
 			{
@@ -204,19 +202,32 @@ void Balbino::Scene::DrawEditor()
 						m_Name = match[1].str();
 				}
 
-				std::ofstream saveFile{};
-				saveFile.open( m_SavePosition, std::ios::out | std::ios::binary );
-				if( saveFile.is_open() )
-				{
-					BinaryReadWrite::Write( saveFile, int( m_pGameObjects.size() ) );
-					for( GameObject* gameObject : m_pGameObjects )
+				SaveToFile( m_SavePosition );
+			}
+			if( ImGui::MenuItem( "Save Scene As" ) )
+			{
+				std::string currentPath = std::filesystem::current_path().u8string();
+				wchar_t fileName[MAX_PATH] = L"";
 
-					{
-						gameObject->Save( saveFile );
-					}
-					m_Saved = true;
+				OPENFILENAME ofn;
+				ZeroMemory( &ofn, sizeof( ofn ) );
+				ofn.lStructSize = sizeof( OPENFILENAME );
+				ofn.hwndOwner = nullptr;
+				ofn.lpstrFilter = L"Balbino Files (.Balbino)\0*.Balbino\0Any File\0*.*\0";
+				ofn.lpstrFile = fileName;
+				ofn.nMaxFile = MAX_PATH;
+				ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+				ofn.lpstrDefExt = L"";
+				if( GetSaveFileName( &ofn ) )
+				{
+					m_SavePosition = std::filesystem::relative( fileName, currentPath ).u8string();
 				}
-				saveFile.close();
+				std::filesystem::current_path( currentPath );
+				std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
+				std::smatch match;
+				if( std::regex_match( m_SavePosition, match, sceneName ) )
+					m_Name = match[1].str();
+				SaveToFile( m_SavePosition );
 			}
 			ImGui::EndMenu();
 		}
@@ -412,7 +423,7 @@ void Balbino::Scene::DrawEditor()
 			name[i] = actualName[i];
 		}
 
-		ImGui::InputText( "Name:", name, 32 );
+		ImGui::InputText( "Name", name, 32 );
 		( *it )->SetName( name );
 		( *it )->DrawInspector();
 
@@ -422,7 +433,7 @@ void Balbino::Scene::DrawEditor()
 		}
 		if( ImGui::BeginPopup( "Select Components" ) )
 		{
-			for( int i = 0; i < 12; i++ )
+			for( int i = 0; i < m_ConponentAmount; i++ )
 			{
 				if( ImGui::Selectable( m_pComponentsString[i] ) )
 				{
@@ -464,6 +475,15 @@ void Balbino::Scene::DrawEditor()
 					case Balbino::ComponentList::Animation:
 						( *it )->AddComponent<Animation>()->Create();
 						break;
+					case Balbino::ComponentList::Enemy:
+						( *it )->AddComponent<Enemy>()->Create();
+						break;
+					case Balbino::ComponentList::Bubble:
+						( *it )->AddComponent<Bubble>()->Create();
+						break;
+					case Balbino::ComponentList::BubbleManager:
+						( *it )->AddComponent<BubbleManager>()->Create();
+						break;
 					default:
 						break;
 					}
@@ -476,12 +496,15 @@ void Balbino::Scene::DrawEditor()
 }
 #else
 Scene::Scene( const std::string& name )
-	: m_Name{ name }
+	: m_Name{}
+	, m_VertexBuff{ (void*) m_Vert, 4 }
+	, m_IndexBuff{ (void*) m_Index, 6, sizeof( m_Index[0] ) }
+	, m_ScreenShader{ "Shaders/Screen.vert", "Shaders/Screen.frag" }
+	, m_SavePosition{ name }
 {
 }
 void Scene::Draw() const
 {
-
 	auto allCameras = Camera::GetAllCameras();
 	if( allCameras.size() != 0 )
 	{
@@ -492,10 +515,8 @@ void Scene::Draw() const
 			{
 				Color clearColor = currentCam->GetClearColor();
 				glBindFramebuffer( GL_FRAMEBUFFER, currentCam->GetCameraIndex() );
-				glViewport( 0, 0, (int) 640, (int) 480 );
 				glClearColor( clearColor.r, clearColor.g, clearColor.b, 1.f );
 				glClear( GL_COLOR_BUFFER_BIT );
-				glEnable( GL_DEPTH_TEST );
 				Shader::SetCamera( *currentCam );
 				for( const auto& object : m_pGameObjects )
 					object->Draw();
@@ -503,16 +524,27 @@ void Scene::Draw() const
 			}
 		}
 	}
-
 	auto mainCamera = Camera::GetMainCamera();
 	glBindFramebuffer( GL_FRAMEBUFFER, 0 );
-	glViewport( 0, 0, (int) 1920, (int) 1080 );
-	glClearColor( 0.f, 0.f, 0.f, 1.f );
+	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
 	glClear( GL_COLOR_BUFFER_BIT );
-
+	if( mainCamera )
+	{
+		m_ScreenShader.Bind();
+		m_VertexBuff.Bind();
+		m_IndexBuff.Bind();
+		glActiveTexture( GL_TEXTURE0 );
+		glBindTexture( GL_TEXTURE_2D, mainCamera->GetTargetTexture() );
+		glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+		//Shader::SetCamera( *mainCamera );
+		//for( const auto& object : m_pGameObjects )
+		//	object->Draw();
+		//glBindTexture( GL_TEXTURE_2D, mainCamera->GetTargetTexture() );	// use the color attachment texture as the texture of the quad plane
+		//glDrawArrays( GL_TRIANGLES, 0, 6 );
+	}
 	SDL_GL_SwapWindow( Application::GetWindow() );
 }
-#endif // _DEBUG
+#endif // BALBINO_DEBUG
 
 Scene::~Scene()
 {
@@ -547,7 +579,7 @@ GameObject* Balbino::Scene::GetGameObject( const std::string name )
 	} );
 	if( it == m_pGameObjects.cend() )
 		return nullptr;
-	return (*it);
+	return ( *it );
 }
 
 void Balbino::Scene::FixedUpdate()
@@ -557,7 +589,7 @@ void Balbino::Scene::FixedUpdate()
 			object->FixedUpdate();
 }
 
-void Scene::Update()
+void Balbino::Scene::Update()
 {
 	for( auto& object : m_pGameObjects )
 		object->Update();
@@ -587,14 +619,11 @@ void Balbino::Scene::LateUpdate()
 		}
 	}
 	m_pGameObjects.erase( it.base(), m_pGameObjects.end() );
-	//m_pGameObjects.sort([]( const GameObject* obj, const GameObject* obj2 )
-	//{
-	//	return obj->ActiveInHierarchy() > obj2->ActiveInHierarchy();
-	//} );
 }
 
 void Balbino::Scene::Load()
 {
+	LoadFromFile( m_SavePosition );
 	for( auto& object : m_pGameObjects )
 		object->Create();
 }
@@ -602,5 +631,70 @@ void Balbino::Scene::Load()
 void Balbino::Scene::Unload()
 {
 	for( auto& object : m_pGameObjects )
-		object->Destroy();
+		delete object;
+	m_pGameObjects.clear();
+}
+
+void Balbino::Scene::LoadFromFile( const std::string file )
+{
+	std::regex sceneName{ R"(^.*\\(.*)\.Balbino$)" };
+	std::smatch match;
+	if( std::regex_match( file, match, sceneName ) )
+		m_Name = match[1].str();
+
+	std::ifstream saveFile{};
+	saveFile.open( file, std::ios::in | std::ios::binary );
+	if( saveFile.is_open() )
+	{
+		for( GameObject* pObject : m_pGameObjects )
+		{
+			delete pObject;
+		}
+		m_pGameObjects.clear();
+		int size{};
+		BinaryReadWrite::Read( saveFile, size );
+		for( int i = 0; i < size; i++ )
+		{
+			GameObject* gameObject = DBG_NEW GameObject{};
+
+			gameObject->Load( saveFile );
+			Add( gameObject );
+		}
+		m_SavePosition = file;
+#ifdef BALBINO_DEBUG
+		m_Saved = true;
+#endif // BALBINO_DEBUG
+
+	}
+	else
+	{
+		m_Name = "Default Scene";
+		GameObject* gameObject = DBG_NEW GameObject{};
+
+		gameObject->AddComponent<Camera>( 640.f / 480.f, 640.f );
+		gameObject->SetName( "Maint Camera" );
+		Add( gameObject );
+	}
+	saveFile.close();
+}
+
+void Balbino::Scene::SaveToFile( const std::string file )
+{
+	std::ofstream saveFile{};
+	saveFile.open( file, std::ios::out | std::ios::binary );
+	if( saveFile.is_open() )
+	{
+		m_SavePosition = file;
+		BinaryReadWrite::Write( saveFile, int( m_pGameObjects.size() ) );
+		for( GameObject* gameObject : m_pGameObjects )
+
+		{
+			gameObject->Save( saveFile );
+		}
+#ifdef BALBINO_DEBUG
+		m_Saved = true;
+#endif // BALBINO_DEBUG
+
+	}
+	saveFile.close();
 }
