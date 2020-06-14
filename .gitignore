@@ -4,5 +4,6 @@
 
 /.vs
 /bin/Debug-x64
-/bin-int/Debug-x64
+/bin/Debug-Win-32
+/bin-int/
 /Temp files
