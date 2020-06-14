@@ -6,7 +6,9 @@ namespace Balbino
 	class GameObject;
 	class Rigidbody2D;
 	class Animation;
-	class Bubble : public Component
+	class BubbleManager;
+
+	class Bubble final : public Component
 	{
 	public:
 		explicit Bubble( const GameObject* const pOrigine );
@@ -29,9 +31,12 @@ namespace Balbino
 		void SetAlive();
 		bool IsAlive();
 		void SetDirection( Direction direction );
+		virtual void OnTriggerEnter( GameObject* pGameObject )override; ////do stuf
+
 	private:
 		float m_LifeTime;
 		Rigidbody2D* m_pRigidBody;
 		Animation* m_pAnimation;
+		BubbleManager* m_pManager;
 	};
 }

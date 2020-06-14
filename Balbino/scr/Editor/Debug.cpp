@@ -11,6 +11,7 @@
 Balbino::VertexBuffer* Balbino::Debug::m_pVertexBuff{ nullptr };
 Balbino::Shader* Balbino::Debug::m_pShader{ nullptr };
 Balbino::Debug::Debug()
+	:Singleton{}
 {
 	m_pVertexBuff = new VertexBuffer{ nullptr, 2 };
 	m_pShader = new Shader{ "Shaders/Line.vert", "Shaders/Line.frag" };

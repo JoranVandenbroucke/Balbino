@@ -4,6 +4,7 @@
 #include <ratio>
 #include <chrono>
 #include <SDL.h>
+#include <future>
 //struct SDL_Window;
 
 namespace Balbino
@@ -31,6 +32,7 @@ public:
 		void SetImGuiStyle();
 	private:
 		static SDL_Window* m_pWindow;
+		std::future<void> m_Future;
 	};
 	//to be defined in client
 	Application* CreateApplication();

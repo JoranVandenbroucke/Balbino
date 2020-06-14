@@ -4,7 +4,7 @@ namespace Balbino
 {
 	class GameObject;
 	class Enemy;
-	class LevelLoader :	public Component
+	class LevelLoader final :	public Component
 	{
 	public:
 		explicit LevelLoader( const GameObject* const origine );

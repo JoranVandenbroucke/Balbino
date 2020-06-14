@@ -27,7 +27,7 @@ namespace Balbino
 		std::vector<Mix_Chunk*> m_pMixChunks;
 	};
 
-	class ConsoleAudio: public Balbino::Audio, public Balbino::Component
+	class ConsoleAudio final : public Balbino::Audio, public Balbino::Component
 	{
 	public:
 		explicit ConsoleAudio( const GameObject* const origine );
@@ -53,7 +53,7 @@ namespace Balbino
 		virtual void StopAllSounds();
 	};
 
-	class LoggedAudio: public Balbino::Audio, public Balbino::Component
+	class LoggedAudio final : public Balbino::Audio, public Balbino::Component
 	{
 	public:
 		explicit LoggedAudio( const GameObject* const origine );

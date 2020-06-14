@@ -186,6 +186,7 @@ void Balbino::BoxCollider2D::Reset()
 	m_pBody = PhysicsWorld::AddBody( &m_BodyDef );
 
 	m_pFixture = m_pBody->CreateFixture( &m_Colliser, 0 );
+	m_pFixture->SetSensor( m_IsTrigger );
 	m_pFixture->SetUserData( this );
 }
 

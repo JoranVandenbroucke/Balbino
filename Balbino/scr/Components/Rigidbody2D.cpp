@@ -18,7 +18,7 @@ Balbino::Rigidbody2D::Rigidbody2D( const GameObject* const origine )
 	, m_Hits{}
 	, m_Mass{ 1.f }
 	, m_Velocity{}
-	, m_pBody{nullptr}
+	, m_pBody{ nullptr }
 {
 
 }
@@ -42,7 +42,7 @@ void Balbino::Rigidbody2D::Create()
 	m_pBody->ResetMassData();
 	m_pBody->SetLinearDamping( m_Drag );
 	m_pBody->SetAngularDamping( m_AngularDrag );
-	m_pBody->SetGravityScale( 1.f );
+	m_pBody->SetGravityScale( m_UseGravity ? 1.f : 0.f );
 
 	m_pBody->SetSleepingAllowed( true );
 	m_pBody->SetAwake( true );

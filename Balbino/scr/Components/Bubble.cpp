@@ -3,6 +3,8 @@
 #include "Rigidbody2D.h"
 #include "Animation.h"
 #include "Transform.h"
+#include "BubbleManager.h"
+#include "../SceneManager.h"
 #include "../BinaryReaderWrider.h"
 #include "../Time.h"
 
@@ -26,10 +28,24 @@ void Balbino::Bubble::Create()
 		m_pRigidBody->Create();
 	}
 	m_pRigidBody->UseGravity( false );
+	GameObject* pBubbleManagerObject = SceneManager::GetGameObjectByName( "Bubble Manager" );
+	if( pBubbleManagerObject )
+	{
+		m_pManager = pBubbleManagerObject->GetComponent<BubbleManager>();
+	}
 }
 
 void Balbino::Bubble::Update()
 {
+	if( !m_pManager )
+	{
+		GameObject* pBubbleManagerObject = SceneManager::GetGameObjectByName( "Bubble Manager" );
+		if( pBubbleManagerObject )
+		{
+			m_pManager = pBubbleManagerObject->GetComponent<BubbleManager>();
+		}
+		return;
+	}
 	float dt = BTime::DeltaTime();
 	if( m_LifeTime >= 0.f )
 	{
@@ -99,7 +115,18 @@ bool Balbino::Bubble::IsAlive()
 void Balbino::Bubble::SetDirection( Direction direction )
 {
 	if( direction == Direction::LEFT )
-		m_pRigidBody->AddForce( { -64, 0 } );
+		m_pRigidBody->AddForce( { -2048, 0 } );
 	else
-		m_pRigidBody->AddForce( { 64,0 } );
+		m_pRigidBody->AddForce( { 2048,0 } );
+}
+
+void Balbino::Bubble::OnTriggerEnter( GameObject* pGameObject )
+{
+	if( pGameObject->GetTag() == "Enemy" )
+	{
+		if( m_pManager )
+		{
+			m_pManager->Notify( this, Event::HIT_BUBBLE );
+		}
+	}
 }

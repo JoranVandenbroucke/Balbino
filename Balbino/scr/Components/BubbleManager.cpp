@@ -5,6 +5,7 @@
 #include "Bubble.h"
 #include "Sprite.h"
 #include "CharacterController.h"
+#include "Animation.h"
 #include "../BinaryReaderWrider.h"
 #include "../Time.h"
 #include "../SceneManager.h"
@@ -12,6 +13,7 @@
 Balbino::BubbleManager::BubbleManager( const GameObject* const origine )
 	:Component{ origine }
 	, m_NumObservers{}
+	, m_OverSave{}
 {
 	for( int i = 0; i < MAX_OBSERVERS; i++ )
 	{
@@ -31,8 +33,8 @@ void Balbino::BubbleManager::Create()
 		{
 			GameObject* bubble = SceneManager::AddGameObjectToScene();
 			m_pObservers[0]->OnNotify( bubble->AddComponent<Bubble>(), Event::NEW_BUBBLE );
-			bubble->AddComponent<Sprite>();
 			bubble->Create();
+			bubble->AddComponent<Sprite>()->Create();
 			bubble->SetName( (std::string( "Bubble " ) + std::to_string( i ) ).c_str() );
 		}
 	}
@@ -115,7 +117,7 @@ void Balbino::BubbleManager::BubbleObserver::OnNotify( const Component* entity, 
 	{
 		std::string name = entity->GetGameObject()->GetName();
 		Balbino::Vector3 pos = entity->GetComponent<Transform>()->GetPosition();
-
+		
 		if( name == "Bub" )
 		{
 			if( m_BubBubbleDelay < 0 )
@@ -128,6 +130,7 @@ void Balbino::BubbleManager::BubbleObserver::OnNotify( const Component* entity, 
 						m_pBubbles[i]->SetAlive();
 						m_pBubbles[i]->SetPosition( pos );
 						m_pBubbles[i]->SetDirection( ( (CharacterController*) entity )->GetDirection() );
+						m_pBubbles[i]->GetComponent<Animation>()->SetAnimation( 0, "Animations/Bubble/GreenBubble.bani" );
 						break;
 					}
 				}
@@ -145,6 +148,7 @@ void Balbino::BubbleManager::BubbleObserver::OnNotify( const Component* entity, 
 						m_pBubbles[i]->SetAlive();
 						m_pBubbles[i]->SetPosition( pos );
 						m_pBubbles[i]->SetDirection( ( (CharacterController*) entity )->GetDirection() );
+						m_pBubbles[i]->GetComponent<Animation>()->SetAnimation( 0, "Animations/Bubble/BlueBubble.bani" );
 						break;
 					}
 				}

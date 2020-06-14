@@ -9,7 +9,7 @@ namespace Balbino
 	class Animation;
 	class BubbleManager;;
 
-	class CharacterController : public Component
+	class CharacterController final : public Component
 	{
 	public:
 		explicit CharacterController( const GameObject* const origine );

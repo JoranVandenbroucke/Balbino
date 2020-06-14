@@ -58,6 +58,7 @@ std::ostream& Balbino::BinaryReadWrite::Write( std::ostream& file, const Balbino
 	Write( file, int(value.mode) );
 	Write( file, value.type );
 	Write( file, value.threshold );
+	Write( file, value.parameter );
 	return file;
 }
 
@@ -129,6 +130,7 @@ std::istream& Balbino::BinaryReadWrite::Read( std::istream& file, Balbino::Anima
 	Read( file, mode );
 	Read( file, value.type );
 	Read( file, value.threshold );
+	Read( file, value.parameter );
 	value.type = AnimatorControllerParameterType( type );
 	value.mode = AnimatorConditionMode( mode );
 	return file; 

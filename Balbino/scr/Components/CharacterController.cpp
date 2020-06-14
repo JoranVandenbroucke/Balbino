@@ -81,12 +81,14 @@ void Balbino::CharacterController::Save( std::ostream& file )
 	(void) file;
 	BinaryReadWrite::Write( file, int( ComponentList::Avatar ) );
 	BinaryReadWrite::Write( file, m_CurrentDevice );
+	BinaryReadWrite::Write( file, m_IsDead );
 }
 
 void Balbino::CharacterController::Load( std::istream& file )
 {
 	(void) file;
 	BinaryReadWrite::Read( file, m_CurrentDevice );
+	BinaryReadWrite::Read( file, m_IsDead );
 }
 
 #ifdef BALBINO_DEBUG

@@ -480,12 +480,21 @@ void Balbino::Animation::DrawInpector()
 							}
 						}
 						m_Animations.push_back( animation );
-						m_AnimationTransitions.push_back( AnimatorTransition{} );
 					}
 				}
 			}
 			ImGui::EndDragDropTarget();
 		}
+	}
+	if( ImGui::Button( "+" ) )
+	{
+		m_AnimationTransitions.push_back( AnimatorTransition{} );
+		++transitionSize;
+	}
+	if( ImGui::Button( "-" ) && transitionSize != 0 )
+	{
+		m_AnimationTransitions.pop_back();
+		--transitionSize;
 	}
 
 	for( int i = 0; i < transitionSize; i++ )
@@ -549,6 +558,11 @@ void Balbino::Animation::DrawInpector()
 			}
 			ImGui::SameLine();
 			ImGui::DragFloat( "##value", &conditions[j].threshold );
+			if( ImGui::Button( "-" ) )
+			{
+				m_AnimationTransitions[i].RemoveCondition( m_AnimationTransitions[i].GetConditions()[j] );
+				break;
+			}
 		}
 		ImGui::PopItemWidth();
 		ImGui::PopID();

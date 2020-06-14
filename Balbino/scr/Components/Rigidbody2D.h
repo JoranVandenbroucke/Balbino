@@ -8,7 +8,7 @@ namespace Balbino
 	class Collider2D;
 	//https://docs.unity3d.com/ScriptReference/Rigidbody.html
 	//https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html#autotoc_md55
-	class Rigidbody2D : public Component
+	class Rigidbody2D final : public Component
 	{
 	public:
 		explicit Rigidbody2D( const GameObject* const origine );

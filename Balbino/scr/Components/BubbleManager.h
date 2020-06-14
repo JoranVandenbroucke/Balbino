@@ -12,7 +12,7 @@ namespace Balbino
 		HIT_ITEM,
 		NEW_BUBBLE
 	};
-	class BubbleManager : public Component
+	class BubbleManager final : public Component
 	{
 	public:
 		explicit BubbleManager( const GameObject* const origine );

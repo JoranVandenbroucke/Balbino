@@ -48,7 +48,7 @@ namespace Balbino
 	};
 
 	//unique
-	class Animation :public Component
+	class Animation final :public Component
 	{
 	public:
 		explicit Animation( const GameObject* const origine );

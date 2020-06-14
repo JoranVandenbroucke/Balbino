@@ -7,7 +7,7 @@ namespace Balbino
 	class LoggedAudio;
 	class GameObject;
 
-	class Avatar: public Component
+	class Avatar final : public Component
 	{
 	public:
 		explicit Avatar( const GameObject* const origine );

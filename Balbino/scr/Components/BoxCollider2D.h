@@ -6,7 +6,7 @@ namespace Balbino
 {
 	class GameObject;
 	//https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html#autotoc_md55
-	class BoxCollider2D : public Collider2D
+	class BoxCollider2D final : public Collider2D
 	{
 	public:
 		explicit BoxCollider2D( const Balbino::GameObject* const origine );

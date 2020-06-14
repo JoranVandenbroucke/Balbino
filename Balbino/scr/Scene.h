@@ -55,7 +55,6 @@ namespace Balbino
 			"Text",
 			"Transform"
 		};
-
 		std::string m_SavePosition;
 #ifdef BALBINO_DEBUG
 	public:

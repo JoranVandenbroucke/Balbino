@@ -7,7 +7,7 @@ namespace Balbino
 	class GameObject;
 	class Rigidbody2D;
 	class Animation;
-	class Enemy : public Component
+	class Enemy final : public Component
 	{
 	public:
 		explicit Enemy( const GameObject* const origin );
