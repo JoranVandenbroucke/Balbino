@@ -33,18 +33,6 @@
     <ClInclude Include="scr\Components\FPSScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\LevelLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\Components\Sprite.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\Components\Text.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\Components\Texture2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scr\Components\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -147,31 +135,28 @@
     <ClInclude Include="scr\PhysicsWorld.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\BoxCollider2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\Components\Rigidbody2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scr\Components\Collider2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="scr\Editor\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\CharacterController.h">
+    <ClInclude Include="scr\Components\Physics 2D\BoxCollider2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\Animation.h">
+    <ClInclude Include="scr\Components\Physics 2D\Collider2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\Enemy.h">
+    <ClInclude Include="scr\Components\Physics 2D\Rigidbody2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\BubbleManager.h">
+    <ClInclude Include="scr\Components\Animation\Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Components\Bubble.h">
+    <ClInclude Include="scr\Components\Render\Texture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Render\Text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Components\Render\Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -186,18 +171,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\Components\FPSScript.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Components\LevelLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Components\Sprite.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Components\Text.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Components\Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\Components\Transform.cpp">
@@ -278,31 +251,28 @@
     <ClCompile Include="scr\PhysicsWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Components\BoxCollider2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Components\Rigidbody2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scr\Components\Collider2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="scr\Editor\Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Components\CharacterController.cpp">
+    <ClCompile Include="scr\Components\Physics 2D\BoxCollider2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Components\Animation.cpp">
+    <ClCompile Include="scr\Components\Physics 2D\Collider2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Components\Enemy.cpp">
+    <ClCompile Include="scr\Components\Physics 2D\Rigidbody2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Components\BubbleManager.cpp">
+    <ClCompile Include="scr\Components\Animation\Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Components\Bubble.cpp">
+    <ClCompile Include="scr\Components\Render\Text.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Render\Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Components\Render\Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

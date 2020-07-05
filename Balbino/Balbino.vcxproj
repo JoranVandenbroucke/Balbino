@@ -210,16 +210,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="scr\Components\Bubble.h" />
-    <ClInclude Include="scr\Components\BubbleManager.h" />
-    <ClInclude Include="scr\Components\Enemy.h" />
-    <ClInclude Include="scr\Components\Animation.h" />
-    <ClInclude Include="scr\Components\CharacterController.h" />
-    <ClInclude Include="scr\Components\Rigidbody2D.h" />
+    <ClInclude Include="scr\Components\Animation\Animation.h" />
+    <ClInclude Include="scr\Components\Physics 2D\Rigidbody2D.h" />
     <ClInclude Include="scr\Editor\Debug.h" />
     <ClInclude Include="scr\Math.h" />
-    <ClInclude Include="scr\Components\BoxCollider2D.h" />
-    <ClInclude Include="scr\Components\Collider2D.h" />
+    <ClInclude Include="scr\Components\Physics 2D\BoxCollider2D.h" />
+    <ClInclude Include="scr\Components\Physics 2D\Collider2D.h" />
     <ClInclude Include="scr\Editor\File.h" />
     <ClInclude Include="scr\imgui-1.75\imgui_extra.h" />
     <ClInclude Include="scr\Editor\AssetBrouser.h" />
@@ -232,10 +228,9 @@
     <ClInclude Include="scr\Components\Camera.h" />
     <ClInclude Include="scr\Components\Component.h" />
     <ClInclude Include="scr\Components\FPSScript.h" />
-    <ClInclude Include="scr\Components\LevelLoader.h" />
-    <ClInclude Include="scr\Components\Sprite.h" />
-    <ClInclude Include="scr\Components\Text.h" />
-    <ClInclude Include="scr\Components\Texture2D.h" />
+    <ClInclude Include="scr\Components\Render\Sprite.h" />
+    <ClInclude Include="scr\Components\Render\Text.h" />
+    <ClInclude Include="scr\Components\Render\Texture2D.h" />
     <ClInclude Include="scr\Components\Transform.h" />
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
@@ -265,14 +260,10 @@
     <ClInclude Include="scr\Editor\SpriteEditor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scr\Components\Bubble.cpp" />
-    <ClCompile Include="scr\Components\BubbleManager.cpp" />
-    <ClCompile Include="scr\Components\Enemy.cpp" />
-    <ClCompile Include="scr\Components\Animation.cpp" />
-    <ClCompile Include="scr\Components\CharacterController.cpp" />
-    <ClCompile Include="scr\Components\Rigidbody2D.cpp" />
-    <ClCompile Include="scr\Components\BoxCollider2D.cpp" />
-    <ClCompile Include="scr\Components\Collider2D.cpp" />
+    <ClCompile Include="scr\Components\Animation\Animation.cpp" />
+    <ClCompile Include="scr\Components\Physics 2D\Rigidbody2D.cpp" />
+    <ClCompile Include="scr\Components\Physics 2D\BoxCollider2D.cpp" />
+    <ClCompile Include="scr\Components\Physics 2D\Collider2D.cpp" />
     <ClCompile Include="scr\Editor\Debug.cpp" />
     <ClCompile Include="scr\imgui-1.75\imgui_extra.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
@@ -293,10 +284,9 @@
     <ClCompile Include="scr\Components\Camera.cpp" />
     <ClCompile Include="scr\Components\Component.cpp" />
     <ClCompile Include="scr\Components\FPSScript.cpp" />
-    <ClCompile Include="scr\Components\LevelLoader.cpp" />
-    <ClCompile Include="scr\Components\Sprite.cpp" />
-    <ClCompile Include="scr\Components\Text.cpp" />
-    <ClCompile Include="scr\Components\Texture2D.cpp" />
+    <ClCompile Include="scr\Components\Render\Sprite.cpp" />
+    <ClCompile Include="scr\Components\Render\Text.cpp" />
+    <ClCompile Include="scr\Components\Render\Texture2D.cpp" />
     <ClCompile Include="scr\Components\Transform.cpp" />
     <ClCompile Include="scr\Font.cpp" />
     <ClCompile Include="scr\GameObject\GameObject.cpp" />
