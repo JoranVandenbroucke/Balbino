@@ -1,0 +1,5 @@
+fall:dpdown
+jump:dpup
+left:dpleft
+right:dpright
+shoot:a

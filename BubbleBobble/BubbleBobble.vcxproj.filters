@@ -18,9 +18,6 @@
     <ClInclude Include="scr\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scr\pch.cpp">
@@ -35,18 +32,8 @@
     <None Include="Shaders\Basic.vs" />
     <None Include="Shaders\Font.fs" />
     <None Include="Shaders\Font.vs" />
-    <None Include="NoDrop.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Cursor.cur">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="WP7BusyBG.cur">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Shaders\Line.fs" />
     <None Include="Shaders\Line.vs" />
-    <None Include="Shaders\Basic.frag" />
     <None Include="Shaders\Basic.vert" />
     <None Include="Shaders\Font.frag" />
     <None Include="Shaders\Font.vert" />
@@ -54,15 +41,13 @@
     <None Include="Shaders\Line.vert" />
     <None Include="Shaders\Screen.frag" />
     <None Include="Shaders\Screen.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="BubbleBobble.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Balbino.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <None Include="resource\Shaders\Screen.vert" />
+    <None Include="resource\Shaders\Basic.frag" />
+    <None Include="resource\Shaders\Basic.vert" />
+    <None Include="resource\Shaders\Font.frag" />
+    <None Include="resource\Shaders\Font.vert" />
+    <None Include="resource\Shaders\Line.frag" />
+    <None Include="resource\Shaders\Line.vert" />
+    <None Include="resource\Shaders\Screen.frag" />
   </ItemGroup>
 </Project>
