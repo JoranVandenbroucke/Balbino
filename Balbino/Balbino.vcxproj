@@ -26,26 +26,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -210,144 +210,15 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="scr\Components\Animation\Animation.h" />
-    <ClInclude Include="scr\Components\Physics 2D\Rigidbody2D.h" />
-    <ClInclude Include="scr\Editor\Debug.h" />
-    <ClInclude Include="scr\Math.h" />
-    <ClInclude Include="scr\Components\Physics 2D\BoxCollider2D.h" />
-    <ClInclude Include="scr\Components\Physics 2D\Collider2D.h" />
-    <ClInclude Include="scr\Editor\File.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_extra.h" />
-    <ClInclude Include="scr\Editor\AssetBrouser.h" />
-    <ClInclude Include="Balbino.h" />
+    <ClInclude Include="EntryPoint.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="scr\Application.h" />
-    <ClInclude Include="scr\BalbinoPCH.h" />
-    <ClInclude Include="scr\BinaryReaderWrider.h" />
-    <ClInclude Include="scr\Components\All.h" />
-    <ClInclude Include="scr\Components\Audio.h" />
-    <ClInclude Include="scr\Components\Camera.h" />
-    <ClInclude Include="scr\Components\Component.h" />
-    <ClInclude Include="scr\Components\FPSScript.h" />
-    <ClInclude Include="scr\Components\Render\Sprite.h" />
-    <ClInclude Include="scr\Components\Render\Text.h" />
-    <ClInclude Include="scr\Components\Render\Texture2D.h" />
-    <ClInclude Include="scr\Components\Transform.h" />
-    <ClInclude Include="scr\Core.h" />
-    <ClInclude Include="scr\EntryPoint.h" />
-    <ClInclude Include="scr\Font.h" />
-    <ClInclude Include="scr\GameObject\GameObject.h" />
-    <ClInclude Include="scr\gl3w\GL\gl3w.h" />
-    <ClInclude Include="scr\gl3w\GL\glcorearb.h" />
-    <ClInclude Include="scr\imgui-1.75\imconfig.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_impl_opengl3.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_impl_sdl.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_internal.h" />
-    <ClInclude Include="scr\imgui-1.75\imgui_sdl.h" />
-    <ClInclude Include="scr\imgui-1.75\imstb_rectpack.h" />
-    <ClInclude Include="scr\imgui-1.75\imstb_textedit.h" />
-    <ClInclude Include="scr\imgui-1.75\imstb_truetype.h" />
-    <ClInclude Include="scr\InputManager.h" />
-    <ClInclude Include="scr\PhysicsWorld.h" />
-    <ClInclude Include="scr\Renderer\Renderer.h" />
-    <ClInclude Include="scr\ResourceManager.h" />
-    <ClInclude Include="scr\Scene.h" />
-    <ClInclude Include="scr\SceneManager.h" />
-    <ClInclude Include="scr\SceneObject.h" />
-    <ClInclude Include="scr\Singleton.h" />
-    <ClInclude Include="scr\Struct.h" />
-    <ClInclude Include="scr\Time.h" />
-    <ClInclude Include="scr\Editor\SpriteEditor.h" />
+    <ClInclude Include="Balbino.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scr\Components\Animation\Animation.cpp" />
-    <ClCompile Include="scr\Components\Physics 2D\Rigidbody2D.cpp" />
-    <ClCompile Include="scr\Components\Physics 2D\BoxCollider2D.cpp" />
-    <ClCompile Include="scr\Components\Physics 2D\Collider2D.cpp" />
-    <ClCompile Include="scr\Editor\Debug.cpp" />
-    <ClCompile Include="scr\imgui-1.75\imgui_extra.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\Editor\AssetBrouser.cpp" />
+    <ClCompile Include="EntryPoint.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="scr\Application.cpp" />
-    <ClCompile Include="scr\BalbinoPCH.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\BinaryReaderWrider.cpp" />
-    <ClCompile Include="scr\Components\Audio.cpp" />
-    <ClCompile Include="scr\Components\Camera.cpp" />
-    <ClCompile Include="scr\Components\Component.cpp" />
-    <ClCompile Include="scr\Components\FPSScript.cpp" />
-    <ClCompile Include="scr\Components\Render\Sprite.cpp" />
-    <ClCompile Include="scr\Components\Render\Text.cpp" />
-    <ClCompile Include="scr\Components\Render\Texture2D.cpp" />
-    <ClCompile Include="scr\Components\Transform.cpp" />
-    <ClCompile Include="scr\Font.cpp" />
-    <ClCompile Include="scr\GameObject\GameObject.cpp" />
-    <ClCompile Include="scr\gl3w\GL\gl3w.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_demo.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_draw.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_impl_opengl3.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_impl_sdl.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_sdl.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\imgui-1.75\imgui_widgets.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="scr\InputManager.cpp" />
-    <ClCompile Include="scr\PhysicsWorld.cpp" />
-    <ClCompile Include="scr\Renderer\Renderer.cpp" />
-    <ClCompile Include="scr\ResourceManager.cpp" />
-    <ClCompile Include="scr\Scene.cpp" />
-    <ClCompile Include="scr\SceneManager.cpp" />
-    <ClCompile Include="scr\SceneObject.cpp" />
-    <ClCompile Include="scr\Struct.cpp" />
-    <ClCompile Include="scr\Time.cpp" />
-    <ClCompile Include="scr\Editor\SpriteEditor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
