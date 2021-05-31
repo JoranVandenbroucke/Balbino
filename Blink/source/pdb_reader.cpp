@@ -241,17 +241,17 @@ void blink::pdb_reader::read_object_files(std::vector<std::filesystem::path> &ob
 				std::filesystem::path cwd;
 
 				// Look up current working directory in symbol stream https://llvm.org/docs/PDB/ModiStream.html
-				stream_reader stream(msf_reader::stream(info.symbol_stream));
-				stream.skip(4); // Skip 32-bit signature (this should be CV_SIGNATURE_C13, aka 4)
+				stream_reader infoStream(msf_reader::stream(info.symbol_stream));
+				infoStream.skip(4); // Skip 32-bit signature (this should be CV_SIGNATURE_C13, aka 4)
 
-				parse_code_view_records(stream, info.symbol_byte_size - 4, [&](uint16_t tag) {
+				parse_code_view_records(infoStream, info.symbol_byte_size - 4, [&](uint16_t tag) {
 					if (tag == 0x113d) // S_ENVBLOCK
 					{
-						stream.skip(1);
-						while (stream.tell() < stream.size() && *stream.data() != '\0')
+						infoStream.skip(1);
+						while (infoStream.tell() < infoStream.size() && *infoStream.data() != '\0')
 						{
-							const auto key = stream.read_string();
-							const std::string value(stream.read_string());
+							const auto key = infoStream.read_string();
+							const std::string value(infoStream.read_string());
 
 							if (key == "cwd")
 							{

@@ -33,15 +33,6 @@
     <ClInclude Include="imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="misc\cpp\imgui_stdlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="misc\freetype\imgui_freetype.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="misc\single_file\imgui_single_file.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="imgui_demo.cpp">
@@ -57,15 +48,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="misc\cpp\imgui_stdlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="misc\fonts\binary_to_compressed_c.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="misc\freetype\imgui_freetype.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

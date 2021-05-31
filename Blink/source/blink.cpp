@@ -260,6 +260,8 @@ bool blink::application::read_debug_info(const BYTE *image_base)
 }
 void blink::application::read_import_address_table(const BYTE *image_base)
 {
+	(void) image_base;
+	
 	const auto headers = reinterpret_cast<const IMAGE_NT_HEADERS *>(
 		_image_base + reinterpret_cast<const IMAGE_DOS_HEADER *>(_image_base)->e_lfanew);
 

@@ -21,10 +21,16 @@
     <ClInclude Include="scr\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EntryPoint.h">
+    <ClInclude Include="scr\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="scr\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,10 +38,10 @@
     <ClCompile Include="scr\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EntryPoint.cpp">
+    <ClCompile Include="scr\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="scr\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
