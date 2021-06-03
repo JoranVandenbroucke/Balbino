@@ -1,5 +1,5 @@
 #pragma once
-#include "BalbinoPCH.h"
+#include "pch.h"
 //#include <vld.h>
 #ifdef BL_PLATFORM_WINDOWS
 //#define _CRTDBG_MAP_ALLOC
@@ -18,21 +18,22 @@ int main( int arc, char* argv[] )
 
 	StartHeapControl();
 #ifdef _DEBUG
-	_CrtMemState s1, s2, s3;
+	_CrtMemState s1{}, s2{}, s3{};
 	_CrtMemCheckpoint( &s1 );
 #endif // _DEBUG
-	auto bubble = Balbino::CreateApplication();
+	auto pApp = Balbino::CreateApplication();
 	try
 	{
-		bubble->Run();
+		pApp->Initialize();
+		pApp->Run();
 	}
-	catch( const std::exception& e )
+	catch ( const std::exception& e )
 	{
 		std::cout << e.what();
 	}
-	delete bubble;
+	delete pApp;
 #ifdef _DEBUG
-	if( _CrtMemDifference( &s3, &s1, &s2 ) )
+	if ( _CrtMemDifference( &s3, &s1, &s2 ) )
 		_CrtMemDumpStatistics( &s3 );
 #endif // _DEBUG
 
@@ -41,7 +42,7 @@ int main( int arc, char* argv[] )
 	return 0;
 }
 
-void StartHeapControl()
+inline void StartHeapControl()
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	// Notify user if heap is corrupt
@@ -55,7 +56,7 @@ void StartHeapControl()
 #endif
 }
 
-void DumpMemoryLeaks()
+inline void DumpMemoryLeaks()
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtDumpMemoryLeaks();
