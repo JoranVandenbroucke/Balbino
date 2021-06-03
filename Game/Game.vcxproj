@@ -36,58 +36,58 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{C02598DE-BE47-4A8A-A5A1-FC9414FCB379}</ProjectGuid>
+    <ProjectGuid>{EC78B08C-6DE5-4C21-AE58-9BAE3B7BD2E5}</ProjectGuid>
     <RootNamespace>BubbleBobble</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -167,9 +167,9 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -178,8 +178,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -190,9 +190,9 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -201,8 +201,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -213,9 +213,9 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;_DEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -224,17 +224,21 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|Win32'">
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRTDBG_MAP_ALLOC;BL_PLATFORM_WINDOWS;_DEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -243,9 +247,13 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -253,9 +261,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;NDEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -267,8 +275,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -281,9 +289,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;NDEBUG;_WIN32;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -295,8 +303,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -309,9 +317,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -323,8 +331,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -337,9 +345,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)Balbino;$(SolutionDir)3rdParty\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -351,8 +359,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -360,11 +368,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="scr\Interface.h" />
     <ClInclude Include="scr\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scr\Interface.cpp" />
+    <ClCompile Include="scr\main.cpp" />
     <ClCompile Include="scr\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'">Create</PrecompiledHeader>
@@ -377,8 +384,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Imgui\Imgui.vcxproj">
-      <Project>{d75a6b0e-6186-4965-929f-415b311e6f22}</Project>
+    <ProjectReference Include="..\Balbino\Balbino.vcxproj">
+      <Project>{5a4234ba-9b20-4cd4-b9f0-d7bc800edb93}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

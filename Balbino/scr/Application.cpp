@@ -66,48 +66,8 @@ void Balbino::Application::Initialize()
 	{
 		throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ) );
 	}
-	// Use validation layers if this is a debug build
-	std::vector<const char*> layers;
-#if defined(_DEBUG)
-	layers.push_back( "VK_LAYER_KHRONOS_validation" );
-#endif
 
-	// vk::ApplicationInfo allows the programmer to specifiy some basic information about the
-	// program, which can be useful for layers and tools to provide more debug information.
-	vk::ApplicationInfo appInfo = vk::ApplicationInfo()
-		.setPApplicationName( "Balbino Engine" )
-		.setApplicationVersion( 1 )
-		.setPEngineName( "Balbino" )
-		.setEngineVersion( 1 )
-		.setApiVersion( VK_API_VERSION_1_0 );
-
-	// vk::InstanceCreateInfo is where the programmer specifies the layers and/or extensions that
-	// are needed.
-	const vk::InstanceCreateInfo instInfo = vk::InstanceCreateInfo()
-		.setFlags( vk::InstanceCreateFlags() )
-		.setPApplicationInfo( &appInfo )
-		.setEnabledExtensionCount( static_cast<uint32_t>( extensions.size() ) )
-		.setPpEnabledExtensionNames( extensions.data() )
-		.setEnabledLayerCount( static_cast<uint32_t>( layers.size() ) )
-		.setPpEnabledLayerNames( layers.data() );
-
-	// Create the Vulkan m_Instance.
-	try
-	{
-		m_Instance = createInstance( instInfo );
-	}
-	catch ( const std::exception& e )
-	{
-		throw std::runtime_error( std::string( "Could not create a Vulkan m_Instance: " ) + e.what() );
-	}
-
-	// Create a Vulkan m_Surface for rendering
-	VkSurfaceKHR c_surface;
-	if ( !SDL_Vulkan_CreateSurface( m_pWindow, m_Instance, &c_surface ) )
-	{
-		throw std::runtime_error( std::string( "Could not create a Vulkan m_Surface." ) );
-	}
-	m_Surface = vk::SurfaceKHR( c_surface );
+	
 }
 
 void Balbino::Application::LoadGame() const

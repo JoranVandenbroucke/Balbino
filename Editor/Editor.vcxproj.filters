@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scr\main.cpp">
+    <ClCompile Include="scr\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\pch.cpp">
+    <ClCompile Include="scr\Interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,19 +26,8 @@
     <ClInclude Include="scr\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\Basic.frag" />
-    <None Include="Shaders\Basic.fs" />
-    <None Include="Shaders\Basic.vert" />
-    <None Include="Shaders\Basic.vs" />
-    <None Include="Shaders\Font.frag" />
-    <None Include="Shaders\Font.fs" />
-    <None Include="Shaders\Font.vert" />
-    <None Include="Shaders\Font.vs" />
-    <None Include="Shaders\Line.frag" />
-    <None Include="Shaders\Line.fs" />
-    <None Include="Shaders\Line.vert" />
-    <None Include="Shaders\Line.vs" />
+    <ClInclude Include="scr\Interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
