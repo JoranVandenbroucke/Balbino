@@ -1,10 +1,14 @@
 #pragma once
 #include "Core.h"
-#include <SDL.h>
-//struct SDL_Window;
 
+struct SDL_Window;
 namespace Balbino
 {
+	class Renderer;
+#ifdef BL_EDITOR
+	class Interface;
+#endif
+	
 	class BALBINO_API Application
 	{
 	public:
@@ -17,11 +21,16 @@ namespace Balbino
 
 		void Initialize();
 		virtual void LoadGame() const;
-		void Cleanup();
-		void Run();
+		void Cleanup() const;
+		void Run() const;
 
 	private:
 		SDL_Window* m_pWindow;
+
+		Renderer* m_pRenderer;
+#ifdef BL_EDITOR
+		Interface* m_pInterface;;
+#endif
 	};
 
 	//to be defined in client

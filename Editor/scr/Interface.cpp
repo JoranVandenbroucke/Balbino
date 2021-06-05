@@ -1,8 +1,39 @@
 #include "pch.h"
 #include "Interface.h"
 
+#include <SDL.h>
+#include <vulkan/vulkan.hpp>
 
-Interface::Interface()
+
+#ifdef IMGUI_VULKAN_DEBUG_REPORT
+static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData )
+{
+	(void) flags;
+	(void) object;
+	(void) location;
+	(void) messageCode;
+	(void) pUserData;
+	(void) pLayerPrefix; // Unused arguments
+	fprintf( stderr, "[vulkan] Debug report from ObjectType: %i\nMessage: %s\n\n", objectType, pMessage );
+	return VK_FALSE;
+}
+#else
+static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData )
+{
+	(void) flags;
+	(void) objectType;
+	(void) object;
+	(void) location;
+	(void) messageCode;
+	(void) pUserData;
+	(void) pMessage;
+	(void) pLayerPrefix; // Unused arguments
+	return 0;
+}
+#endif // IMGUI_VULKAN_DEBUG_REPORT
+
+
+Balbino::Interface::Interface()
 	: m_ClearColor{ 0.45f, 0.55f, 0.60f, 1.00f }
 	, m_SwapChainRebuild{ false }
 	, m_ShowDemoWindow{ true }
@@ -10,13 +41,13 @@ Interface::Interface()
 {
 }
 
-void Interface::SetupVulkan( const char** extensions, const uint32_t extensionsCount, vk::InstanceCreateInfo& createInfo, vk::Instance& instance, const vk::AllocationCallbacks* pAllocator, vk::DebugReportCallbackEXT& debugReport ) const
+void Balbino::Interface::SetupVulkan( const char** extensions, const uint32_t extensionsCount, vk::InstanceCreateInfo& createInfo, vk::Instance& instance, vk::AllocationCallbacks* pCallback, vk::DebugReportCallbackEXT& debugReport ) const
 {
 	(void) extensions;
 	(void) extensionsCount;
 	(void) createInfo;
 	(void) instance;
-	(void) pAllocator;
+	(void) pCallback;
 	(void) debugReport;
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
 	// Enabling validation layers
@@ -32,26 +63,24 @@ void Interface::SetupVulkan( const char** extensions, const uint32_t extensionsC
 	createInfo.ppEnabledExtensionNames = extensionsExt;
 
 	// Create Vulkan Instance
-	vk::Result err{ createInstance( &createInfo, pAllocator, &instance ) };
-	CheckVkResult( err );
+	CheckVkResult( createInstance( &createInfo, pCallback, &instance ) );
 	free( extensionsExt );
 
 	// Get the function pointer (required for any extensions)
-	const auto vkCreateDebugReportCallbackExt{ reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>( vkGetInstanceProcAddr( instance, "vkCreateDebugReportCallbackEXT" ) ) };
-	IM_ASSERT( vkCreateDebugReportCallbackExt != nullptr );
-
 	// Setup the debug report callback
 	vk::DebugReportCallbackCreateInfoEXT debugReportCi{};
 	debugReportCi.sType = vk::StructureType::eDebugReportCallbackCreateInfoEXT;
 	debugReportCi.flags = vk::DebugReportFlagBitsEXT::eError | vk::DebugReportFlagBitsEXT::eWarning | vk::DebugReportFlagBitsEXT::ePerformanceWarning;
 	debugReportCi.pfnCallback = DebugReport;
 	debugReportCi.pUserData = nullptr;
-	err = instance.createDebugReportCallbackEXT( &debugReportCi, pAllocator, &debugReport );
+
+	auto dldi = vk::DispatchLoaderDynamic( instance, vkGetInstanceProcAddr );
+	const vk::Result err = instance.createDebugReportCallbackEXT( &debugReportCi, pCallback, &debugReport, dldi );
 	CheckVkResult( err );
 #endif
 }
 
-void Interface::SetupVulkanWindow( const vk::SurfaceKHR& surface, const int width, const int height, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::AllocationCallbacks* pCallback, const uint32_t queueFamily, const uint32_t minImageCount )
+void Balbino::Interface::SetupVulkanWindow( const vk::SurfaceKHR& surface, const int width, const int height, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::AllocationCallbacks* pCallback, const uint32_t queueFamily, const uint32_t minImageCount )
 {
 	m_MainWindowData.Surface = surface;
 
@@ -61,28 +90,29 @@ void Interface::SetupVulkanWindow( const vk::SurfaceKHR& surface, const int widt
 	}
 
 	// Select Surface Format
-	const VkFormat requestSurfaceImageFormat[]
+	const vk::Format requestSurfaceImageFormat[]
 	{
-		VK_FORMAT_B8G8R8A8_UNORM,
-		VK_FORMAT_R8G8B8A8_UNORM,
-		VK_FORMAT_B8G8R8_UNORM,
-		VK_FORMAT_R8G8B8_UNORM
+		vk::Format::eB8G8R8A8Unorm,
+		vk::Format::eR8G8B8A8Unorm,
+		vk::Format::eB8G8R8Unorm,
+		vk::Format::eR8G8B8Unorm
+
 	};
-	const VkColorSpaceKHR requestSurfaceColorSpace{ VK_COLORSPACE_SRGB_NONLINEAR_KHR };
+	const vk::ColorSpaceKHR requestSurfaceColorSpace{ vk::ColorSpaceKHR::eSrgbNonlinear };
 	m_MainWindowData.SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat( physicalDevice, m_MainWindowData.Surface, requestSurfaceImageFormat, static_cast<size_t>( IM_ARRAYSIZE( requestSurfaceImageFormat ) ), requestSurfaceColorSpace );
 
 	// Select Present Mode
 #ifdef IMGUI_UNLIMITED_FRAME_RATE
-	VkPresentModeKHR presentMode[]
+	vk::PresentModeKHR presentMode[]
 	{
-		VK_PRESENT_MODE_MAILBOX_KHR,
-		VK_PRESENT_MODE_IMMEDIATE_KHR,
-		VK_PRESENT_MODE_FIFO_KHR
+		vk::PresentModeKHR::eMailbox,
+		vk::PresentModeKHR::eImmediate,
+		vk::PresentModeKHR::eFifo
 	};
 #else
-	VkPresentModeKHR presentMode[]
+	vk::PresentModeKHR presentMode[]
 	{
-		VK_PRESENT_MODE_FIFO_KHR
+		vk::PresentModeKHR::eFifo
 	};
 #endif
 
@@ -91,47 +121,25 @@ void Interface::SetupVulkanWindow( const vk::SurfaceKHR& surface, const int widt
 
 	// Create SwapChain, RenderPass, Framebuffer, etc.
 	IM_ASSERT( minImageCount >= 2 );
-	VkAllocationCallbacks callbacks;
-	callbacks.pUserData = pCallback->pUserData;
-	callbacks.pfnAllocation = pCallback->pfnAllocation;
-	callbacks.pfnFree = pCallback->pfnFree;
-	callbacks.pfnInternalAllocation = pCallback->pfnInternalAllocation;
-	callbacks.pfnInternalFree = pCallback->pfnInternalFree;
-	callbacks.pfnReallocation = pCallback->pfnReallocation;
-	ImGui_ImplVulkanH_CreateOrResizeWindow( instance, physicalDevice, device, &m_MainWindowData, queueFamily, &callbacks, width, height, minImageCount );
+	ImGui_ImplVulkanH_CreateOrResizeWindow( instance, physicalDevice, device, &m_MainWindowData, queueFamily, pCallback, width, height, minImageCount );
 }
 
-void Interface::CleanupVulkan( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::DebugReportCallbackEXT& debugReport ) const
+void Balbino::Interface::CleanupVulkan( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::DebugReportCallbackEXT& debugReport ) const
 {
 	// Remove the debug report callback
-	const auto vkDestroyDebugReportCallbackExt{ reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>( vkGetInstanceProcAddr( instance, "vkDestroyDebugReportCallbackEXT" ) ) };
-	VkAllocationCallbacks callbacks;
-	callbacks.pUserData = pCallback->pUserData;
-	callbacks.pfnAllocation = pCallback->pfnAllocation;
-	callbacks.pfnFree = pCallback->pfnFree;
-	callbacks.pfnInternalAllocation = pCallback->pfnInternalAllocation;
-	callbacks.pfnInternalFree = pCallback->pfnInternalFree;
-	callbacks.pfnReallocation = pCallback->pfnReallocation;
-	vkDestroyDebugReportCallbackExt( instance, debugReport, &callbacks );
+	(void) instance;
+	(void) pCallback;
+	(void) debugReport;
+	auto dldi = vk::DispatchLoaderDynamic( instance, vkGetInstanceProcAddr );
+	instance.destroyDebugReportCallbackEXT( debugReport, pCallback, dldi );
 }
 
-void Interface::CleanupVulkanWindow( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::Device& device )
+void Balbino::Interface::CleanupVulkanWindow( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::Device& device )
 {
-	ImGui_ImplVulkan_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-	
-	VkAllocationCallbacks callbacks;
-	callbacks.pUserData = pCallback->pUserData;
-	callbacks.pfnAllocation = pCallback->pfnAllocation;
-	callbacks.pfnFree = pCallback->pfnFree;
-	callbacks.pfnInternalAllocation = pCallback->pfnInternalAllocation;
-	callbacks.pfnInternalFree = pCallback->pfnInternalFree;
-	callbacks.pfnReallocation = pCallback->pfnReallocation;
-	ImGui_ImplVulkanH_DestroyWindow( instance, device, &m_MainWindowData, &callbacks );
+	ImGui_ImplVulkanH_DestroyWindow( instance, device, &m_MainWindowData, pCallback );
 }
 
-void Interface::Setup( SDL_Window* pWindow, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const uint32_t queueFamily, const vk::Queue& queue, const vk::PipelineCache& pipelineCache, const vk::DescriptorPool& descriptorPool, const vk::AllocationCallbacks* pCallback, const uint32_t minImageCount ) const
+void Balbino::Interface::Setup( SDL_Window* pWindow, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const uint32_t queueFamily, const vk::Queue& queue, const vk::PipelineCache& pipelineCache, const vk::DescriptorPool& descriptorPool, const vk::AllocationCallbacks* pCallback, const uint32_t minImageCount ) const
 {
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
@@ -141,7 +149,7 @@ void Interface::Setup( SDL_Window* pWindow, const vk::Instance& instance, const 
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
@@ -156,16 +164,10 @@ void Interface::Setup( SDL_Window* pWindow, const vk::Instance& instance, const 
 		style.WindowRounding = 0.0f;
 		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 	}
+	SetImGuiStyle();
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL2_InitForVulkan( pWindow );
-	VkAllocationCallbacks callbacks;
-	callbacks.pUserData = pCallback->pUserData;
-	callbacks.pfnAllocation = pCallback->pfnAllocation;
-	callbacks.pfnFree = pCallback->pfnFree;
-	callbacks.pfnInternalAllocation = pCallback->pfnInternalAllocation;
-	callbacks.pfnInternalFree = pCallback->pfnInternalFree;
-	callbacks.pfnReallocation = pCallback->pfnReallocation;
 	ImGui_ImplVulkan_InitInfo initInfo{};
 	initInfo.Instance = instance;
 	initInfo.PhysicalDevice = physicalDevice;
@@ -174,14 +176,14 @@ void Interface::Setup( SDL_Window* pWindow, const vk::Instance& instance, const 
 	initInfo.Queue = queue;
 	initInfo.PipelineCache = pipelineCache;
 	initInfo.DescriptorPool = descriptorPool;
-	initInfo.Allocator = &callbacks;
+	initInfo.Allocator = pCallback;
 	initInfo.MinImageCount = minImageCount;
 	initInfo.ImageCount = m_MainWindowData.ImageCount;
-	initInfo.CheckVkResultFn = VKCheckVkResult;
+	initInfo.CheckVkResultFn = CheckVkResult;
 	ImGui_ImplVulkan_Init( &initInfo, m_MainWindowData.RenderPass );
 }
 
-void Interface::UploadFont( const vk::Device& device, const vk::Queue& queue ) const
+void Balbino::Interface::UploadFont( const vk::Device& device, const vk::Queue& queue ) const
 {
 	// Use any command queue
 	const vk::CommandPool commandPool{ m_MainWindowData.Frames[m_MainWindowData.FrameIndex].CommandPool };
@@ -211,12 +213,12 @@ void Interface::UploadFont( const vk::Device& device, const vk::Queue& queue ) c
 	ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
-void Interface::HandleEvents( SDL_Event e )
+void Balbino::Interface::HandleEvents( SDL_Event e )
 {
 	ImGui_ImplSDL2_ProcessEvent( &e );
 }
 
-void Interface::ResizeSwapChain( SDL_Window* pWindow, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const uint32_t queueFamily, const vk::AllocationCallbacks* pCallback, const uint32_t minImageCount )
+void Balbino::Interface::ResizeSwapChain( SDL_Window* pWindow, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const uint32_t queueFamily, const vk::AllocationCallbacks* pCallback, const uint32_t minImageCount )
 {
 	if ( m_SwapChainRebuild )
 	{
@@ -224,22 +226,15 @@ void Interface::ResizeSwapChain( SDL_Window* pWindow, const vk::Instance& instan
 		SDL_GetWindowSize( pWindow, &width, &height );
 		if ( width > 0 && height > 0 )
 		{
-			VkAllocationCallbacks callbacks;
-			callbacks.pUserData = pCallback->pUserData;
-			callbacks.pfnAllocation = pCallback->pfnAllocation;
-			callbacks.pfnFree = pCallback->pfnFree;
-			callbacks.pfnInternalAllocation = pCallback->pfnInternalAllocation;
-			callbacks.pfnInternalFree = pCallback->pfnInternalFree;
-			callbacks.pfnReallocation = pCallback->pfnReallocation;
 			ImGui_ImplVulkan_SetMinImageCount( minImageCount );
-			ImGui_ImplVulkanH_CreateOrResizeWindow( instance, physicalDevice, device, &m_MainWindowData, queueFamily, &callbacks, width, height, minImageCount );
+			ImGui_ImplVulkanH_CreateOrResizeWindow( instance, physicalDevice, device, &m_MainWindowData, queueFamily, pCallback, width, height, minImageCount );
 			m_MainWindowData.FrameIndex = 0;
 			m_SwapChainRebuild = false;
 		}
 	}
 }
 
-void Interface::DrawStart( SDL_Window* pWindow )
+void Balbino::Interface::DrawStart( SDL_Window* pWindow )
 {
 	// Start the Dear ImGui frame
 	ImGui_ImplVulkan_NewFrame();
@@ -247,7 +242,7 @@ void Interface::DrawStart( SDL_Window* pWindow )
 	ImGui::NewFrame();
 }
 
-void Interface::Draw()
+void Balbino::Interface::Draw()
 {
 	//todo remove demo code
 	 // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
@@ -273,7 +268,7 @@ void Interface::Draw()
 		ImGui::SameLine();
 		ImGui::Text( "counter = %d", counter );
 
-		ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate );
+		ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)", 1000.0f / static_cast<double>( ImGui::GetIO().Framerate ), static_cast<double>( ImGui::GetIO().Framerate ) );
 		ImGui::End();
 	}
 
@@ -288,7 +283,7 @@ void Interface::Draw()
 	}
 }
 
-void Interface::Render( const vk::Device& device, const vk::Queue& queue )
+void Balbino::Interface::Render( const vk::Device& device, const vk::Queue& queue )
 {
 	// Rendering
 	ImGui::Render();
@@ -315,12 +310,18 @@ void Interface::Render( const vk::Device& device, const vk::Queue& queue )
 		FramePresent( queue );
 }
 
-void Interface::FrameRender( ImDrawData* drawData, const vk::Device& device, const vk::Queue& queue )
+void Balbino::Interface::Cleanup()
+{
+	ImGui_ImplVulkan_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+}
+
+void Balbino::Interface::FrameRender( ImDrawData* drawData, const vk::Device& device, const vk::Queue& queue )
 {
 	vk::Semaphore imageAcquiredSemaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].ImageAcquiredSemaphore };
 	vk::Semaphore renderCompleteSemaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore };
 	vk::Result err{ device.acquireNextImageKHR( m_MainWindowData.Swapchain, UINT64_MAX, imageAcquiredSemaphore, VK_NULL_HANDLE, &m_MainWindowData.FrameIndex ) };
-	//err = vkAcquireNextImageKHR( device, m_MainWindowData.Swapchain, UINT64_MAX, image_acquired_semaphore, VK_NULL_HANDLE, &m_MainWindowData.FrameIndex );
 	if ( err == vk::Result::eErrorOutOfDateKHR || err == vk::Result::eSuboptimalKHR )
 	{
 		m_SwapChainRebuild = true;
@@ -340,7 +341,7 @@ void Interface::FrameRender( ImDrawData* drawData, const vk::Device& device, con
 		device.resetCommandPool( fd->CommandPool, vk::CommandPoolResetFlagBits::eReleaseResources );
 		//CheckVkResult( err );
 		vk::CommandBufferBeginInfo info{};
-		info.sType = vk::StructureType::eBufferCreateInfo;
+		info.sType = vk::StructureType::eCommandBufferBeginInfo;
 		info.flags |= vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
 		const vk::CommandBuffer commandBuffer{ fd->CommandBuffer };
 		err = commandBuffer.begin( &info );
@@ -369,11 +370,9 @@ void Interface::FrameRender( ImDrawData* drawData, const vk::Device& device, con
 	ImGui_ImplVulkan_RenderDrawData( drawData, fd->CommandBuffer );
 
 	// Submit command buffer
-	vkCmdEndRenderPass( fd->CommandBuffer );
+	fd->CommandBuffer.endRenderPass();
 	{
 		vk::PipelineStageFlags waitStage{ vk::PipelineStageFlagBits::eColorAttachmentOutput };
-		const vk::CommandBuffer command{ fd->CommandBuffer };
-		const vk::Fence fence{ fd->Fence };
 
 		vk::SubmitInfo info{};
 		info.sType = vk::StructureType::eSubmitInfo;
@@ -381,26 +380,24 @@ void Interface::FrameRender( ImDrawData* drawData, const vk::Device& device, con
 		info.pWaitSemaphores = &imageAcquiredSemaphore;
 		info.pWaitDstStageMask = &waitStage;
 		info.commandBufferCount = 1;
-		info.pCommandBuffers = &command;
+		info.pCommandBuffers = &fd->CommandBuffer;
 		info.signalSemaphoreCount = 1;
 		info.pSignalSemaphores = &renderCompleteSemaphore;
 
-		command.end();
-		vkEndCommandBuffer( fd->CommandBuffer );
-		//CheckVkResult( err );
-		err = queue.submit( 1, &info, fence );
+		fd->CommandBuffer.end();
+		err = queue.submit( 1, &info, fd->Fence );
 		CheckVkResult( err );
 	}
 }
 
-void Interface::FramePresent( const vk::Queue& queue)
+void Balbino::Interface::FramePresent( const vk::Queue& queue )
 {
 	if ( m_SwapChainRebuild )
 		return;
-	vk::Semaphore render_complete_semaphore {m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore};
+	vk::Semaphore render_complete_semaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore };
 	vk::SwapchainKHR swapchain{ m_MainWindowData.Swapchain };
-	vk::PresentInfoKHR info {};
-	info.sType = vk::StructureType::eDisplayPresentInfoKHR;
+	vk::PresentInfoKHR info{};
+	info.sType = vk::StructureType::ePresentInfoKHR;
 	info.waitSemaphoreCount = 1;
 	info.pWaitSemaphores = &render_complete_semaphore;
 	info.swapchainCount = 1;
@@ -414,4 +411,91 @@ void Interface::FramePresent( const vk::Queue& queue)
 	}
 	CheckVkResult( err );
 	m_MainWindowData.SemaphoreIndex = ( m_MainWindowData.SemaphoreIndex + 1 ) % m_MainWindowData.ImageCount; // Now we can use the next set of semaphores
+}
+
+void Balbino::Interface::CheckVkResult( const vk::Result err )
+{
+	if ( err == vk::Result::eSuccess )
+		return;
+	fprintf( stderr, "[vulkan] Error: VkResult = %d\n", err );
+	if ( err < vk::Result::eSuccess )
+		abort();
+}
+
+void Balbino::Interface::VkCheckVkResult( VkResult err )
+{
+	if ( err == 0 )
+		return;
+	fprintf( stderr, "[vulkan] Error: VkResult = %d\n", err );
+	if ( err < 0 )
+		abort();
+}
+
+
+void Balbino::Interface::SetImGuiStyle() const
+{
+	ImGuiStyle* style = &ImGui::GetStyle();
+	ImVec4* colors = style->Colors;
+
+	colors[ImGuiCol_Text] = ImVec4( 1.000f, 1.000f, 1.000f, 1.000f );
+	colors[ImGuiCol_TextDisabled] = ImVec4( 0.500f, 0.500f, 0.500f, 1.000f );
+	colors[ImGuiCol_WindowBg] = ImVec4( 0.180f, 0.180f, 0.180f, 1.000f );
+	colors[ImGuiCol_ChildBg] = ImVec4( 0.280f, 0.280f, 0.280f, 0.000f );
+	colors[ImGuiCol_PopupBg] = ImVec4( 0.313f, 0.313f, 0.313f, 1.000f );
+	colors[ImGuiCol_Border] = ImVec4( 0.266f, 0.266f, 0.266f, 1.000f );
+	colors[ImGuiCol_BorderShadow] = ImVec4( 0.000f, 0.000f, 0.000f, 0.000f );
+	colors[ImGuiCol_FrameBg] = ImVec4( 0.160f, 0.160f, 0.160f, 1.000f );
+	colors[ImGuiCol_FrameBgHovered] = ImVec4( 0.200f, 0.200f, 0.200f, 1.000f );
+	colors[ImGuiCol_FrameBgActive] = ImVec4( 0.280f, 0.280f, 0.280f, 1.000f );
+	colors[ImGuiCol_TitleBg] = ImVec4( 0.148f, 0.148f, 0.148f, 1.000f );
+	colors[ImGuiCol_TitleBgActive] = ImVec4( 0.148f, 0.148f, 0.148f, 1.000f );
+	colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 0.148f, 0.148f, 0.148f, 1.000f );
+	colors[ImGuiCol_MenuBarBg] = ImVec4( 0.195f, 0.195f, 0.195f, 1.000f );
+	colors[ImGuiCol_ScrollbarBg] = ImVec4( 0.160f, 0.160f, 0.160f, 1.000f );
+	colors[ImGuiCol_ScrollbarGrab] = ImVec4( 0.277f, 0.277f, 0.277f, 1.000f );
+	colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4( 0.300f, 0.300f, 0.300f, 1.000f );
+	colors[ImGuiCol_ScrollbarGrabActive] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_CheckMark] = ImVec4( 1.000f, 1.000f, 1.000f, 1.000f );
+	colors[ImGuiCol_SliderGrab] = ImVec4( 0.391f, 0.391f, 0.391f, 1.000f );
+	colors[ImGuiCol_SliderGrabActive] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_Button] = ImVec4( 1.000f, 1.000f, 1.000f, 0.000f );
+	colors[ImGuiCol_ButtonHovered] = ImVec4( 1.000f, 1.000f, 1.000f, 0.156f );
+	colors[ImGuiCol_ButtonActive] = ImVec4( 1.000f, 1.000f, 1.000f, 0.391f );
+	colors[ImGuiCol_Header] = ImVec4( 0.313f, 0.313f, 0.313f, 1.000f );
+	colors[ImGuiCol_HeaderHovered] = ImVec4( 0.469f, 0.469f, 0.469f, 1.000f );
+	colors[ImGuiCol_HeaderActive] = ImVec4( 0.469f, 0.469f, 0.469f, 1.000f );
+	colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
+	colors[ImGuiCol_SeparatorHovered] = ImVec4( 0.391f, 0.391f, 0.391f, 1.000f );
+	colors[ImGuiCol_SeparatorActive] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_ResizeGrip] = ImVec4( 1.000f, 1.000f, 1.000f, 0.250f );
+	colors[ImGuiCol_ResizeGripHovered] = ImVec4( 1.000f, 1.000f, 1.000f, 0.670f );
+	colors[ImGuiCol_ResizeGripActive] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_Tab] = ImVec4( 0.098f, 0.098f, 0.098f, 1.000f );
+	colors[ImGuiCol_TabHovered] = ImVec4( 0.352f, 0.352f, 0.352f, 1.000f );
+	colors[ImGuiCol_TabActive] = ImVec4( 0.195f, 0.195f, 0.195f, 1.000f );
+	colors[ImGuiCol_TabUnfocused] = ImVec4( 0.098f, 0.098f, 0.098f, 1.000f );
+	colors[ImGuiCol_TabUnfocusedActive] = ImVec4( 0.195f, 0.195f, 0.195f, 1.000f );
+	colors[ImGuiCol_DockingPreview] = ImVec4( 0.038f, 0.420f, 0.000f, 0.781f );
+	colors[ImGuiCol_DockingEmptyBg] = ImVec4( 0.180f, 0.180f, 0.180f, 1.000f );
+	colors[ImGuiCol_PlotLines] = ImVec4( 0.469f, 0.469f, 0.469f, 1.000f );
+	colors[ImGuiCol_PlotLinesHovered] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_PlotHistogram] = ImVec4( 0.586f, 0.586f, 0.586f, 1.000f );
+	colors[ImGuiCol_PlotHistogramHovered] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_TextSelectedBg] = ImVec4( 1.000f, 1.000f, 1.000f, 0.156f );
+	colors[ImGuiCol_DragDropTarget] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_NavHighlight] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_NavWindowingHighlight] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
+	colors[ImGuiCol_NavWindowingDimBg] = ImVec4( 0.000f, 0.000f, 0.000f, 0.586f );
+	colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.000f, 0.000f, 0.000f, 0.586f );
+
+	style->ChildRounding = 4.0f;
+	style->FrameBorderSize = 1.0f;
+	style->FrameRounding = 2.0f;
+	style->GrabMinSize = 7.0f;
+	style->PopupRounding = 2.0f;
+	style->ScrollbarRounding = 12.0f;
+	style->ScrollbarSize = 13.0f;
+	style->TabBorderSize = 1.0f;
+	style->TabRounding = 0.0f;
+	style->WindowRounding = 4.0f;
 }

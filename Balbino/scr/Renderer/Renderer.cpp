@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "Renderer.h"
 
-Renderer::Renderer()
+#include <SDL_vulkan.h>
+#include <scr/Interface.h>
+
+Balbino::Renderer::Renderer()
 	: m_pAllocator{ nullptr }
 	, m_Instance{ VK_NULL_HANDLE }
 	, m_PhysicalDevice{ VK_NULL_HANDLE }
@@ -13,10 +16,23 @@ Renderer::Renderer()
 	, m_DescriptorPool{ VK_NULL_HANDLE }
 	, m_MinImageCount{ 2 }
 	, m_SwapChainRebuild{ false }
+#ifdef  BL_EDITOR
+	, m_pInterface{ nullptr }
+#endif
 {
 }
 
-void Renderer::SetupVulkan( const char** extensions, uint32_t extensionsCount )
+void Balbino::Renderer::Setup( SDL_Window* pWindow )
+{
+	(void) pWindow;
+#if BL_EDITOR
+	m_pInterface->Setup( pWindow, m_Instance, m_PhysicalDevice, m_Device, m_QueueFamily, m_Queue, m_PipelineCache, m_DescriptorPool, m_pAllocator, m_MinImageCount );
+	m_pInterface->UploadFont( m_Device, m_Queue );
+#endif
+
+}
+
+void Balbino::Renderer::SetupVulkan( const char** extensions, const uint32_t extensionsCount )
 {
 	vk::Result err;
 
@@ -28,7 +44,8 @@ void Renderer::SetupVulkan( const char** extensions, uint32_t extensionsCount )
 		createInfo.ppEnabledExtensionNames = extensions;
 
 #if defined(BL_EDITOR) && defined(_DEBUG)
-		//todo: add Editor callback
+		if ( m_pInterface )
+			m_pInterface->SetupVulkan( extensions, extensionsCount, createInfo, m_Instance, m_pAllocator, m_DebugReport );
 #else
 		// Create Vulkan Instance without any debug feature
 		err = vk::createInstance( &createInfo, m_pAllocator, &m_Instance );
@@ -38,7 +55,7 @@ void Renderer::SetupVulkan( const char** extensions, uint32_t extensionsCount )
 
 	// Select GPU
 	{
-		uint32_t gpuCount;
+		uint32_t gpuCount{};
 		err = m_Instance.enumeratePhysicalDevices( &gpuCount, nullptr );
 		CheckVkResult( err );
 
@@ -128,37 +145,71 @@ void Renderer::SetupVulkan( const char** extensions, uint32_t extensionsCount )
 	}
 }
 
-void Renderer::SetupVulkanWindow( SDL_Window* pWindow, VkSurfaceKHR surface, int width, int height )
+void Balbino::Renderer::SetupVulkanWindow( SDL_Window* pWindow ) const
 {
 	(void) pWindow;
-	(void) surface;
-	(void) width;
-	(void) height;
 #if BL_EDITOR
-	//todo: call Interface
+	VkSurfaceKHR surface;
+	if ( SDL_Vulkan_CreateSurface( pWindow, m_Instance, &surface ) == 0 )
+	{
+		throw std::runtime_error( "Failed to create Vulkan surface.\n" );
+	}
+
+	// Create Framebuffers
+	int w, h;
+	SDL_GetWindowSize( pWindow, &w, &h );
+	if ( m_pInterface )
+	{
+		m_pInterface->SetupVulkanWindow( surface, w, h, m_Instance, m_PhysicalDevice, m_Device, m_pAllocator, m_QueueFamily, m_MinImageCount );
+	}
 #endif
 }
 
-void Renderer::CleanupVulkan()
+void Balbino::Renderer::Cleanup() const
+{
+	m_Device.waitIdle();
+#if BL_EDITOR
+	m_pInterface->Cleanup();
+#endif
+	CleanupVulkanWindow();
+	CleanupVulkan();
+}
+
+void Balbino::Renderer::CleanupVulkan() const
 {
 	m_Device.destroyDescriptorPool( m_DescriptorPool, m_pAllocator );
 
 #if defined(BL_EDITOR) && defined(_DEBUG)
-	//todo call interface
+	if ( m_pInterface )
+		m_pInterface->CleanupVulkan( m_Instance, m_pAllocator, m_DebugReport );
 #endif // IMGUI_VULKAN_DEBUG_REPORT
 
 	m_Device.destroy( m_pAllocator );
 	m_Instance.destroy( m_pAllocator );
 }
 
-void Renderer::CleanupVulkanWindow()
+void Balbino::Renderer::CleanupVulkanWindow() const
 {
 #if BL_EDITOR
-	//todo: call Interface
+	if ( m_pInterface )
+		m_pInterface->CleanupVulkanWindow( m_Instance, m_pAllocator, m_Device );
 #endif
 }
 
-void Renderer::Draw()
+void Balbino::Renderer::Draw( SDL_Window* pWindow ) const
 {
-	
+	(void) pWindow;
+#if BL_EDITOR
+	m_pInterface->ResizeSwapChain( pWindow, m_Instance, m_PhysicalDevice, m_Device, m_QueueFamily, m_pAllocator, m_MinImageCount );
+	m_pInterface->DrawStart( pWindow );
+	m_pInterface->Draw();
+	m_pInterface->Render( m_Device, m_Queue );
+#endif
 }
+
+#if BL_EDITOR
+void Balbino::Renderer::SetInterface( Interface* const pInterface )
+{
+	m_pInterface = pInterface;
+}
+#endif

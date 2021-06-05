@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
-//#include <vld.h>
+//#include "vld.h"
+
 #ifdef BL_PLATFORM_WINDOWS
 //#define _CRTDBG_MAP_ALLOC
 #include <iostream>
@@ -16,11 +17,12 @@ int main( int arc, char* argv[] )
 	(void) arc;
 	(void) argv;
 
-	StartHeapControl();
 #ifdef _DEBUG
+	StartHeapControl();
 	_CrtMemState s1{}, s2{}, s3{};
 	_CrtMemCheckpoint( &s1 );
 #endif // _DEBUG
+
 	auto pApp = Balbino::CreateApplication();
 	try
 	{
@@ -32,12 +34,13 @@ int main( int arc, char* argv[] )
 		std::cout << e.what();
 	}
 	delete pApp;
+
 #ifdef _DEBUG
 	if ( _CrtMemDifference( &s3, &s1, &s2 ) )
 		_CrtMemDumpStatistics( &s3 );
-#endif // _DEBUG
 
 	DumpMemoryLeaks();
+#endif // _DEBUG
 
 	return 0;
 }
@@ -52,7 +55,7 @@ inline void StartHeapControl()
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
 	// Set a breakpoint on the specified object allocation order number
-	//_CrtSetBreakAlloc( 3957 );
+	//_CrtSetBreakAlloc( 254 );
 #endif
 }
 

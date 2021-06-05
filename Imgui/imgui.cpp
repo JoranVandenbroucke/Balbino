@@ -4317,7 +4317,6 @@ void ImGui::Shutdown(ImGuiContext* context)
         IM_DELETE(g.IO.Fonts);
     }
     g.IO.Fonts = NULL;
-
     // Cleanup of other data are conditional on actually having initialized Dear ImGui.
     if (!g.Initialized)
         return;
