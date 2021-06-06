@@ -182,8 +182,12 @@
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|x64'">
@@ -205,8 +209,12 @@
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -227,6 +235,14 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|Win32'">
     <ClCompile>
@@ -246,6 +262,14 @@
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -271,8 +295,12 @@
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'">
@@ -299,8 +327,12 @@
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -327,8 +359,12 @@
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'">
@@ -355,15 +391,23 @@
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Windows\GameView.h" />
+    <ClInclude Include="scr\Windows\MainScreen.h" />
     <ClInclude Include="scr\Interface.h" />
     <ClInclude Include="scr\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Windows\GameView.cpp" />
+    <ClCompile Include="scr\Windows\MainScreen.cpp" />
     <ClCompile Include="scr\Interface.cpp" />
     <ClCompile Include="scr\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

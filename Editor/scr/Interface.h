@@ -6,6 +6,8 @@
 
 #include <vulkan/vulkan.hpp>
 
+class GameView;
+class MainScreen;
 struct SDL_Window;
 
 #ifdef _DEBUG
@@ -41,6 +43,8 @@ namespace Balbino
 		void CleanupVulkan( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::DebugReportCallbackEXT& debugReport )const;
 		void CleanupVulkanWindow( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::Device& device );
 	private:
+		MainScreen* m_pMain;
+		GameView* m_pGameView;
 		// Our state
 		ImGui_ImplVulkanH_Window m_MainWindowData;
 		ImVec4 m_ClearColor;

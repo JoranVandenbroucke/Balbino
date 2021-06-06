@@ -184,6 +184,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|Win32'">
     <ClCompile>
@@ -205,6 +213,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -230,6 +246,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'">
     <ClCompile>
@@ -255,6 +279,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -276,6 +308,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|x64'">
     <ClCompile>
@@ -297,6 +337,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -322,6 +370,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'">
     <ClCompile>
@@ -347,6 +403,14 @@
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="backends\imgui_impl_sdl.h" />

@@ -178,7 +178,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>sdl2.lib;sdl2_image.lib;sdl2_ttf.lib;sdl2_mixer.lib;vulkan-1.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>
@@ -187,6 +187,14 @@
       </LinkTimeCodeGeneration>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|Win32'">
     <ClCompile>
@@ -204,7 +212,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>sdl2.lib;sdl2_image.lib;sdl2_ttf.lib;sdl2_mixer.lib;vulkan-1.lib;vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget);$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Vulkan\lib\$(PlatformTarget);$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>
@@ -213,6 +221,14 @@
       </LinkTimeCodeGeneration>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -239,6 +255,14 @@
       </LinkTimeCodeGeneration>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|x64'">
     <ClCompile>
@@ -265,6 +289,14 @@
       </LinkTimeCodeGeneration>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -293,6 +325,14 @@
       </EntryPointSymbol>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'">
     <ClCompile>
@@ -321,6 +361,14 @@
       </EntryPointSymbol>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -349,6 +397,14 @@
       </EntryPointSymbol>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'">
     <ClCompile>
@@ -377,6 +433,14 @@
       </EntryPointSymbol>
       <LinkTimeCodeGeneration>UseFastLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(OutDir)..\Game" (
+       xcopy "$(OutDir)" "$(OutDir)..\Game" /E /H /C /I /Y
+) ELSE (
+       mkdir "$(OutDir)..\Game"
+       xcopy "$(OutDir)Balbino.dll" "$(OutDir)..\Game" /E /H /C /I /Y
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="scr\Renderer\Renderer.h" />

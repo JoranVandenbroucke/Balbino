@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <vulkan/vulkan.hpp>
 
+#include "Windows/MainScreen.h"
+#include "Windows/GameView.h"
+
 
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData )
@@ -34,7 +37,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, 
 
 
 Balbino::Interface::Interface()
-	: m_ClearColor{ 0.45f, 0.55f, 0.60f, 1.00f }
+	: m_pMain{ DBG_NEW MainScreen{} }
+	, m_pGameView{DBG_NEW GameView{} }
+	, m_ClearColor{ 0.0f, 0.0f, 0.0f, 1.00f }
 	, m_SwapChainRebuild{ false }
 	, m_ShowDemoWindow{ true }
 	, m_ShowAnotherWindow{ false }
@@ -141,29 +146,22 @@ void Balbino::Interface::CleanupVulkanWindow( const vk::Instance& instance, cons
 
 void Balbino::Interface::Setup( SDL_Window* pWindow, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const uint32_t queueFamily, const vk::Queue& queue, const vk::PipelineCache& pipelineCache, const vk::DescriptorPool& descriptorPool, const vk::AllocationCallbacks* pCallback, const uint32_t minImageCount ) const
 {
-	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io{ ImGui::GetIO() };
-	(void) io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+	//ImGuiSDL::Initialize( Renderer::Get().GetSDLRenderer(), w, h );
+	ImGuiIO& io = ImGui::GetIO(); (void) io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+	//io.ConfigViewportsNoAutoMerge = true;
+	//io.ConfigViewportsNoTaskBarIcon = true;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 	//ImGui::StyleColorsClassic();
 
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-	ImGuiStyle& style{ ImGui::GetStyle() };
-	if ( io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable )
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
 	SetImGuiStyle();
 
 	// Setup Platform/Renderer backends
@@ -244,47 +242,17 @@ void Balbino::Interface::DrawStart( SDL_Window* pWindow )
 
 void Balbino::Interface::Draw()
 {
+	m_pMain->Draw();
 	//todo remove demo code
 	 // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	if ( m_ShowDemoWindow )
 		ImGui::ShowDemoWindow( &m_ShowDemoWindow );
-
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-	{
-		static float f = 0.0f;
-		static int counter = 0;
-
-		ImGui::Begin( "Hello, world!" );                          // Create a window called "Hello, world!" and append into it.
-
-		ImGui::Text( "This is some useful text." );               // Display some text (you can use a format strings too)
-		ImGui::Checkbox( "Demo Window", &m_ShowDemoWindow );      // Edit bools storing our window open/close state
-		ImGui::Checkbox( "Another Window", &m_ShowAnotherWindow );
-
-		ImGui::SliderFloat( "float", &f, 0.0f, 1.0f );            // Edit 1 float using a slider from 0.0f to 1.0f
-		ImGui::ColorEdit3( "clear color", reinterpret_cast<float*>( &m_ClearColor ) ); // Edit 3 floats representing a color
-
-		if ( ImGui::Button( "Button" ) )                            // Buttons return true when clicked (most widgets return true when edited/activated)
-			counter++;
-		ImGui::SameLine();
-		ImGui::Text( "counter = %d", counter );
-
-		ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)", 1000.0f / static_cast<double>( ImGui::GetIO().Framerate ), static_cast<double>( ImGui::GetIO().Framerate ) );
-		ImGui::End();
-	}
-
-	// 3. Show another simple window.
-	if ( m_ShowAnotherWindow )
-	{
-		ImGui::Begin( "Another Window", &m_ShowAnotherWindow );   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::Text( "Hello from another window!" );
-		if ( ImGui::Button( "Close Me" ) )
-			m_ShowAnotherWindow = false;
-		ImGui::End();
-	}
 }
 
 void Balbino::Interface::Render( const vk::Device& device, const vk::Queue& queue )
 {
+	m_pGameView->Draw();
+	
 	// Rendering
 	ImGui::Render();
 	ImDrawData* pDrawData = ImGui::GetDrawData();
@@ -312,6 +280,8 @@ void Balbino::Interface::Render( const vk::Device& device, const vk::Queue& queu
 
 void Balbino::Interface::Cleanup()
 {
+	delete m_pMain;
+	delete m_pGameView;
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -488,14 +458,28 @@ void Balbino::Interface::SetImGuiStyle() const
 	colors[ImGuiCol_NavWindowingDimBg] = ImVec4( 0.000f, 0.000f, 0.000f, 0.586f );
 	colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.000f, 0.000f, 0.000f, 0.586f );
 
-	style->ChildRounding = 4.0f;
+	style->WindowPadding = ImVec2( 2.0f, 2.0f );
+	style->FramePadding = ImVec2( 2.0f, 2.0f );
+	style->CellPadding = ImVec2( 2.0f, 2.0f );
+	style->ItemSpacing = ImVec2( 4.0f, 4.0f );
+	style->ItemInnerSpacing = ImVec2( 4.0f, 4.0f );
+	style->TouchExtraPadding = ImVec2( 0.0f, 0.0f );
+	style->IndentSpacing = 22.0f;
+	style->ScrollbarSize = 12.0f;
+	style->GrabMinSize = 12.0f;
+
+	style->WindowBorderSize = 0.0f;
+	style->ChildBorderSize = 1.0f;
+	style->PopupBorderSize = 1.0f;
 	style->FrameBorderSize = 1.0f;
-	style->FrameRounding = 2.0f;
-	style->GrabMinSize = 7.0f;
-	style->PopupRounding = 2.0f;
-	style->ScrollbarRounding = 12.0f;
-	style->ScrollbarSize = 13.0f;
 	style->TabBorderSize = 1.0f;
-	style->TabRounding = 0.0f;
-	style->WindowRounding = 4.0f;
+
+	style->WindowRounding = 0.0f;
+	style->ChildRounding = 4.0f;
+	style->FrameRounding = 4.0f;
+	style->PopupRounding = 4.0f;
+	style->ScrollbarSize = 4.0f;
+	style->GrabRounding = 4.0f;
+	style->LogSliderDeadzone = 4.0f;
+	style->TabRounding = 4.0f;
 }

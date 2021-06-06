@@ -17,9 +17,9 @@
 
 Balbino::Application::Application()
 	: m_pWindow{ nullptr }
-	, m_pRenderer{ new Renderer{} }
+	, m_pRenderer{ DBG_NEW Renderer{} }
 #ifdef BL_EDITOR
-	, m_pInterface{ new Interface{} }
+	, m_pInterface{ DBG_NEW Interface{} }
 #endif
 {
 }
@@ -72,7 +72,7 @@ void Balbino::Application::Initialize()
 	{
 		throw std::runtime_error( std::string( "Could not get the number of required m_Instance extensions from SDL." ) );
 	}
-	const char** extensions{ new const char* [extenstionCount] };
+	const char** extensions{ DBG_NEW const char* [extenstionCount] };
 	if ( !SDL_Vulkan_GetInstanceExtensions( m_pWindow, &extenstionCount, extensions ) )
 	{
 		throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ) );
@@ -85,7 +85,7 @@ void Balbino::Application::Initialize()
 
 void Balbino::Application::LoadGame() const
 {
-	std::cout << "Load Game\n";
+	std::cout << "Load Engine\n";
 }
 
 void Balbino::Application::Cleanup() const
@@ -121,8 +121,6 @@ void Balbino::Application::Run() const
 			}
 		}
 		m_pRenderer->Draw( m_pWindow );
-
-		std::cout << "Lol";
 	}
 	Cleanup();
 }
