@@ -1,5 +1,5 @@
 #pragma once
-class GameView
+class CGameView
 {
 public:
 	void Draw();

@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 
-class MainScreen
+class CMainScreen
 {
 public:
 	void Draw();
 private:
 	std::string m_SavePosition;
-	bool m_Saved;
+	bool m_Saved = false;
 };
 

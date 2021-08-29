@@ -4,8 +4,8 @@
 #include <SDL.h>
 #include <vulkan/vulkan.hpp>
 
-#include "Windows/MainScreen.h"
 #include "Windows/GameView.h"
+#include "Windows/MainScreen.h"
 
 
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
@@ -36,9 +36,9 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, 
 #endif // IMGUI_VULKAN_DEBUG_REPORT
 
 
-Balbino::Interface::Interface()
-	: m_pMain{ DBG_NEW MainScreen{} }
-	, m_pGameView{DBG_NEW GameView{} }
+Balbino::CInterface::CInterface()
+	: m_pMain{ DBG_NEW CMainScreen{} }
+	, m_pGameView{ DBG_NEW CGameView{} }
 	, m_ClearColor{ 0.0f, 0.0f, 0.0f, 1.00f }
 	, m_SwapChainRebuild{ false }
 	, m_ShowDemoWindow{ true }
@@ -46,7 +46,7 @@ Balbino::Interface::Interface()
 {
 }
 
-void Balbino::Interface::SetupVulkan( const char** extensions, const uint32_t extensionsCount, vk::InstanceCreateInfo& createInfo, vk::Instance& instance, vk::AllocationCallbacks* pCallback, vk::DebugReportCallbackEXT& debugReport ) const
+void Balbino::CInterface::SetupVulkan( const char** extensions, const uint32_t extensionsCount, VkInstanceCreateInfo& createInfo, VkInstance& instance, const VkAllocationCallbacks* pCallback, VkDebugReportCallbackEXT& debugReport ) const
 {
 	(void) extensions;
 	(void) extensionsCount;
@@ -61,90 +61,88 @@ void Balbino::Interface::SetupVulkan( const char** extensions, const uint32_t ex
 	createInfo.ppEnabledLayerNames = layers;
 
 	// Enable debug report extension (we need additional storage, so we duplicate the user array to add our new extension to it)
-	const auto extensionsExt{ static_cast<const char**>( malloc( sizeof( const char* ) * ( extensionsCount + 1 ) ) ) };
+	const auto extensionsExt{ static_cast<const char**>( malloc( sizeof( const char* ) * ( 1 + extensionsCount ) ) ) };
 	memcpy( extensionsExt, extensions, extensionsCount * sizeof( const char* ) );
 	extensionsExt[extensionsCount] = "VK_EXT_debug_report";
 	createInfo.enabledExtensionCount = extensionsCount + 1;
 	createInfo.ppEnabledExtensionNames = extensionsExt;
 
 	// Create Vulkan Instance
-	CheckVkResult( createInstance( &createInfo, pCallback, &instance ) );
+	CheckVkResult( vkCreateInstance( &createInfo, pCallback, &instance ) );
 	free( extensionsExt );
 
 	// Get the function pointer (required for any extensions)
 	// Setup the debug report callback
-	vk::DebugReportCallbackCreateInfoEXT debugReportCi{};
-	debugReportCi.sType = vk::StructureType::eDebugReportCallbackCreateInfoEXT;
-	debugReportCi.flags = vk::DebugReportFlagBitsEXT::eError | vk::DebugReportFlagBitsEXT::eWarning | vk::DebugReportFlagBitsEXT::ePerformanceWarning;
+	VkDebugReportCallbackCreateInfoEXT debugReportCi{};
+	debugReportCi.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+	debugReportCi.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
 	debugReportCi.pfnCallback = DebugReport;
 	debugReportCi.pUserData = nullptr;
 
-	auto dldi = vk::DispatchLoaderDynamic( instance, vkGetInstanceProcAddr );
-	const vk::Result err = instance.createDebugReportCallbackEXT( &debugReportCi, pCallback, &debugReport, dldi );
+	const VkResult err = vkCreateDebugReportCallbackEXT(instance, &debugReportCi, pCallback, &debugReport );
 	CheckVkResult( err );
 #endif
 }
 
-void Balbino::Interface::SetupVulkanWindow( const vk::SurfaceKHR& surface, const int width, const int height, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const vk::AllocationCallbacks* pCallback, const uint32_t queueFamily, const uint32_t minImageCount )
+void Balbino::CInterface::SetupVulkanWindow( const VkSurfaceKHR& surface, const int width, const int height, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, const VkAllocationCallbacks* pCallback, const uint32_t queueFamily, const uint32_t minImageCount )
 {
 	m_MainWindowData.Surface = surface;
 
-	if ( physicalDevice.getSurfaceSupportKHR( queueFamily, m_MainWindowData.Surface ) != VK_TRUE )
+	VkBool32 supportsPresent = VK_FALSE;
+	if ( vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamily, m_MainWindowData.Surface, &supportsPresent) != VK_SUCCESS )
 	{
 		throw std::runtime_error( "Error no WSI support on physical device 0\n" );
 	}
 
 	// Select Surface Format
-	const vk::Format requestSurfaceImageFormat[]
+	const VkFormat requestSurfaceImageFormat[]
 	{
-		vk::Format::eB8G8R8A8Unorm,
-		vk::Format::eR8G8B8A8Unorm,
-		vk::Format::eB8G8R8Unorm,
-		vk::Format::eR8G8B8Unorm
+		VK_FORMAT_B8G8R8A8_UNORM,
+		VK_FORMAT_R8G8B8A8_UNORM,
+		VK_FORMAT_B8G8R8_UNORM,
+		VK_FORMAT_R8G8B8_UNORM
 
 	};
-	const vk::ColorSpaceKHR requestSurfaceColorSpace{ vk::ColorSpaceKHR::eSrgbNonlinear };
+	const VkColorSpaceKHR& requestSurfaceColorSpace{ VK_COLORSPACE_SRGB_NONLINEAR_KHR };
 	m_MainWindowData.SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat( physicalDevice, m_MainWindowData.Surface, requestSurfaceImageFormat, static_cast<size_t>( IM_ARRAYSIZE( requestSurfaceImageFormat ) ), requestSurfaceColorSpace );
 
 	// Select Present Mode
 #ifdef IMGUI_UNLIMITED_FRAME_RATE
-	vk::PresentModeKHR presentMode[]
+	VkPresentModeKHR presentMode[]
 	{
-		vk::PresentModeKHR::eMailbox,
-		vk::PresentModeKHR::eImmediate,
-		vk::PresentModeKHR::eFifo
+		VkPresentModeKHRMailbox,
+		VkPresentModeKHRImmediate,
+		VkPresentModeKHRFifo
 	};
 #else
-	vk::PresentModeKHR presentMode[]
+	const VkPresentModeKHR presentMode[]
 	{
-		vk::PresentModeKHR::eFifo
+		VK_PRESENT_MODE_FIFO_KHR
 	};
 #endif
 
 	m_MainWindowData.PresentMode = ImGui_ImplVulkanH_SelectPresentMode( physicalDevice, m_MainWindowData.Surface, &presentMode[0], IM_ARRAYSIZE( presentMode ) );
-	//printf("[vulkan] Selected PresentMode = %d\n", m_MainWindowData.PresentMode);
 
-	// Create SwapChain, RenderPass, Framebuffer, etc.
+	// Create SwapChain, RenderPass, Frame-buffer, etc.
 	IM_ASSERT( minImageCount >= 2 );
 	ImGui_ImplVulkanH_CreateOrResizeWindow( instance, physicalDevice, device, &m_MainWindowData, queueFamily, pCallback, width, height, minImageCount );
 }
 
-void Balbino::Interface::CleanupVulkan( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::DebugReportCallbackEXT& debugReport ) const
+void Balbino::CInterface::CleanupVulkan( const VkInstance& instance, const VkAllocationCallbacks* pCallback, const VkDebugReportCallbackEXT& debugReport ) const
 {
 	// Remove the debug report callback
 	(void) instance;
 	(void) pCallback;
 	(void) debugReport;
-	auto dldi = vk::DispatchLoaderDynamic( instance, vkGetInstanceProcAddr );
-	instance.destroyDebugReportCallbackEXT( debugReport, pCallback, dldi );
+	vkDestroyDebugReportCallbackEXT(instance, debugReport, pCallback);
 }
 
-void Balbino::Interface::CleanupVulkanWindow( const vk::Instance& instance, const vk::AllocationCallbacks* pCallback, const vk::Device& device )
+void Balbino::CInterface::CleanupVulkanWindow( const VkInstance& instance, const VkAllocationCallbacks* pCallback, const VkDevice& device )
 {
 	ImGui_ImplVulkanH_DestroyWindow( instance, device, &m_MainWindowData, pCallback );
 }
 
-void Balbino::Interface::Setup( SDL_Window* pWindow, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const uint32_t queueFamily, const vk::Queue& queue, const vk::PipelineCache& pipelineCache, const vk::DescriptorPool& descriptorPool, const vk::AllocationCallbacks* pCallback, const uint32_t minImageCount ) const
+void Balbino::CInterface::Setup( SDL_Window* pWindow, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, const uint32_t queueFamily, const VkQueue& queue, const VkPipelineCache& pipelineCache, const VkDescriptorPool& descriptorPool, const VkAllocationCallbacks* pCallback, const uint32_t minImageCount ) const
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -164,7 +162,7 @@ void Balbino::Interface::Setup( SDL_Window* pWindow, const vk::Instance& instanc
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	SetImGuiStyle();
 
-	// Setup Platform/Renderer backends
+	// Setup Platform/Renderer backend
 	ImGui_ImplSDL2_InitForVulkan( pWindow );
 	ImGui_ImplVulkan_InitInfo initInfo{};
 	initInfo.Instance = instance;
@@ -181,42 +179,42 @@ void Balbino::Interface::Setup( SDL_Window* pWindow, const vk::Instance& instanc
 	ImGui_ImplVulkan_Init( &initInfo, m_MainWindowData.RenderPass );
 }
 
-void Balbino::Interface::UploadFont( const vk::Device& device, const vk::Queue& queue ) const
+void Balbino::CInterface::UploadFont( const VkDevice& device, const VkQueue& queue ) const
 {
 	// Use any command queue
-	const vk::CommandPool commandPool{ m_MainWindowData.Frames[m_MainWindowData.FrameIndex].CommandPool };
-	vk::CommandBuffer commandBuffer{ m_MainWindowData.Frames[m_MainWindowData.FrameIndex].CommandBuffer };
+	const VkCommandPool& commandPool{ m_MainWindowData.Frames[m_MainWindowData.FrameIndex].CommandPool };
+	const VkCommandBuffer& commandBuffer{ m_MainWindowData.Frames[m_MainWindowData.FrameIndex].CommandBuffer };
 	/*err = */
-	device.resetCommandPool( commandPool, vk::CommandPoolResetFlagBits::eReleaseResources );
+	vkResetCommandPool( device, commandPool, VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT );
 	//CheckVkResult( err );
-	vk::CommandBufferBeginInfo beginInfo{};
-	beginInfo.sType = vk::StructureType::eCommandBufferBeginInfo;
-	beginInfo.flags |= vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
-	vk::Result err = commandBuffer.begin( &beginInfo );
+	VkCommandBufferBeginInfo beginInfo{};
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	VkResult err = vkBeginCommandBuffer( commandBuffer, &beginInfo );
 	CheckVkResult( err );
 
 	ImGui_ImplVulkan_CreateFontsTexture( commandBuffer );
 
-	vk::SubmitInfo endInfo = {};
-	endInfo.sType = vk::StructureType::eSubmitInfo;
+	VkSubmitInfo endInfo = {};
+	endInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	endInfo.commandBufferCount = 1;
 	endInfo.pCommandBuffers = &commandBuffer;
-	commandBuffer.end();
-	//CheckVkResult( err );
-	err = queue.submit( 1, &endInfo, VK_NULL_HANDLE );
+	err = vkEndCommandBuffer( commandBuffer);
+	CheckVkResult( err );
+	err = vkQueueSubmit( queue, 1, &endInfo, VK_NULL_HANDLE );
 	CheckVkResult( err );
 
-	device.waitIdle();
-	//CheckVkResult( err );
+	err = vkDeviceWaitIdle( device );
+	CheckVkResult( err );
 	ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
 
-void Balbino::Interface::HandleEvents( SDL_Event e )
+void Balbino::CInterface::HandleEvents( SDL_Event e )
 {
 	ImGui_ImplSDL2_ProcessEvent( &e );
 }
 
-void Balbino::Interface::ResizeSwapChain( SDL_Window* pWindow, const vk::Instance& instance, const vk::PhysicalDevice& physicalDevice, const vk::Device& device, const uint32_t queueFamily, const vk::AllocationCallbacks* pCallback, const uint32_t minImageCount )
+void Balbino::CInterface::ResizeSwapChain( SDL_Window* pWindow, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, const uint32_t queueFamily, const VkAllocationCallbacks* pCallback, const uint32_t minImageCount )
 {
 	if ( m_SwapChainRebuild )
 	{
@@ -232,7 +230,7 @@ void Balbino::Interface::ResizeSwapChain( SDL_Window* pWindow, const vk::Instanc
 	}
 }
 
-void Balbino::Interface::DrawStart( SDL_Window* pWindow )
+void Balbino::CInterface::DrawStart( SDL_Window* pWindow )
 {
 	// Start the Dear ImGui frame
 	ImGui_ImplVulkan_NewFrame();
@@ -240,7 +238,7 @@ void Balbino::Interface::DrawStart( SDL_Window* pWindow )
 	ImGui::NewFrame();
 }
 
-void Balbino::Interface::Draw()
+void Balbino::CInterface::Draw()
 {
 	m_pMain->Draw();
 	//todo remove demo code
@@ -249,10 +247,10 @@ void Balbino::Interface::Draw()
 		ImGui::ShowDemoWindow( &m_ShowDemoWindow );
 }
 
-void Balbino::Interface::Render( const vk::Device& device, const vk::Queue& queue )
+void Balbino::CInterface::Render( const VkDevice& device, const VkQueue& queue )
 {
 	m_pGameView->Draw();
-	
+
 	// Rendering
 	ImGui::Render();
 	ImDrawData* pDrawData = ImGui::GetDrawData();
@@ -278,7 +276,7 @@ void Balbino::Interface::Render( const vk::Device& device, const vk::Queue& queu
 		FramePresent( queue );
 }
 
-void Balbino::Interface::Cleanup()
+void Balbino::CInterface::Cleanup() const
 {
 	delete m_pMain;
 	delete m_pGameView;
@@ -287,65 +285,65 @@ void Balbino::Interface::Cleanup()
 	ImGui::DestroyContext();
 }
 
-void Balbino::Interface::FrameRender( ImDrawData* drawData, const vk::Device& device, const vk::Queue& queue )
+void Balbino::CInterface::FrameRender( ImDrawData* drawData, const VkDevice& device, const VkQueue& queue )
 {
-	vk::Semaphore imageAcquiredSemaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].ImageAcquiredSemaphore };
-	vk::Semaphore renderCompleteSemaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore };
-	vk::Result err{ device.acquireNextImageKHR( m_MainWindowData.Swapchain, UINT64_MAX, imageAcquiredSemaphore, VK_NULL_HANDLE, &m_MainWindowData.FrameIndex ) };
-	if ( err == vk::Result::eErrorOutOfDateKHR || err == vk::Result::eSuboptimalKHR )
+	const VkSemaphore& imageAcquiredSemaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].ImageAcquiredSemaphore };
+	const VkSemaphore& renderCompleteSemaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore };
+	VkResult err{ vkAcquireNextImageKHR( device, m_MainWindowData.Swapchain, UINT64_MAX, imageAcquiredSemaphore, VK_NULL_HANDLE, &m_MainWindowData.FrameIndex ) };
+	if ( err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR )
 	{
 		m_SwapChainRebuild = true;
 		return;
 	}
 	CheckVkResult( err );
 
-	ImGui_ImplVulkanH_Frame* fd = &m_MainWindowData.Frames[m_MainWindowData.FrameIndex];
+	const ImGui_ImplVulkanH_Frame* fd = &m_MainWindowData.Frames[m_MainWindowData.FrameIndex];
 	{
-		vk::Fence fence{ fd->Fence };
-		err = device.waitForFences( 1, &fence, VK_TRUE, UINT64_MAX );    // wait indefinitely instead of periodically checking
+		const VkFence& fence{ fd->Fence };
+		err = vkWaitForFences( device, 1, &fence, VK_TRUE, UINT64_MAX );    // wait indefinitely instead of periodically checking
 		CheckVkResult( err );
-		err = device.resetFences( 1, &fence );
+		err = vkResetFences( device, 1, &fence );
 		CheckVkResult( err );
 	}
 	{
-		device.resetCommandPool( fd->CommandPool, vk::CommandPoolResetFlagBits::eReleaseResources );
+		vkResetCommandPool( device, fd->CommandPool, VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT );
 		//CheckVkResult( err );
-		vk::CommandBufferBeginInfo info{};
-		info.sType = vk::StructureType::eCommandBufferBeginInfo;
-		info.flags |= vk::CommandBufferUsageFlagBits::eOneTimeSubmit;
-		const vk::CommandBuffer commandBuffer{ fd->CommandBuffer };
-		err = commandBuffer.begin( &info );
+		VkCommandBufferBeginInfo info{};
+		info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		info.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		const VkCommandBuffer& commandBuffer{ fd->CommandBuffer };
+		err = vkBeginCommandBuffer( commandBuffer, &info );
 		CheckVkResult( err );
 	}
 	{
-		vk::RenderPassBeginInfo info{};
-		vk::ClearValue clear;
-		const vk::CommandBuffer command{ fd->CommandBuffer };
+		VkRenderPassBeginInfo info{};
+		VkClearValue clear;
+		const VkCommandBuffer& command{ fd->CommandBuffer };
 		clear.depthStencil = m_MainWindowData.ClearValue.depthStencil;
 		clear.color.float32[0] = m_MainWindowData.ClearValue.color.float32[0];
 		clear.color.float32[1] = m_MainWindowData.ClearValue.color.float32[1];
 		clear.color.float32[2] = m_MainWindowData.ClearValue.color.float32[2];
 		clear.color.float32[3] = m_MainWindowData.ClearValue.color.float32[3];
-		info.sType = vk::StructureType::eRenderPassBeginInfo;
+		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT;
 		info.renderPass = m_MainWindowData.RenderPass;
 		info.framebuffer = fd->Framebuffer;
 		info.renderArea.extent.width = m_MainWindowData.Width;
 		info.renderArea.extent.height = m_MainWindowData.Height;
 		info.clearValueCount = 1;
 		info.pClearValues = &clear;
-		command.beginRenderPass( &info, vk::SubpassContents::eInline );
+		vkCmdBeginRenderPass( command, &info, VK_SUBPASS_CONTENTS_INLINE );
 	}
 
 	// Record dear imgui primitives into command buffer
 	ImGui_ImplVulkan_RenderDrawData( drawData, fd->CommandBuffer );
 
 	// Submit command buffer
-	fd->CommandBuffer.endRenderPass();
+	vkCmdEndRenderPass( fd->CommandBuffer );
 	{
-		vk::PipelineStageFlags waitStage{ vk::PipelineStageFlagBits::eColorAttachmentOutput };
+		const VkPipelineStageFlags& waitStage{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
-		vk::SubmitInfo info{};
-		info.sType = vk::StructureType::eSubmitInfo;
+		VkSubmitInfo info{};
+		info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		info.waitSemaphoreCount = 1;
 		info.pWaitSemaphores = &imageAcquiredSemaphore;
 		info.pWaitDstStageMask = &waitStage;
@@ -354,27 +352,26 @@ void Balbino::Interface::FrameRender( ImDrawData* drawData, const vk::Device& de
 		info.signalSemaphoreCount = 1;
 		info.pSignalSemaphores = &renderCompleteSemaphore;
 
-		fd->CommandBuffer.end();
-		err = queue.submit( 1, &info, fd->Fence );
+		vkEndCommandBuffer( fd->CommandBuffer );
+		err = vkQueueSubmit( queue, 1, &info, fd->Fence );
 		CheckVkResult( err );
 	}
 }
 
-void Balbino::Interface::FramePresent( const vk::Queue& queue )
+void Balbino::CInterface::FramePresent( const VkQueue& queue )
 {
 	if ( m_SwapChainRebuild )
 		return;
-	vk::Semaphore render_complete_semaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore };
-	vk::SwapchainKHR swapchain{ m_MainWindowData.Swapchain };
-	vk::PresentInfoKHR info{};
-	info.sType = vk::StructureType::ePresentInfoKHR;
+	const VkSemaphore& renderCompleteSemaphore{ m_MainWindowData.FrameSemaphores[m_MainWindowData.SemaphoreIndex].RenderCompleteSemaphore };
+	VkPresentInfoKHR info{};
+	info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 	info.waitSemaphoreCount = 1;
-	info.pWaitSemaphores = &render_complete_semaphore;
+	info.pWaitSemaphores = &renderCompleteSemaphore;
 	info.swapchainCount = 1;
-	info.pSwapchains = &swapchain;
+	info.pSwapchains = &m_MainWindowData.Swapchain;
 	info.pImageIndices = &m_MainWindowData.FrameIndex;
-	const vk::Result err = queue.presentKHR( &info );
-	if ( err == vk::Result::eErrorOutOfDateKHR || err == vk::Result::eSuboptimalKHR )
+	const VkResult err = vkQueuePresentKHR( queue, &info );
+	if ( err == VK_ERROR_OUT_OF_DATE_KHR || err == VK_SUBOPTIMAL_KHR )
 	{
 		m_SwapChainRebuild = true;
 		return;
@@ -383,26 +380,17 @@ void Balbino::Interface::FramePresent( const vk::Queue& queue )
 	m_MainWindowData.SemaphoreIndex = ( m_MainWindowData.SemaphoreIndex + 1 ) % m_MainWindowData.ImageCount; // Now we can use the next set of semaphores
 }
 
-void Balbino::Interface::CheckVkResult( const vk::Result err )
+void Balbino::CInterface::CheckVkResult( const VkResult err )
 {
-	if ( err == vk::Result::eSuccess )
+	if ( err == VK_SUCCESS )
 		return;
-	fprintf( stderr, "[vulkan] Error: VkResult = %d\n", err );
-	if ( err < vk::Result::eSuccess )
-		abort();
-}
-
-void Balbino::Interface::VkCheckVkResult( VkResult err )
-{
-	if ( err == 0 )
-		return;
-	fprintf( stderr, "[vulkan] Error: VkResult = %d\n", err );
-	if ( err < 0 )
+	fprintf( stderr, "[Vulkan] Error: VkResult = %d\n", err );
+	if ( err < VK_SUCCESS)
 		abort();
 }
 
 
-void Balbino::Interface::SetImGuiStyle() const
+void Balbino::CInterface::SetImGuiStyle()
 {
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;

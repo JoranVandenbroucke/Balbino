@@ -8,7 +8,7 @@
 #include <iostream>
 #include <regex>
 
-void MainScreen::Draw()
+void CMainScreen::Draw()
 {
 	ImGuiIO& io = ImGui::GetIO(); (void) io;
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus /*| ImGuiWindowFlags_NoDocking*/;

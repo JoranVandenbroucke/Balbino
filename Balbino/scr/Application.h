@@ -4,7 +4,7 @@
 struct SDL_Window;
 namespace Balbino
 {
-	class Renderer;
+	class CRenderer;
 #ifdef BL_EDITOR
 	class Interface;
 #endif
@@ -27,7 +27,7 @@ namespace Balbino
 	private:
 		SDL_Window* m_pWindow;
 
-		Renderer* m_pRenderer;
+		CRenderer* m_pRenderer;
 #ifdef BL_EDITOR
 		Interface* m_pInterface;;
 #endif

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 
+#include "Renderer/Camera.h"
 #include "Renderer/Renderer.h"
 
 #ifdef BL_EDITOR
@@ -17,7 +18,7 @@
 
 Balbino::Application::Application()
 	: m_pWindow{ nullptr }
-	, m_pRenderer{ DBG_NEW Renderer{} }
+	, m_pRenderer{ DBG_NEW CRenderer{} }
 #ifdef BL_EDITOR
 	, m_pInterface{ DBG_NEW Interface{} }
 #endif
@@ -26,6 +27,8 @@ Balbino::Application::Application()
 
 Balbino::Application::~Application()
 {
+	delete m_pRenderer;
+	m_pRenderer = nullptr;
 	m_pWindow = nullptr;
 }
 
@@ -45,7 +48,7 @@ void Balbino::Application::Initialize()
 		throw std::runtime_error( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError() );
 	}
 
-	const SDL_WindowFlags flags{ SDL_WINDOW_VULKAN /*| SDL_WINDOW_FULLSCREEN*/ };
+	constexpr SDL_WindowFlags flags{ SDL_WINDOW_VULKAN /*| SDL_WINDOW_FULLSCREEN*/ };
 	m_pWindow = SDL_CreateWindow(
 		"Balbino Editor",
 		SDL_WINDOWPOS_CENTERED,
@@ -77,6 +80,10 @@ void Balbino::Application::Initialize()
 	{
 		throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ) );
 	}
+	
+	const CCamera* cam{DBG_NEW CCamera{}};
+	(void) cam;
+
 	m_pRenderer->SetupVulkan( extensions, extenstionCount );
 	delete[] extensions;
 	m_pRenderer->SetupVulkanWindow( m_pWindow );

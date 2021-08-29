@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <imgui.h>
 
-void GameView::Draw()
+void CGameView::Draw()
 {
 	ImGui::Begin( "GameView" );
 	ImGui::BeginChild( "game", ImVec2{ 640, 500 }, true );

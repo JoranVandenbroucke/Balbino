@@ -1,22 +1,22 @@
 #pragma once
-#include <vulkan/vulkan.hpp>
 #include <vulkan/vulkan_core.h>
-
+#define FRAME_COUNT 2
 struct SDL_Window;
+
 namespace Balbino
 {
-	class Interface;
+	class CInterface;
 
-	class Renderer
+	class CRenderer
 	{
 	public:
-		Renderer();
-		~Renderer() = default;
+		CRenderer();
+		~CRenderer() = default;
 
-		Renderer( const Renderer& ) = delete;
-		Renderer( Renderer&& ) = delete;
-		Renderer& operator=( const Renderer& ) = delete;
-		Renderer& operator=( Renderer&& ) = delete;
+		CRenderer( const CRenderer& ) = delete;
+		CRenderer( CRenderer&& ) = delete;
+		CRenderer& operator=( const CRenderer& ) = delete;
+		CRenderer& operator=( CRenderer&& ) = delete;
 
 
 		void SetupVulkan( const char** extensions, uint32_t extensionsCount );
@@ -25,22 +25,31 @@ namespace Balbino
 
 		void Cleanup() const;
 
-		void Draw( SDL_Window* pWindow ) const;
+		void Draw( const SDL_Window* pWindow );
 
+#if BL_EDITOR
 		void SetInterface( Interface* const pInterface );
-	
-	private:
-		vk::AllocationCallbacks* m_pAllocator;
-		vk::Instance m_Instance;
-		vk::PhysicalDevice m_PhysicalDevice;
-		vk::Device m_Device;
-		uint32_t m_QueueFamily;
-		vk::Queue m_Queue;
-		vk::DebugReportCallbackEXT m_DebugReport;
-		vk::PipelineCache m_PipelineCache;
-		vk::DescriptorPool m_DescriptorPool;
+#endif
 
+	private:
+		VkAllocationCallbacks* m_pAllocator;
+		VkCommandPool m_CommandPool;
+		VkDebugReportCallbackEXT m_DebugReport;
+		VkDescriptorPool m_DescriptorPool;
+		VkDevice m_Device;
+		VkInstance m_Instance;
+		VkPhysicalDevice m_PhysicalDevice;
+		VkPipelineCache m_PipelineCache;
+		VkQueue m_Queue;
+
+		VkCommandBuffer m_CommandBuffers[FRAME_COUNT];
+		VkFence m_FrameFences[FRAME_COUNT]; // Create with VK_FENCE_CREATE_SIGNALED_BIT.
+		VkSemaphore m_ImageAvailableSemaphores[FRAME_COUNT];
+		VkSemaphore m_RenderFinishedSemaphores[FRAME_COUNT];
+		
+		uint32_t m_QueueFamily;
 		uint32_t m_MinImageCount;
+		uint32_t m_FrameIndex;
 		bool m_SwapChainRebuild;
 
 #if BL_EDITOR
@@ -49,22 +58,7 @@ namespace Balbino
 
 		void CleanupVulkan() const;
 		void CleanupVulkanWindow() const;
-		
-		static void CheckVkResult( const vk::Result err )
-		{
-			if ( err == vk::Result::eSuccess )
-				return;
-			fprintf( stderr, "[vulkan] Error: VkResult = %d\n", err );
-			if ( err < vk::Result::eSuccess )
-				abort();
-		}
-		static void VKCheckVkResult( VkResult err )
-		{
-			if ( err == 0 )
-				return;
-			fprintf( stderr, "[vulkan] Error: VkResult = %d\n", err );
-			if ( err < 0 )
-				abort();
-		}
+
+		static void CheckVkResult( VkResult err );
 	};
 }
