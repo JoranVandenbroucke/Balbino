@@ -6,7 +6,7 @@ namespace Balbino
 {
 	class CRenderer;
 #ifdef BL_EDITOR
-	class Interface;
+	class CInterface;
 #endif
 	
 	class BALBINO_API Application
@@ -29,7 +29,7 @@ namespace Balbino
 
 		CRenderer* m_pRenderer;
 #ifdef BL_EDITOR
-		Interface* m_pInterface;;
+		CInterface* m_pInterface;;
 #endif
 	};
 

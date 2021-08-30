@@ -20,7 +20,7 @@ Balbino::Application::Application()
 	: m_pWindow{ nullptr }
 	, m_pRenderer{ DBG_NEW CRenderer{} }
 #ifdef BL_EDITOR
-	, m_pInterface{ DBG_NEW Interface{} }
+	, m_pInterface{ DBG_NEW CInterface{} }
 #endif
 {
 }
@@ -30,6 +30,11 @@ Balbino::Application::~Application()
 	delete m_pRenderer;
 	m_pRenderer = nullptr;
 	m_pWindow = nullptr;
+
+#ifdef BL_EDITOR
+	delete m_pInterface;
+	m_pInterface = nullptr;
+#endif
 }
 
 void Balbino::Application::Initialize()
@@ -81,9 +86,6 @@ void Balbino::Application::Initialize()
 		throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ) );
 	}
 	
-	const CCamera* cam{DBG_NEW CCamera{}};
-	(void) cam;
-
 	m_pRenderer->SetupVulkan( extensions, extenstionCount );
 	delete[] extensions;
 	m_pRenderer->SetupVulkanWindow( m_pWindow );
@@ -93,6 +95,8 @@ void Balbino::Application::Initialize()
 void Balbino::Application::LoadGame() const
 {
 	std::cout << "Load Engine\n";
+	const CCamera* pCamera = DBG_NEW CCamera{};
+	(void) pCamera;
 }
 
 void Balbino::Application::Cleanup() const

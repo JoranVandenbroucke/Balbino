@@ -26,7 +26,7 @@ namespace Balbino
 		CInterface& operator=( const CInterface& ) = delete;
 		CInterface& operator=( CInterface&& ) = delete;
 
-		void SetupVulkan( const char** extensions, const uint32_t extensionsCount, VkInstanceCreateInfo& createInfo, VkInstance& instance, const VkAllocationCallbacks* pCallback, VkDebugReportCallbackEXT& debugReport ) const;
+		void SetupVulkan(const char** extensions, const uint32_t extensionsCount, VkInstanceCreateInfo& createInfo, VkInstance& instance, const VkAllocationCallbacks* pCallback, VkDebugReportCallbackEXT& debugReport );
 		void SetupVulkanWindow( const VkSurfaceKHR& surface, int width, int height, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, const VkAllocationCallbacks* pCallback, uint32_t queueFamily, uint32_t minImageCount );
 
 		void Setup( SDL_Window* pWindow, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, uint32_t queueFamily, const VkQueue& queue, const VkPipelineCache& pipelineCache, const VkDescriptorPool& descriptorPool, const VkAllocationCallbacks* pCallback, uint32_t minImageCount ) const;
@@ -50,8 +50,11 @@ namespace Balbino
 		ImVec4 m_ClearColor;
 		bool m_SwapChainRebuild;
 
-		bool m_ShowDemoWindow;
-		bool m_ShowAnotherWindow;
+		bool m_showDemoWindow;
+		bool m_showAnotherWindow;
+
+		PFN_vkCreateDebugReportCallbackEXT vkpfn_CreateDebugReportCallbackEXT = nullptr;
+		PFN_vkDestroyDebugReportCallbackEXT vkpfn_DestroyDebugReportCallbackEXT = nullptr;
 
 		static void SetImGuiStyle();
 		void FrameRender( ImDrawData* drawData, const VkDevice& device, const VkQueue& queue );

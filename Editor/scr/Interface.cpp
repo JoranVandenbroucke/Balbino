@@ -39,14 +39,14 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, 
 Balbino::CInterface::CInterface()
 	: m_pMain{ DBG_NEW CMainScreen{} }
 	, m_pGameView{ DBG_NEW CGameView{} }
-	, m_ClearColor{ 0.0f, 0.0f, 0.0f, 1.00f }
+	, m_ClearColor{ 0.645f, 0.98f, 0.123f, 1.00f }
 	, m_SwapChainRebuild{ false }
-	, m_ShowDemoWindow{ true }
-	, m_ShowAnotherWindow{ false }
+	, m_showDemoWindow{ true }
+	, m_showAnotherWindow{ false }
 {
 }
 
-void Balbino::CInterface::SetupVulkan( const char** extensions, const uint32_t extensionsCount, VkInstanceCreateInfo& createInfo, VkInstance& instance, const VkAllocationCallbacks* pCallback, VkDebugReportCallbackEXT& debugReport ) const
+void Balbino::CInterface::SetupVulkan(const char** extensions, const uint32_t extensionsCount, VkInstanceCreateInfo& createInfo, VkInstance& instance, const VkAllocationCallbacks* pCallback, VkDebugReportCallbackEXT& debugReport )
 {
 	(void) extensions;
 	(void) extensionsCount;
@@ -54,34 +54,45 @@ void Balbino::CInterface::SetupVulkan( const char** extensions, const uint32_t e
 	(void) instance;
 	(void) pCallback;
 	(void) debugReport;
+	VkResult err = VK_ERROR_INITIALIZATION_FAILED;
 #ifdef IMGUI_VULKAN_DEBUG_REPORT
 	// Enabling validation layers
-	const char* layers[]{ "VK_LAYER_KHRONOS_validation" };
+	const char* layers[]{"VK_LAYER_KHRONOS_validation"};
 	createInfo.enabledLayerCount = 1;
 	createInfo.ppEnabledLayerNames = layers;
 
 	// Enable debug report extension (we need additional storage, so we duplicate the user array to add our new extension to it)
-	const auto extensionsExt{ static_cast<const char**>( malloc( sizeof( const char* ) * ( 1 + extensionsCount ) ) ) };
-	memcpy( extensionsExt, extensions, extensionsCount * sizeof( const char* ) );
+	const auto extensionsExt{static_cast<const char**>(malloc(sizeof(const char*) * (extensionsCount + 1)))};
+	memcpy(extensionsExt, extensions, extensionsCount * sizeof(const char*));
 	extensionsExt[extensionsCount] = "VK_EXT_debug_report";
 	createInfo.enabledExtensionCount = extensionsCount + 1;
 	createInfo.ppEnabledExtensionNames = extensionsExt;
 
-	// Create Vulkan Instance
-	CheckVkResult( vkCreateInstance( &createInfo, pCallback, &instance ) );
-	free( extensionsExt );
-
-	// Get the function pointer (required for any extensions)
-	// Setup the debug report callback
-	VkDebugReportCallbackCreateInfoEXT debugReportCi{};
-	debugReportCi.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-	debugReportCi.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
-	debugReportCi.pfnCallback = DebugReport;
-	debugReportCi.pUserData = nullptr;
-
-	const VkResult err = vkCreateDebugReportCallbackEXT(instance, &debugReportCi, pCallback, &debugReport );
-	CheckVkResult( err );
+	err = vkCreateInstance(&createInfo, pCallback, &instance);
+	CheckVkResult(err);
+	free(extensionsExt);
+	if (err == VK_SUCCESS)
+	{
+		vkpfn_CreateDebugReportCallbackEXT =
+			reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>( vkGetInstanceProcAddr( instance, "vkCreateDebugReportCallbackEXT" ) );
+		vkpfn_DestroyDebugReportCallbackEXT =
+			reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>( vkGetInstanceProcAddr( instance, "vkDestroyDebugReportCallbackEXT" ) );
+		if (vkpfn_CreateDebugReportCallbackEXT && vkpfn_DestroyDebugReportCallbackEXT)
+		{
+			VkDebugReportCallbackCreateInfoEXT debugReportCi{};
+			debugReportCi.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+			debugReportCi.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
+			debugReportCi.pfnCallback = DebugReport;
+			debugReportCi.pUserData = nullptr;
+			vkpfn_CreateDebugReportCallbackEXT(instance, &debugReportCi, pCallback, &debugReport);
+			CheckVkResult(err);
+		}
+	}
 #endif
+	if(err != VK_SUCCESS)
+	{
+		CheckVkResult(vkCreateInstance(&createInfo, pCallback, &instance));
+	}
 }
 
 void Balbino::CInterface::SetupVulkanWindow( const VkSurfaceKHR& surface, const int width, const int height, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, const VkAllocationCallbacks* pCallback, const uint32_t queueFamily, const uint32_t minImageCount )
@@ -134,7 +145,12 @@ void Balbino::CInterface::CleanupVulkan( const VkInstance& instance, const VkAll
 	(void) instance;
 	(void) pCallback;
 	(void) debugReport;
-	vkDestroyDebugReportCallbackEXT(instance, debugReport, pCallback);
+#ifdef IMGUI_VULKAN_DEBUG_REPORT
+	if (vkpfn_DestroyDebugReportCallbackEXT && debugReport)
+	{
+		vkpfn_DestroyDebugReportCallbackEXT(instance, debugReport, pCallback);
+	}
+#endif
 }
 
 void Balbino::CInterface::CleanupVulkanWindow( const VkInstance& instance, const VkAllocationCallbacks* pCallback, const VkDevice& device )
@@ -243,8 +259,8 @@ void Balbino::CInterface::Draw()
 	m_pMain->Draw();
 	//todo remove demo code
 	 // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if ( m_ShowDemoWindow )
-		ImGui::ShowDemoWindow( &m_ShowDemoWindow );
+	if ( m_showDemoWindow )
+		ImGui::ShowDemoWindow( &m_showDemoWindow );
 }
 
 void Balbino::CInterface::Render( const VkDevice& device, const VkQueue& queue )
@@ -324,7 +340,7 @@ void Balbino::CInterface::FrameRender( ImDrawData* drawData, const VkDevice& dev
 		clear.color.float32[1] = m_MainWindowData.ClearValue.color.float32[1];
 		clear.color.float32[2] = m_MainWindowData.ClearValue.color.float32[2];
 		clear.color.float32[3] = m_MainWindowData.ClearValue.color.float32[3];
-		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT;
+		info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		info.renderPass = m_MainWindowData.RenderPass;
 		info.framebuffer = fd->Framebuffer;
 		info.renderArea.extent.width = m_MainWindowData.Width;
