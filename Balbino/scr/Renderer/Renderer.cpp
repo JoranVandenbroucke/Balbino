@@ -8,25 +8,28 @@
 #include "../Managers/CameraManager.h"
 
 Balbino::CRenderer::CRenderer()
-	: m_pAllocator{nullptr}
-	, m_commandPool{nullptr}
-	, m_instance{VK_NULL_HANDLE}
-	, m_physicalDevice{VK_NULL_HANDLE}
-	, m_device{VK_NULL_HANDLE}
-	, m_queueFamily{static_cast<uint32_t>(-1)}
-	, m_queue{VK_NULL_HANDLE}
+	: m_pAllocator{ nullptr }
+	, m_commandPool{ nullptr }
+	, m_instance{ VK_NULL_HANDLE }
+	, m_physicalDevice{ VK_NULL_HANDLE }
+	, m_device{ VK_NULL_HANDLE }
+	, m_queueFamily{ static_cast<uint32_t>( -1 ) }
+	, m_queue{ VK_NULL_HANDLE }
 	, m_commandBuffers{}
 	, m_frameFences{}
 	, m_imageAvailableSemaphores{}
 	, m_renderFinishedSemaphores{}
-	, m_debugReport{VK_NULL_HANDLE}
-	, m_pipelineCache{VK_NULL_HANDLE}
-	, m_descriptorPool{VK_NULL_HANDLE}
-	, m_minImageCount{2}
-	, m_frameIndex{0}
-	, m_swapChainRebuild{false}
+	, m_debugReport{ VK_NULL_HANDLE }
+	, m_pipelineCache{ VK_NULL_HANDLE }
+	, m_descriptorPool{ VK_NULL_HANDLE }
+	, m_minImageCount{ 2 }
+	, m_frameIndex{ 0 }
+	, m_width{ 0 }
+	, m_height{ 0 }
+	, m_imageCount{ 0 }
+	, m_swapChainRebuild{ false }
 #ifdef  BL_EDITOR
-	, m_pInterface{nullptr}
+	, m_pInterface{ nullptr }
 #endif
 {
 }
@@ -75,7 +78,6 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow)
 	CheckVkResult(err);
 	err = vkCreateFence(m_device, &fenceCreateInfo, nullptr, &m_frameFences[1]);
 	CheckVkResult(err);
-
 }
 
 void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t extensionsCount)
@@ -244,14 +246,14 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 		else
 			m_imageCount = PRESENT_MODE_DEFAULT_IMAGE_COUNT;
 
-		err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, surface, &m_SurfaceCapabilities);
+		err = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, surface, &m_surfaceCapabilities);
 		CheckVkResult(err);
 
-		m_swapchainExtent = m_SurfaceCapabilities.currentExtent;
+		m_swapchainExtent = m_surfaceCapabilities.currentExtent;
 		if (m_swapchainExtent.width == UINT32_MAX)
 		{
-			m_swapchainExtent.width = std::clamp(m_width, m_SurfaceCapabilities.minImageExtent.width, m_SurfaceCapabilities.maxImageExtent.width);
-			m_swapchainExtent.height = std::clamp(m_height, m_SurfaceCapabilities.minImageExtent.height, m_SurfaceCapabilities.maxImageExtent.height);
+			m_swapchainExtent.width = std::clamp(m_width, m_surfaceCapabilities.minImageExtent.width, m_surfaceCapabilities.maxImageExtent.width);
+			m_swapchainExtent.height = std::clamp(m_height, m_surfaceCapabilities.minImageExtent.height, m_surfaceCapabilities.maxImageExtent.height);
 		}
 
 
@@ -265,7 +267,7 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 		swapChainCreateInfo.imageArrayLayers = 1; // 2 for stereo
 		swapChainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		swapChainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		swapChainCreateInfo.preTransform = m_SurfaceCapabilities.currentTransform;
+		swapChainCreateInfo.preTransform = m_surfaceCapabilities.currentTransform;
 		swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 		swapChainCreateInfo.presentMode = VK_PRESENT_MODE_MAILBOX_KHR;
 		swapChainCreateInfo.clipped = VK_TRUE;
@@ -274,14 +276,57 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 		CheckVkResult(err);
 		err = vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_minImageCount, nullptr);
 		CheckVkResult(err);
-		err = vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_minImageCount, m_Images);
+		err = vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_minImageCount, m_images);
 		CheckVkResult(err);
 	}
+	{
+		VkAttachmentDescription colorAttachment{};
+        colorAttachment.format = m_surfaceFormat.format;
+        colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+        colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+        colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+        colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+        VkAttachmentReference colorAttachmentRef{};
+        colorAttachmentRef.attachment = 0;
+        colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+        VkSubpassDescription subpass{};
+        subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+        subpass.colorAttachmentCount = 1;
+        subpass.pColorAttachments = &colorAttachmentRef;
+
+        VkSubpassDependency dependency{};
+        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dependency.dstSubpass = 0;
+        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.srcAccessMask = 0;
+        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+        VkRenderPassCreateInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassInfo.attachmentCount = 1;
+        renderPassInfo.pAttachments = &colorAttachment;
+        renderPassInfo.subpassCount = 1;
+        renderPassInfo.pSubpasses = &subpass;
+        renderPassInfo.dependencyCount = 1;
+        renderPassInfo.pDependencies = &dependency;
+
+        if (vkCreateRenderPass(m_device, &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create render pass!");
+        }
+	}
+	m_mesh.Initialize(m_device, m_physicalDevice, m_swapchainExtent, m_renderPass, m_pAllocator );
 #endif
 }
 
 void Balbino::CRenderer::Cleanup() const
 {
+	m_mesh.Cleanup(m_device, m_pAllocator);
 	vkDeviceWaitIdle(m_device);
 #if BL_EDITOR
 	m_pInterface->Cleanup();
@@ -355,48 +400,52 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow)
 		CheckVkResult(err);
 
 		uint32_t imageIndex;
-		err = vkAcquireNextImageKHR(m_device, m_swapchain, UINT64_MAX, m_imageAvailableSemaphores[index], VK_NULL_HANDLE, &imageIndex);
-		CheckVkResult(err);
+		vkAcquireNextImageKHR(m_device, m_swapchain, UINT64_MAX, m_imageAvailableSemaphores[index], VK_NULL_HANDLE, &imageIndex);
 
-		VkCommandBufferBeginInfo beginInfo{};
-		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		constexpr VkCommandBufferBeginInfo beginInfo {
+			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+		};
+		vkBeginCommandBuffer(m_commandBuffers[index], &beginInfo);
 
 		const VkClearColorValue clearColor{164.0f / 256.0f, 30.0f / 256.0f, 34.0f / 256.0f, 0.0f};
-		VkImageSubresourceRange imageRange{};
-		imageRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		imageRange.levelCount = 1;
-		imageRange.layerCount = 1;
+		constexpr VkImageSubresourceRange imageRange{
+			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+			.levelCount = 1,
+			.layerCount = 1
+		};
 
 		err = vkBeginCommandBuffer(m_commandBuffers[index], &beginInfo);
 		CheckVkResult(err);
+
 		vkCmdClearColorImage(m_commandBuffers[index], m_images[index], VK_IMAGE_LAYOUT_GENERAL, &clearColor, 1, &imageRange);
 		//todo: draw things
+		m_mesh.Draw(m_commandBuffers[index]);
 
+		vkEndCommandBuffer(m_commandBuffers[index]);
 
-		err = vkEndCommandBuffer(m_commandBuffers[index]);
-		CheckVkResult(err);
-
-		constexpr VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		VkSubmitInfo submitInfo{};
-		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		submitInfo.waitSemaphoreCount = 1;
-		submitInfo.pWaitSemaphores = &m_imageAvailableSemaphores[index];
-		submitInfo.pWaitDstStageMask = &waitStage;
-		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &m_commandBuffers[index];
-		submitInfo.signalSemaphoreCount = 1;
-		submitInfo.pSignalSemaphores = &m_renderFinishedSemaphores[index];
+		const VkPipelineStageFlags waitStages[] {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+		const VkSubmitInfo submitInfo {
+			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			.waitSemaphoreCount = 1,
+			.pWaitSemaphores = &m_imageAvailableSemaphores[index],
+			.pWaitDstStageMask = waitStages,
+			.commandBufferCount = 1,
+			.pCommandBuffers = &m_commandBuffers[index],
+			.signalSemaphoreCount = 1,
+			.pSignalSemaphores = &m_renderFinishedSemaphores[index],
+		};
 		err = vkQueueSubmit(m_queue, 1, &submitInfo, m_frameFences[index]);
 		CheckVkResult(err);
 
-		VkPresentInfoKHR presentInfo{};
-		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		presentInfo.waitSemaphoreCount = 1;
-		presentInfo.pWaitSemaphores = &m_renderFinishedSemaphores[index];
-		presentInfo.swapchainCount = 1;
-		presentInfo.pSwapchains = &m_swapchain;
-		presentInfo.pImageIndices = &imageIndex;
+		const VkPresentInfoKHR presentInfo {
+			.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+			.waitSemaphoreCount = 1,
+			.pWaitSemaphores = &m_renderFinishedSemaphores[index],
+			.swapchainCount = 1,
+			.pSwapchains = &m_swapchain,
+			.pImageIndices = &imageIndex,
+		};
 		err = vkQueuePresentKHR(m_queue, &presentInfo);
 		CheckVkResult(err);
 	}

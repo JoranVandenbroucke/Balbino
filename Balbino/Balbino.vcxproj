@@ -171,10 +171,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -205,10 +206,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -239,10 +241,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -273,10 +276,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -309,10 +313,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -345,10 +350,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -381,10 +387,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -417,10 +424,11 @@
       <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\physx\include;$(SolutionDir)3rdParty/Visual Leak Detector/include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -443,19 +451,27 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Renderer\IndexBuffer.h" />
+    <ClInclude Include="scr\Renderer\Mesh.h" />
     <ClInclude Include="scr\Managers\CameraManager.h" />
     <ClInclude Include="scr\Renderer\Camera.h" />
     <ClInclude Include="scr\Renderer\Renderer.h" />
     <ClInclude Include="scr\pch.h" />
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
+    <ClInclude Include="scr\Renderer\Vertex.h" />
     <ClInclude Include="scr\Scene.h" />
     <ClInclude Include="scr\Application.h" />
     <ClInclude Include="Balbino.h" />
     <ClInclude Include="scr\Renderer\Material.h" />
     <ClInclude Include="scr\Managers\Singleton.h" />
+    <ClInclude Include="scr\Managers\ShaderManager.h" />
+    <ClInclude Include="scr\Renderer\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Renderer\IndexBuffer.cpp" />
+    <ClCompile Include="scr\Renderer\VertexBuffer.cpp" />
+    <ClCompile Include="scr\Renderer\Mesh.cpp" />
     <ClCompile Include="scr\Managers\CameraManager.cpp" />
     <ClCompile Include="scr\Renderer\Camera.cpp" />
     <ClCompile Include="scr\Renderer\Renderer.cpp" />
@@ -473,6 +489,7 @@
     <ClCompile Include="scr\Application.cpp" />
     <ClCompile Include="scr\Renderer\Material.cpp" />
     <ClCompile Include="scr\Managers\Singleton.cpp" />
+    <ClCompile Include="scr\Managers\ShaderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Editor\Editor.vcxproj">

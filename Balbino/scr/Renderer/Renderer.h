@@ -1,5 +1,7 @@
 #pragma once
 #include <vulkan/vulkan_core.h>
+
+#include "Mesh.h"
 #define FRAME_COUNT 2
 #define MAX_PRESENT_MODE_COUNT 3
 #define PRESENT_MODE_MAILBOX_IMAGE_COUNT 3
@@ -35,6 +37,8 @@ namespace Balbino
 #endif
 
 	private:
+		CMesh m_mesh;
+
 		VkAllocationCallbacks* m_pAllocator;
 		VkCommandPool m_commandPool;
 		VkDebugReportCallbackEXT m_debugReport;
@@ -67,8 +71,9 @@ namespace Balbino
 		VkSurfaceFormatKHR m_surfaceFormat;
 		VkPresentModeKHR m_presentMode;
 		VkExtent2D  m_swapchainExtent;
-		VkSurfaceCapabilitiesKHR m_SurfaceCapabilities;
-		VkImage m_Images[MAX_PRESENT_MODE_COUNT];
+		VkSurfaceCapabilitiesKHR m_surfaceCapabilities;
+		VkRenderPass m_renderPass;
+		VkImage m_images[MAX_PRESENT_MODE_COUNT];
 #endif
 
 		void CleanupVulkan() const;

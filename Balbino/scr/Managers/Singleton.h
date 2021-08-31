@@ -2,20 +2,20 @@
 namespace Balbino
 {
 	template <class T>
-	class Singleton
+	class CSingleton
 	{
 	public:
 		static T& GetInstance();
-		Singleton() = default;
-		~Singleton() = default;
-		Singleton( const Singleton& ) = delete;
-		Singleton( Singleton&& ) = delete;
-		Singleton& operator=( const Singleton& ) = delete;
-		Singleton& operator=( Singleton&& ) = delete;
+		CSingleton() = default;
+		virtual ~CSingleton() = default;
+		CSingleton( const CSingleton& ) = delete;
+		CSingleton( CSingleton&& ) = delete;
+		CSingleton& operator=( const CSingleton& ) = delete;
+		CSingleton& operator=( CSingleton&& ) = delete;
 	};
 
 	template <class T>
-	T& Singleton<T>::GetInstance()
+	T& CSingleton<T>::GetInstance()
 	{
 		static T init{};
 		return init;
