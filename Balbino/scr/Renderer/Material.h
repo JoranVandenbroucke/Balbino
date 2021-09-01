@@ -8,10 +8,11 @@ namespace Balbino
 	{
 	public:
 		CMaterial();
+		~CMaterial();
 
 		//https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Shader_modules
 		void Compile( const VkDevice& device, const VkExtent2D& swapChainExtent, const VkRenderPass& renderPass, const VkAllocationCallbacks* callbacks);
-		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* callbacks) const;
+		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* callbacks);
 		void Bind(const VkCommandBuffer& commandBuffer) const;
 	private:
 		VkPipelineLayout m_pipelineLayout;

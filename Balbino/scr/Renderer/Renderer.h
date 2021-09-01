@@ -26,9 +26,9 @@ namespace Balbino
 
 		void SetupVulkan( const char** extensions, uint32_t extensionsCount );
 		void SetupVulkanWindow( SDL_Window* pWindow );
-		void Setup( SDL_Window* pWindow );
+		void Setup( SDL_Window* pWindow, const char** extensions, const uint32_t extensionsCount);
 
-		void Cleanup() const;
+		void Cleanup();
 
 		void Draw( SDL_Window* pWindow );
 

@@ -86,10 +86,8 @@ void Balbino::Application::Initialize()
 		throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ) );
 	}
 	
-	m_pRenderer->SetupVulkan( extensions, extenstionCount );
+	m_pRenderer->Setup( m_pWindow, extensions, extenstionCount);
 	delete[] extensions;
-	m_pRenderer->SetupVulkanWindow( m_pWindow );
-	m_pRenderer->Setup( m_pWindow );
 }
 
 void Balbino::Application::LoadGame() const
