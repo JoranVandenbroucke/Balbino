@@ -46,6 +46,15 @@ Balbino::CInterface::CInterface()
 {
 }
 
+void Balbino::CInterface::GetValues( VkSwapchainKHR& swapchain, VkExtent2D& swapchainExtent, VkPresentModeKHR& presentMode, VkRenderPass& renderPass ) const
+{
+	swapchain = m_MainWindowData.Swapchain;
+	swapchainExtent.width = m_MainWindowData.Width;
+	swapchainExtent.height = m_MainWindowData.Height;
+	presentMode = m_MainWindowData.PresentMode;
+	renderPass = m_MainWindowData.RenderPass;
+}
+
 void Balbino::CInterface::SetupVulkan(const char** extensions, const uint32_t extensionsCount, VkInstanceCreateInfo& createInfo, VkInstance& instance, const VkAllocationCallbacks* pCallback, VkDebugReportCallbackEXT& debugReport )
 {
 	(void) extensions;

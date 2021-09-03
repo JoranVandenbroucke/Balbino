@@ -22,8 +22,8 @@ Balbino::CMaterial::~CMaterial()
 
 void Balbino::CMaterial::Compile(const VkDevice& device, const VkExtent2D& swapChainExtent, const VkRenderPass& renderPass, const VkAllocationCallbacks* callbacks)
 {
-	const std::vector<char> vertShaderCode{ReadFile(R"(../Resources/Shaders/vertex.vert)")};
-	const std::vector<char> fragShaderCode{ReadFile(R"(../Resources/Shaders/fragment.frag)")};
+	const std::string vertShaderCode{ReadFile(R"(../Resources/Shaders/vertex.spv)")};
+	const std::string fragShaderCode{ReadFile(R"(../Resources/Shaders/fragment.spv)")};
 
 
 	const VkShaderModule& vertShaderModule{CreateShaderModule(vertShaderCode, device, callbacks)};
@@ -156,12 +156,12 @@ void Balbino::CMaterial::Bind(const VkCommandBuffer& commandBuffer) const
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 }
 
-VkShaderModule Balbino::CMaterial::CreateShaderModule(const std::vector<char>& code, const VkDevice& device, const VkAllocationCallbacks* callbacks)
+VkShaderModule Balbino::CMaterial::CreateShaderModule(const std::string& code, const VkDevice& device, const VkAllocationCallbacks* callbacks)
 {
 	VkShaderModuleCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	createInfo.codeSize = code.size();
-	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+	createInfo.pCode = reinterpret_cast<const uint32_t*>(code.c_str());
 
 	VkShaderModule shaderModule;
 	const VkResult result{vkCreateShaderModule(device, &createInfo, callbacks, &shaderModule)};
@@ -173,25 +173,18 @@ VkShaderModule Balbino::CMaterial::CreateShaderModule(const std::vector<char>& c
 }
 
 //https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Shader_modules
-std::vector<char> Balbino::CMaterial::ReadFile(const std::string& filename)
+std::string Balbino::CMaterial::ReadFile(const std::string& filename)
 {
 	try
 	{
-		std::ifstream file{};
-		file.open(filename, std::ios::in | std::ios::ate | std::ios::binary);
+		std::ifstream file(filename, std::ios::binary);
 		if (!file.is_open())
 		{
 			throw std::runtime_error{"failed to open file! " + std::filesystem::absolute(filename).string()};
 		}
-
-		const size_t fileSize = static_cast<size_t>(file.tellg());
-		std::vector<char> buffer(fileSize);
-
-		file.seekg(0);
-		file.read(buffer.data(), fileSize);
+		const std::string text = std::string((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 		file.close();
-
-		return buffer;
+		return text;
 	}
 	catch (const std::ios_base::failure& f)
 	{

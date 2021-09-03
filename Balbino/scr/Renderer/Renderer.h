@@ -3,9 +3,9 @@
 
 #include "Mesh.h"
 #define FRAME_COUNT 2
-#define MAX_PRESENT_MODE_COUNT 3
+#define MAX_PRESENT_MODE_COUNT 4
 #define PRESENT_MODE_MAILBOX_IMAGE_COUNT 3
-#define PRESENT_MODE_DEFAULT_IMAGE_COUNT 3
+#define PRESENT_MODE_DEFAULT_IMAGE_COUNT 2
 struct SDL_Window;
 
 namespace Balbino
@@ -35,24 +35,37 @@ namespace Balbino
 #if BL_EDITOR
 		void SetInterface( CInterface* const pInterface );
 #endif
+#ifdef _DEBUG
+		PFN_vkCreateDebugReportCallbackEXT vkpfn_CreateDebugReportCallbackEXT = nullptr;
+		PFN_vkDestroyDebugReportCallbackEXT vkpfn_DestroyDebugReportCallbackEXT = nullptr;
+#endif
+
 
 	private:
 		CMesh m_mesh;
 
-		VkAllocationCallbacks* m_pAllocator;
-		VkCommandPool m_commandPool;
-		VkDebugReportCallbackEXT m_debugReport;
-		VkDescriptorPool m_descriptorPool;
-		VkDevice m_device;
 		VkInstance m_instance;
+		VkAllocationCallbacks* m_pAllocator;
+		VkDebugReportCallbackEXT m_debugReport;
 		VkPhysicalDevice m_physicalDevice;
-		VkPipelineCache m_pipelineCache;
+		VkCommandPool m_commandPool;
+		VkDevice m_device;
 		VkQueue m_queue;
+		VkDescriptorPool m_descriptorPool;
+		VkPipelineCache m_pipelineCache;	//todo: this is for materials
 
 		VkCommandBuffer m_commandBuffers[FRAME_COUNT];
 		VkFence m_frameFences[FRAME_COUNT]; // Create with VK_FENCE_CREATE_SIGNALED_BIT.
 		VkSemaphore m_imageAvailableSemaphores[FRAME_COUNT];
 		VkSemaphore m_renderFinishedSemaphores[FRAME_COUNT];
+
+		VkSwapchainKHR m_swapchain;
+		VkRenderPass m_renderPass;
+		VkSurfaceFormatKHR m_surfaceFormat;
+		VkPresentModeKHR m_presentMode;
+		VkExtent2D  m_swapchainExtent;
+		VkSurfaceCapabilitiesKHR m_surfaceCapabilities;
+		VkImage m_images[MAX_PRESENT_MODE_COUNT];
 		
 		uint32_t m_queueFamily;
 		uint32_t m_minImageCount;
@@ -66,14 +79,6 @@ namespace Balbino
 
 #if BL_EDITOR
 		CInterface* m_pInterface;
-#else
-		VkSwapchainKHR m_swapchain;
-		VkSurfaceFormatKHR m_surfaceFormat;
-		VkPresentModeKHR m_presentMode;
-		VkExtent2D  m_swapchainExtent;
-		VkSurfaceCapabilitiesKHR m_surfaceCapabilities;
-		VkRenderPass m_renderPass;
-		VkImage m_images[MAX_PRESENT_MODE_COUNT];
 #endif
 
 		void CleanupVulkan() const;

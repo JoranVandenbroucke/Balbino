@@ -18,8 +18,8 @@ namespace Balbino
 		VkPipelineLayout m_pipelineLayout;
 		VkPipeline m_pipeline;
 
-		static VkShaderModule CreateShaderModule( const std::vector<char>& code, const VkDevice& device, const VkAllocationCallbacks* callbacks);
-		static std::vector<char> ReadFile( const std::string& filename );
+		static VkShaderModule CreateShaderModule( const std::string& code, const VkDevice& device, const VkAllocationCallbacks* callbacks);
+		static std::string ReadFile(const std::string & filename);
 	};
 
 }

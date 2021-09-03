@@ -8,38 +8,52 @@
 #include "../Managers/CameraManager.h"
 
 Balbino::CRenderer::CRenderer()
-	: m_pAllocator{ VK_NULL_HANDLE }
-	, m_commandPool{ VK_NULL_HANDLE }
-	, m_instance{ VK_NULL_HANDLE }
-	, m_physicalDevice{ VK_NULL_HANDLE }
-	, m_device{ VK_NULL_HANDLE }
-	, m_queueFamily{ static_cast<uint32_t>( -1 ) }
-	, m_queue{ VK_NULL_HANDLE }
+	: m_mesh{}
+	, m_instance{VK_NULL_HANDLE}
+	, m_pAllocator{VK_NULL_HANDLE}
+	, m_debugReport{VK_NULL_HANDLE}
+	, m_physicalDevice{VK_NULL_HANDLE}
+	, m_commandPool{VK_NULL_HANDLE}
+	, m_device{VK_NULL_HANDLE}
+	, m_queue{VK_NULL_HANDLE}
+	, m_descriptorPool{VK_NULL_HANDLE}
+	, m_pipelineCache{VK_NULL_HANDLE}
 	, m_commandBuffers{}
 	, m_frameFences{}
 	, m_imageAvailableSemaphores{}
+	, m_queueFamily{static_cast<uint32_t>(-1)}
 	, m_renderFinishedSemaphores{}
-	, m_debugReport{ VK_NULL_HANDLE }
-	, m_pipelineCache{ VK_NULL_HANDLE }
-	, m_descriptorPool{ VK_NULL_HANDLE }
-	, m_minImageCount{ 2 }
-	, m_frameIndex{ 0 }
-	, m_width{ 0 }
-	, m_height{ 0 }
-	, m_imageCount{ 0 }
-	, m_swapChainRebuild{ false }
+	, m_minImageCount{2}
+	, m_frameIndex{0}
+	, m_width{0}
+	, m_height{0}
+	, m_imageCount{0}
+	, m_swapChainRebuild{false}
 	, m_swapchain{VK_NULL_HANDLE}
+	, m_renderPass{VK_NULL_HANDLE}
 	, m_surfaceFormat{}
 	, m_presentMode{}
 	, m_swapchainExtent{}
 	, m_surfaceCapabilities{}
-	, m_renderPass{VK_NULL_HANDLE}
 	, m_images{}
 #ifdef  BL_EDITOR
 	, m_pInterface{nullptr}
 #endif
+{}
+
+#if defined(_DEBUG) && !defined(BL_EDITOR)
+static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
 {
+	(void) flags;
+	(void) object;
+	(void) location;
+	(void) messageCode;
+	(void) pUserData;
+	(void) pLayerPrefix; // Unused arguments
+	fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\nMessage: %s\n\n", objectType, pMessage);
+	return VK_FALSE;
 }
+#endif // IMGUI_VULKAN_DEBUG_REPORT
 
 void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, const uint32_t extensionsCount)
 {
@@ -49,6 +63,7 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 #if BL_EDITOR
 	m_pInterface->Setup(pWindow, m_instance, m_physicalDevice, m_device, m_queueFamily, m_queue, m_pipelineCache, m_descriptorPool, m_pAllocator, m_minImageCount);
 	m_pInterface->UploadFont(m_device, m_queue);
+	m_pInterface->GetValues(m_swapchain, m_swapchainExtent, m_presentMode, m_renderPass);
 #endif
 
 	VkCommandPoolCreateInfo commandPoolCreateInfo{};
@@ -89,6 +104,7 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 	err = vkCreateFence(m_device, &fenceCreateInfo, m_pAllocator, &m_frameFences[1]);
 	CheckVkResult(err);
 
+	//m_mesh.Initialize( m_device, m_commandPool, m_queue, m_physicalDevice, m_swapchainExtent, m_renderPass, m_pAllocator );
 	m_mesh.Initialize(m_device, m_commandPool, m_queue, m_physicalDevice, m_swapchainExtent, m_renderPass, m_pAllocator);
 }
 
@@ -103,13 +119,32 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 		createInfo.enabledExtensionCount = extensionsCount;
 		createInfo.ppEnabledExtensionNames = extensions;
 
-#if defined(BL_EDITOR) && defined(_DEBUG)
-		if (m_pInterface)
-			m_pInterface->SetupVulkan(extensions, extensionsCount, createInfo, m_instance, m_pAllocator, m_debugReport);
+#if defined(_DEBUG)
+#if defined(BL_EDITOR)
+		m_pInterface->SetupVulkan(extensions, extensionsCount, createInfo, m_instance, m_pAllocator, m_debugReport);
 #else
 		// Create Vulkan Instance without any debug feature
 		err = vkCreateInstance(&createInfo, m_pAllocator, &m_instance);
 		CheckVkResult(err);
+		//free(extensions);
+		if (err == VK_SUCCESS)
+		{
+			vkpfn_CreateDebugReportCallbackEXT =
+				reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(vkGetInstanceProcAddr(m_instance, "vkCreateDebugReportCallbackEXT"));
+			vkpfn_DestroyDebugReportCallbackEXT =
+				reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(vkGetInstanceProcAddr(m_instance, "vkDestroyDebugReportCallbackEXT"));
+			if (vkpfn_CreateDebugReportCallbackEXT && vkpfn_DestroyDebugReportCallbackEXT)
+			{
+				VkDebugReportCallbackCreateInfoEXT debugReportCi{};
+				debugReportCi.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+				debugReportCi.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
+				debugReportCi.pfnCallback = DebugReport;
+				debugReportCi.pUserData = nullptr;
+				vkpfn_CreateDebugReportCallbackEXT(m_instance, &debugReportCi, m_pAllocator, &m_debugReport);
+				CheckVkResult(err);
+			}
+		}
+#endif
 #endif
 	}
 
@@ -219,22 +254,22 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 	SDL_GetWindowSize(pWindow, &w, &h);
 
 #if BL_EDITOR
-	if (m_pInterface)
-	{
-		m_pInterface->SetupVulkanWindow(surface, w, h, m_instance, m_physicalDevice, m_device, m_pAllocator, m_queueFamily, m_minImageCount);
-	}
+	m_pInterface->SetupVulkanWindow(surface, w, h, m_instance, m_physicalDevice, m_device, m_pAllocator, m_queueFamily, m_minImageCount);
 #else
 	vkDeviceWaitIdle(m_device);
 	//create swap chain (https://sopyer.github.io/Blog/post/minimal-vulkan-sample/)
 	{
+		VkBool32 supportsPresent = VK_FALSE;
+		VkResult err = vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, m_queueFamily, surface, &supportsPresent);
+		CheckVkResult(err);
+
 		//Use first available format
 		uint32_t formatCount = 1;
-		VkResult err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, surface, &formatCount, nullptr); // suppress validation layer
+		err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, surface, &formatCount, nullptr); // suppress validation layer
 		CheckVkResult(err);
 		err = vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, surface, &formatCount, &m_surfaceFormat);
 		CheckVkResult(err);
 		m_surfaceFormat.format = m_surfaceFormat.format == VK_FORMAT_UNDEFINED ? VK_FORMAT_R8G8B8A8_UNORM : m_surfaceFormat.format;
-
 
 		uint32_t presentModeCount{};
 		err = vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, surface, &presentModeCount, nullptr);
@@ -244,7 +279,7 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 		err = vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, surface, &presentModeCount, presentModes);
 		CheckVkResult(err);
 
-		VkPresentModeKHR presentMode{VK_PRESENT_MODE_FIFO_KHR};   // always supported.
+		VkPresentModeKHR presentMode{VK_PRESENT_MODE_FIFO_KHR}; // always supported.
 		for (uint32_t i = 0; i < presentModeCount; ++i)
 		{
 			if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
@@ -267,7 +302,6 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 			m_swapchainExtent.width = std::clamp(m_width, m_surfaceCapabilities.minImageExtent.width, m_surfaceCapabilities.maxImageExtent.width);
 			m_swapchainExtent.height = std::clamp(m_height, m_surfaceCapabilities.minImageExtent.height, m_surfaceCapabilities.maxImageExtent.height);
 		}
-
 
 		VkSwapchainCreateInfoKHR swapChainCreateInfo{};
 		swapChainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -292,42 +326,46 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 		CheckVkResult(err);
 	}
 	{
-		VkAttachmentDescription colorAttachment{};
-		colorAttachment.format = m_surfaceFormat.format;
-		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		const VkAttachmentDescription colorAttachment{
+			.format = m_surfaceFormat.format,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+			.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+			.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+			.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		};
 
-		VkAttachmentReference colorAttachmentRef{};
-		colorAttachmentRef.attachment = 0;
-		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		const VkAttachmentReference colorAttachmentRef{
+			.attachment = 0,
+			.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		};
 
-		VkSubpassDescription subpass{};
-		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpass.colorAttachmentCount = 1;
-		subpass.pColorAttachments = &colorAttachmentRef;
+		const VkSubpassDescription subpass{
+			.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+			.colorAttachmentCount = 1,
+			.pColorAttachments = &colorAttachmentRef,
+		};
 
-		VkSubpassDependency dependency{};
-		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		dependency.dstSubpass = 0;
-		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.srcAccessMask = 0;
-		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-		VkRenderPassCreateInfo renderPassInfo{};
-		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderPassInfo.attachmentCount = 1;
-		renderPassInfo.pAttachments = &colorAttachment;
-		renderPassInfo.subpassCount = 1;
-		renderPassInfo.pSubpasses = &subpass;
-		renderPassInfo.dependencyCount = 1;
-		renderPassInfo.pDependencies = &dependency;
-
+		const VkSubpassDependency dependency
+		{
+			.srcSubpass = VK_SUBPASS_EXTERNAL,
+			.dstSubpass = 0,
+			.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+			.srcAccessMask = 0,
+			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+		};
+		const VkRenderPassCreateInfo renderPassInfo{
+			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+			.attachmentCount = 1,
+			.pAttachments = &colorAttachment,
+			.subpassCount = 1,
+			.pSubpasses = &subpass,
+			.dependencyCount = 1,
+			.pDependencies = &dependency,
+		};
 		if (vkCreateRenderPass(m_device, &renderPassInfo, m_pAllocator, &m_renderPass) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create render pass!");
@@ -421,10 +459,11 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow)
 		vkBeginCommandBuffer(m_commandBuffers[index], &beginInfo);
 
 		const VkClearColorValue clearColor{164.0f / 256.0f, 30.0f / 256.0f, 34.0f / 256.0f, 0.0f};
-		constexpr VkImageSubresourceRange imageRange{
+		constexpr VkImageSubresourceRange imageRange
+		{
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 			.levelCount = 1,
-			.layerCount = 1
+			.layerCount = 1,
 		};
 
 		err = vkBeginCommandBuffer(m_commandBuffers[index], &beginInfo);
@@ -437,7 +476,8 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow)
 		vkEndCommandBuffer(m_commandBuffers[index]);
 
 		const VkPipelineStageFlags waitStages[]{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-		const VkSubmitInfo submitInfo{
+		const VkSubmitInfo submitInfo
+		{
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
 			.waitSemaphoreCount = 1,
 			.pWaitSemaphores = &m_imageAvailableSemaphores[index],
@@ -450,7 +490,8 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow)
 		err = vkQueueSubmit(m_queue, 1, &submitInfo, m_frameFences[index]);
 		CheckVkResult(err);
 
-		const VkPresentInfoKHR presentInfo{
+		const VkPresentInfoKHR presentInfo
+		{
 			.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 			.waitSemaphoreCount = 1,
 			.pWaitSemaphores = &m_renderFinishedSemaphores[index],

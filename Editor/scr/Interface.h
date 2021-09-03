@@ -21,6 +21,7 @@ namespace Balbino
 	public:
 		CInterface();
 		~CInterface() = default;
+		void GetValues( VkSwapchainKHR& swapchain, VkExtent2D& swapchainExtent, VkPresentModeKHR& presentMode, VkRenderPass& renderPass ) const;
 		CInterface( const CInterface& ) = delete;
 		CInterface( CInterface&& ) = delete;
 		CInterface& operator=( const CInterface& ) = delete;
