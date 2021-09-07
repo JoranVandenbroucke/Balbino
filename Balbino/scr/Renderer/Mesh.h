@@ -13,12 +13,13 @@ namespace Balbino
 	public:
 		CMesh();
 		~CMesh() = default;
+		const Balbino::CMaterial& GetMaterial() const;
 		CMesh(const CMesh&) = delete;
 		CMesh(CMesh&&) = delete;
 		CMesh& operator&(const CMesh&) = delete;
 		CMesh& operator&(CMesh&&) = delete;
 
-		void Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const VkExtent2D& swapchainExtent, const VkRenderPass& renderPass, const VkAllocationCallbacks* callbacks);
+		void Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const VkExtent2D& swapchainExtent, const VkRenderPass& renderPass, VkDescriptorSetLayout& descriptorSetLayout, const VkAllocationCallbacks* callbacks);
 		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* callbacks);
 		void Draw(const VkCommandBuffer& commandBuffer) const;
 	private:

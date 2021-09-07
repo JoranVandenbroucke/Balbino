@@ -15,6 +15,11 @@ Balbino::CMesh::CMesh()
 {
 }
 
+const Balbino::CMaterial& Balbino::CMesh::GetMaterial() const
+{
+	return m_material;
+}
+
 void Balbino::CMesh::Draw(const VkCommandBuffer& commandBuffer) const
 {
 	m_material.Bind(commandBuffer);
@@ -23,9 +28,9 @@ void Balbino::CMesh::Draw(const VkCommandBuffer& commandBuffer) const
 	vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(m_indices.size()), 1, 0, 0, 0);
 }
 
-void Balbino::CMesh::Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const VkExtent2D& swapchainExtent, const VkRenderPass& renderPass, const VkAllocationCallbacks* callbacks)
+void Balbino::CMesh::Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const VkExtent2D& swapchainExtent, const VkRenderPass& renderPass, VkDescriptorSetLayout& descriptorSetLayout, const VkAllocationCallbacks* callbacks)
 {
-	m_material.Compile(device, swapchainExtent, renderPass, callbacks);
+	m_material.Initialize(device, swapchainExtent, renderPass, descriptorSetLayout, callbacks);
 	m_vertexBuffer.Initialize(device, commandPool, queue, physicalDevice, m_vertices, callbacks);
 	m_indexBuffer.Initialize(device, commandPool, queue, physicalDevice, m_indices, callbacks);
 }

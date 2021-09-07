@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 #include "Renderer/Camera.h"
 #include "Renderer/Renderer.h"
@@ -17,10 +18,10 @@
 
 
 Balbino::Application::Application()
-	: m_pWindow{ nullptr }
-	, m_pRenderer{ DBG_NEW CRenderer{} }
+	: m_pWindow{nullptr}
+	, m_pRenderer{DBG_NEW CRenderer{}}
 #ifdef BL_EDITOR
-	, m_pInterface{ DBG_NEW CInterface{} }
+	, m_pInterface{DBG_NEW CInterface{}}
 #endif
 {
 }
@@ -40,20 +41,20 @@ Balbino::Application::~Application()
 void Balbino::Application::Initialize()
 {
 #ifdef BL_EDITOR
-	m_pRenderer->SetInterface( m_pInterface );
+	m_pRenderer->SetInterface(m_pInterface);
 #endif
-	
-	if ( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
+
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		throw std::runtime_error( std::string( "SDL_Init Error: " ) + SDL_GetError() );
+		throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
 	}
 	SDL_DisplayMode current;
-	if ( SDL_GetDesktopDisplayMode( 0, &current ) != 0 )
+	if (SDL_GetDesktopDisplayMode(0, &current) != 0)
 	{
-		throw std::runtime_error( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError() );
+		throw std::runtime_error(std::string("Could not get display mode for video display 0: ") + SDL_GetError());
 	}
 
-	constexpr SDL_WindowFlags flags{ SDL_WINDOW_VULKAN /*| SDL_WINDOW_FULLSCREEN*/ };
+	constexpr SDL_WindowFlags flags{SDL_WINDOW_VULKAN /*| SDL_WINDOW_FULLSCREEN*/};
 	m_pWindow = SDL_CreateWindow(
 		"Balbino Editor",
 		SDL_WINDOWPOS_CENTERED,
@@ -62,9 +63,9 @@ void Balbino::Application::Initialize()
 		current.h / 2,
 		flags
 	);
-	if ( m_pWindow == nullptr )
+	if (m_pWindow == nullptr)
 	{
-		throw std::runtime_error( std::string( "SDL_CreateWindow Error: " ) + SDL_GetError() );
+		throw std::runtime_error(std::string("SDL_CreateWindow Error: ") + SDL_GetError());
 	}
 
 	/*
@@ -76,17 +77,17 @@ void Balbino::Application::Initialize()
 
 	 // Get WSI extensions from SDL (we can add more if we like - we just can't remove these)
 	unsigned int extenstionCount;
-	if ( !SDL_Vulkan_GetInstanceExtensions( m_pWindow, &extenstionCount, nullptr ) )
+	if (!SDL_Vulkan_GetInstanceExtensions(m_pWindow, &extenstionCount, nullptr))
 	{
-		throw std::runtime_error( std::string( "Could not get the number of required m_Instance extensions from SDL." ) );
+		throw std::runtime_error(std::string("Could not get the number of required m_Instance extensions from SDL."));
 	}
-	const char** extensions{ DBG_NEW const char* [extenstionCount] };
-	if ( !SDL_Vulkan_GetInstanceExtensions( m_pWindow, &extenstionCount, extensions ) )
+	const char** extensions{DBG_NEW const char* [extenstionCount]};
+	if (!SDL_Vulkan_GetInstanceExtensions(m_pWindow, &extenstionCount, extensions))
 	{
-		throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ) );
+		throw std::runtime_error(std::string("Could not get the names of required m_Instance extensions from SDL."));
 	}
-	
-	m_pRenderer->Setup( m_pWindow, extensions, extenstionCount);
+
+	m_pRenderer->Setup(m_pWindow, extensions, extenstionCount);
 	delete[] extensions;
 }
 
@@ -100,7 +101,7 @@ void Balbino::Application::LoadGame() const
 void Balbino::Application::Cleanup() const
 {
 	m_pRenderer->Cleanup();
-	SDL_DestroyWindow( m_pWindow );
+	SDL_DestroyWindow(m_pWindow);
 	//Quit SDL subsystems
 	SDL_Quit();
 }
@@ -108,28 +109,33 @@ void Balbino::Application::Cleanup() const
 void Balbino::Application::Run() const
 {
 	LoadGame();
-	bool isRunning{ true };
-	while ( isRunning )
+	bool isRunning{true};
+	auto start{std::chrono::system_clock::now()};
+	while (isRunning)
 	{
+		auto end{std::chrono::system_clock::now()};
+		const float deltaTime{std::chrono::duration<float>(end - start).count()};
+		start = end;
+
 		SDL_Event e;
-		while ( SDL_PollEvent( &e ) )
+		while (SDL_PollEvent(&e))
 		{
 #ifdef BL_EDITOR
-			m_pInterface->HandleEvents( e );
+			m_pInterface->HandleEvents(e);
 #endif
 
-			switch ( e.type )
+			switch (e.type)
 			{
-			case SDL_QUIT:
-				isRunning = false;
-				break;
+				case SDL_QUIT:
+					isRunning = false;
+					break;
 
-			default:
-				// Do nothing.
-				break;
+				default:
+					// Do nothing.
+					break;
 			}
-		}
-		m_pRenderer->Draw( m_pWindow );
 	}
+		m_pRenderer->Draw(m_pWindow, deltaTime);
+}
 	Cleanup();
 }

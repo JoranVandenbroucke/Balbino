@@ -30,7 +30,9 @@ namespace Balbino
 
 		void Cleanup();
 
-		void Draw( SDL_Window* pWindow );
+		void Draw( SDL_Window* pWindow, float dt);
+		void CreateBuffer( VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory );
+		uint32_t FindMemoryType( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const;
 
 #if BL_EDITOR
 		void SetInterface( CInterface* const pInterface );
@@ -40,10 +42,16 @@ namespace Balbino
 		PFN_vkDestroyDebugReportCallbackEXT vkpfn_DestroyDebugReportCallbackEXT = nullptr;
 #endif
 
+		bool GetDevice(VkDevice& device) const;
+		bool GetAllocationCallbacks(VkAllocationCallbacks*& pAlloc) const;
+		bool GetPhysicalDevice(VkPhysicalDevice& physicalDevice) const;
+		bool GetQueue(VkQueue& queue) const;
+		bool GetCommandPool(VkCommandPool& commandPool) const;
 
 	private:
 		CMesh m_mesh;
 
+		VkSurfaceKHR m_surface;
 		VkInstance m_instance;
 		VkAllocationCallbacks* m_pAllocator;
 		VkDebugReportCallbackEXT m_debugReport;
@@ -61,12 +69,19 @@ namespace Balbino
 
 		VkSwapchainKHR m_swapchain;
 		VkRenderPass m_renderPass;
+		std::vector<VkImageView> m_backBuffer;
+		std::vector<VkFramebuffer> m_framebuffers;
 		VkSurfaceFormatKHR m_surfaceFormat;
 		VkPresentModeKHR m_presentMode;
 		VkExtent2D  m_swapchainExtent;
 		VkSurfaceCapabilitiesKHR m_surfaceCapabilities;
 		VkImage m_images[MAX_PRESENT_MODE_COUNT];
-		
+
+		VkDescriptorSetLayout m_descriptorSetLayout;
+		std::vector<VkBuffer> m_uniformBuffers;
+		std::vector<VkDeviceMemory> m_uniformBuffersMemory;
+		std::vector<VkDescriptorSet> m_descriptorSets;
+
 		uint32_t m_queueFamily;
 		uint32_t m_minImageCount;
 		uint32_t m_frameIndex;

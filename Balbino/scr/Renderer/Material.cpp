@@ -20,7 +20,7 @@ Balbino::CMaterial::~CMaterial()
 		std::cerr << "index buffer was not destroyed" << std::endl;
 }
 
-void Balbino::CMaterial::Compile(const VkDevice& device, const VkExtent2D& swapChainExtent, const VkRenderPass& renderPass, const VkAllocationCallbacks* callbacks)
+void Balbino::CMaterial::Initialize(const VkDevice& device, const VkExtent2D& swapChainExtent, const VkRenderPass& renderPass, VkDescriptorSetLayout& descriptorSetLayout, const VkAllocationCallbacks* callbacks)
 {
 	const std::string vertShaderCode{ReadFile(R"(../Resources/Shaders/vertex.spv)")};
 	const std::string fragShaderCode{ReadFile(R"(../Resources/Shaders/fragment.spv)")};
@@ -62,8 +62,8 @@ void Balbino::CMaterial::Compile(const VkDevice& device, const VkExtent2D& swapC
 	VkViewport viewport{};
 	viewport.x = 0.0f;
 	viewport.y = 0.0f;
-	viewport.width = (float) swapChainExtent.width;
-	viewport.height = (float) swapChainExtent.height;
+	viewport.width = static_cast<float>( swapChainExtent.width );
+	viewport.height = static_cast<float>( swapChainExtent.height );
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
@@ -85,7 +85,7 @@ void Balbino::CMaterial::Compile(const VkDevice& device, const VkExtent2D& swapC
 	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 	rasterizer.lineWidth = 1.0f;
 	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-	rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.depthBiasEnable = VK_FALSE;
 
 	VkPipelineMultisampleStateCreateInfo multisampling{};
@@ -110,7 +110,8 @@ void Balbino::CMaterial::Compile(const VkDevice& device, const VkExtent2D& swapC
 
 	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	pipelineLayoutInfo.setLayoutCount = 0;
+	pipelineLayoutInfo.setLayoutCount = 1;
+	pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
 	pipelineLayoutInfo.pushConstantRangeCount = 0;
 
 	if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, callbacks, &m_pipelineLayout) != VK_SUCCESS)
@@ -154,6 +155,16 @@ void Balbino::CMaterial::Cleanup(const VkDevice& device, const VkAllocationCallb
 void Balbino::CMaterial::Bind(const VkCommandBuffer& commandBuffer) const
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+}
+
+const VkPipelineLayout& Balbino::CMaterial::GetPipelineLayout() const
+{
+	return m_pipelineLayout;
+}
+
+VkPipeline Balbino::CMaterial::GetPipeline() const
+{
+	return m_pipeline;
 }
 
 VkShaderModule Balbino::CMaterial::CreateShaderModule(const std::string& code, const VkDevice& device, const VkAllocationCallbacks* callbacks)
