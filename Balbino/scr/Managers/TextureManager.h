@@ -2,6 +2,7 @@
 #include "Singleton.h"
 
 #include <unordered_map>
+#include <vulkan/vulkan_core.h>
 
 namespace Balbino
 {
@@ -12,9 +13,11 @@ namespace Balbino
 	{
 	public:
 		static CTexture* AddTexture( CTexture* pTexture, const std::string& filePath);
+		static CTexture* AddTexture( CTexture* pTexture, const char* filePath);
 
 		void Initialize(CRenderer* pRenderer);
-		void Cleanup();
+		void Cleanup( const VkDevice& device, const VkAllocationCallbacks* pAllocator );
+		void SetRenderer( CRenderer* pRenderer );
 	private:
 		friend CSingleton<CTextureManager>;
 
@@ -25,7 +28,7 @@ namespace Balbino
 		CTextureManager& operator=(const CTextureManager&) = delete;
 		CTextureManager& operator=(CTextureManager&&) = delete;
 
-		CTexture* IAddTexture( CTexture* pTexture, const std::string& filePath);
+		CTexture* IAddTexture( CTexture* pTexture, const char* filePath);
 
 		CRenderer* m_pRenderer;
 		std::unordered_map<uint32_t, CTexture*> m_textures;

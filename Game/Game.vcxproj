@@ -185,10 +185,10 @@
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|x64'">
@@ -213,10 +213,10 @@ xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(P
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -241,10 +241,10 @@ xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(P
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug Editor|Win32'">
@@ -269,10 +269,10 @@ xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(P
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -302,10 +302,10 @@ xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(P
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|Win32'">
@@ -335,10 +335,10 @@ xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(P
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -368,10 +368,10 @@ xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(P
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Editor|x64'">
@@ -401,10 +401,10 @@ xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(P
     <PostBuildEvent>
       <Command>xcopy "$(OutDir)..\Balbino\Balbino.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\SDL2_image.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\SDL2_mixer.dll" "$(OutDir)" /D /Y
-xcopy "$(SolutionDir)3rdParty\Visual Leak Detector\lib\$(PlatformTarget)\vld_$(PlatformTarget).dll" "$(OutDir)" /D /Y</Command>
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

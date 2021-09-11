@@ -13,6 +13,7 @@ namespace Balbino
 		static const CCamera* GetMainCamera();
 		static const std::vector<CCamera*>& GetCameras();
 		void AddCamera( CCamera* cam );
+		void Cleanup();
 	private:
 		friend CSingleton<CCameraManager>;
 		CCameraManager();

@@ -26,7 +26,14 @@ void* Balbino::CCamera::operator new( size_t size, int b, const char* f, int l)
 void Balbino::CCamera::operator delete( void* ptr ) noexcept
 {
 	if ( ptr )
-		free( ptr );
+		::operator delete( ptr );
+	ptr = nullptr;
+}
+
+void Balbino::CCamera::operator delete( void* ptr, int b, const char* f, int l) noexcept
+{
+	if (ptr)
+		::operator delete(ptr, b, f, l);
 	ptr = nullptr;
 }
 

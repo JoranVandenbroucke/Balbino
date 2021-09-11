@@ -7,18 +7,13 @@
 
 Balbino::CCameraManager::CCameraManager()
 	: m_pMainCamera{ nullptr }
-	, m_Cameras{}
 {
 }
 
 Balbino::CCameraManager::~CCameraManager()
 {
-	m_pMainCamera = nullptr;
-	for ( const CCamera* const camera : m_Cameras )
-	{
-		delete camera;
-	}
-	m_Cameras.clear();
+	if (m_pMainCamera != nullptr || !m_Cameras.empty())
+		std::cerr << "Texture Manager not cleared" << std::endl;
 }
 
 const Balbino::CCamera* Balbino::CCameraManager::GetMainCamera()
@@ -33,8 +28,18 @@ const std::vector<Balbino::CCamera*>& Balbino::CCameraManager::GetCameras()
 
 void Balbino::CCameraManager::AddCamera(  CCamera* cam )
 {
-	m_Cameras.emplace_back( cam );
+	m_Cameras.push_back( cam );
 	SortList();
+}
+
+void Balbino::CCameraManager::Cleanup()
+{
+	m_pMainCamera = nullptr;
+	for (const CCamera* const camera : m_Cameras)
+	{
+		delete camera;
+	}
+	m_Cameras.clear();
 }
 
 void Balbino::CCameraManager::SortList()

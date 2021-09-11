@@ -7,43 +7,11 @@
 #include <scr/Interface.h>
 
 #include "Camera.h"
+#include "Texture.h"
 #include "UniformBufferObject.h"
 #include "../Managers/CameraManager.h"
-
-Balbino::CRenderer::CRenderer()
-	: m_surface{ nullptr }
-	, m_instance{ VK_NULL_HANDLE }
-	, m_pAllocator{ VK_NULL_HANDLE }
-	, m_debugReport{ VK_NULL_HANDLE }
-	, m_physicalDevice{ VK_NULL_HANDLE }
-	, m_commandPool{ VK_NULL_HANDLE }
-	, m_device{ VK_NULL_HANDLE }
-	, m_queue{ VK_NULL_HANDLE }
-	, m_descriptorPool{ VK_NULL_HANDLE }
-	, m_pipelineCache{ VK_NULL_HANDLE }
-	, m_commandBuffers{}
-	, m_frameFences{}
-	, m_imageAvailableSemaphores{}
-	, m_queueFamily{ static_cast<uint32_t>( -1 ) }
-	, m_renderFinishedSemaphores{}
-	, m_minImageCount{ 2 }
-	, m_frameIndex{ 0 }
-	, m_width{ 0 }
-	, m_height{ 0 }
-	, m_imageCount{ 0 }
-	, m_swapChainRebuild{ false }
-	, m_swapchain{ VK_NULL_HANDLE }
-	, m_renderPass{ VK_NULL_HANDLE }
-	, m_surfaceFormat{}
-	, m_presentMode{}
-	, m_swapchainExtent{}
-	, m_surfaceCapabilities{}
-	, m_images{}
-	, m_descriptorSetLayout{ VK_NULL_HANDLE }
-#ifdef  BL_EDITOR
-	, m_pInterface{nullptr}
-#endif
-{}
+#include "../Managers/TextureManager.h"
+#include "../Managers/ShaderManager.h"
 
 #if defined(_DEBUG) && !defined(BL_EDITOR)
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
@@ -57,15 +25,65 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport(VkDebugReportFlagsEXT flags, V
 	fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\nMessage: %s\n\n", objectType, pMessage);
 	return VK_FALSE;
 }
-#endif // IMGUI_VULKAN_DEBUG_REPORT
+#else
+static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
+{
+	(void) flags;
+	(void) objectType;
+	(void) object;
+	(void) location;
+	(void) messageCode;
+	(void) pUserData;
+	(void) pMessage;
+	(void) pLayerPrefix; // Unused arguments
+	return 0;
+}
+#endif //_DEBUG && !BL_EDITOR
+
+Balbino::CRenderer::CRenderer()
+	: m_surface{nullptr}
+	, m_instance{VK_NULL_HANDLE}
+	, m_pCallback{VK_NULL_HANDLE}
+	, m_debugReport{VK_NULL_HANDLE}
+	, m_physicalDevice{VK_NULL_HANDLE}
+	, m_commandPool{VK_NULL_HANDLE}
+	, m_device{VK_NULL_HANDLE}
+	, m_queue{VK_NULL_HANDLE}
+	, m_descriptorPool{VK_NULL_HANDLE}
+	, m_pipelineCache{VK_NULL_HANDLE}
+	, m_commandBuffers{}
+	, m_frameFences{}
+	, m_imageAvailableSemaphores{}
+	, m_queueFamily{static_cast<uint32_t>(-1)}
+	, m_renderFinishedSemaphores{}
+	, m_minImageCount{2}
+	, m_frameIndex{0}
+	, m_width{0}
+	, m_height{0}
+	, m_imageCount{0}
+	, m_swapChainRebuild{false}
+	, m_swapchain{VK_NULL_HANDLE}
+	, m_renderPass{VK_NULL_HANDLE}
+	, m_surfaceFormat{}
+	, m_presentMode{}
+	, m_swapchainExtent{}
+	, m_surfaceCapabilities{}
+	, m_images{}
+	, m_descriptorSetLayout{VK_NULL_HANDLE}
+#ifdef  BL_EDITOR
+	, m_pInterface{nullptr}
+#endif
+{}
 
 void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, const uint32_t extensionsCount)
 {
 	(void) pWindow;
+	CTextureManager::GetInstance().SetRenderer(this);
+	CShaderManager::GetInstance().SetRenderer(this);
 	SetupVulkan(extensions, extensionsCount);
 	SetupVulkanWindow(pWindow);
 #if BL_EDITOR
-	m_pInterface->Setup(pWindow, m_instance, m_physicalDevice, m_device, m_queueFamily, m_queue, m_pipelineCache, m_descriptorPool, m_pAllocator, m_minImageCount);
+	m_pInterface->Setup(pWindow, m_instance, m_physicalDevice, m_device, m_queueFamily, m_queue, m_pipelineCache, m_descriptorPool, m_pCallback, m_minImageCount);
 	m_pInterface->UploadFont(m_device, m_queue);
 	m_pInterface->GetValues(m_swapchain, m_swapchainExtent, m_presentMode, m_renderPass);
 #endif
@@ -83,7 +101,7 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 		.queueFamilyIndex = m_queueFamily,
 	};
 
-	CheckVkResult(vkCreateCommandPool(m_device, &commandPoolCreateInfo, m_pAllocator, &m_commandPool));
+	CheckVkResult(vkCreateCommandPool(m_device, &commandPoolCreateInfo, m_pCallback, &m_commandPool));
 
 	const VkCommandBufferAllocateInfo commandBufferAllocInfo{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -94,62 +112,15 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 	CheckVkResult(vkAllocateCommandBuffers(m_device, &commandBufferAllocInfo, m_commandBuffers));
 
 	for (int i{}; i < std::size(m_imageAvailableSemaphores); ++i)
-		CheckVkResult(vkCreateSemaphore(m_device, &semaphoreCreateInfo, m_pAllocator, &m_imageAvailableSemaphores[i]));
+		CheckVkResult(vkCreateSemaphore(m_device, &semaphoreCreateInfo, m_pCallback, &m_imageAvailableSemaphores[i]));
 	for (int i{}; i < std::size(m_renderFinishedSemaphores); ++i)
-		CheckVkResult(vkCreateSemaphore(m_device, &semaphoreCreateInfo, m_pAllocator, &m_renderFinishedSemaphores[i]));
+		CheckVkResult(vkCreateSemaphore(m_device, &semaphoreCreateInfo, m_pCallback, &m_renderFinishedSemaphores[i]));
 	for (int i{}; i < std::size(m_frameFences); ++i)
-		CheckVkResult(vkCreateFence(m_device, &fenceCreateInfo, m_pAllocator, &m_frameFences[i]));
+		CheckVkResult(vkCreateFence(m_device, &fenceCreateInfo, m_pCallback, &m_frameFences[i]));
 
-	// Create Descriptor Pool
-	{
-		const VkDescriptorPoolSize poolSize{
-			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = m_imageCount,
-		};
-		const VkDescriptorPoolCreateInfo poolInfo{
-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-			.maxSets = m_imageCount,
-			.poolSizeCount = 1,
-			.pPoolSizes = &poolSize,
-		};
-		if (vkCreateDescriptorPool(m_device, &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create descriptor pool!");
-		}
-	}
-
-	{
-		const VkDescriptorSetLayoutBinding uboLayoutBinding{
-			.binding = 0,
-			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-			.descriptorCount = 1,
-			.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-			.pImmutableSamplers = VK_NULL_HANDLE,
-		};
-		const VkDescriptorSetLayoutCreateInfo layoutInfo{
-			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-			.bindingCount = 1,
-			.pBindings = &uboLayoutBinding,
-		};
-		if (vkCreateDescriptorSetLayout(m_device, &layoutInfo, m_pAllocator, &m_descriptorSetLayout) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create descriptor set layout!");
-		}
-	}
-	{
-		const VkDeviceSize bufferSize = sizeof(SUniformBufferObject);
-
-		m_uniformBuffers.resize(m_imageCount);
-		m_uniformBuffersMemory.resize(m_imageCount);
-
-		for (size_t i = 0; i < m_imageCount; i++)
-		{
-			CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_uniformBuffers[i], m_uniformBuffersMemory[i]);
-		}
-	}
+	//create image view
 	{
 		m_backBuffer.resize(m_imageCount);
-
 		for (size_t i = 0; i < m_imageCount; i++)
 		{
 			const VkImageViewCreateInfo createInfo{
@@ -171,12 +142,13 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 					.layerCount = 1,
 				},
 			};
-			if (vkCreateImageView(m_device, &createInfo, m_pAllocator, &m_backBuffer[i]) != VK_SUCCESS)
+			if (vkCreateImageView(m_device, &createInfo, m_pCallback, &m_backBuffer[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to create image views!");
 			}
 		}
 	}
+	//Create Frame buffer
 	{
 		m_framebuffers.resize(m_imageCount);
 
@@ -201,6 +173,71 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 			}
 		}
 	}
+	// Create Descriptor Set Layout
+	{
+		std::vector<VkDescriptorSetLayoutBinding> layoutBindings{
+			{
+				.binding = 0,
+				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.descriptorCount = 1,
+				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+				.pImmutableSamplers = VK_NULL_HANDLE,
+			}
+		};
+		/*
+		 *todo: initialize all samplers
+		 * foreach sampler
+		 * get VkDescriptorSetLayoutBinding
+		 */
+		layoutBindings.push_back(m_textureSampler.GetDescriptorLayoutBinding());
+		const VkDescriptorSetLayoutCreateInfo layoutInfo{
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+			.bindingCount = static_cast<uint32_t>(layoutBindings.size()),
+			.pBindings = layoutBindings.data(),
+		};
+		if (vkCreateDescriptorSetLayout(m_device, &layoutInfo, m_pCallback, &m_descriptorSetLayout) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create descriptor set layout!");
+		}
+	}
+	//todo: replace with manager stuff
+	m_pTexture = new(_NORMAL_BLOCK, __FILE__, __LINE__, "../Resources/Textures/UVMS1_colorgrid.png") CTexture;
+	m_textureSampler.Initialize(m_device, m_pCallback);
+	m_mesh.Initialize(m_device, m_commandPool, m_queue, m_physicalDevice, m_pCallback);
+	//Create Uniform Buffers
+	{
+		const VkDeviceSize bufferSize = sizeof(SUniformBufferObject);
+
+		m_uniformBuffers.resize(m_imageCount);
+		m_uniformBuffersMemory.resize(m_imageCount);
+
+		for (size_t i = 0; i < m_imageCount; i++)
+		{
+			CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_uniformBuffers[i], m_uniformBuffersMemory[i]);
+		}
+	}
+
+	// Create Descriptor Pool
+	{
+		std::vector<VkDescriptorPoolSize> poolSize{
+			{
+				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.descriptorCount = m_imageCount,
+			}
+		};
+		//todo: foreach sampler, get VkDescriptorPoolSize
+		poolSize.push_back(m_textureSampler.GetDescriptorPoolSize(m_imageCount));
+		const VkDescriptorPoolCreateInfo poolInfo{
+			.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
+			.maxSets = m_imageCount,
+			.poolSizeCount = static_cast<uint32_t>(poolSize.size()),
+			.pPoolSizes = poolSize.data(),
+		};
+		if (vkCreateDescriptorPool(m_device, &poolInfo, m_pCallback, &m_descriptorPool) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create descriptor pool!");
+		}
+	}
 	{
 		std::vector<VkDescriptorSetLayout> layouts(m_imageCount, m_descriptorSetLayout);
 		VkDescriptorSetAllocateInfo allocInfo{
@@ -222,25 +259,44 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 				.offset = 0,
 				.range = sizeof(SUniformBufferObject),
 			};
-			VkWriteDescriptorSet descriptorWrite{
-				.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-				.dstSet = m_descriptorSets[i],
-				.dstBinding = 0,
-				.dstArrayElement = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.pBufferInfo = &bufferInfo,
+
+			VkDescriptorImageInfo imageInfo{};
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfo.imageView = m_pTexture->GetImageView();
+			imageInfo.sampler = m_textureSampler.GetSampler();
+
+			std::vector<VkWriteDescriptorSet> descriptorWrites{
+				{
+					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+					.dstSet = m_descriptorSets[i],
+					.dstBinding = 0,
+					.dstArrayElement = 0,
+					.descriptorCount = 1,
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.pBufferInfo = &bufferInfo,
+				},
+				{
+					.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+					.dstSet = m_descriptorSets[i],
+					.dstBinding = 1,
+					.dstArrayElement = 0,
+					.descriptorCount = 1,
+					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+					.pImageInfo = &imageInfo,
+				}
 			};
-			vkUpdateDescriptorSets(m_device, 1, &descriptorWrite, 0, VK_NULL_HANDLE);
+			//todo: get sampler info
+			//foreach sampler
+			//getwritedescriptorset
+			//descriptorWrites.push_back( m_textureSampler.GetWriteDescriptorSet( m_descriptorSets[i] ) );
+			vkUpdateDescriptorSets(m_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}
 	}
-	//m_mesh.Initialize( m_device, m_commandPool, m_queue, m_physicalDevice, m_swapchainExtent, m_renderPass, m_pAllocator );
-	m_mesh.Initialize(m_device, m_commandPool, m_queue, m_physicalDevice, m_swapchainExtent, m_renderPass, m_descriptorSetLayout, m_pAllocator);
+	m_pShader = DBG_NEW CShader{};
 }
 
 void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t extensionsCount)
 {
-
 	// Create Vulkan Instance
 	{
 		VkInstanceCreateInfo createInfo{
@@ -248,13 +304,27 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 			.enabledExtensionCount = extensionsCount,
 			.ppEnabledExtensionNames = extensions,
 		};
+		VkResult err{VK_ERROR_INITIALIZATION_FAILED};
 #if defined(_DEBUG)
 #if defined(BL_EDITOR)
-		m_pInterface->SetupVulkan(extensions, extensionsCount, createInfo, m_instance, m_pAllocator, m_debugReport);
+		m_pInterface->SetupVulkan(extensions, extensionsCount, createInfo, m_instance, m_pCallback, m_debugReport);
 #else
-		const VkResult err{vkCreateInstance(&createInfo, m_pAllocator, &m_instance)};
+
+		// Enabling validation layers
+		const char* layers[]{"VK_LAYER_KHRONOS_validation"};
+		createInfo.enabledLayerCount = 1;
+		createInfo.ppEnabledLayerNames = layers;
+
+		// Enable debug report extension (we need additional storage, so we duplicate the user array to add our new extension to it)
+		const auto extensionsExt{static_cast<const char**>(malloc(sizeof(const char*) * (extensionsCount + 1)))};
+		memcpy(extensionsExt, extensions, extensionsCount * sizeof(const char*));
+		extensionsExt[extensionsCount] = "VK_EXT_debug_report";
+		createInfo.enabledExtensionCount = extensionsCount + 1;
+		createInfo.ppEnabledExtensionNames = extensionsExt;
+
+		err = vkCreateInstance(&createInfo, m_pCallback, &m_instance);
 		CheckVkResult(err);
-		//free(extensions);
+		free(extensionsExt);
 		if (err == VK_SUCCESS)
 		{
 			vkpfn_CreateDebugReportCallbackEXT =
@@ -263,17 +333,21 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 				reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(vkGetInstanceProcAddr(m_instance, "vkDestroyDebugReportCallbackEXT"));
 			if (vkpfn_CreateDebugReportCallbackEXT && vkpfn_DestroyDebugReportCallbackEXT)
 			{
-				const VkDebugReportCallbackCreateInfoEXT debugReportCi{
-					.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-					.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT,
-					.pfnCallback = DebugReport,
-					.pUserData = nullptr,
-				};
-				vkpfn_CreateDebugReportCallbackEXT(m_instance, &debugReportCi, m_pAllocator, &m_debugReport);
+				VkDebugReportCallbackCreateInfoEXT debugReportCi{};
+				debugReportCi.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+				debugReportCi.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
+				debugReportCi.pfnCallback = DebugReport;
+				debugReportCi.pUserData = nullptr;
+				vkpfn_CreateDebugReportCallbackEXT(m_instance, &debugReportCi, m_pCallback, &m_debugReport);
+				CheckVkResult(err);
 			}
 		}
 #endif
 #endif
+		if (err != VK_SUCCESS)
+		{
+			CheckVkResult(vkCreateInstance(&createInfo, m_pCallback, &m_instance));
+		}
 	}
 
 	// Select GPU
@@ -322,12 +396,14 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 		constexpr int deviceExtensionCount{1};
 		const char* deviceExtensions[]{"VK_KHR_swapchain"};
 		const float queuePriority[]{1.0f};
-		const VkDeviceQueueCreateInfo queueInfo[1]{{
-		.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-		.queueFamilyIndex = m_queueFamily,
-		.queueCount = 1,
-		.pQueuePriorities = queuePriority,
-		}};
+		const VkDeviceQueueCreateInfo queueInfo[1]{
+			{
+				.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+				.queueFamilyIndex = m_queueFamily,
+				.queueCount = 1,
+				.pQueuePriorities = queuePriority,
+			}
+		};
 		const VkDeviceCreateInfo createInfo{
 			.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 			.queueCreateInfoCount = static_cast<uint32_t>(std::size(queueInfo)),
@@ -335,7 +411,7 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 			.enabledExtensionCount = deviceExtensionCount,
 			.ppEnabledExtensionNames = deviceExtensions,
 		};
-		CheckVkResult(vkCreateDevice(m_physicalDevice, &createInfo, m_pAllocator, &m_device));
+		CheckVkResult(vkCreateDevice(m_physicalDevice, &createInfo, m_pCallback, &m_device));
 		vkGetDeviceQueue(m_device, m_queueFamily, 0, &m_queue);
 	}
 }
@@ -353,7 +429,7 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 	SDL_GetWindowSize(pWindow, &w, &h);
 
 #if BL_EDITOR
-	m_pInterface->SetupVulkanWindow(surface, w, h, m_instance, m_physicalDevice, m_device, m_pAllocator, m_queueFamily, m_minImageCount);
+	m_pInterface->SetupVulkanWindow(surface, w, h, m_instance, m_physicalDevice, m_device, m_pCallback, m_queueFamily, m_minImageCount);
 #else
 	vkDeviceWaitIdle(m_device);
 	//create swap chain (https://sopyer.github.io/Blog/post/minimal-vulkan-sample/)
@@ -411,7 +487,7 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 			.presentMode = VK_PRESENT_MODE_MAILBOX_KHR,
 			.clipped = VK_TRUE,
 		};
-		CheckVkResult(vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, m_pAllocator, &m_swapchain));
+		CheckVkResult(vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, m_pCallback, &m_swapchain));
 		CheckVkResult(vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_imageCount, nullptr));
 		CheckVkResult(vkGetSwapchainImagesKHR(m_device, m_swapchain, &m_imageCount, m_images));
 	}
@@ -456,7 +532,7 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 			.dependencyCount = 1,
 			.pDependencies = &dependency,
 		};
-		if (vkCreateRenderPass(m_device, &renderPassInfo, m_pAllocator, &m_renderPass) != VK_SUCCESS)
+		if (vkCreateRenderPass(m_device, &renderPassInfo, m_pCallback, &m_renderPass) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create render pass!");
 		}
@@ -467,29 +543,31 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 void Balbino::CRenderer::Cleanup()
 {
 	vkDeviceWaitIdle(m_device);
-	m_mesh.Cleanup(m_device, m_pAllocator);
-
+	m_mesh.Cleanup(m_device, m_pCallback);
+	CTextureManager::GetInstance().Cleanup(m_device, m_pCallback);
+	CShaderManager::GetInstance().Cleanup(m_device, m_pCallback);
+	m_textureSampler.Cleanup(m_device, m_pCallback);
 	//vkFreeDescriptorSets(m_device, m_descriptorPool, (uint32_t) m_descriptorSets.size(), m_descriptorSets.data());
 	for (const VkFramebuffer framebuffer : m_framebuffers)
-		vkDestroyFramebuffer(m_device, framebuffer, m_pAllocator);
+		vkDestroyFramebuffer(m_device, framebuffer, m_pCallback);
 	for (const VkImageView backBuffer : m_backBuffer)
-		vkDestroyImageView(m_device, backBuffer, m_pAllocator);
+		vkDestroyImageView(m_device, backBuffer, m_pCallback);
 	for (const VkBuffer buffer : m_uniformBuffers)
-		vkDestroyBuffer(m_device, buffer, m_pAllocator);
+		vkDestroyBuffer(m_device, buffer, m_pCallback);
 	for (const VkDeviceMemory uniformBuffersMemory : m_uniformBuffersMemory)
-		vkFreeMemory(m_device, uniformBuffersMemory, m_pAllocator);
+		vkFreeMemory(m_device, uniformBuffersMemory, m_pCallback);
 
-	vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, m_pAllocator);
-	vkDestroyDescriptorPool(m_device, m_descriptorPool, m_pAllocator);
+	vkDestroyDescriptorSetLayout(m_device, m_descriptorSetLayout, m_pCallback);
+	vkDestroyDescriptorPool(m_device, m_descriptorPool, m_pCallback);
 
 	for (const VkFence& fence : m_frameFences)
-		vkDestroyFence(m_device, fence, m_pAllocator);
+		vkDestroyFence(m_device, fence, m_pCallback);
 	for (const VkSemaphore& semaphore : m_renderFinishedSemaphores)
-		vkDestroySemaphore(m_device, semaphore, m_pAllocator);
+		vkDestroySemaphore(m_device, semaphore, m_pCallback);
 	for (const VkSemaphore& semaphore : m_imageAvailableSemaphores)
-		vkDestroySemaphore(m_device, semaphore, m_pAllocator);
+		vkDestroySemaphore(m_device, semaphore, m_pCallback);
 	vkFreeCommandBuffers(m_device, m_commandPool, (uint32_t) std::size(m_commandBuffers), m_commandBuffers);
-	vkDestroyCommandPool(m_device, m_commandPool, m_pAllocator);
+	vkDestroyCommandPool(m_device, m_commandPool, m_pCallback);
 #if BL_EDITOR
 	m_pInterface->Cleanup();
 #endif
@@ -509,9 +587,9 @@ bool Balbino::CRenderer::GetDevice(VkDevice& device) const
 
 bool Balbino::CRenderer::GetAllocationCallbacks(VkAllocationCallbacks*& pAlloc) const
 {
-	if (m_pAllocator != VK_NULL_HANDLE)
+	if (m_pCallback != VK_NULL_HANDLE)
 	{
-		pAlloc = m_pAllocator;
+		pAlloc = m_pCallback;
 		return true;
 	}
 	return false;
@@ -550,27 +628,27 @@ bool Balbino::CRenderer::GetCommandPool(VkCommandPool& commandPool) const
 void Balbino::CRenderer::CleanupVulkan() const
 {
 #if defined(BL_EDITOR) && defined(_DEBUG)
-	m_pInterface->CleanupVulkan(m_instance, m_pAllocator, m_debugReport);
+	m_pInterface->CleanupVulkan(m_instance, m_pCallback, m_debugReport);
 #endif // IMGUI_VULKAN_DEBUG_REPORT
-	vkDestroyDevice(m_device, m_pAllocator);
+	vkDestroyDevice(m_device, m_pCallback);
 	if (vkpfn_DestroyDebugReportCallbackEXT && m_debugReport)
 	{
-		vkpfn_DestroyDebugReportCallbackEXT(m_instance, m_debugReport, m_pAllocator);
+		vkpfn_DestroyDebugReportCallbackEXT(m_instance, m_debugReport, m_pCallback);
 	}
-	vkDestroySurfaceKHR(m_instance, m_surface, m_pAllocator);
-	vkDestroyInstance(m_instance, m_pAllocator);
+	vkDestroySurfaceKHR(m_instance, m_surface, m_pCallback);
+	vkDestroyInstance(m_instance, m_pCallback);
 }
 
 void Balbino::CRenderer::CleanupVulkanWindow() const
 {
 #if BL_EDITOR
 	if (m_pInterface)
-		m_pInterface->CleanupVulkanWindow(m_instance, m_pAllocator, m_device);
+		m_pInterface->CleanupVulkanWindow(m_instance, m_pCallback, m_device);
 #endif
 
-	vkDestroyRenderPass(m_device, m_renderPass, m_pAllocator);
+	vkDestroyRenderPass(m_device, m_renderPass, m_pCallback);
 #ifndef BL_EDITOR
-	vkDestroySwapchainKHR(m_device, m_swapchain, m_pAllocator);
+	vkDestroySwapchainKHR(m_device, m_swapchain, m_pCallback);
 #endif
 }
 
@@ -587,7 +665,7 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow, float dt)
 {
 	(void) pWindow;
 #if BL_EDITOR
-	m_pInterface->ResizeSwapChain(pWindow, m_instance, m_physicalDevice, m_device, m_queueFamily, m_pAllocator, m_minImageCount);
+	m_pInterface->ResizeSwapChain(pWindow, m_instance, m_physicalDevice, m_device, m_queueFamily, m_pCallback, m_minImageCount);
 	m_pInterface->DrawStart(pWindow);
 
 	//todo: Render stuff
@@ -609,19 +687,19 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow, float dt)
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
 			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
 		};
-		const VkClearValue clearColor = {{{0.165f, 0.306f, 0.243f, 1.0f}}};
+		const VkClearValue clearColor = {{ { 0.165f, 0.306f, 0.243f, 1.0f } }};
 		const VkRenderPassBeginInfo renderPassInfo{
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
 			.renderPass = m_renderPass,
 			.framebuffer = m_framebuffers[index],
-			.renderArea = {{0, 0}, m_swapchainExtent},
+			.renderArea = { { 0, 0 }, m_swapchainExtent },
 			.clearValueCount = 1,
 			.pClearValues = &clearColor,
 		};
 		vkBeginCommandBuffer(m_commandBuffers[index], &beginInfo);
 
 		vkCmdBeginRenderPass(m_commandBuffers[index], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		vkCmdBindDescriptorSets(m_commandBuffers[index], VK_PIPELINE_BIND_POINT_GRAPHICS, m_mesh.GetMaterial().GetPipelineLayout(), 0, 1, &m_descriptorSets[index], 0, nullptr);
+		vkCmdBindDescriptorSets(m_commandBuffers[index], VK_PIPELINE_BIND_POINT_GRAPHICS, m_pShader->GetPipelineLayout(), 0, 1, &m_descriptorSets[index], 0, nullptr);
 
 		SUniformBufferObject ubo{
 			.model = glm::rotate(glm::mat4(1.0f), dt * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
@@ -636,6 +714,7 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow, float dt)
 		vkUnmapMemory(m_device, m_uniformBuffersMemory[index]);
 
 		//todo: draw things
+		m_pShader->Bind(m_commandBuffers[index]);
 		m_mesh.Draw(m_commandBuffers[index]);
 
 		vkCmdEndRenderPass(m_commandBuffers[index]);
@@ -711,6 +790,36 @@ uint32_t Balbino::CRenderer::FindMemoryType(uint32_t typeFilter, const VkMemoryP
 	}
 
 	throw std::runtime_error("failed to find suitable memory type!");
+}
+
+bool Balbino::CRenderer::GetSwatChainExtend(VkExtent2D& swapchainExtend) const
+{
+	if (m_swapchainExtent.width > 0 || m_swapchainExtent.height > 0)
+	{
+		swapchainExtend = m_swapchainExtent;
+		return true;
+	}
+	return false;
+}
+
+bool Balbino::CRenderer::GetRenderPass(VkRenderPass& renderPass) const
+{
+	if (m_renderPass != VK_NULL_HANDLE)
+	{
+		renderPass = m_renderPass;
+		return true;
+	}
+	return false;
+}
+
+bool Balbino::CRenderer::GetDescriptorSetLayout(VkDescriptorSetLayout& descriptorSetLayout) const
+{
+	if (m_descriptorSetLayout != VK_NULL_HANDLE)
+	{
+		descriptorSetLayout = m_descriptorSetLayout;
+		return true;
+	}
+	return false;
 }
 
 #if BL_EDITOR

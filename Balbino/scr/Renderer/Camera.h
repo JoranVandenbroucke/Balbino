@@ -18,6 +18,7 @@ namespace Balbino
 		void* operator new[]( size_t size ) = delete;
 
 		void operator delete( void* ptr )noexcept;
+		void operator delete( void* ptr, int, const char*, int)noexcept;
 		void operator delete[]( void* ptr ) = delete;
 
 		void SetDrawIndex(int index);

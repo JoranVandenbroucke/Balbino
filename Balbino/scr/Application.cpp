@@ -9,6 +9,7 @@
 #include <vector>
 #include <chrono>
 
+#include "Managers/CameraManager.h"
 #include "Renderer/Camera.h"
 #include "Renderer/Renderer.h"
 
@@ -100,6 +101,7 @@ void Balbino::Application::LoadGame() const
 
 void Balbino::Application::Cleanup() const
 {
+	CCameraManager::GetInstance().Cleanup();
 	m_pRenderer->Cleanup();
 	SDL_DestroyWindow(m_pWindow);
 	//Quit SDL subsystems

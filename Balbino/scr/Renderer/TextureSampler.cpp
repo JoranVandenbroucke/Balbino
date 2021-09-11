@@ -1,29 +1,70 @@
 #include "pch.h"
 #include "TextureSampler.h"
 
-#include "Texture.h"
-
-Balbino::CTextureSampler::CTextureSampler() {}
-Balbino::CTextureSampler::~CTextureSampler() {}
-void Balbino::CTextureSampler::Initialize(const CTexture* pTexture, const VkDevice& device)
+Balbino::CTextureSampler::CTextureSampler()
+	: m_textureImageView{ VK_NULL_HANDLE }
+	, m_textureSampler{ VK_NULL_HANDLE }
+	, m_descriptorSetLayout{}
+	, m_descriptorPoolSize{}
 {
-	const VkImageViewCreateInfo viewInfo{
-		.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-		.image = pTexture->GetImage(),
-		.viewType = VK_IMAGE_VIEW_TYPE_2D,
-		.format = VK_FORMAT_R8G8B8A8_SRGB,
-		.subresourceRange = {
-			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.baseMipLevel = 0,
-			.levelCount = 1,
-			.baseArrayLayer = 0,
-			.layerCount = 1,
-		},
-	};
-
-	if (vkCreateImageView(device, &viewInfo, nullptr, &m_textureImageView) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to create texture image view!");
-	}
 }
-void Balbino::CTextureSampler::Cleanup() {}
+
+Balbino::CTextureSampler::~CTextureSampler() {}
+
+void Balbino::CTextureSampler::Initialize( const VkDevice& device, const VkAllocationCallbacks* pCallbacks)
+{
+
+	const VkSamplerCreateInfo samplerInfo{
+		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.magFilter = VK_FILTER_LINEAR,
+		.minFilter = VK_FILTER_LINEAR,
+		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+		.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.mipLodBias = 0.0f,
+		.anisotropyEnable = VK_FALSE,
+		.maxAnisotropy = 0,
+		.compareEnable = VK_FALSE,
+		.compareOp = VK_COMPARE_OP_LESS,
+		.minLod = 0.0f,
+		.maxLod = 1.0f,
+		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
+		.unnormalizedCoordinates = VK_FALSE,
+	};
+	if (vkCreateSampler(device, &samplerInfo, pCallbacks, &m_textureSampler) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create texture sampler!");
+	}
+
+	m_descriptorPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+}
+
+void Balbino::CTextureSampler::Cleanup( const VkDevice& device, const VkAllocationCallbacks* pCallbacks )
+{
+	vkDestroySampler( device, m_textureSampler, pCallbacks );
+	vkDestroyImageView( device, m_textureImageView, pCallbacks );
+}
+
+const VkDescriptorSetLayoutBinding& Balbino::CTextureSampler::GetDescriptorLayoutBinding()
+{
+	m_descriptorSetLayout.binding = 1;
+	m_descriptorSetLayout.descriptorCount = 1;
+	m_descriptorSetLayout.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	m_descriptorSetLayout.pImmutableSamplers = nullptr;
+	m_descriptorSetLayout.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	return m_descriptorSetLayout;
+}
+
+const VkDescriptorPoolSize& Balbino::CTextureSampler::GetDescriptorPoolSize(uint32_t size)
+{
+	m_descriptorPoolSize.descriptorCount = size;
+	return m_descriptorPoolSize;
+}
+
+const VkSampler& Balbino::CTextureSampler::GetSampler()
+{
+	return m_textureSampler;
+}

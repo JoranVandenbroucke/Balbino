@@ -12,6 +12,11 @@
 
 Balbino::CTexture* Balbino::CTextureManager::AddTexture(Balbino::CTexture* pTexture, const std::string& filePath)
 {
+	return GetInstance().IAddTexture(pTexture, filePath.c_str());
+}
+
+Balbino::CTexture* Balbino::CTextureManager::AddTexture(CTexture* pTexture, const char* filePath)
+{
 	return GetInstance().IAddTexture(pTexture, filePath);
 }
 
@@ -19,15 +24,21 @@ void Balbino::CTextureManager::Initialize( CRenderer* pRenderer )
 {
 	m_pRenderer = pRenderer;
 }
-void Balbino::CTextureManager::Cleanup()
+void Balbino::CTextureManager::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAllocator)
 {
 	for ( const auto texture : m_textures )
 	{
+		texture.second->Cleanup(device, pAllocator);
 		delete texture.second;
 	}
 	m_textures.clear();
 
 	m_pRenderer = nullptr;
+}
+
+void Balbino::CTextureManager::SetRenderer( CRenderer* pRenderer )
+{
+	m_pRenderer = pRenderer;
 }
 
 Balbino::CTextureManager::CTextureManager()
@@ -41,7 +52,7 @@ Balbino::CTextureManager::~CTextureManager()
 		std::cerr << "Texture Manager not cleared" << std::endl;
 };
 
-Balbino::CTexture* Balbino::CTextureManager::IAddTexture(Balbino::CTexture* pTexture, const std::string& filePath)
+Balbino::CTexture* Balbino::CTextureManager::IAddTexture(Balbino::CTexture* pTexture, const char* filePath)
 {
 	const std::filesystem::path path(std::filesystem::absolute(filePath));
 	const uint32_t hash = static_cast<uint32_t>(std::hash<std::string>{}(path.relative_path().string()));
@@ -56,7 +67,7 @@ Balbino::CTexture* Balbino::CTextureManager::IAddTexture(Balbino::CTexture* pTex
 	fileChecker.close();
 
 	SDL_Surface* pSurface = IMG_Load(path.string().c_str());
-	if (pTexture == nullptr)
+	if (pSurface == nullptr)
 	{
 		throw std::runtime_error(std::string("Failed to load texture: ") + SDL_GetError());
 	}

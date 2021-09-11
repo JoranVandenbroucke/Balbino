@@ -1,15 +1,20 @@
 #pragma once
 #include "Singleton.h"
 #include <vector>
+#include <vulkan/vulkan_core.h>
 
 namespace Balbino
 {
+	class CRenderer;
 	class CShader;
 	class CShaderManager final: public CSingleton<CShaderManager>
 	{
 	public:
 		static const std::vector<CShader*>& GetShaders();
-		void AddShader(CShader* cam);
+		static void AddShader(CShader* shader);
+		static void BindShader( uint32_t materialIndex, const VkCommandBuffer& commandBuffer );
+		static void SetRenderer( CRenderer* renderer );
+		void Cleanup( const VkDevice& device, const VkAllocationCallbacks* pAllocator );
 	private:
 		friend CSingleton<CShaderManager>;
 		CShaderManager();
@@ -20,10 +25,12 @@ namespace Balbino
 		CShaderManager& operator=(CShaderManager&&) = delete;
 
 		const std::vector<Balbino::CShader*>& IGetShaders() const;
+		void IAddShader(CShader* shader);
+		void IBindShader( uint32_t materialIndex, const VkCommandBuffer& commandBuffer ) const;
+		void ISetRenderer( CRenderer* renderer );
 
-		void SortList();
-
-		std::vector<CShader*> m_Shaders;
+		CRenderer* m_pRenderer;
+		std::vector<CShader*> m_shader;
 	};
 }
 

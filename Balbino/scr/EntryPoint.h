@@ -49,13 +49,13 @@ inline void StartHeapControl()
 {
 #if defined(DEBUG) | defined(_DEBUG)
 	// Notify user if heap is corrupt
-	//HeapSetInformation( NULL, HeapEnableTerminationOnCorruption, NULL, 0 );
+	HeapSetInformation( nullptr, HeapEnableTerminationOnCorruption, nullptr, 0 );
 
 	// Report detected leaks when the program exits
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
 	// Set a breakpoint on the specified object allocation order number
-	//_CrtSetBreakAlloc( 254 );
+	_CrtSetBreakAlloc(354);
 #endif
 }
 

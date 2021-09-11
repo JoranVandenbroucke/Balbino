@@ -2,6 +2,9 @@
 #include <vulkan/vulkan_core.h>
 
 #include "Mesh.h"
+#include "Shader.h"
+#include "TextureSampler.h"
+
 #define FRAME_COUNT 2
 #define MAX_PRESENT_MODE_COUNT 4
 #define PRESENT_MODE_MAILBOX_IMAGE_COUNT 3
@@ -11,6 +14,7 @@ struct SDL_Window;
 namespace Balbino
 {
 	class CInterface;
+	class CTexture;
 
 	class CRenderer
 	{
@@ -47,13 +51,19 @@ namespace Balbino
 		bool GetPhysicalDevice(VkPhysicalDevice& physicalDevice) const;
 		bool GetQueue(VkQueue& queue) const;
 		bool GetCommandPool(VkCommandPool& commandPool) const;
+		bool GetSwatChainExtend( VkExtent2D& swapchainExtend)const;
+		bool GetRenderPass( VkRenderPass& renderPass)const;
+		bool GetDescriptorSetLayout( VkDescriptorSetLayout& descriptorSetLayout)const;
 
 	private:
 		CMesh m_mesh;
+		CShader* m_pShader;
+		CTextureSampler m_textureSampler;
+		CTexture* m_pTexture;
 
 		VkSurfaceKHR m_surface;
 		VkInstance m_instance;
-		VkAllocationCallbacks* m_pAllocator;
+		VkAllocationCallbacks* m_pCallback;
 		VkDebugReportCallbackEXT m_debugReport;
 		VkPhysicalDevice m_physicalDevice;
 		VkCommandPool m_commandPool;

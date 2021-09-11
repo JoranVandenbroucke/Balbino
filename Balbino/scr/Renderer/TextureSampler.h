@@ -3,7 +3,6 @@
 
 namespace Balbino
 {
-	class CTexture;
 	class CTextureSampler
 	{
 	public:
@@ -14,9 +13,17 @@ namespace Balbino
 		CTextureSampler& operator=(const CTextureSampler&) = delete;
 		CTextureSampler& operator=(CTextureSampler&&) = delete;
 
-		void Initialize(const CTexture* pTexture, const VkDevice& device);
-		void Cleanup();
+		void Initialize( const VkDevice& device, const VkAllocationCallbacks* pCallbacks );
+		void Cleanup( const VkDevice& device, const VkAllocationCallbacks* pCallbacks );
+
+		const VkDescriptorSetLayoutBinding& GetDescriptorLayoutBinding();
+		const VkDescriptorPoolSize& GetDescriptorPoolSize(uint32_t size);
+		const VkSampler& GetSampler();
 	private:
 		VkImageView m_textureImageView;
+		VkSampler m_textureSampler;
+
+		VkDescriptorSetLayoutBinding m_descriptorSetLayout;
+		VkDescriptorPoolSize m_descriptorPoolSize;
 	};
 }

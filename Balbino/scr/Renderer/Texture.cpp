@@ -4,16 +4,41 @@
 
 #include  <SDL.h>
 
-Balbino::CTexture::CTexture() {}
+Balbino::CTexture::CTexture()
+	: m_textureImage{m_textureImage}
+	, m_textureImageMemory{m_textureImageMemory}
+	, m_textureImageView{m_textureImageView} {}
+
 Balbino::CTexture::~CTexture()
 {
-	if (m_textureImageMemory || m_textureImage)
+	if (m_textureImageMemory || m_textureImage || m_textureImageView)
 		std::cerr << "didn't clear Texture" << std::endl;
+}
+
+void Balbino::CTexture::operator delete(void* ptr)
+{
+	if (ptr)
+		::operator delete(ptr);
+	ptr = nullptr;
+}
+
+void Balbino::CTexture::operator delete(void* ptr, const char* filePath)
+{
+	(void) filePath;
+	operator delete(ptr);
+}
+void Balbino::CTexture::operator delete(void* ptr, int b, const char* f, int l, const char* filePath)
+{
+	(void) b;
+	(void) f;
+	(void) l;
+	(void) filePath;
+	operator delete(ptr);
 }
 
 void Balbino::CTexture::Initialize(SDL_Surface* pSurface, const VkDevice& device, const VkAllocationCallbacks* pCallbacks, const VkPhysicalDevice& physicalDevice, const VkQueue& queue, const VkCommandPool& commandPool)
 {
-	const uint32_t imageSize{static_cast<uint32_t>( pSurface->w * pSurface->h * 4 )};
+	const uint32_t imageSize{static_cast<uint32_t>(pSurface->w * pSurface->h * 4)};
 
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingBufferMemory;
@@ -63,14 +88,35 @@ void Balbino::CTexture::Initialize(SDL_Surface* pSurface, const VkDevice& device
 
 	vkDestroyBuffer(device, stagingBuffer, nullptr);
 	vkFreeMemory(device, stagingBufferMemory, nullptr);
+
+	const VkImageViewCreateInfo viewInfo{
+	.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+	.image = m_textureImage,
+	.viewType = VK_IMAGE_VIEW_TYPE_2D,
+	.format = VK_FORMAT_R8G8B8A8_SRGB,
+	.subresourceRange = {
+		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+		.baseMipLevel = 0,
+		.levelCount = 1,
+		.baseArrayLayer = 0,
+		.layerCount = 1,
+	},
+	};
+
+	if (vkCreateImageView(device, &viewInfo, pCallbacks, &m_textureImageView) != VK_SUCCESS)
+	{
+		throw std::runtime_error("failed to create texture image view!");
+	}
 }
 
-void Balbino::CTexture::Cleanup( const VkDevice& device, const VkAllocationCallbacks* pCallbacks )
+void Balbino::CTexture::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pCallbacks)
 {
+	vkDestroyImageView(device, m_textureImageView, pCallbacks);
 	vkDestroyImage(device, m_textureImage, pCallbacks);
 	vkFreeMemory(device, m_textureImageMemory, pCallbacks);
 	m_textureImage = nullptr;
 	m_textureImageMemory = nullptr;
+	m_textureImageView = nullptr;
 }
 
 const VkImage& Balbino::CTexture::GetImage() const
@@ -78,7 +124,12 @@ const VkImage& Balbino::CTexture::GetImage() const
 	return m_textureImage;
 }
 
-void* Balbino::CTexture::operator new(size_t size, const std::string& filePath)
+const VkImageView& Balbino::CTexture::GetImageView() const
+{
+	return m_textureImageView;
+}
+
+void* Balbino::CTexture::operator new(size_t size, const char* filePath)
 {
 	if (CTexture* pTexture = static_cast<CTexture*>(::operator new(size)))
 	{
@@ -94,7 +145,7 @@ void* Balbino::CTexture::operator new(size_t size, const std::string& filePath)
 	return nullptr;
 }
 
-void* Balbino::CTexture::operator new(size_t size, int b, const char* f, int l, const std::string& filePath)
+void* Balbino::CTexture::operator new(size_t size, int b, const char* f, int l, const char* filePath)
 {
 	if (CTexture* pTexture = static_cast<CTexture*>(::operator new(size, b, f, l)))
 	{
@@ -108,13 +159,6 @@ void* Balbino::CTexture::operator new(size_t size, int b, const char* f, int l, 
 		return pTexture;
 	}
 	return nullptr;
-}
-
-void Balbino::CTexture::operator delete(void* ptr) noexcept
-{
-	if (ptr)
-		free(ptr);
-	ptr = nullptr;
 }
 
 uint32_t Balbino::CTexture::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, const VkPhysicalDevice& physicalDevice)
@@ -135,7 +179,7 @@ uint32_t Balbino::CTexture::FindMemoryType(uint32_t typeFilter, VkMemoryProperty
 
 void Balbino::CTexture::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, const VkDevice& device, const VkQueue& queue, const VkCommandPool& commandPool)
 {
-	const VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, commandPool);
+	const VkCommandBuffer& commandBuffer{BeginSingleTimeCommands(device, commandPool)};
 
 	VkBufferCopy copyRegion{};
 	copyRegion.size = size;
@@ -181,7 +225,7 @@ void Balbino::CTexture::EndSingleTimeCommands(const VkCommandBuffer& commandBuff
 
 void Balbino::CTexture::TransitionImageLayout(const VkImage& image, const VkImageLayout& oldLayout, const VkImageLayout& newLayout, const VkDevice& device, const VkQueue& queue, const VkCommandPool& commandPool)
 {
-	const VkCommandBuffer commandBuffer{BeginSingleTimeCommands(device, commandPool)};
+	const VkCommandBuffer& commandBuffer{BeginSingleTimeCommands(device, commandPool)};
 
 	VkImageMemoryBarrier barrier{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -195,8 +239,7 @@ void Balbino::CTexture::TransitionImageLayout(const VkImage& image, const VkImag
 			.baseMipLevel = 0,
 			.levelCount = 1,
 			.baseArrayLayer = 0,
-			.layerCount = 1,
-			},
+			.layerCount = 1,},
 	};
 	VkPipelineStageFlags sourceStage;
 	VkPipelineStageFlags destinationStage;
@@ -234,9 +277,9 @@ void Balbino::CTexture::TransitionImageLayout(const VkImage& image, const VkImag
 	EndSingleTimeCommands(commandBuffer, device, queue, commandPool);
 }
 
-void Balbino::CTexture::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, const VkDevice& device, const VkQueue& queue, const VkCommandPool& commandPool)
+void Balbino::CTexture::CopyBufferToImage(const VkBuffer& buffer, const VkImage& image, const uint32_t width, const uint32_t height, const VkDevice& device, const VkQueue& queue, const VkCommandPool& commandPool)
 {
-	const VkCommandBuffer commandBuffer = BeginSingleTimeCommands(device, commandPool);
+	const VkCommandBuffer& commandBuffer{BeginSingleTimeCommands(device, commandPool)};
 
 	const VkBufferImageCopy region{
 		.bufferOffset = 0,
