@@ -264,7 +264,7 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 	//todo: replace with manager stuff
 	//m_pTexture = new(_NORMAL_BLOCK, __FILE__, __LINE__, "../Resources/Textures/UVMS1_colorgrid.png") CTexture;
 	m_pTexture = DBG_NEW("../Resources/Textures/UVMS1_colorgrid.png") CTexture;
-	m_textureSampler.Initialize(m_device, m_pCallback);
+	m_textureSampler.Initialize(m_device, m_pCallback, m_pTexture->GetMipLevels() );
 	m_pMesh = DBG_NEW("../Resources/Models/Cube.ply")CMesh;
 	//Create Uniform Buffers
 	{

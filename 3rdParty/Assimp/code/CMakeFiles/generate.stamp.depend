@@ -1,5 +1,0 @@
-# CMake generation dependency list for this directory.
-C:/Program Files/CMake/share/cmake-3.19/Modules/FindPackageHandleStandardArgs.cmake
-C:/Program Files/CMake/share/cmake-3.19/Modules/FindPackageMessage.cmake
-D:/joran/Documents/GitHub/Balbino/3rdParty/Assimp/cmake-modules/FindRT.cmake
-D:/joran/Documents/GitHub/Balbino/3rdParty/Assimp/code/CMakeLists.txt

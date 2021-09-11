@@ -11,7 +11,7 @@ Balbino::CTextureSampler::CTextureSampler()
 
 Balbino::CTextureSampler::~CTextureSampler() {}
 
-void Balbino::CTextureSampler::Initialize( const VkDevice& device, const VkAllocationCallbacks* pCallbacks)
+void Balbino::CTextureSampler::Initialize( const VkDevice& device, const VkAllocationCallbacks* pCallbacks, uint32_t mipLevels)
 {
 
 	const VkSamplerCreateInfo samplerInfo{
@@ -30,7 +30,7 @@ void Balbino::CTextureSampler::Initialize( const VkDevice& device, const VkAlloc
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_LESS,
 		.minLod = 0.0f,
-		.maxLod = 1.0f,
+		.maxLod = static_cast<float>(mipLevels),
 		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
