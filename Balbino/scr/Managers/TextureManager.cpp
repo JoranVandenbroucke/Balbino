@@ -22,7 +22,7 @@ Balbino::CTexture* Balbino::CTextureManager::AddTexture(CTexture* pTexture, cons
 
 void Balbino::CTextureManager::Initialize( CRenderer* pRenderer )
 {
-	m_pRenderer = pRenderer;
+	SetRenderer(pRenderer);
 }
 void Balbino::CTextureManager::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAllocator)
 {
@@ -43,7 +43,6 @@ void Balbino::CTextureManager::SetRenderer( CRenderer* pRenderer )
 
 Balbino::CTextureManager::CTextureManager()
 	: m_pRenderer{ nullptr }
-	, m_textures{}
 {}
 
 Balbino::CTextureManager::~CTextureManager()

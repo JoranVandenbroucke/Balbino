@@ -25,7 +25,9 @@ void Balbino::CTexture::operator delete(void* ptr)
 void Balbino::CTexture::operator delete(void* ptr, const char* filePath)
 {
 	(void) filePath;
-	operator delete(ptr);
+	if (ptr)
+		::operator delete(ptr);
+	ptr = nullptr;
 }
 void Balbino::CTexture::operator delete(void* ptr, int b, const char* f, int l, const char* filePath)
 {
@@ -33,7 +35,9 @@ void Balbino::CTexture::operator delete(void* ptr, int b, const char* f, int l, 
 	(void) f;
 	(void) l;
 	(void) filePath;
-	operator delete(ptr);
+	if (ptr)
+		::operator delete(ptr);
+	ptr = nullptr;
 }
 
 void Balbino::CTexture::Initialize(SDL_Surface* pSurface, const VkDevice& device, const VkAllocationCallbacks* pCallbacks, const VkPhysicalDevice& physicalDevice, const VkQueue& queue, const VkCommandPool& commandPool)

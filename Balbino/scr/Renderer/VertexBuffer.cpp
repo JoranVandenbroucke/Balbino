@@ -5,8 +5,8 @@
 #include <vector>
 
 Balbino::CVertexBuffer::CVertexBuffer()
-	: m_vertexBuffer{VK_NULL_HANDLE}
-	, m_vertexBufferMemory{VK_NULL_HANDLE}
+	: m_vertexBuffer{m_vertexBuffer}
+	, m_vertexBufferMemory{m_vertexBufferMemory}
 {
 }
 

@@ -1,0 +1,14 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckFunctionExists.c
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckFunctionExists.cmake
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckIncludeFile.c.in
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckIncludeFileCXX.cmake
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckTypeSize.c.in
+C:/Program Files/CMake/share/cmake-3.19/Modules/CheckTypeSize.cmake
+C:/Program Files/CMake/share/cmake-3.19/Modules/Internal/CheckSourceCompiles.cmake
+D:/joran/Documents/GitHub/Balbino/3rdParty/Assimp/CMakeFiles/CheckTypeSize/OFF64_T.c
+D:/joran/Documents/GitHub/Balbino/3rdParty/Assimp/contrib/zlib/CMakeLists.txt
+D:/joran/Documents/GitHub/Balbino/3rdParty/Assimp/contrib/zlib/zconf.h.cmakein
+D:/joran/Documents/GitHub/Balbino/3rdParty/Assimp/contrib/zlib/zlib.pc.cmakein

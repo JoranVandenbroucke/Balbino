@@ -1,7 +1,6 @@
 #pragma once
 #include <vulkan/vulkan_core.h>
 
-#include "Mesh.h"
 #include "Shader.h"
 #include "TextureSampler.h"
 
@@ -15,6 +14,7 @@ namespace Balbino
 {
 	class CInterface;
 	class CTexture;
+	class CMesh;
 
 	class CRenderer
 	{
@@ -54,9 +54,11 @@ namespace Balbino
 		bool GetSwatChainExtend( VkExtent2D& swapchainExtend)const;
 		bool GetRenderPass( VkRenderPass& renderPass)const;
 		bool GetDescriptorSetLayout( VkDescriptorSetLayout& descriptorSetLayout)const;
+		VkFormat FindSupportedFormat( const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features );
+		VkFormat FindDepthFormat();
 
 	private:
-		CMesh m_mesh;
+		CMesh* m_pMesh;
 		CShader* m_pShader;
 		CTextureSampler m_textureSampler;
 		CTexture* m_pTexture;
@@ -86,6 +88,10 @@ namespace Balbino
 		VkExtent2D  m_swapchainExtent;
 		VkSurfaceCapabilitiesKHR m_surfaceCapabilities;
 		VkImage m_images[MAX_PRESENT_MODE_COUNT];
+
+		VkImage m_depthImage;
+		VkDeviceMemory m_depthImageMemory;
+		VkImageView m_depthImageView;
 
 		VkDescriptorSetLayout m_descriptorSetLayout;
 		std::vector<VkBuffer> m_uniformBuffers;

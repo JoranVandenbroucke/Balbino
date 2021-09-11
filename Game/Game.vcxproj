@@ -188,6 +188,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -216,6 +217,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -244,6 +246,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -272,6 +275,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -305,6 +309,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -338,6 +343,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -371,6 +377,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -404,6 +411,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)" /
 xcopy "$(SolutionDir)3rdParty\SDL2_image\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
 xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib\$(PlatformTarget)\*.dll" "$(OutDir)" /D /Y
+xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D /Y
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

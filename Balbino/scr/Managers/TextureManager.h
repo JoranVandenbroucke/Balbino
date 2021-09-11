@@ -2,7 +2,7 @@
 #include "Singleton.h"
 
 #include <unordered_map>
-#include <vulkan/vulkan_core.h>
+#include <vulkan/vulkan.h>
 
 namespace Balbino
 {

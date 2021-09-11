@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "IndexBuffer.h"
 
+#include <iostream>
+#include <vector>
+
 Balbino::CIndexBuffer::CIndexBuffer()
-	: m_indexBuffer{VK_NULL_HANDLE}
-	, m_indexBufferMemory{VK_NULL_HANDLE}
+	: m_indexBuffer{m_indexBuffer}
+	, m_indexBufferMemory{m_indexBufferMemory}
 {
 }
 
