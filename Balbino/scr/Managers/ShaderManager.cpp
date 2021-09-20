@@ -1,35 +1,15 @@
 #include "pch.h"
 #include "ShaderManager.h"
 
-#include "../Renderer/Shader.h"
 #include "../Renderer/Renderer.h"
 
-const std::vector<Balbino::CShader*>& Balbino::CShaderManager::GetShaders()
-{
-	return GetInstance().IGetShaders();
-}
-
-void Balbino::CShaderManager::AddShader( CShader* shader)
-{
-	GetInstance().IAddShader(shader);
-}
-
-void Balbino::CShaderManager::BindShader( uint32_t materialIndex, const VkCommandBuffer& commandBuffer)
-{
-	return GetInstance().IBindShader(materialIndex, commandBuffer);
-}
-
-void Balbino::CShaderManager::SetRenderer( CRenderer* renderer )
-{
-	GetInstance().ISetRenderer(renderer);
-}
-
-void Balbino::CShaderManager::ISetRenderer( CRenderer* renderer )
+void Balbino::CShaderManager::SetRenderer(CRenderer* renderer)
 {
 	m_pRenderer = renderer;
 }
 
 Balbino::CShaderManager::CShaderManager()
+	: m_pRenderer{ nullptr }
 {
 }
 
@@ -41,39 +21,42 @@ Balbino::CShaderManager::~CShaderManager()
 
 void Balbino::CShaderManager::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAllocator)
 {
-	for (const auto shader : m_shader)
+	for (auto& shader : m_shader)
 	{
-		shader->Cleanup(device, pAllocator);
-		delete shader;
+		shader.Cleanup(device, pAllocator);
 	}
 	m_shader.clear();
 
 	m_pRenderer = nullptr;
 }
 
-const std::vector<Balbino::CShader*>& Balbino::CShaderManager::IGetShaders() const
+const std::vector<Balbino::CShader>& Balbino::CShaderManager::GetShaders() const
 {
 	return m_shader;
 }
 
-void Balbino::CShaderManager::IAddShader( CShader* shader)
+Balbino::CShader* Balbino::CShaderManager::AddShader()
 {
 	VkDevice device;
 	VkExtent2D swapchainExtend;
 	VkRenderPass renderPass;
 	VkDescriptorSetLayout descriptorSetLayout;
-	VkAllocationCallbacks* pCallbacks{nullptr};
+	VkAllocationCallbacks* pCallbacks{ nullptr };
 
 	m_pRenderer->GetDevice(device);
 	m_pRenderer->GetSwatChainExtend(swapchainExtend);
 	m_pRenderer->GetRenderPass(renderPass);
 	m_pRenderer->GetDescriptorSetLayout(descriptorSetLayout);
 	m_pRenderer->GetAllocationCallbacks(pCallbacks);
-	shader->Initialize(device, swapchainExtend, renderPass, descriptorSetLayout, pCallbacks);
-	m_shader.push_back(shader);
+	m_shader.emplace_back();
+	m_shader.back().Initialize(device, swapchainExtend, renderPass, descriptorSetLayout, pCallbacks);
+	return &m_shader.back();
 }
 
-void Balbino::CShaderManager::IBindShader( const uint32_t materialIndex, const VkCommandBuffer& commandBuffer ) const
+void Balbino::CShaderManager::BindShader(const uint32_t materialIndex, const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet) const
 {
-	m_shader[materialIndex]->Bind(commandBuffer);
+	if (materialIndex < m_shader.size()) {
+		m_shader[materialIndex].Bind(commandBuffer, descriptorSet);
+		
+	}
 }

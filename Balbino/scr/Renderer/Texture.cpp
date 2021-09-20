@@ -5,10 +5,10 @@
 #include  <SDL.h>
 
 Balbino::CTexture::CTexture()
-	: m_mipLevels{m_mipLevels}
-	, m_textureImage{m_textureImage}
-	, m_textureImageMemory{m_textureImageMemory}
-	, m_textureImageView{m_textureImageView}
+	: m_mipLevels{}
+	, m_textureImage{}
+	, m_textureImageMemory{}
+	, m_textureImageView{}
 {
 	
 }
@@ -17,31 +17,6 @@ Balbino::CTexture::~CTexture()
 {
 	if (m_textureImageMemory || m_textureImage || m_textureImageView)
 		std::cerr << "didn't clear Texture" << std::endl;
-}
-
-void Balbino::CTexture::operator delete(void* ptr)
-{
-	if (ptr)
-		::operator delete(ptr);
-	ptr = nullptr;
-}
-
-void Balbino::CTexture::operator delete(void* ptr, const char* filePath)
-{
-	(void) filePath;
-	if (ptr)
-		::operator delete(ptr);
-	ptr = nullptr;
-}
-void Balbino::CTexture::operator delete(void* ptr, int b, const char* f, int l, const char* filePath)
-{
-	(void) b;
-	(void) f;
-	(void) l;
-	(void) filePath;
-	if (ptr)
-		::operator delete(ptr);
-	ptr = nullptr;
 }
 
 void Balbino::CTexture::Initialize(SDL_Surface* pSurface, const VkDevice& device, const VkAllocationCallbacks* pCallbacks, const VkPhysicalDevice& physicalDevice, const VkQueue& queue, const VkCommandPool& commandPool)
@@ -74,7 +49,7 @@ void Balbino::CTexture::Initialize(SDL_Surface* pSurface, const VkDevice& device
 		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 	};
 
-	if (vkCreateImage(device, &imageInfo, nullptr, &m_textureImage) != VK_SUCCESS)
+	if (vkCreateImage(device, &imageInfo, pCallbacks, &m_textureImage) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create image!");
 	}
@@ -87,7 +62,7 @@ void Balbino::CTexture::Initialize(SDL_Surface* pSurface, const VkDevice& device
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, physicalDevice);
 
-	if (vkAllocateMemory(device, &allocInfo, nullptr, &m_textureImageMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(device, &allocInfo, pCallbacks, &m_textureImageMemory) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate image memory!");
 	}
@@ -98,8 +73,8 @@ void Balbino::CTexture::Initialize(SDL_Surface* pSurface, const VkDevice& device
 	CopyBufferToImage(stagingBuffer, m_textureImage, static_cast<uint32_t>(pSurface->w), static_cast<uint32_t>(pSurface->h), device, queue, commandPool);
 	//TransitionImageLayout(m_textureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, device, queue, commandPool);
 
-	vkDestroyBuffer(device, stagingBuffer, nullptr);
-	vkFreeMemory(device, stagingBufferMemory, nullptr);
+	vkDestroyBuffer(device, stagingBuffer, pCallbacks);
+	vkFreeMemory(device, stagingBufferMemory, pCallbacks);
 	GenerateMipmaps(VK_FORMAT_R8G8B8A8_SRGB, pSurface->w, pSurface->h, device, physicalDevice, commandPool, queue);
 
 	const VkImageViewCreateInfo viewInfo{
@@ -145,38 +120,6 @@ const VkImageView& Balbino::CTexture::GetImageView() const
 uint32_t Balbino::CTexture::GetMipLevels() const
 {
 	return m_mipLevels;
-}
-
-void* Balbino::CTexture::operator new(size_t size, const char* filePath)
-{
-	if (CTexture* pTexture = static_cast<CTexture*>(::operator new(size)))
-	{
-		CTexture* pActualTexture = CTextureManager::AddTexture(pTexture, filePath);
-
-		if (pTexture != pActualTexture)
-		{
-			delete pTexture;
-			return pActualTexture;
-		}
-		return pTexture;
-	}
-	return nullptr;
-}
-
-void* Balbino::CTexture::operator new(size_t size, int b, const char* f, int l, const char* filePath)
-{
-	if (CTexture* pTexture = static_cast<CTexture*>(::operator new(size, b, f, l)))
-	{
-		CTexture* pActualTexture = CTextureManager::AddTexture(pTexture, filePath);
-
-		if (pTexture != pActualTexture)
-		{
-			delete pTexture;
-			return pActualTexture;
-		}
-		return pTexture;
-	}
-	return nullptr;
 }
 
 uint32_t Balbino::CTexture::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, const VkPhysicalDevice& physicalDevice)

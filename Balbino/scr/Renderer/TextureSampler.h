@@ -14,13 +14,12 @@ namespace Balbino
 		CTextureSampler& operator=(CTextureSampler&&) = delete;
 
 		void Initialize( const VkDevice& device, const VkAllocationCallbacks* pCallbacks, uint32_t mipLevels );
-		void Cleanup( const VkDevice& device, const VkAllocationCallbacks* pCallbacks );
+		void Cleanup( const VkDevice& device, const VkAllocationCallbacks* pCallbacks ) const;
 
 		const VkDescriptorSetLayoutBinding& GetDescriptorLayoutBinding();
 		const VkDescriptorPoolSize& GetDescriptorPoolSize(uint32_t size);
 		const VkSampler& GetSampler();
 	private:
-		VkImageView m_textureImageView;
 		VkSampler m_textureSampler;
 
 		VkDescriptorSetLayoutBinding m_descriptorSetLayout;

@@ -4,10 +4,9 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <SDL_vulkan.h>
-#include <gtc/matrix_transform.hpp>
 #include <scr/Interface.h>
 
-#include "Camera.h"
+#include "../Camera.h"
 #include "Texture.h"
 #include "Mesh.h"
 #include "UniformBufferObject.h"
@@ -15,76 +14,78 @@
 #include "../Managers/TextureManager.h"
 #include "../Managers/ShaderManager.h"
 #include "../Managers/MeshManager.h"
+#include "../Managers/Manager.h"
 
 #if defined(_DEBUG) && !defined(BL_EDITOR)
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
 {
-	(void) flags;
-	(void) object;
-	(void) location;
-	(void) messageCode;
-	(void) pUserData;
-	(void) pLayerPrefix; // Unused arguments
-	fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\nMessage: %s\n\n", objectType, pMessage);
+	(void)flags;
+	(void)object;
+	(void)location;
+	(void)messageCode;
+	(void)pUserData;
+	(void)pLayerPrefix; // Unused arguments
+	fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\n\rMessage: %s\n\r\n\r", objectType, pMessage);
 	return VK_FALSE;
 }
 #else
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData)
 {
-	(void) flags;
-	(void) objectType;
-	(void) object;
-	(void) location;
-	(void) messageCode;
-	(void) pUserData;
-	(void) pMessage;
-	(void) pLayerPrefix; // Unused arguments
+	(void)flags;
+	(void)objectType;
+	(void)object;
+	(void)location;
+	(void)messageCode;
+	(void)pUserData;
+	(void)pMessage;
+	(void)pLayerPrefix; // Unused arguments
 	return 0;
 }
 #endif //_DEBUG && !BL_EDITOR
 
 Balbino::CRenderer::CRenderer()
-	: m_surface{nullptr}
-	, m_instance{VK_NULL_HANDLE}
-	, m_pCallback{VK_NULL_HANDLE}
-	, m_debugReport{VK_NULL_HANDLE}
-	, m_physicalDevice{VK_NULL_HANDLE}
-	, m_commandPool{VK_NULL_HANDLE}
-	, m_device{VK_NULL_HANDLE}
-	, m_queue{VK_NULL_HANDLE}
-	, m_descriptorPool{VK_NULL_HANDLE}
-	, m_pipelineCache{VK_NULL_HANDLE}
+	: m_surface{ nullptr }
+	, m_instance{ VK_NULL_HANDLE }
+	, m_pCallback{ VK_NULL_HANDLE }
+	, m_debugReport{ VK_NULL_HANDLE }
+	, m_physicalDevice{ VK_NULL_HANDLE }
+	, m_commandPool{ VK_NULL_HANDLE }
+	, m_device{ VK_NULL_HANDLE }
+	, m_queue{ VK_NULL_HANDLE }
+	, m_descriptorPool{ VK_NULL_HANDLE }
+	, m_pipelineCache{ VK_NULL_HANDLE }
 	, m_commandBuffers{}
 	, m_frameFences{}
 	, m_imageAvailableSemaphores{}
-	, m_queueFamily{static_cast<uint32_t>(-1)}
+	, m_queueFamily{ static_cast<uint32_t>(-1) }
 	, m_renderFinishedSemaphores{}
-	, m_minImageCount{2}
-	, m_frameIndex{0}
-	, m_width{0}
-	, m_height{0}
-	, m_imageCount{0}
-	, m_swapChainRebuild{false}
-	, m_swapchain{VK_NULL_HANDLE}
-	, m_renderPass{VK_NULL_HANDLE}
+	, m_minImageCount{ 2 }
+	, m_frameIndex{ 0 }
+	, m_width{ 0 }
+	, m_height{ 0 }
+	, m_imageCount{ 0 }
+	, m_swapChainRebuild{ false }
+	, m_swapchain{ VK_NULL_HANDLE }
+	, m_renderPass{ VK_NULL_HANDLE }
 	, m_surfaceFormat{}
 	, m_presentMode{}
 	, m_swapchainExtent{}
 	, m_surfaceCapabilities{}
 	, m_images{}
-	, m_descriptorSetLayout{VK_NULL_HANDLE}
+	, m_descriptorSetLayout{ VK_NULL_HANDLE }
 #ifdef  BL_EDITOR
-	, m_pInterface{nullptr}
+	, m_pInterface{ nullptr }
 #endif
 {
 }
 
 void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, const uint32_t extensionsCount)
 {
-	(void) pWindow;
-	CTextureManager::GetInstance().SetRenderer(this);
-	CShaderManager::GetInstance().SetRenderer(this);
-	CMeshManager::GetInstance().SetRenderer(this);
+	(void)pWindow;
+	CManager::GetCameraManager()->SetRenderer(this);
+	CManager::GetMeshManager()->SetRenderer(this);
+	CManager::GetShaderManager()->SetRenderer(this);
+	CManager::GetTextureManager()->SetRenderer(this);
 	SetupVulkan(extensions, extensionsCount);
 	SetupVulkanWindow(pWindow);
 #if BL_EDITOR
@@ -157,21 +158,21 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 	{
 		VkFormat depthFormat = FindDepthFormat();
 
-		VkImageCreateInfo imageInfo{};
-		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageInfo.extent = {m_swapchainExtent.width, m_swapchainExtent.height, 1};
-		imageInfo.extent.depth = 1;
-		imageInfo.mipLevels = 1;
-		imageInfo.arrayLayers = 1;
-		imageInfo.format = depthFormat;
-		imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-		imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		const VkImageCreateInfo imageInfo{
+			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+			.imageType = VK_IMAGE_TYPE_2D,
+			.format = depthFormat,
+			.extent = {m_swapchainExtent.width, m_swapchainExtent.height, 1},
+			.mipLevels = 1,
+			.arrayLayers = 1,
+			.samples = VK_SAMPLE_COUNT_1_BIT,
+			.tiling = VK_IMAGE_TILING_OPTIMAL,
+			.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		};
 
-		if (vkCreateImage(m_device, &imageInfo, nullptr, &m_depthImage) != VK_SUCCESS)
+		if (vkCreateImage(m_device, &imageInfo, m_pCallback, &m_depthImage) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create image!");
 		}
@@ -184,8 +185,7 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 		allocInfo.allocationSize = memRequirements.size;
 		allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-		if (vkAllocateMemory(m_device, &allocInfo, nullptr, &m_depthImageMemory) != VK_SUCCESS)
-		{
+		if (vkAllocateMemory(m_device, &allocInfo, m_pCallback, &m_depthImageMemory) != VK_SUCCESS) {
 			throw std::runtime_error("failed to allocate image memory!");
 		}
 
@@ -201,10 +201,11 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 				.baseMipLevel = 0,
 				.levelCount = 1,
 				.baseArrayLayer = 0,
-				.layerCount = 1
+				.layerCount = 1,
 			},
 		};
-		if (vkCreateImageView(m_device, &viewInfo, nullptr, &m_depthImageView) != VK_SUCCESS)
+
+		if (vkCreateImageView(m_device, &viewInfo, m_pCallback, &m_depthImageView) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create texture image view!");
 		}
@@ -222,7 +223,7 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 			const VkFramebufferCreateInfo framebufferInfo{
 				.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 				.renderPass = m_renderPass,
-				.attachmentCount = (uint32_t) std::size(attachments),
+				.attachmentCount = static_cast<uint32_t>(std::size(attachments)),
 				.pAttachments = attachments,
 				.width = m_swapchainExtent.width,
 				.height = m_swapchainExtent.height,
@@ -261,11 +262,12 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 			throw std::runtime_error("failed to create descriptor set layout!");
 		}
 	}
-	//todo: replace with manager stuff
-	//m_pTexture = new(_NORMAL_BLOCK, __FILE__, __LINE__, "../Resources/Textures/UVMS1_colorgrid.png") CTexture;
-	m_pTexture = DBG_NEW("../Resources/Textures/UVMS1_colorgrid.png") CTexture;
-	m_textureSampler.Initialize(m_device, m_pCallback, m_pTexture->GetMipLevels() );
-	m_pMesh = DBG_NEW("../Resources/Models/Cube.ply")CMesh;
+	//todo: move this to "Game" and replace it with Initialize;
+	CTexture* pTexture{ CManager::GetTextureManager()->AddTexture("../Resources/Textures/UVMS1_colorgrid.png") };
+	m_textureSampler.Initialize(m_device, m_pCallback, pTexture->GetMipLevels());
+	//CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.ply");
+	//CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.obj");
+	CManager::GetMeshManager()->AddMesh("../Resources/Models/sponza.obj");
 	//Create Uniform Buffers
 	{
 		const VkDeviceSize bufferSize = sizeof(SUniformBufferObject);
@@ -324,7 +326,7 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 
 			VkDescriptorImageInfo imageInfo{};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = m_pTexture->GetImageView();
+			imageInfo.imageView = pTexture->GetImageView();
 			imageInfo.sampler = m_textureSampler.GetSampler();
 
 			std::vector<VkWriteDescriptorSet> descriptorWrites{
@@ -354,7 +356,8 @@ void Balbino::CRenderer::Setup(SDL_Window* pWindow, const char** extensions, con
 			vkUpdateDescriptorSets(m_device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}
 	}
-	m_pShader = DBG_NEW() CShader {};
+	CManager::GetShaderManager()->AddShader();
+
 }
 
 void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t extensionsCount)
@@ -366,19 +369,19 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 			.enabledExtensionCount = extensionsCount,
 			.ppEnabledExtensionNames = extensions,
 		};
-		VkResult err{VK_ERROR_INITIALIZATION_FAILED};
+		VkResult err{ VK_ERROR_INITIALIZATION_FAILED };
 #if defined(_DEBUG)
 #if defined(BL_EDITOR)
 		m_pInterface->SetupVulkan(extensions, extensionsCount, createInfo, m_instance, m_pCallback, m_debugReport);
 #else
 
 		// Enabling validation layers
-		const char* layers[]{"VK_LAYER_KHRONOS_validation"};
+		const char* layers[]{ "VK_LAYER_KHRONOS_validation" };
 		createInfo.enabledLayerCount = 1;
 		createInfo.ppEnabledLayerNames = layers;
 
 		// Enable debug report extension (we need additional storage, so we duplicate the user array to add our new extension to it)
-		const auto extensionsExt{static_cast<const char**>(malloc(sizeof(const char*) * (extensionsCount + 1)))};
+		const auto extensionsExt{ static_cast<const char**>(malloc(sizeof(const char*) * (extensionsCount + 1))) };
 		memcpy(extensionsExt, extensions, extensionsCount * sizeof(const char*));
 		extensionsExt[extensionsCount] = "VK_EXT_debug_report";
 		createInfo.enabledExtensionCount = extensionsCount + 1;
@@ -416,13 +419,13 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 	{
 		uint32_t gpuCount;
 		CheckVkResult(vkEnumeratePhysicalDevices(m_instance, &gpuCount, nullptr));
-		VkPhysicalDevice* pGpus{static_cast<VkPhysicalDevice*>(malloc(sizeof(VkPhysicalDevice) * gpuCount))};
+		VkPhysicalDevice* pGpus{ static_cast<VkPhysicalDevice*>(malloc(sizeof(VkPhysicalDevice) * gpuCount)) };
 		CheckVkResult(vkEnumeratePhysicalDevices(m_instance, &gpuCount, pGpus));
 
 		// If a number >1 of GPUs got reported, find discrete GPU if present, or use first one available. This covers
 		// most common cases (multi-gpu/integrated+dedicated graphics). Handling more complicated setups (multiple
 		// dedicated GPUs) is out of scope of this sample.
-		int useGpu{0};
+		int useGpu{ 0 };
 		for (int i = 0; i < static_cast<int>(gpuCount); i++)
 		{
 			VkPhysicalDeviceProperties properties;
@@ -442,7 +445,7 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 	{
 		uint32_t count;
 		vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &count, nullptr);
-		VkQueueFamilyProperties* queues{static_cast<VkQueueFamilyProperties*>(malloc(sizeof(VkQueueFamilyProperties) * count))};
+		VkQueueFamilyProperties* queues{ static_cast<VkQueueFamilyProperties*>(malloc(sizeof(VkQueueFamilyProperties) * count)) };
 		vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &count, queues);
 		for (uint32_t i = 0; i < count; i++)
 			if (queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
@@ -455,9 +458,9 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 
 	// Create Logical Device (with 1 queue)
 	{
-		constexpr int deviceExtensionCount{1};
-		const char* deviceExtensions[]{"VK_KHR_swapchain"};
-		const float queuePriority[]{1.0f};
+		constexpr int deviceExtensionCount{ 1 };
+		const char* deviceExtensions[]{ "VK_KHR_swapchain" };
+		const float queuePriority[]{ 1.0f };
 		const VkDeviceQueueCreateInfo queueInfo[1]{
 			{
 				.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -480,7 +483,7 @@ void Balbino::CRenderer::SetupVulkan(const char** extensions, const uint32_t ext
 
 void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 {
-	(void) pWindow;
+	(void)pWindow;
 	if (SDL_Vulkan_CreateSurface(pWindow, m_instance, &m_surface) == 0)
 	{
 		throw std::runtime_error("Failed to create Vulkan surface.\n");
@@ -501,7 +504,7 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 		//Use first available format
 		uint32_t formatCount = 1;
 		VkPresentModeKHR presentModes[MAX_PRESENT_MODE_COUNT]{};
-		VkPresentModeKHR presentMode{VK_PRESENT_MODE_FIFO_KHR}; // always supported.
+		VkPresentModeKHR presentMode{ VK_PRESENT_MODE_FIFO_KHR }; // always supported.
 
 		CheckVkResult(vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, m_queueFamily, m_surface, &supportsPresent));
 		CheckVkResult(vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &formatCount, nullptr)); // suppress validation layer
@@ -599,10 +602,10 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 			.srcAccessMask = 0,
 			.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
 		};
-		const std::array<VkAttachmentDescription, 2> attachments{colorAttachment, depthAttachment};
+		const std::array<VkAttachmentDescription, 2> attachments{ colorAttachment, depthAttachment };
 		const VkRenderPassCreateInfo renderPassInfo{
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-			.attachmentCount = (uint32_t) attachments.size(),
+			.attachmentCount = static_cast<uint32_t>(attachments.size()),
 			.pAttachments = attachments.data(),
 			.subpassCount = 1,
 			.pSubpasses = &subpass,
@@ -620,10 +623,12 @@ void Balbino::CRenderer::SetupVulkanWindow(SDL_Window* pWindow)
 void Balbino::CRenderer::Cleanup()
 {
 	vkDeviceWaitIdle(m_device);
-	m_pMesh->Cleanup(m_device, m_pCallback);
-	CTextureManager::GetInstance().Cleanup(m_device, m_pCallback);
-	CShaderManager::GetInstance().Cleanup(m_device, m_pCallback);
+	//m_pMesh->Cleanup(m_device, m_pCallback);
+	CManager::GetMeshManager()->Cleanup(m_device, m_pCallback);
+	CManager::GetTextureManager()->Cleanup(m_device, m_pCallback);
+	CManager::GetShaderManager()->Cleanup(m_device, m_pCallback);
 	m_textureSampler.Cleanup(m_device, m_pCallback);
+
 	//vkFreeDescriptorSets(m_device, m_descriptorPool, (uint32_t) m_descriptorSets.size(), m_descriptorSets.data());
 	for (const VkFramebuffer framebuffer : m_framebuffers)
 		vkDestroyFramebuffer(m_device, framebuffer, m_pCallback);
@@ -643,7 +648,7 @@ void Balbino::CRenderer::Cleanup()
 		vkDestroySemaphore(m_device, semaphore, m_pCallback);
 	for (const VkSemaphore& semaphore : m_imageAvailableSemaphores)
 		vkDestroySemaphore(m_device, semaphore, m_pCallback);
-	vkFreeCommandBuffers(m_device, m_commandPool, (uint32_t) std::size(m_commandBuffers), m_commandBuffers);
+	vkFreeCommandBuffers(m_device, m_commandPool, static_cast<uint32_t>(std::size(m_commandBuffers)), m_commandBuffers);
 	vkDestroyCommandPool(m_device, m_commandPool, m_pCallback);
 
 	vkDestroyImageView(m_device, m_depthImageView, m_pCallback);
@@ -654,6 +659,11 @@ void Balbino::CRenderer::Cleanup()
 #endif
 	CleanupVulkanWindow();
 	CleanupVulkan();
+}
+
+float Balbino::CRenderer::GetAspectRatio() const
+{
+	return static_cast<float>(m_swapchainExtent.width) / static_cast<float>(m_swapchainExtent.height);;
 }
 
 bool Balbino::CRenderer::GetDevice(VkDevice& device) const
@@ -742,9 +752,9 @@ void Balbino::CRenderer::CheckVkResult(VkResult err)
 		abort();
 }
 
-void Balbino::CRenderer::Draw(SDL_Window* pWindow, float dt)
+void Balbino::CRenderer::Draw(SDL_Window* pWindow)
 {
-	(void) pWindow;
+	(void)pWindow;
 #if BL_EDITOR
 	m_pInterface->ResizeSwapChain(pWindow, m_instance, m_physicalDevice, m_device, m_queueFamily, m_pCallback, m_minImageCount);
 	m_pInterface->DrawStart(pWindow);
@@ -754,10 +764,11 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow, float dt)
 	m_pInterface->Draw();
 	m_pInterface->Render(m_device, m_queue);
 #else
-	const std::vector<CCamera*>& allCameras{CCameraManager::GetCameras()};
+	CCameraManager* pCameraManager{ CManager::GetCameraManager() };
+	const std::vector<CCamera>& allCameras{ pCameraManager->GetCameras() };
 	if (allCameras.size())
 	{
-		const uint32_t index{(m_frameIndex++) % FRAME_COUNT};
+		const uint32_t index{ (m_frameIndex++) % FRAME_COUNT };
 		CheckVkResult(vkWaitForFences(m_device, 1, &m_frameFences[index], VK_TRUE, UINT64_MAX));
 		CheckVkResult(vkResetFences(m_device, 1, &m_frameFences[index]));
 
@@ -783,14 +794,15 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow, float dt)
 		vkBeginCommandBuffer(m_commandBuffers[index], &beginInfo);
 
 		vkCmdBeginRenderPass(m_commandBuffers[index], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-		vkCmdBindDescriptorSets(m_commandBuffers[index], VK_PIPELINE_BIND_POINT_GRAPHICS, m_pShader->GetPipelineLayout(), 0, 1, &m_descriptorSets[index], 0, nullptr);
+		vkCmdBindDescriptorSets(m_commandBuffers[index], VK_PIPELINE_BIND_POINT_GRAPHICS, CManager::GetShaderManager()->GetShaders()[0].GetPipelineLayout(), 0, 1, &m_descriptorSets[index], 0, nullptr);
 
-		SUniformBufferObject ubo{
-			.model = glm::rotate(glm::mat4(1.0f), dt * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
-			.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
-			.projection = glm::perspective(glm::radians(45.0f), m_swapchainExtent.width / static_cast<float>(m_swapchainExtent.height), 0.01f, 1000.0f ),
+		const SUniformBufferObject ubo{
+			.model = glm::mat4(1),
+			.view = allCameras[0].GetViewBuffer(),
+			.projection = allCameras[0].GetProjection(),
+			//.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)),
+			//.projection = glm::perspective(glm::radians(45.0f), m_swapchainExtent.width / static_cast<float>(m_swapchainExtent.height), 0.01f, 1000.0f ),
 		};
-		ubo.projection[1][1] *= -1;
 
 		void* data;
 		vkMapMemory(m_device, m_uniformBuffersMemory[index], 0, sizeof(ubo), 0, &data);
@@ -798,13 +810,12 @@ void Balbino::CRenderer::Draw(SDL_Window* pWindow, float dt)
 		vkUnmapMemory(m_device, m_uniformBuffersMemory[index]);
 
 		//todo: draw things
-		m_pShader->Bind(m_commandBuffers[index]);
-		m_pMesh->Draw(m_commandBuffers[index]);
+		CManager::GetMeshManager()->Draw(m_commandBuffers[index], &m_descriptorSets[index]);
 
 		vkCmdEndRenderPass(m_commandBuffers[index]);
 		vkEndCommandBuffer(m_commandBuffers[index]);
 
-		const VkPipelineStageFlags pipelineStageFlags[]{VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+		const VkPipelineStageFlags pipelineStageFlags[]{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 		const VkSubmitInfo submitInfo
 		{
 			.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -839,7 +850,7 @@ void Balbino::CRenderer::CreateBuffer(const VkDeviceSize size, const VkBufferUsa
 	bufferInfo.usage = usage;
 	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(m_device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
+	if (vkCreateBuffer(m_device, &bufferInfo, m_pCallback, &buffer) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to create buffer!");
 	}
@@ -852,7 +863,7 @@ void Balbino::CRenderer::CreateBuffer(const VkDeviceSize size, const VkBufferUsa
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
 
-	if (vkAllocateMemory(m_device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
+	if (vkAllocateMemory(m_device, &allocInfo, m_pCallback, &bufferMemory) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to allocate buffer memory!");
 	}
@@ -929,7 +940,7 @@ VkFormat Balbino::CRenderer::FindSupportedFormat(const std::vector<VkFormat>& ca
 VkFormat Balbino::CRenderer::FindDepthFormat()
 {
 	return FindSupportedFormat(
-		{VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+		{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
 	);

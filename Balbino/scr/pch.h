@@ -4,9 +4,9 @@
 #include <crtdbg.h>
 #include <cstdlib>
 
-#define DBG_NEW(...) new( _NORMAL_BLOCK ,  __FILE__ ,  __LINE__, ## __VA_ARGS__)
+#define DBG_NEW new( _NORMAL_BLOCK ,  __FILE__ ,  __LINE__ )
 #else
-#define DBG_NEW(...) new(## __VA_ARGS__)
+#define DBG_NEW new
 #endif // _DEBUG
 
 // SDL libs
@@ -23,18 +23,21 @@
 #pragma comment(lib, "SDL2_mixer.lib")  
 
 // SDL and OpenGL Includes
-#include <cstdio>
-#include <iostream> // std::cout
-#include <memory> // smart pointers
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h> 
 #include <SDL_opengl.h>
 #include <SDL_ttf.h> 
+
+#include <gl/GLU.h>
+
+#include <algorithm>
+#include <cstdio>
+#include <iostream> // std::cout
+#include <memory> // smart pointers
 #include <sstream> // stringstream
 #include <string>
 #include <vector>
-#include <gl/GLU.h>
 
 //#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>

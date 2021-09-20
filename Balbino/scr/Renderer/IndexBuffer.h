@@ -13,7 +13,8 @@ namespace Balbino
 		CIndexBuffer& operator=(const CIndexBuffer&) = delete;
 		CIndexBuffer& operator=(CIndexBuffer&&) = delete;
 
-		void Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const std::vector<uint16_t>& indices, const VkAllocationCallbacks* pCallback);
+		void Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const
+		                std::vector<uint32_t>& indices, const VkAllocationCallbacks* pCallback);
 		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAlloc);
 		void Bind(const VkCommandBuffer& commandBuffer) const;
 	private:

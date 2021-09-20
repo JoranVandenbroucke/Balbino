@@ -39,7 +39,7 @@
     <ClInclude Include="scr\Renderer\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Renderer\Camera.h">
+    <ClInclude Include="scr\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scr\Managers\CameraManager.h">
@@ -75,10 +75,19 @@
     <ClInclude Include="scr\Managers\TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Renderer\MeshMaterialData.h">
+    <ClInclude Include="scr\Managers\MeshManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scr\Managers\MeshManager.h">
+    <ClInclude Include="scr\Input\InputHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Input\InputButtons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Managers\Manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Renderer\MeshMetadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,7 +107,7 @@
     <ClCompile Include="scr\Renderer\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scr\Renderer\Camera.cpp">
+    <ClCompile Include="scr\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\Managers\CameraManager.cpp">
@@ -129,6 +138,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="scr\Managers\MeshManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Input\InputHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Input\InputButtons.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Managers\Manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

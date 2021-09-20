@@ -10,8 +10,8 @@
 #include "../Managers/ShaderManager.h"
 
 Balbino::CShader::CShader()
-	: m_pipelineLayout{m_pipelineLayout}
-	, m_pipeline{m_pipeline}
+	: m_pipelineLayout{}
+	, m_pipeline{}
 {
 }
 
@@ -21,36 +21,10 @@ Balbino::CShader::~CShader()
 		std::cerr << "index buffer was not destroyed" << std::endl;
 }
 
-void* Balbino::CShader::operator new(size_t size)
+Balbino::CShader::CShader(CShader&& other) noexcept
 {
-	if (CShader* pTexture = static_cast<CShader*>(::operator new(size)))
-	{
-		CShaderManager::AddShader(pTexture);
-
-		return pTexture;
-	}
-	return nullptr;
-}
-
-void* Balbino::CShader::operator new(size_t size, int b, const char* f, int l)
-{
-	if (CShader* pTexture = static_cast<CShader*>(::operator new(size, b, f, l)))
-	{
-		CShaderManager::AddShader(pTexture);
-
-		return pTexture;
-	}
-	return nullptr;
-}
-
-void Balbino::CShader::operator delete(void* ptr)
-{
-	::operator delete(ptr);
-}
-
-void Balbino::CShader::operator delete(void* ptr, int b, const char* f, int l)
-{
-	::operator delete(ptr, b, f, l);
+	this->m_pipeline = other.m_pipeline;
+	this->m_pipelineLayout = other.m_pipelineLayout;
 }
 
 void Balbino::CShader::Initialize(const VkDevice& device, const VkExtent2D& swapChainExtent, const VkRenderPass& renderPass, VkDescriptorSetLayout& descriptorSetLayout, const VkAllocationCallbacks* callbacks)
@@ -185,8 +159,8 @@ void Balbino::CShader::Initialize(const VkDevice& device, const VkExtent2D& swap
 		throw std::runtime_error("failed to create graphics pipeline!");
 	}
 
-	vkDestroyShaderModule(device, fragShaderModule, nullptr);
-	vkDestroyShaderModule(device, vertShaderModule, nullptr);
+	vkDestroyShaderModule(device, fragShaderModule, callbacks);
+	vkDestroyShaderModule(device, vertShaderModule, callbacks);
 }
 
 void Balbino::CShader::Cleanup(const VkDevice& device, const VkAllocationCallbacks* callbacks)
@@ -198,9 +172,10 @@ void Balbino::CShader::Cleanup(const VkDevice& device, const VkAllocationCallbac
 	m_pipelineLayout = VK_NULL_HANDLE;
 }
 
-void Balbino::CShader::Bind(const VkCommandBuffer& commandBuffer) const
+void Balbino::CShader::Bind(const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet) const
 {
 	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, descriptorSet, 0, nullptr);
 }
 
 const VkPipelineLayout& Balbino::CShader::GetPipelineLayout() const

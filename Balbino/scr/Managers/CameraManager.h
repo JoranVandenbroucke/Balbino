@@ -1,21 +1,15 @@
 #pragma once
-#include "Singleton.h"
-
 #include <vector>
+#include <glm.hpp>
+#include "../Camera.h"
 
 namespace Balbino
 {
-	class CCamera;
+	class CRenderer;
 
-	class CCameraManager final : public CSingleton<CCameraManager>
+	class CCameraManager final
 	{
 	public:
-		static const CCamera* GetMainCamera();
-		static const std::vector<CCamera*>& GetCameras();
-		void AddCamera( CCamera* cam );
-		void Cleanup();
-	private:
-		friend CSingleton<CCameraManager>;
 		CCameraManager();
 		virtual ~CCameraManager();
 		CCameraManager( const CCameraManager& ) = delete;
@@ -23,12 +17,19 @@ namespace Balbino
 		CCameraManager& operator=( const CCameraManager& ) = delete;
 		CCameraManager& operator=( CCameraManager&& ) = delete;
 
-		const CCamera* IGetMainCamera() const;
-		const std::vector<CCamera*>& IGetCameras() const;
+		void Update(float deltaTime) const;
+		CCamera* AddCamera(const glm::vec3& pos = {0.0f,0.0f,0.0f}, float xAngle = 0, float yAngle = 0);
+		void SetRenderer(const CRenderer* renderer);
+		void Cleanup();
+
+		const CCamera* GetMainCamera() const;
+		const std::vector<CCamera>& GetCameras() const;
+	private:
 
 		void SortList();
 
 		CCamera* m_pMainCamera;
-		std::vector<CCamera*> m_Cameras;
+		const CRenderer* m_pRenderer;
+		std::vector<CCamera> m_cameras;
 	};
 }

@@ -5,8 +5,8 @@
 #include <vector>
 
 Balbino::CVertexBuffer::CVertexBuffer()
-	: m_vertexBuffer{m_vertexBuffer}
-	, m_vertexBufferMemory{m_vertexBufferMemory}
+	: m_vertexBuffer{}
+	, m_vertexBufferMemory{}
 {
 }
 
@@ -18,37 +18,6 @@ Balbino::CVertexBuffer::~CVertexBuffer()
 
 void Balbino::CVertexBuffer::Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const std::vector<SVertex>& vertices, const VkAllocationCallbacks* pCallback)
 {
-	//VkBufferCreateInfo bufferInfo{};
-	//bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	//bufferInfo.size = sizeof(vertices[0]) * vertices.size();
-	//bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-	//bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	//
-	//if (vkCreateBuffer(device, &bufferInfo, nullptr, &m_vertexBuffer) != VK_SUCCESS)
-	//{
-	//    throw std::runtime_error("failed to create vertex buffer!");
-	//}
-	//
-	//VkMemoryRequirements memRequirements;
-	//vkGetBufferMemoryRequirements(device, m_vertexBuffer, &memRequirements);
-	//
-	//VkMemoryAllocateInfo allocInfo{};
-	//allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	//allocInfo.allocationSize = memRequirements.size;
-	//allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, physicalDevice);
-	//
-	//if (vkAllocateMemory(device, &allocInfo, nullptr, &m_vertexBufferMemory) != VK_SUCCESS)
-	//{
-	//    throw std::runtime_error("failed to allocate vertex buffer memory!");
-	//}
-	//
-	//vkBindBufferMemory(device, m_vertexBuffer, m_vertexBufferMemory, 0);
-	//
-	//void* data;
-	//vkMapMemory(device, m_vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-	//memcpy(data, vertices.data(), (size_t) bufferInfo.size);
-	//vkUnmapMemory(device, m_vertexBufferMemory);
-
 	VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
 
 	VkBuffer stagingBuffer;
@@ -64,8 +33,8 @@ void Balbino::CVertexBuffer::Initialize(const VkDevice& device, const VkCommandP
 
 	CopyBuffer(device, commandPool, queue, stagingBuffer, m_vertexBuffer, bufferSize);
 
-	vkDestroyBuffer(device, stagingBuffer, nullptr);
-	vkFreeMemory(device, stagingBufferMemory, nullptr);
+	vkDestroyBuffer(device, stagingBuffer, pCallback);
+	vkFreeMemory(device, stagingBufferMemory, pCallback);
 }
 void  Balbino::CVertexBuffer::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAlloc)
 {

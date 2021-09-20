@@ -2,8 +2,7 @@
 #include "TextureSampler.h"
 
 Balbino::CTextureSampler::CTextureSampler()
-	: m_textureImageView{ VK_NULL_HANDLE }
-	, m_textureSampler{ VK_NULL_HANDLE }
+	: m_textureSampler{ VK_NULL_HANDLE }
 	, m_descriptorSetLayout{}
 	, m_descriptorPoolSize{}
 {
@@ -42,10 +41,9 @@ void Balbino::CTextureSampler::Initialize( const VkDevice& device, const VkAlloc
 	m_descriptorPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 }
 
-void Balbino::CTextureSampler::Cleanup( const VkDevice& device, const VkAllocationCallbacks* pCallbacks )
+void Balbino::CTextureSampler::Cleanup( const VkDevice& device, const VkAllocationCallbacks* pCallbacks ) const
 {
 	vkDestroySampler( device, m_textureSampler, pCallbacks );
-	vkDestroyImageView( device, m_textureImageView, pCallbacks );
 }
 
 const VkDescriptorSetLayoutBinding& Balbino::CTextureSampler::GetDescriptorLayoutBinding()

@@ -1,6 +1,5 @@
 #pragma once
 #include "pch.h"
-//#include "vld.h"
 
 #ifdef BL_PLATFORM_WINDOWS
 //#define _CRTDBG_MAP_ALLOC
@@ -41,7 +40,7 @@ int main( int arc, char* argv[] )
 
 	DumpMemoryLeaks();
 #endif // _DEBUG
-
+	//std::cin.get();
 	return 0;
 }
 
@@ -55,7 +54,7 @@ inline void StartHeapControl()
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 	_CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_DEBUG );
 	// Set a breakpoint on the specified object allocation order number
-	//_CrtSetBreakAlloc(354);
+	//_CrtSetBreakAlloc(2527);
 #endif
 }
 

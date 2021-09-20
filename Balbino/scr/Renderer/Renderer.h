@@ -34,7 +34,7 @@ namespace Balbino
 
 		void Cleanup();
 
-		void Draw( SDL_Window* pWindow, float dt);
+		void Draw( SDL_Window* pWindow);
 		void CreateBuffer( VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory );
 		uint32_t FindMemoryType( uint32_t typeFilter, VkMemoryPropertyFlags properties ) const;
 
@@ -46,6 +46,7 @@ namespace Balbino
 		PFN_vkDestroyDebugReportCallbackEXT vkpfn_DestroyDebugReportCallbackEXT = nullptr;
 #endif
 
+		float GetAspectRatio() const;
 		bool GetDevice(VkDevice& device) const;
 		bool GetAllocationCallbacks(VkAllocationCallbacks*& pAlloc) const;
 		bool GetPhysicalDevice(VkPhysicalDevice& physicalDevice) const;
@@ -58,10 +59,7 @@ namespace Balbino
 		VkFormat FindDepthFormat();
 
 	private:
-		CMesh* m_pMesh;
-		CShader* m_pShader;
 		CTextureSampler m_textureSampler;
-		CTexture* m_pTexture;
 
 		VkSurfaceKHR m_surface;
 		VkInstance m_instance;

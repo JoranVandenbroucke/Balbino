@@ -8,17 +8,6 @@
 #include <SDL_image.h>
 
 #include "../Renderer/Renderer.h"
-#include "../Renderer/Texture.h"
-
-Balbino::CTexture* Balbino::CTextureManager::AddTexture(Balbino::CTexture* pTexture, const std::string& filePath)
-{
-	return GetInstance().IAddTexture(pTexture, filePath.c_str());
-}
-
-Balbino::CTexture* Balbino::CTextureManager::AddTexture(CTexture* pTexture, const char* filePath)
-{
-	return GetInstance().IAddTexture(pTexture, filePath);
-}
 
 void Balbino::CTextureManager::Initialize( CRenderer* pRenderer )
 {
@@ -26,10 +15,9 @@ void Balbino::CTextureManager::Initialize( CRenderer* pRenderer )
 }
 void Balbino::CTextureManager::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAllocator)
 {
-	for ( const auto texture : m_textures )
+	for ( auto& texture : m_textures )
 	{
-		texture.second->Cleanup(device, pAllocator);
-		delete texture.second;
+		texture.second.Cleanup(device, pAllocator);
 	}
 	m_textures.clear();
 
@@ -51,12 +39,12 @@ Balbino::CTextureManager::~CTextureManager()
 		std::cerr << "Texture Manager not cleared" << std::endl;
 };
 
-Balbino::CTexture* Balbino::CTextureManager::IAddTexture(Balbino::CTexture* pTexture, const char* filePath)
+Balbino::CTexture* Balbino::CTextureManager::AddTexture( const char* filePath)
 {
 	const std::filesystem::path path(std::filesystem::absolute(filePath));
 	const uint32_t hash = static_cast<uint32_t>(std::hash<std::string>{}(path.relative_path().string()));
 	if (m_textures.find(hash) != m_textures.end())
-		return m_textures[hash];
+		return &m_textures[hash];
 
 	std::ifstream fileChecker{path};
 	if (!fileChecker.is_open())
@@ -82,7 +70,8 @@ Balbino::CTexture* Balbino::CTextureManager::IAddTexture(Balbino::CTexture* pTex
 	m_pRenderer->GetQueue(queue);
 	m_pRenderer->GetCommandPool(commandPool);
 
-	pTexture->Initialize(pSurface, device, pCallbacks, physicalDevice, queue, commandPool);
+	const auto& pTexture = m_textures.try_emplace(hash);
+	pTexture.first->second.Initialize(pSurface, device, pCallbacks, physicalDevice, queue, commandPool);
 	SDL_free(pSurface);
-	return m_textures[hash] = pTexture;
+	return &pTexture.first->second;
 }

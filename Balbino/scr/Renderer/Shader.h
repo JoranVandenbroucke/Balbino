@@ -9,22 +9,14 @@ namespace Balbino
 		CShader();
 		~CShader();
 		CShader(const CShader&)=delete;
-		CShader(CShader&&)=delete;
+		CShader(CShader&&) noexcept;
 		CShader& operator=(const CShader&)=delete;
 		CShader& operator=(CShader&&)=delete;
-
-		void* operator new(size_t size);
-		void* operator new(size_t size, int b, const char* f, int l);
-		void* operator new[](size_t size) = delete;
-
-		void operator delete(void* ptr);
-		void operator delete(void* ptr, int b, const char* f, int l);
-		void operator delete[](void* ptr) = delete;
 
 		//https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics/Shader_modules
 		void Initialize( const VkDevice& device, const VkExtent2D& swapChainExtent, const VkRenderPass& renderPass, VkDescriptorSetLayout& descriptorSetLayout, const VkAllocationCallbacks* callbacks);
 		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* callbacks);
-		void Bind(const VkCommandBuffer& commandBuffer) const;
+		void Bind(const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet) const;
 		const VkPipelineLayout& GetPipelineLayout()const;
 		VkPipeline GetPipeline() const;
 

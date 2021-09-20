@@ -16,7 +16,7 @@ Balbino::CIndexBuffer::~CIndexBuffer()
 		std::cerr << "index buffer was not destroyed" << std::endl;
 }
 
-void Balbino::CIndexBuffer::Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const std::vector<uint16_t>& indices, const VkAllocationCallbacks* pCallback)
+void Balbino::CIndexBuffer::Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const std::vector<uint32_t>& indices, const VkAllocationCallbacks* pCallback)
 {
 	VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
 
@@ -47,7 +47,7 @@ void Balbino::CIndexBuffer::Cleanup(const VkDevice& device, const VkAllocationCa
 
 void Balbino::CIndexBuffer::Bind(const VkCommandBuffer& commandBuffer) const
 {
-	vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+	vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
 void Balbino::CIndexBuffer::CopyBuffer(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkBuffer& srcBuffer, const VkBuffer& dstBuffer, VkDeviceSize& size)

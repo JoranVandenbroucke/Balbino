@@ -15,16 +15,6 @@ namespace Balbino
 		CTexture& operator=(const CTexture&) = delete;
 		CTexture& operator=(CTexture&&) = delete;
 
-		void* operator new(size_t size, const char* filePath);
-		void* operator new(size_t size, int b, const char* f, int l, const char* filePath);
-		void* operator new(size_t size) = delete;
-		void* operator new[](size_t size) = delete;
-		
-		void operator delete(void* ptr);
-		void operator delete(void* ptr, const char* filePath);
-		void operator delete(void* ptr, int b, const char* f, int l, const char* filePath);
-		void operator delete[](void* ptr) = delete;
-
 		void Initialize(SDL_Surface* pSurface, const VkDevice& device, const VkAllocationCallbacks* pCallbacks, const VkPhysicalDevice& physicalDevice, const VkQueue& queue, const VkCommandPool& commandPool);
 		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* pCallbacks);
 
