@@ -1,12 +1,11 @@
 #pragma once
 #include <unordered_map>
-#include <vulkan/vulkan.h>
+#include "../Core.h"
 #include "../Renderer/Mesh.h"
 
 namespace Balbino
 {
-	class CRenderer;
-
+	class CMesh;
 	class CMeshManager final
 	{
 	public:
@@ -17,14 +16,11 @@ namespace Balbino
 		CMeshManager& operator=(const CMeshManager&) = delete;
 		CMeshManager& operator=(CMeshManager&&) = delete;
 
-		void Initialize(CRenderer* pRenderer);
-		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAllocator);
-		void SetRenderer(CRenderer* pRenderer);
-		void Draw(const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet);
-		CMesh* AddMesh(const char* filePath);
+		void Initialize( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue );
+		void Cleanup();
+		void Draw( BalVulkan::CCommandPool* pCommandPool );
+		BALBINO_API CMesh* AddMesh(const char* filePath);
 	private:
-		CRenderer* m_pRenderer;
 		std::unordered_map<uint32_t, CMesh> m_meshes;
 	};
 }
-

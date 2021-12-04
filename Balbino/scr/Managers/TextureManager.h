@@ -1,11 +1,15 @@
 #pragma once
-#include <unordered_map>
-#include <vulkan/vulkan.h>
-#include "../Renderer/Texture.h"
 
+#include "../Core.h"
+
+namespace BalVulkan
+{
+	class CDevice;
+	class CCommandPool;
+	class CQueue;
+}
 namespace Balbino
 {
-	class CRenderer;
 	class CTexture;
 
 	class CTextureManager final
@@ -18,13 +22,15 @@ namespace Balbino
 		CTextureManager& operator=(const CTextureManager&) = delete;
 		CTextureManager& operator=(CTextureManager&&) = delete;
 
-		void Initialize(CRenderer* pRenderer);
-		void Cleanup( const VkDevice& device, const VkAllocationCallbacks* pAllocator );
-		void SetRenderer( CRenderer* pRenderer );
+		void SetRenderData( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue );
+		void Initialize();
+		void Cleanup();
 
-		CTexture* AddTexture( const char* filePath);
+		BALBINO_API CTexture* AddTexture(const char* filePath);
 	private:
-		CRenderer* m_pRenderer;
-		std::unordered_map<uint32_t, CTexture> m_textures;
+		std::unordered_map<uint32_t, Balbino::CTexture*> m_textures;
+		const BalVulkan::CDevice* m_pDevice;
+		const BalVulkan::CCommandPool* m_pCommandPool;
+		const BalVulkan::CQueue* m_pQueue;
 	};
 }

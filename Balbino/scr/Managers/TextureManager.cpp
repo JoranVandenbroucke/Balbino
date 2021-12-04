@@ -1,77 +1,108 @@
 #include "pch.h"
 #include "TextureManager.h"
 
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <SDL.h>
-#include <SDL_image.h>
 
-#include "../Renderer/Renderer.h"
+#include "Common.h"
+#include "../Renderer/Texture.h"
 
-void Balbino::CTextureManager::Initialize( CRenderer* pRenderer )
+void Balbino::CTextureManager::SetRenderData( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
 {
-	SetRenderer(pRenderer);
+	m_pDevice = pDevice;
+	m_pCommandPool = pCommandPool;
+	m_pQueue = pQueue;
 }
-void Balbino::CTextureManager::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAllocator)
+
+void Balbino::CTextureManager::Initialize()
 {
-	for ( auto& texture : m_textures )
+}
+
+void Balbino::CTextureManager::Cleanup()
+{
+	for ( const auto& texture : m_textures )
 	{
-		texture.second.Cleanup(device, pAllocator);
+		texture.second->Cleanup();
+		delete texture.second;
 	}
 	m_textures.clear();
-
-	m_pRenderer = nullptr;
-}
-
-void Balbino::CTextureManager::SetRenderer( CRenderer* pRenderer )
-{
-	m_pRenderer = pRenderer;
 }
 
 Balbino::CTextureManager::CTextureManager()
-	: m_pRenderer{ nullptr }
-{}
+	: m_pDevice{ nullptr }
+	, m_pCommandPool{ nullptr }
+	, m_pQueue{ nullptr }
+{
+}
 
 Balbino::CTextureManager::~CTextureManager()
 {
-	if (m_pRenderer != nullptr || !m_textures.empty())
+	if ( !m_textures.empty() )
 		std::cerr << "Texture Manager not cleared" << std::endl;
 };
 
-Balbino::CTexture* Balbino::CTextureManager::AddTexture( const char* filePath)
+Balbino::CTexture* Balbino::CTextureManager::AddTexture( const char* filePath )
 {
-	const std::filesystem::path path(std::filesystem::absolute(filePath));
-	const uint32_t hash = static_cast<uint32_t>(std::hash<std::string>{}(path.relative_path().string()));
-	if (m_textures.find(hash) != m_textures.end())
-		return &m_textures[hash];
+	const std::filesystem::path path( std::filesystem::absolute( filePath ) );
+	const uint32_t hash = static_cast< uint32_t >( std::hash<std::string>{}( path.relative_path().string() ) );
+	if ( m_textures.find( hash ) != m_textures.end() )
+		return m_textures.at( hash );
 
-	std::ifstream fileChecker{path};
-	if (!fileChecker.is_open())
+	std::ifstream fileChecker{ path };
+	if ( !fileChecker.is_open() )
 	{
-		throw std::runtime_error(path.string() + " does not exist");
+		throw std::runtime_error( path.string() + " does not exist" );
 	}
 	fileChecker.close();
 
-	SDL_Surface* pSurface = IMG_Load(path.string().c_str());
-	if (pSurface == nullptr)
+	void* pData;
+	uint32_t width, height, mipmaps, layers, faces, size;
+	const BalVulkan::EImageLayout layout = BalVulkan::EImageLayout::Color;
+	BalVulkan::EImageViewType type = BalVulkan::EImageViewType::View2D;
+	BalVulkan::EFormat format = BalVulkan::EFormat::R8G8B8A8Srgb;
+	if ( path.string().find( ".dds" ) != std::string::npos )
 	{
-		throw std::runtime_error(std::string("Failed to load texture: ") + SDL_GetError());
+		gli::texture_cube texture{ gli::load( path.string().c_str() ) };
+		if ( texture.empty() )
+			throw std::runtime_error( std::string( "Failed to load texture" ) );
+
+		width = texture.extent().x;
+		height = texture.extent().y;
+		mipmaps = static_cast<uint32_t>( texture.max_level() );
+		faces = static_cast<uint32_t>( texture.max_face() );
+		layers = static_cast<uint32_t>( texture.max_layer() );
+		size = static_cast<uint32_t>( texture.size() );
+		pData = texture.data();
+		switch( texture.format() )
+		{
+			case gli::format::FORMAT_RGBA8_UNORM_PACK8:
+				format = BalVulkan::EFormat::R8G8B8A8Unorm;
+				break;
+			case gli::format::FORMAT_R8_UNORM_PACK8:
+				format = BalVulkan::EFormat::R8Unorm;
+				break;
+			case gli::format::FORMAT_R8_SRGB_PACK8:
+				format = BalVulkan::EFormat::R8Srgb;
+				break;
+		}
+		type = ( size / height / width ) > 1 ? BalVulkan::EImageViewType::Cube : type;
 	}
-	VkDevice device;
-	VkAllocationCallbacks* pCallbacks{nullptr};
-	VkPhysicalDevice physicalDevice;
-	VkQueue queue;
-	VkCommandPool commandPool;
+	else
+	{
+		SDL_Surface* pSurface{ IMG_Load( path.string().c_str() ) };
+		if ( pSurface == nullptr )
+		{
+			throw std::runtime_error( std::string( "Failed to load texture: " ) + SDL_GetError() );
+		}
+		if ( pSurface->pitch / pSurface->w != 4 )
+			pSurface = SDL_ConvertSurfaceFormat( pSurface, SDL_PIXELFORMAT_RGBA32, 0 );
 
-	m_pRenderer->GetDevice(device);
-	m_pRenderer->GetAllocationCallbacks(pCallbacks);
-	m_pRenderer->GetPhysicalDevice(physicalDevice);
-	m_pRenderer->GetQueue(queue);
-	m_pRenderer->GetCommandPool(commandPool);
+		width = pSurface->w;
+		height = pSurface->h;
+		mipmaps = layers = faces = 1;
+		size = pSurface->pitch * height;
+		pData = pSurface->pixels;
+	}
+	m_textures[hash] = DBG_NEW Balbino::CTexture{ m_pDevice };
 
-	const auto& pTexture = m_textures.try_emplace(hash);
-	pTexture.first->second.Initialize(pSurface, device, pCallbacks, physicalDevice, queue, commandPool);
-	SDL_free(pSurface);
-	return &pTexture.first->second;
+	m_textures[hash]->Initialize( pData, width, height, mipmaps, layers, faces, size, layout, type, format, *m_pCommandPool, m_pQueue );
+	return m_textures[hash];
 }

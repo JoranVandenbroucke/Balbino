@@ -4,4 +4,3 @@ class CGameView
 public:
 	void Draw();
 };
-

@@ -27,7 +27,8 @@ Balbino::CCamera* Balbino::CCameraManager::AddCamera(const glm::vec3& pos, float
 {
 	m_cameras.emplace_back();
 	m_cameras.back().Initialize(m_pRenderer->GetAspectRatio(), pos, xAngle, yAngle);
-	if (!m_pMainCamera)m_pMainCamera = &m_cameras.back();
+	if (!m_pMainCamera)
+		m_pMainCamera = &m_cameras.back();
 	SortList();
 	return &m_cameras.back();
 }
@@ -46,14 +47,16 @@ void Balbino::CCameraManager::Cleanup()
 void Balbino::CCameraManager::SortList()
 {
 	std::sort(m_cameras.begin(), m_cameras.end(), [](const CCamera& a, const CCamera& b)
-		{
-			return a.GetDrawIndex() > b.GetDrawIndex();
-		});
-
-	const int mainPos{ static_cast<int>(std::find(m_cameras.cbegin(), m_cameras.cend(), *m_pMainCamera) - m_cameras.cbegin() - 1) };
-	for (int i{ mainPos }; i > 0; --i)
 	{
-		const CCamera cam {m_cameras[i]};
+		return a.GetDrawIndex() > b.GetDrawIndex();
+	});
+
+	const int mainPos{
+		static_cast<int>(std::find(m_cameras.cbegin(), m_cameras.cend(), *m_pMainCamera) - m_cameras.cbegin() - 1)
+	};
+	for (int i{mainPos}; i > 0; --i)
+	{
+		const CCamera cam{m_cameras[i]};
 		m_cameras[i] = m_cameras[i - 1];
 		m_cameras[i - 1] = cam;
 	}

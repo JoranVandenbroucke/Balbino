@@ -21,28 +21,40 @@ namespace Balbino
 	public:
 		CInterface();
 		~CInterface() = default;
-		void GetValues( VkSwapchainKHR& swapchain, VkExtent2D& swapchainExtent, VkPresentModeKHR& presentMode, VkRenderPass& renderPass ) const;
-		CInterface( const CInterface& ) = delete;
-		CInterface( CInterface&& ) = delete;
-		CInterface& operator=( const CInterface& ) = delete;
-		CInterface& operator=( CInterface&& ) = delete;
+		void GetValues(VkSwapchainKHR& swapchain, VkExtent2D& swapchainExtent, VkPresentModeKHR& presentMode,
+		               VkRenderPass& renderPass) const;
+		CInterface(const CInterface&) = delete;
+		CInterface(CInterface&&) = delete;
+		CInterface& operator=(const CInterface&) = delete;
+		CInterface& operator=(CInterface&&) = delete;
 
-		void SetupVulkan(const char** extensions, const uint32_t extensionsCount, VkInstanceCreateInfo& createInfo, VkInstance& instance, const VkAllocationCallbacks* pCallback, VkDebugReportCallbackEXT& debugReport );
-		void SetupVulkanWindow( const VkSurfaceKHR& surface, int width, int height, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, const VkAllocationCallbacks* pCallback, uint32_t queueFamily, uint32_t minImageCount );
+		void SetupVulkan(const char** extensions, uint32_t extensionsCount, VkInstanceCreateInfo& createInfo,
+		                 VkInstance& instance, const VkAllocationCallbacks* pCallback,
+		                 VkDebugReportCallbackEXT& debugReport);
+		void SetupVulkanWindow(const VkSurfaceKHR& surface, int width, int height, const VkInstance& instance,
+		                       const VkPhysicalDevice& physicalDevice, const VkDevice& device,
+		                       const VkAllocationCallbacks* pCallback, uint32_t queueFamily, uint32_t minImageCount);
 
-		void Setup( SDL_Window* pWindow, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, uint32_t queueFamily, const VkQueue& queue, const VkPipelineCache& pipelineCache, const VkDescriptorPool& descriptorPool, const VkAllocationCallbacks* pCallback, uint32_t minImageCount ) const;
-		void UploadFont( const VkDevice& device, const VkQueue& queue ) const;
+		void Setup(SDL_Window* pWindow, const VkInstance& instance, const VkPhysicalDevice& physicalDevice,
+		           const VkDevice& device, uint32_t queueFamily, const VkQueue& queue,
+		           const VkPipelineCache& pipelineCache, const VkDescriptorPool& descriptorPool,
+		           const VkAllocationCallbacks* pCallback, uint32_t minImageCount) const;
+		void UploadFont(const VkDevice& device, const VkQueue& queue) const;
 
-		void HandleEvents( SDL_Event e );
-		void ResizeSwapChain( SDL_Window* pWindow, const VkInstance& instance, const VkPhysicalDevice& physicalDevice, const VkDevice& device, const uint32_t queueFamily, const VkAllocationCallbacks* pCallback, const uint32_t minImageCount );
+		void HandleEvents(SDL_Event e);
+		void ResizeSwapChain(SDL_Window* pWindow, const VkInstance& instance, const VkPhysicalDevice& physicalDevice,
+		                     const VkDevice& device, uint32_t queueFamily, const VkAllocationCallbacks* pCallback,
+		                     uint32_t minImageCount);
 
-		void DrawStart( SDL_Window* pWindow );
+		void DrawStart(SDL_Window* pWindow);
 		void Draw();
-		void Render( const VkDevice& device, const VkQueue& queue );
+		void Render(const VkDevice& device, const VkQueue& queue);
 
 		void Cleanup() const;
-		void CleanupVulkan( const VkInstance& instance, const VkAllocationCallbacks* pCallback, const VkDebugReportCallbackEXT& debugReport )const;
-		void CleanupVulkanWindow( const VkInstance& instance, const VkAllocationCallbacks* pCallback, const VkDevice& device );
+		void CleanupVulkan(const VkInstance& instance, const VkAllocationCallbacks* pCallback,
+		                   const VkDebugReportCallbackEXT& debugReport) const;
+		void CleanupVulkanWindow(const VkInstance& instance, const VkAllocationCallbacks* pCallback,
+		                         const VkDevice& device);
 	private:
 		CMainScreen* m_pMain;
 		CGameView* m_pGameView;
@@ -58,9 +70,9 @@ namespace Balbino
 		PFN_vkDestroyDebugReportCallbackEXT vkpfn_DestroyDebugReportCallbackEXT = nullptr;
 
 		static void SetImGuiStyle();
-		void FrameRender( ImDrawData* drawData, const VkDevice& device, const VkQueue& queue );
-		void FramePresent( const VkQueue& queue );
+		void FrameRender(ImDrawData* drawData, const VkDevice& device, const VkQueue& queue);
+		void FramePresent(const VkQueue& queue);
 
-		static void CheckVkResult( const VkResult err );
+		static void CheckVkResult(VkResult err);
 	};
 }

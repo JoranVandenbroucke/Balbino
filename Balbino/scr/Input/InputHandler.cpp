@@ -17,10 +17,12 @@ bool Balbino::CInputHandler::Initialize()
 
 bool Balbino::CInputHandler::Cleanup()
 {
-	for (auto var : m_inputsAxis) {
+	for (auto var : m_inputsAxis)
+	{
 		delete var.second;
 	}
-	for (auto var : m_inputsAxisBinding) {
+	for (auto var : m_inputsAxisBinding)
+	{
 		delete var.second;
 	}
 	m_inputsAxis.clear();
@@ -37,8 +39,8 @@ void Balbino::CInputHandler::ProcessEvents(SDL_Event e)
 		{
 			if (axis.second->code == e.key.keysym.sym && e.key.repeat == 0)
 			{
-				auto it{ m_inputsAxisBinding.equal_range(axis.first) };
-				for (auto iter{ it.first }; iter != it.second; ++iter)
+				auto it{m_inputsAxisBinding.equal_range(axis.first)};
+				for (auto iter{it.first}; iter != it.second; ++iter)
 				{
 					iter->second->value += axis.second->weight;
 				}
@@ -52,8 +54,8 @@ void Balbino::CInputHandler::ProcessEvents(SDL_Event e)
 		{
 			if (axis.second->code == e.key.keysym.sym)
 			{
-				auto it{ m_inputsAxisBinding.equal_range(axis.first) };
-				for (auto iter{ it.first }; iter != it.second; ++iter)
+				auto it{m_inputsAxisBinding.equal_range(axis.first)};
+				for (auto iter{it.first}; iter != it.second; ++iter)
 				{
 					iter->second->value -= axis.second->weight;
 				}
@@ -61,10 +63,10 @@ void Balbino::CInputHandler::ProcessEvents(SDL_Event e)
 		}
 		break;
 	case SDL_MOUSEMOTION:
-		m_mousePosition.x = (float)e.motion.x;
-		m_mousePosition.y = (float)e.motion.y;
-		m_mouseRelativePosition.x = (float)e.motion.xrel;
-		m_mouseRelativePosition.y = (float)e.motion.yrel;
+		m_mousePosition.x = static_cast<float>(e.motion.x);
+		m_mousePosition.y = static_cast<float>(e.motion.y);
+		m_mouseRelativePosition.x = static_cast<float>(e.motion.xrel);
+		m_mouseRelativePosition.y = static_cast<float>(e.motion.yrel);
 		break;
 	case SDL_MOUSEBUTTONDOWN:
 		break;
@@ -118,7 +120,7 @@ void Balbino::CInputHandler::ProcessEvents(SDL_Event e)
 		break;
 	case SDL_MULTIGESTURE:
 		break;
-	default:;
+	default: ;
 	}
 }
 
@@ -126,8 +128,8 @@ void Balbino::CInputHandler::Update()
 {
 	for (auto axis : m_inputsAxis)
 	{
-		auto it{ m_inputsAxisBinding.equal_range(axis.first) };
-		for (auto iter{ it.first }; iter != it.second; ++iter)
+		auto it{m_inputsAxisBinding.equal_range(axis.first)};
+		for (auto iter{it.first}; iter != it.second; ++iter)
 		{
 			iter->second->function(iter->second->value);
 		}
@@ -137,7 +139,9 @@ void Balbino::CInputHandler::Update()
 
 void Balbino::CInputHandler::AddAxis(const char* pName, SDL_KeyCode code, float weight)
 {
-	m_inputsAxis.emplace(pName, new CInputAxis{ .name = SDL_GetKeyName(code), .code = (uint16_t)code, .weight = weight, });
+	m_inputsAxis.emplace(pName, DBG_NEW CInputAxis{
+		                     .name = SDL_GetKeyName(code), .code = static_cast<uint16_t>(code), .weight = weight,
+	                     });
 }
 
 void Balbino::CInputHandler::GetMousePosition(float& x, float& y) const
@@ -150,12 +154,11 @@ void Balbino::CInputHandler::GetRelativeMousePosition(float& x, float& y) const
 {
 	x = m_mouseRelativePosition.x;
 	y = m_mouseRelativePosition.y;
-
 }
 
 void Balbino::CInputHandler::ToggleCursor()
 {
-	if (SDL_SetRelativeMouseMode(m_visible? SDL_TRUE: SDL_FALSE) != 0)
+	if (SDL_SetRelativeMouseMode(m_visible ? SDL_TRUE : SDL_FALSE) != 0)
 	{
 		throw std::runtime_error(std::string("could not enable Relative Mouse Mode: ") + SDL_GetError());
 	}

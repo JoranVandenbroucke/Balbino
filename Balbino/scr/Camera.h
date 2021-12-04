@@ -8,17 +8,17 @@ namespace Balbino
 	public:
 		CCamera();
 		~CCamera() = default;
-		CCamera( const CCamera& ) = default;
-		CCamera( CCamera&& ) = default;
-		CCamera& operator=( const CCamera& ) = default;
-		CCamera& operator=( CCamera&& ) = default;
+		CCamera(const CCamera&) = default;
+		CCamera(CCamera&&) = default;
+		CCamera& operator=(const CCamera&) = default;
+		CCamera& operator=(CCamera&&) = default;
 
 		bool operator==(const CCamera& other) const;
 
 		void Initialize(float aspectRatio, const glm::vec3& pos, float xAngle, float yAngle);
 
-		const glm::mat4& GetViewBuffer()const;
-		const glm::mat4& GetProjection()const;
+		const glm::mat4& GetView() const;
+		const glm::mat4& GetProjection() const;
 		void SetDrawIndex(int index);
 		void Update(float dt);
 

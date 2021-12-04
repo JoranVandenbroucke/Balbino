@@ -1,62 +1,41 @@
 #include "pch.h"
 #include "ShaderManager.h"
+#include <Shader.h>
 
-#include "../Renderer/Renderer.h"
-
-void Balbino::CShaderManager::SetRenderer(CRenderer* renderer)
-{
-	m_pRenderer = renderer;
-}
-
-Balbino::CShaderManager::CShaderManager()
-	: m_pRenderer{ nullptr }
-{
-}
+Balbino::CShaderManager::CShaderManager() = default;
 
 Balbino::CShaderManager::~CShaderManager()
 {
-	if (m_pRenderer != nullptr || !m_shader.empty())
+	if (!m_shader.empty())
 		std::cerr << "Texture Manager not cleared" << std::endl;
 }
 
-void Balbino::CShaderManager::Cleanup(const VkDevice& device, const VkAllocationCallbacks* pAllocator)
+void Balbino::CShaderManager::Initialize(const BalVulkan::CDevice* pDevice)
 {
-	for (auto& shader : m_shader)
-	{
-		shader.Cleanup(device, pAllocator);
-	}
-	m_shader.clear();
-
-	m_pRenderer = nullptr;
+	( void ) pDevice;
+	//m_shader.emplace_back( DBG_NEW BalVulkan::CShader{pDevice} );
+	//m_shader.emplace_back( DBG_NEW BalVulkan::CShader{pDevice} );
+	std::cout << m_shader.size() << std::endl;
 }
 
-const std::vector<Balbino::CShader>& Balbino::CShaderManager::GetShaders() const
+void Balbino::CShaderManager::Cleanup()
+{
+	m_shader.clear();
+}
+
+const std::vector<BalVulkan::CShader*>& Balbino::CShaderManager::GetShaders() const
 {
 	return m_shader;
 }
 
-Balbino::CShader* Balbino::CShaderManager::AddShader()
+void Balbino::CShaderManager::AddShader( BalVulkan::CShader* shader, const char* path, BalVulkan::EShaderStage shaderStage )
 {
-	VkDevice device;
-	VkExtent2D swapchainExtend;
-	VkRenderPass renderPass;
-	VkDescriptorSetLayout descriptorSetLayout;
-	VkAllocationCallbacks* pCallbacks{ nullptr };
+	const std::filesystem::path filePath{ std::filesystem::absolute( path ) };
+	std::ifstream file{ filePath, std::ios::in | std::ios::binary };
 
-	m_pRenderer->GetDevice(device);
-	m_pRenderer->GetSwatChainExtend(swapchainExtend);
-	m_pRenderer->GetRenderPass(renderPass);
-	m_pRenderer->GetDescriptorSetLayout(descriptorSetLayout);
-	m_pRenderer->GetAllocationCallbacks(pCallbacks);
-	m_shader.emplace_back();
-	m_shader.back().Initialize(device, swapchainExtend, renderPass, descriptorSetLayout, pCallbacks);
-	return &m_shader.back();
-}
-
-void Balbino::CShaderManager::BindShader(const uint32_t materialIndex, const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet) const
-{
-	if (materialIndex < m_shader.size()) {
-		m_shader[materialIndex].Bind(commandBuffer, descriptorSet);
-		
-	}
+	if ( !file.is_open() )
+		return;
+	const std::string shaderCode{ std::string( ( std::istreambuf_iterator<char>( file ) ), std::istreambuf_iterator<char>() ) };
+	shader->Initialize( static_cast<const void*>( shaderCode.c_str() ), shaderCode.size(), shaderStage, path );
+	m_shader.push_back( shader );
 }

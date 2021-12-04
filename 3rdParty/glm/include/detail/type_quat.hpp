@@ -38,15 +38,17 @@ namespace glm
 #				pragma warning(disable: 4201)  // nonstandard extension used : nameless struct/union
 #			endif
 #		endif
-
 #		if GLM_LANG & GLM_LANG_CXXMS_FLAG
 			union
 			{
+#pragma warning(push)
+#pragma warning(disable : 4201)
 #				ifdef GLM_FORCE_QUAT_DATA_WXYZ
 					struct { T w, x, y, z; };
 #				else
 					struct { T x, y, z, w; };
 #				endif
+#pragma warning(pop)
 
 				typename detail::storage<4, T, detail::is_aligned<Q>::value>::type data;
 			};
@@ -57,7 +59,6 @@ namespace glm
 				T x, y, z, w;
 #			endif
 #		endif
-
 #		if GLM_SILENT_WARNINGS == GLM_ENABLE
 #			if GLM_COMPILER & GLM_COMPILER_CLANG
 #				pragma clang diagnostic pop

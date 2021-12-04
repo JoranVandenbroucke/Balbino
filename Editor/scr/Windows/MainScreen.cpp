@@ -6,12 +6,15 @@
 
 void CMainScreen::Draw()
 {
-	ImGuiIO& io = ImGui::GetIO(); (void) io;
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus /*| ImGuiWindowFlags_NoDocking*/;
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_NoBringToFrontOnFocus /*| ImGuiWindowFlags_NoDocking*/;
 	ImGui::SetNextWindowSize(io.DisplaySize);
-	ImGui::SetNextWindowPos({0,0});
+	ImGui::SetNextWindowPos({0, 0});
 	static ImGuiID dockspaceID = 0;
-	ImGui::Begin("MainWindow", 0, flags);
+	ImGui::Begin("MainWindow", nullptr, flags);
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))

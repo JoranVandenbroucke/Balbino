@@ -1,11 +1,15 @@
 #pragma once
 #include "IndexBuffer.h"
+#include "MeshMetadata.h"
 #include "Vertex.h"
 #include "VertexBuffer.h"
-#include "MeshMetadata.h"
 
-#include <vector>
-
+namespace BalVulkan
+{
+	class CDevice;
+	class CCommandPool;
+	class CQueue;
+}
 
 namespace Balbino
 {
@@ -13,21 +17,23 @@ namespace Balbino
 	{
 	public:
 		CMesh() = default;
-		~CMesh() = default;
+		CMesh( std::vector<BalVulkan::SVertex> vertices, std::vector<uint32_t> indices,
+		       std::vector<SMeshMetadata> metadatas);
+		~CMesh();
 		CMesh(const CMesh&) = delete;
 		CMesh(CMesh&&) = delete;
 		CMesh& operator=(const CMesh&) = delete;
 		CMesh& operator=(CMesh&&) = delete;
 
-		void Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const
-		                VkAllocationCallbacks* callbacks, const std::vector<SVertex>& vertices, const std::vector<uint32_t>& indices, const std
-		                ::vector<SMeshMetadata>& metadatas);
-		void Cleanup(const VkDevice& device, const VkAllocationCallbacks* callbacks);
-		void Draw(const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet) const;
+		void Initialize( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue );
+		void Cleanup();
+		void Draw( const BalVulkan::CCommandPool* pCommandBuffer ) const;
 	private:
+		std::vector<BalVulkan::SVertex> m_vertices;
+		std::vector<uint32_t> m_indices;
+		std::vector<SMeshMetadata> m_metadatas;
+
 		CVertexBuffer m_vertexBuffer;
 		CIndexBuffer m_indexBuffer;
-		std::vector<SMeshMetadata> m_metadatas;
 	};
-
 }

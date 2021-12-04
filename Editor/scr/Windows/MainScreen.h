@@ -9,4 +9,3 @@ private:
 	std::string m_SavePosition;
 	bool m_Saved = false;
 };
-

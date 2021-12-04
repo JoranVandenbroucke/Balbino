@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+
 namespace Balbino
 {
 	enum class EInputEvent
@@ -10,12 +11,14 @@ namespace Balbino
 		DoubleClick = 3,
 		Axis = 4,
 	};
+
 	struct CInputAxis
 	{
 		const char* name;
 		uint16_t code;
 		float weight;
 	};
+
 	struct CInputAxisBinding
 	{
 		float value;

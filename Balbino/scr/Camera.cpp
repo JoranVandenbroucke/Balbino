@@ -5,9 +5,8 @@
 #include <ext/matrix_transform.hpp>
 #include <gtx/rotate_vector.hpp>
 
-#include "Managers/Manager.h"
-//#include "Input/InputButtons.h"
 #include "Input/InputHandler.h"
+#include "Managers/Manager.h"
 
 Balbino::CCamera::CCamera()
 	: m_index{}
@@ -44,17 +43,17 @@ void Balbino::CCamera::Initialize(float aspectRation, const glm::vec3& pos, cons
 	m_projection = glm::perspective(glm::radians(45.0f), aspectRation, 0.01f, 1000.0f);
 	m_projection[1][1] *= -1;
 
-	glm::vec3 forward{ 0,0,1 };
-	glm::vec3 right{ 1,0,0 };
-	forward = glm::rotateX(forward, m_yaw);
-	forward = glm::rotateY(forward, m_pitch);
-	right = glm::rotateX(right, m_yaw);
-	right = glm::rotateY(right, m_pitch);
-	const glm::vec3 up = glm::cross(forward, right);
-	m_view = glm::lookAt(pos, pos + forward, up);
+	glm::vec3 forward{0, 0, 1};
+	glm::vec3 right{1, 0, 0};
+	forward = rotateX(forward, m_yaw);
+	forward = rotateY(forward, m_pitch);
+	right = rotateX(right, m_yaw);
+	right = rotateY(right, m_pitch);
+	const glm::vec3 up = cross(forward, right);
+	m_view = lookAt(pos, pos + forward, up);
 }
 
-const glm::mat4& Balbino::CCamera::GetViewBuffer() const
+const glm::mat4& Balbino::CCamera::GetView() const
 {
 	return m_view;
 }
@@ -76,10 +75,10 @@ int Balbino::CCamera::GetDrawIndex() const
 
 void Balbino::CCamera::Update(float dt)
 {
-	glm::mat4 inverseInv{ glm::inverse(m_view) };
-	glm::vec3 position{ inverseInv[3].x,inverseInv[3].y,inverseInv[3].z };
-	const glm::vec3 f{ inverseInv[2].x,inverseInv[2].y,inverseInv[2].z };
-	const glm::vec3 r{ inverseInv[0].x,inverseInv[0].y,inverseInv[0].z };
+	glm::mat4 inverseInv{inverse(m_view)};
+	glm::vec3 position{inverseInv[3].x, inverseInv[3].y, inverseInv[3].z};
+	const glm::vec3 f{inverseInv[2].x, inverseInv[2].y, inverseInv[2].z};
+	const glm::vec3 r{inverseInv[0].x, inverseInv[0].y, inverseInv[0].z};
 	position += f * (m_inputDir.y * 4 * dt) + r * (m_inputDir.x * 4 * dt);
 
 	float x, y;
@@ -87,14 +86,14 @@ void Balbino::CCamera::Update(float dt)
 	pInput->GetRelativeMousePosition(x, y);
 	m_yaw += y / 180.0f * 3.14159265359f;
 	m_pitch -= x / 180.0f * 3.14159265359f;
-	glm::vec3 forward{ 0,0,1 };
-	glm::vec3 right{ 1,0,0 };
-	forward = glm::rotateX(forward, m_yaw);
-	forward = glm::rotateY(forward, m_pitch);
-	right = glm::rotateX(right, m_yaw);
-	right = glm::rotateY(right, m_pitch);
-	const glm::vec3 up = glm::cross(forward, right);
-	m_view = glm::lookAt(position, position + forward, up);
+	glm::vec3 forward{0, 0, 1};
+	glm::vec3 right{1, 0, 0};
+	forward = rotateX(forward, m_yaw);
+	forward = rotateY(forward, m_pitch);
+	right = rotateX(right, m_yaw);
+	right = rotateY(right, m_pitch);
+	const glm::vec3 up = cross(forward, right);
+	m_view = lookAt(position, position + forward, up);
 }
 
 void Balbino::CCamera::Horizontal(float value)

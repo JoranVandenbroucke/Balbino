@@ -1,29 +1,47 @@
 #include "pch.h"
 #include "Mesh.h"
-#include "../Managers/Manager.h"
-#include "../Managers/ShaderManager.h"
 
-void Balbino::CMesh::Draw(const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet) const
+#include "CommandPool.h"
+#include "Common.h"
+#include "../Managers/Manager.h"
+#include "../Managers/MaterialManager.h"
+
+Balbino::CMesh::CMesh( std::vector<BalVulkan::SVertex> vertices, std::vector<uint32_t> indices,
+                       std::vector<SMeshMetadata> metadatas)
+	: m_vertices{ std::move( vertices ) }
+	, m_indices{ std::move( indices ) }
+	, m_metadatas{ std::move( metadatas ) }
 {
-		m_indexBuffer.Bind(commandBuffer);
-		m_vertexBuffer.Bind(commandBuffer);
-	for (int i = 0; i < m_metadatas.size(); ++i)
+}
+
+Balbino::CMesh::~CMesh()
+{
+	if (!m_vertices.empty() || !m_indices.empty() || !m_metadatas.empty())
+		std::cout << "mesh was not cleaned up" << std::endl;
+}
+
+void Balbino::CMesh::Draw( const BalVulkan::CCommandPool* pCommandBuffer ) const
+{
+	m_vertexBuffer.Bind();
+	m_indexBuffer.Bind();
+	for ( const auto& [materialId, indexCount, indexStart] : m_metadatas )
 	{
-		CManager::GetShaderManager()->BindShader(m_metadatas[0].shaderId, commandBuffer, descriptorSet);
-		vkCmdDrawIndexed(commandBuffer, m_metadatas[i].indexCount, 1, m_metadatas[i].indexStart, 0, 0);
+		CManager::GetMaterialManager()->BindMaterial( materialId );
+		BalVulkan::DrawMesh( pCommandBuffer, indexCount, indexCount );
 	}
 }
 
-void Balbino::CMesh::Initialize(const VkDevice& device, const VkCommandPool& commandPool, const VkQueue& queue, const VkPhysicalDevice& physicalDevice, const VkAllocationCallbacks* callbacks, const std::vector<SVertex>& vertices, const std::vector<uint32_t >& indices, const std::vector<SMeshMetadata>& metadatas)
+void Balbino::CMesh::Initialize( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
 {
-	m_metadatas = std::move(metadatas);
-	m_vertexBuffer.Initialize(device, commandPool, queue, physicalDevice, vertices, callbacks);
-	m_indexBuffer.Initialize(device, commandPool, queue, physicalDevice, indices, callbacks);
+	m_vertexBuffer.Initialize( m_vertices, pDevice, pCommandPool, pQueue );
+	m_indexBuffer.Initialize( m_indices, pDevice, pCommandPool, pQueue );
 }
 
-void Balbino::CMesh::Cleanup(const VkDevice& device, const VkAllocationCallbacks* callbacks)
+void Balbino::CMesh::Cleanup()
 {
-	m_vertexBuffer.Cleanup(device, callbacks);
-	m_indexBuffer.Cleanup(device, callbacks);
+	m_vertexBuffer.Cleanup();
+	m_indexBuffer.Cleanup();
+	m_vertices.clear();
+	m_indices.clear();
 	m_metadatas.clear();
 }

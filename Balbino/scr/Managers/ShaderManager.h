@@ -1,30 +1,30 @@
 #pragma once
-#include <vector>
-#include <vulkan/vulkan_core.h>
-#include "../Renderer/Shader.h"
+#include "Common.h"
+
+namespace BalVulkan
+{
+	class CShader;
+	class CDevice;
+}
 
 namespace Balbino
 {
-	class CRenderer;
 	class CShaderManager final
 	{
 	public:
 		CShaderManager();
 		~CShaderManager();
-		CShaderManager(const CShaderManager&) = delete;
-		CShaderManager(CShaderManager&&) = delete;
-		CShaderManager& operator=(const CShaderManager&) = delete;
-		CShaderManager& operator=(CShaderManager&&) = delete;
+		CShaderManager( const CShaderManager& ) = delete;
+		CShaderManager( CShaderManager&& ) = delete;
+		CShaderManager& operator=( const CShaderManager& ) = delete;
+		CShaderManager& operator=( CShaderManager&& ) = delete;
 
-		void Cleanup( const VkDevice& device, const VkAllocationCallbacks* pAllocator );
-		void BindShader(const uint32_t materialIndex, const VkCommandBuffer& commandBuffer, const VkDescriptorSet* descriptorSet) const;
-		void SetRenderer( CRenderer* renderer );
+		void Initialize( const BalVulkan::CDevice* pDevice );
+		void Cleanup();
 
-		CShader* AddShader();
-		const std::vector<CShader>& GetShaders() const;
+		void AddShader( BalVulkan::CShader* shader, const char* path, BalVulkan::EShaderStage shaderStage );
+		const std::vector<BalVulkan::CShader*>& GetShaders() const;
 	private:
-		CRenderer* m_pRenderer;
-		std::vector<CShader> m_shader;
+		std::vector<BalVulkan::CShader*> m_shader;
 	};
 }
-
