@@ -57,6 +57,6 @@ namespace blink
 		std::vector<std::filesystem::path> _object_files;
 		std::vector<std::vector<std::filesystem::path>> _source_files;
 		std::unordered_map<std::string, void *> _symbols;
-		std::unordered_map<std::string, uint32_t> _last_modifications;
+		std::unordered_map<std::string, uint64_t> _last_modifications;
 	};
 }

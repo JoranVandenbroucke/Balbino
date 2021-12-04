@@ -1,0 +1,327 @@
+# Blender MTL File: 'sponza.blend'
+# Material Count: 25
+
+newmtl Material_47
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 0.938686 0.479320 0.597202
+Ks 0.040000 0.040000 0.040000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl arch
+Ns 40.000007
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\sponza_arch_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_arch_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_arch_srm.png
+
+newmtl back_plate
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.010000 0.010000 0.010000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\background_normal.png
+map_Kd ..\\Textures\\Sponza\\background_diff.png
+map_Ka ..\\Textures\\Sponza\\background_srm.png
+
+newmtl bricks
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.015000 0.015000 0.015000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\spnza_bricks_a_normal.png
+map_Kd ..\\Textures\\Sponza\\spnza_bricks_a_diff.png
+map_Ka ..\\Textures\\Sponza\\spnza_bricks_a_srm.png
+
+newmtl ceiling
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.010000 0.010000 0.010000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\sponza_ceiling_a_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_ceiling_a_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_ceiling_a_srm.png
+
+newmtl chain
+Ns 50.000007
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.100000 0.100000 0.100000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\chain_texture_normal.png
+map_Kd ..\\Textures\\Sponza\\chain_texture_diff.png
+map_d ..\\Textures\\Sponza\\chain_texture_diff.png
+map_Ka ..\\Textures\\Sponza\\chain_texture_srm.png
+
+newmtl column_a
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.010000 0.010000 0.010000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\sponza_column_a_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_column_a_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_column_a_srm.png
+
+newmtl column_b
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_column_b_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_column_b_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_column_b_srm.png
+
+newmtl column_c
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.010000 0.010000 0.010000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\sponza_column_c_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_column_c_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_column_c_srm.png
+
+newmtl details
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_details_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_details_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_details_srm.png
+
+newmtl fabric_a
+Ns 0.100000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_fabric_red_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_fabric_red_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_fabric_red_srm.png
+
+newmtl fabric_c
+Ns 0.100000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_curtain_red_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_curtain_red_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_curtain_red_srm.png
+
+newmtl fabric_d
+Ns 0.100000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_fabric_blue_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_fabric_blue_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_fabric_blue_srm.png
+
+newmtl fabric_e
+Ns 0.100000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_fabric_green_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_fabric_green_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_fabric_srm.png
+
+newmtl fabric_f
+Ns 0.100000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_curtain_green_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_curtain_green_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_curtain_green_srm.png
+
+newmtl fabric_g
+Ns 0.100000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_curtain_blue_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_curtain_blue_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_curtain_blue_srm.png
+
+newmtl flagpole
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.050000 0.050000 0.050000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\sponza_flagpole_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_flagpole_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_flagpole_srm.png
+
+newmtl floor
+Ns 70.000000
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\sponza_floor_a_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_floor_a_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_floor_a_srm.png
+
+newmtl flowers
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\vase_plant_normal.png
+map_Kd ..\\Textures\\Sponza\\vase_plant_diff.png
+map_d ..\\Textures\\Sponza\\vase_plant_diff.png
+map_Ka ..\\Textures\\Sponza\\vase_plant_b_srm.png
+
+newmtl leaf
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_thorn_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_thorn_diff.png
+map_d ..\\Textures\\Sponza\\sponza_thorn_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_thorn_srm.png
+
+newmtl lion
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.010000 0.010000 0.010000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\lion_normal.png
+map_Kd ..\\Textures\\Sponza\\lion_diff.png
+map_Ka ..\\Textures\\Sponza\\lion_srm.png
+
+newmtl roof
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\sponza_roof_normal.png
+map_Kd ..\\Textures\\Sponza\\sponza_roof_diff.png
+map_Ka ..\\Textures\\Sponza\\sponza_roof_srm.png
+
+newmtl vase
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Bump ..\\Textures\\Sponza\\vase_normal.png
+map_Kd ..\\textures\\sponza\\vase_diff.png
+map_Ka ..\\Textures\\Sponza\\vase_srm.png
+
+newmtl vase_hanging
+Ns 50.000007
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\vase_hanging_normal.png
+map_Kd ..\\Textures\\Sponza\\vase_hanging_diff.png
+map_Ka ..\\Textures\\Sponza\\vase_hanging_srm.png
+
+newmtl vase_round
+Ns 10.000002
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.010000 0.010000 0.010000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Bump ..\\Textures\\Sponza\\vase_round_normal.png
+map_Kd ..\\Textures\\Sponza\\vase_round_diff.png
+map_Ka ..\\Textures\\Sponza\\vase_round_srm.png
