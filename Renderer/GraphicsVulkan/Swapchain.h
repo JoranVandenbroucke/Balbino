@@ -19,6 +19,7 @@ namespace BalVulkan
 		VkExtent2D GetExtend()const;
 		void GetImages( std::vector<CImageResource*>& swapChainImages, uint32_t& count) const;
 		const VkSwapchainKHR& GetVkSwapchain() const;
+		uint32_t GetMinImage()const;
 
 		static CSwapchain* CreateNew( const CDevice* device, const VkSurfaceKHR& surface );
 	private:

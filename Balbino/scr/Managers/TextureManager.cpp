@@ -55,7 +55,7 @@ Balbino::CTexture* Balbino::CTextureManager::AddTexture( const char* filePath )
 
 	void* pData;
 	uint32_t width, height, mipmaps, layers, faces, size;
-	const BalVulkan::EImageLayout layout = BalVulkan::EImageLayout::Color;
+	const BalVulkan::EImageLayout layout = BalVulkan::EImageLayout::ColorAttachmentOptimal;
 	BalVulkan::EImageViewType type = BalVulkan::EImageViewType::View2D;
 	BalVulkan::EFormat format = BalVulkan::EFormat::R8G8B8A8Srgb;
 	if ( path.string().find( ".dds" ) != std::string::npos )

@@ -18,11 +18,11 @@ void Balbino::CVertexBuffer::Initialize( const std::vector<BalVulkan::SVertex>& 
 {
 	const uint64_t size{ sizeof( BalVulkan::SVertex ) * vertices.size() };
 	BalVulkan::CBuffer stagingBuffer{ pDevice, pCommandPool, pQueue };
-	stagingBuffer.Initialize( size, BalVulkan::EBufferType::StagingBuffer );
+	stagingBuffer.Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferSrcBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
 	stagingBuffer.UpdateData( vertices.data(), size );
 
 	m_vertexBuffer = DBG_NEW BalVulkan::CBuffer{ pDevice, pCommandPool, pQueue };
-	m_vertexBuffer->Initialize( size, BalVulkan::EBufferType::VertexBuffer );
+	m_vertexBuffer->Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit, BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
 
 	stagingBuffer.CopyBuffer( *m_vertexBuffer, size );
 }

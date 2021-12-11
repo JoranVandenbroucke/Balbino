@@ -45,8 +45,10 @@ namespace BalVulkan
 		uint8_t DeviceCount() const;
 		CDevice* CreateDevice(uint32_t physicalDeviceIndex);
 		uint32_t FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf );
-
+		VkDebugReportCallbackEXT GetReportCallbackExt()const;
+		VkSurfaceKHR GetSurface()const;
 		static CInstance* CreateNew();
+
 	private:
 		VkDebugReportCallbackEXT m_debugReport;
 		VkAllocationCallbacks* m_pCallbacks;

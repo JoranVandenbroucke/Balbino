@@ -1,5 +1,13 @@
 #pragma once
 
+#ifdef BALBINO_EDITOR
+#include <scr/Interface.h>
+namespace BalEditor
+{
+	class CInterface;
+}
+#endif
+
 namespace BalVulkan
 {
 	class CBuffer;
@@ -27,12 +35,16 @@ namespace Balbino
 		CRenderer();
 		~CRenderer();
 
-		CRenderer(const CRenderer&) = delete;
-		CRenderer(CRenderer&&) = delete;
-		CRenderer& operator=(const CRenderer&) = delete;
-		CRenderer& operator=(CRenderer&&) = delete;
+		CRenderer( const CRenderer& ) = delete;
+		CRenderer( CRenderer&& ) = delete;
+		CRenderer& operator=( const CRenderer& ) = delete;
+		CRenderer& operator=( CRenderer&& ) = delete;
 
-		void Setup(SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount);
+#ifdef BALBINO_EDITOR
+		void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface );
+#endif // BALBINO_EDITOR
+
+		void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount );
 		void Cleanup();
 		void Draw();
 		[[nodiscard]] float GetAspectRatio() const;
@@ -52,6 +64,12 @@ namespace Balbino
 		BalVulkan::CBuffer* m_pModelBuffer;
 		BalVulkan::CBuffer* m_pShadingBuffer;
 
+#ifdef BALBINO_EDITOR
+		BalEditor::CInterface* m_pInterface;
+#endif
+
+		int32_t m_width;
+		int32_t m_height;
 		float m_aspectRation;
 	};
 }

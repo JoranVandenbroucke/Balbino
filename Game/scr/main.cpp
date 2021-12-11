@@ -13,10 +13,10 @@ namespace Dear
 		Editor& operator=(const Editor&) = delete;
 		Editor& operator=(Editor&&) = delete;
 
-		void LoadGame() const override;
+		void LoadGame() override;
 	};
 
-	void Editor::LoadGame() const
+	void Editor::LoadGame()
 	{
 		Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.ply");
 		//Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.obj");

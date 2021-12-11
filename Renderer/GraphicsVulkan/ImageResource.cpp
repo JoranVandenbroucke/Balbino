@@ -33,47 +33,164 @@ uint32_t BalVulkan::CImageResource::GetDepth() const
 	return m_createInfo.extent.depth;
 }
 
-void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand )
+void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, BalVulkan::EImageLayout newLayout )
 {
 	pCommand->BeginSingleTimeCommands();
 
-	EPipelineStageFlagBits sourceStage;
-	EPipelineStageFlagBits destinationStage;
+	EPipelineStageFlagBits sourceStage{};
+	EPipelineStageFlagBits destinationStage{};
+	//VkImageMemoryBarrier barrier{
+	//	.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+	//	.oldLayout = m_imageLayout,
+	//	.newLayout = (VkImageLayout) newLayout,	//todo:: make this "cusomizable"
+	//	.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+	//	.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
+	//	.image = m_image,
+	//	.subresourceRange{
+	//		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+	//		.baseMipLevel = 0,
+	//		.levelCount = mipLevels,
+	//		.baseArrayLayer = 0,
+	//		.layerCount = 1,
+	//	},
+	//};
+
+	//if ( m_imageLayout == VK_IMAGE_LAYOUT_UNDEFINED && barrier.newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL )
+	//{
+	//	barrier.srcAccessMask = 0;
+	//	barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+	//	sourceStage = EPipelineStageFlagBits::TopOfPipeBit;
+	//	destinationStage = EPipelineStageFlagBits::TransferBit;
+	//}
+	//else if ( m_imageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && barrier.newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL )
+	//{
+	//	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	//	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+	//	sourceStage = EPipelineStageFlagBits::TransferBit;
+	//	destinationStage = EPipelineStageFlagBits::FragmentShaderBit;
+	//}
+	//else
+	//{
+	//	throw std::invalid_argument( "unsupported layout transition!" );
+	//}
+
+	// Create an image barrier object
 	VkImageMemoryBarrier barrier{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		.oldLayout = m_imageLayout,
-		.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,	//todo:: make this "cusomizable"
+		.newLayout = ( VkImageLayout ) newLayout,	//todo:: make this "cusomizable"
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.image = m_image,
 		.subresourceRange{
 			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.baseMipLevel = 1,
+			.baseMipLevel = 0,
 			.levelCount = mipLevels,
-			.baseArrayLayer = 1,
+			.baseArrayLayer = 0,
 			.layerCount = 1,
 		},
 	};
-
-	if ( m_imageLayout == VK_IMAGE_LAYOUT_UNDEFINED && barrier.newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL )
+	m_imageLayout = barrier.newLayout;
+	// Source layouts (old)
+	// Source access mask controls actions that have to be finished on the old layout
+	// before it will be transitioned to the new layout
+	switch ( barrier.oldLayout )
 	{
-		barrier.srcAccessMask = 0;
-		barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		case VK_IMAGE_LAYOUT_UNDEFINED:
+			// Image layout is undefined (or does not matter)
+			// Only valid as initial layout
+			// No flags required, listed only for completeness
+			barrier.srcAccessMask = 0;
+			sourceStage = EPipelineStageFlagBits::TopOfPipeBit;
+			break;
 
-		sourceStage = EPipelineStageFlagBits::BottomOfPipeBit;
-		destinationStage = EPipelineStageFlagBits::TransferBit;
+		case VK_IMAGE_LAYOUT_PREINITIALIZED:
+			// Image is preinitialized
+			// Only valid as initial layout for linear images, preserves memory contents
+			// Make sure host writes have been finished
+			barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+			// Image is a color attachment
+			// Make sure any writes to the color buffer have been finished
+			barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+			// Image is a depth/stencil attachment
+			// Make sure any writes to the depth/stencil buffer have been finished
+			barrier.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+			// Image is a transfer source
+			// Make sure any reads from the image have been finished
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+			// Image is a transfer destination
+			// Make sure any writes to the image have been finished
+			barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			sourceStage = EPipelineStageFlagBits::TransferBit;
+			break;
+
+		case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+			// Image is read by a shader
+			// Make sure any shader reads from the image have been finished
+			barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			break;
+		default:
+			// Other source layouts aren't handled (yet)
+			throw std::invalid_argument( "unsupported layout transition!" );
 	}
-	else if ( m_imageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && barrier.newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL )
-	{
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-		sourceStage = EPipelineStageFlagBits::TransferBit;
-		destinationStage = EPipelineStageFlagBits::FragmentShaderBit;
-	}
-	else
+	// Target layouts (new)
+	// Destination access mask controls the dependency for the new image layout
+	switch ( barrier.newLayout )
 	{
-		throw std::invalid_argument( "unsupported layout transition!" );
+		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+			// Image will be used as a transfer destination
+			// Make sure any writes to the image have been finished
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			destinationStage = EPipelineStageFlagBits::TransferBit;
+			break;
+
+		case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+			// Image will be used as a transfer source
+			// Make sure any reads from the image have been finished
+			barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+			// Image will be used as a color attachment
+			// Make sure any writes to the color buffer have been finished
+			barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+			// Image layout will be used as a depth/stencil attachment
+			// Make sure any writes to depth/stencil buffer have been finished
+			barrier.dstAccessMask = barrier.dstAccessMask | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+			// Image will be read in a shader (sampler, input attachment)
+			// Make sure any writes to the image have been finished
+				destinationStage = EPipelineStageFlagBits::FragmentShaderBit;
+			if ( barrier.srcAccessMask == 0 )
+			{
+				barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
+				destinationStage = EPipelineStageFlagBits::TransferBit;
+			}
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			break;
+		default:
+			// Other source layouts aren't handled (yet)
+			throw std::invalid_argument( "unsupported layout transition!" );
 	}
 	pCommand->PipelineBarrier( sourceStage, destinationStage, &barrier );
 
@@ -200,17 +317,8 @@ VkResult BalVulkan::CImageResource::Initialize( const uint32_t width,
 	if ( m_image )
 		return VK_ERROR_UNKNOWN;
 
-	VkImageLayout imageLayout{};
-	VkImageUsageFlagBits usageflags{( VkImageUsageFlagBits ) usage };
-	switch ( layout )
-	{
-		case BalVulkan::EImageLayout::Color:
-			imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			break;
-		case BalVulkan::EImageLayout::Depth:
-			imageLayout = VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_OPTIMAL;
-			break;
-	}
+	const VkImageLayout imageLayout{( VkImageLayout ) layout};
+	const VkImageUsageFlagBits usageflags{( VkImageUsageFlagBits ) usage };
 	const VkFormat imageFormat{( VkFormat )format};
 	
 	m_imageLayout = imageLayout;
@@ -225,7 +333,7 @@ VkResult BalVulkan::CImageResource::Initialize( const uint32_t width,
 	m_createInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 	m_createInfo.usage = usageflags;
 	m_createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	m_createInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	m_createInfo.initialLayout = imageLayout;
 
 	CheckVkResult( vkCreateImage( GetDevice()->GetVkDevice(), &m_createInfo, nullptr, &m_image ), "failed to create image!" );
 	m_mipLevels = mipLevels;

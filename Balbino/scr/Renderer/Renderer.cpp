@@ -39,29 +39,35 @@ Balbino::CRenderer::~CRenderer()
 {
 }
 
+#ifdef BALBINO_EDITOR
+void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface )
+{
+	Setup( pWindow, extensions, extensionsCount );
+	pInterface->Initialize( pWindow, m_width, m_height, m_pDevice, m_pQueue,m_pCommandPool, m_pFrameBuffer);
+	m_pInterface = pInterface;
+}
+#endif
+
 void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount )
 {
-	VkSurfaceKHR surface;
-	int32_t width;
-	int32_t height;
+	VkSurfaceKHR surface;;
 
 	m_pInstance = BalVulkan::CInstance::CreateNew();
 	m_pInstance->Initialize( extensions, extensionsCount );
 
 	SDL_Vulkan_CreateSurface( pWindow, m_pInstance->GetHandle(), &surface );
-	SDL_GetWindowSize( pWindow, &width, &height );
+	SDL_GetWindowSize( pWindow, &m_width, &m_height );
 	m_pInstance->SetSurface( surface );
 	m_pDevice = m_pInstance->CreateDevice( m_pInstance->FindBestPhysicalDeviceIndex( surface ) );
 
-	m_aspectRation = static_cast< float >( height ) / static_cast< float >( width );
-	//todo: move "new" into Vulkan Renderer
+	m_aspectRation = static_cast< float >( m_height ) / static_cast< float >( m_width );
 	m_pSwapchain = BalVulkan::CSwapchain::CreateNew( m_pDevice, surface );
 
 	m_pFrameBuffer = BalVulkan::CFrameBuffer::CreateNew( m_pDevice );
 	m_pQueue = BalVulkan::CQueue::CreateNew( m_pDevice );
 	m_pCommandPool = BalVulkan::CCommandPool::CreateNew( m_pDevice );
 
-	m_pSwapchain->Initialize( width, height );
+	m_pSwapchain->Initialize( m_width, m_height );
 
 	m_pQueue->Initialize();
 	m_pCommandPool->Initialize( m_pQueue->GetQueFamily(), m_pSwapchain );
@@ -70,8 +76,8 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
 	m_pModelBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
 	m_pShadingBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
 
-	m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferType::UniformBuffer );
-	m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferType::UniformBuffer );
+	m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit);
+	m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
 
 	std::vector descriptorSets
 	{
@@ -145,6 +151,10 @@ void Balbino::CRenderer::Draw()
 		m_pCommandPool->BeginRender( m_pFrameBuffer, m_pSwapchain );
 		//todo: render
 		//CManager::GetMeshManager()->Draw( m_pCommandPool );
+#ifdef BALBINO_EDITOR
+		m_pInterface->Draw( m_pCommandPool );
+#endif // BALBINO_EDITOR
+
 		if ( m_pInFlightFences[imageIndex] != nullptr ) {
 			m_pInFlightFences[imageIndex]->Wait();
 		}
