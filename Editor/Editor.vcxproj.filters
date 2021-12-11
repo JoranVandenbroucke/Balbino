@@ -27,7 +27,13 @@
     <ClCompile Include="scr\Windows\GameView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FIleSystem.cpp">
+    <ClCompile Include="scr\Tools\FilesSystem\FIleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Windows\AssetBrowser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Tools\FilesSystem\Inporter\ImageImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,7 +50,13 @@
     <ClInclude Include="scr\Windows\GameView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FIleSystem.h">
+    <ClInclude Include="scr\Tools\FilesSystem\FIleSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Windows\AssetBrowser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Tools\FilesSystem\Inporter\ImageImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -13,6 +13,8 @@ uint32_t BalVulkan::CRefCounted::AddRef()
 
 uint32_t BalVulkan::CRefCounted::Release()
 {
+	if ( this == nullptr )
+		return 0;
 	const uint32_t newRefCount{ --m_refCount };
 	if ( newRefCount == 0 )
 	{

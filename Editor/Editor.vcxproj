@@ -58,7 +58,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)SPIRV_Cross;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -94,7 +94,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Imgui;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)SPIRV_Cross;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -121,14 +121,18 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="FIleSystem.h" />
+    <ClInclude Include="scr\Tools\FilesSystem\Inporter\ImageImporter.h" />
+    <ClInclude Include="scr\Windows\AssetBrowser.h" />
+    <ClInclude Include="scr\Tools\FilesSystem\FIleSystem.h" />
     <ClInclude Include="scr\Windows\GameView.h" />
     <ClInclude Include="scr\Windows\MainScreen.h" />
     <ClInclude Include="scr\Interface.h" />
     <ClInclude Include="scr\pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FIleSystem.cpp" />
+    <ClCompile Include="scr\Tools\FilesSystem\Inporter\ImageImporter.cpp" />
+    <ClCompile Include="scr\Windows\AssetBrowser.cpp" />
+    <ClCompile Include="scr\Tools\FilesSystem\FIleSystem.cpp" />
     <ClCompile Include="scr\Windows\GameView.cpp" />
     <ClCompile Include="scr\Windows\MainScreen.cpp" />
     <ClCompile Include="scr\Interface.cpp" />

@@ -15,6 +15,7 @@
 #include <Sampler.h>
 
 #include "backends/imgui_impl_sdl.h"
+#include "Windows/AssetBrowser.h"
 #include "Windows/GameView.h"
 #include "Windows/MainScreen.h"
 
@@ -126,6 +127,7 @@ static uint32_t g_glslShaderFragSpv[] =
 BalEditor::CInterface::CInterface()
 	: m_pMain{ nullptr }
 	, m_pGameView{ nullptr }
+	, m_pAssetBrowser{ nullptr }
 	, m_descriptorPool{ nullptr }
 	, m_descriptorSetLayout{ nullptr }
 	, m_descriptorSet{ nullptr }
@@ -146,8 +148,9 @@ BalEditor::CInterface::CInterface()
 }
 
 
-void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CFrameBuffer* pFrameBuffer )
+void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CFrameBuffer* pFrameBuffer )
 {
+	m_pWindow = pWindow;
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui_ImplSDL2_InitForVulkan( pWindow );
@@ -158,7 +161,7 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
-	io.DisplaySize = ImVec2( ( float ) w, (float)h );
+	io.DisplaySize = ImVec2( ( float ) w, ( float ) h );
 	io.DisplayFramebufferScale = ImVec2( 1.0f, 1.0f );
 	//{
 	//	io.KeyMap[ImGuiKey_Tab] = SDL_GetScancodeFromKey( SDLK_TAB );
@@ -220,7 +223,7 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 	VkDescriptorPoolCreateInfo descriptorPoolInfo{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.maxSets = 1,
-		.poolSizeCount = static_cast<uint32_t>( poolSizes.size() ),
+		.poolSizeCount = static_cast< uint32_t >( poolSizes.size() ),
 		.pPoolSizes = poolSizes.data(),
 	};
 	vkCreateDescriptorPool( pDevice->GetVkDevice(), &descriptorPoolInfo, nullptr, &m_descriptorPool );
@@ -236,7 +239,7 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 	};
 	VkDescriptorSetLayoutCreateInfo descriptorLayout{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.bindingCount = static_cast<uint32_t>( setLayoutBindings.size() ),
+		.bindingCount = static_cast< uint32_t >( setLayoutBindings.size() ),
 		.pBindings = setLayoutBindings.data(),
 	};
 	vkCreateDescriptorSetLayout( pDevice->GetVkDevice(), &descriptorLayout, nullptr, &m_descriptorSetLayout );
@@ -265,7 +268,7 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 			.pImageInfo = &fontDescriptor,
 		}
 	};
-	vkUpdateDescriptorSets( pDevice->GetVkDevice(), static_cast<uint32_t>( writeDescriptorSets.size() ), writeDescriptorSets.data(), 0, nullptr );
+	vkUpdateDescriptorSets( pDevice->GetVkDevice(), static_cast< uint32_t >( writeDescriptorSets.size() ), writeDescriptorSets.data(), 0, nullptr );
 
 	// Pipeline cache
 	VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
@@ -357,7 +360,7 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 	VkGraphicsPipelineCreateInfo pipelineCreateInfo{
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.flags = 0,
-		.stageCount = static_cast<uint32_t>( shaderStages.size() ),
+		.stageCount = static_cast< uint32_t >( shaderStages.size() ),
 		.pStages = shaderStages.data(),
 		.pInputAssemblyState = &inputAssemblyState,
 		.pViewportState = &viewportState,
@@ -373,14 +376,14 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 	};
 
 	// Vertex bindings an attributes based on ImGui vertex definition
-	std::vector vertexInputBindings {
+	std::vector vertexInputBindings{
 		VkVertexInputBindingDescription{
 			.binding = 0,
 			.stride = sizeof( ImDrawVert ),
 			.inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
 		}
 	};
-	std::vector vertexInputAttributes {
+	std::vector vertexInputAttributes{
 		VkVertexInputAttributeDescription{		// Location 0: Position
 			.location = 0,
 			.binding = 0,
@@ -413,13 +416,13 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 	VkShaderModuleCreateInfo vertInfo = {};
 	vertInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	vertInfo.codeSize = sizeof( g_glslShaderVertSpv );
-	vertInfo.pCode = static_cast<uint32_t*>( g_glslShaderVertSpv );
+	vertInfo.pCode = static_cast< uint32_t* >( g_glslShaderVertSpv );
 	vkCreateShaderModule( pDevice->GetVkDevice(), &vertInfo, nullptr, &m_shaderModuleVert );
 
 	VkShaderModuleCreateInfo fragInfo = {};
 	fragInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	fragInfo.codeSize = sizeof( g_glslShaderFragSpv );
-	fragInfo.pCode = static_cast<uint32_t*>( g_glslShaderFragSpv );
+	fragInfo.pCode = static_cast< uint32_t* >( g_glslShaderFragSpv );
 	vkCreateShaderModule( pDevice->GetVkDevice(), &fragInfo, nullptr, &m_shaderModuleFrag );
 
 	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -436,6 +439,7 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
 	m_pDevice = pDevice;
 	m_pMain = new CMainScreen{};
 	m_pGameView = new CGameView{};
+	m_pAssetBrowser = new CAssetBrowser{};
 }
 
 void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
@@ -447,6 +451,7 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 	ImGui::ShowDemoWindow();
 	m_pMain->Draw();
 	m_pGameView->Draw();
+	m_pAssetBrowser->Draw();
 
 	ImGui::Render();
 	UpdateBuffers();
@@ -472,11 +477,20 @@ void BalEditor::CInterface::Cleanup() const
 
 	delete m_pMain;
 	delete m_pGameView;
+	delete m_pAssetBrowser;
 }
 
 void BalEditor::CInterface::ProcessEvent( SDL_Event e ) const
 {
 	ImGui_ImplSDL2_ProcessEvent( &e );
+	switch ( e.type )
+	{
+		case SDL_DROPFILE:	
+			char* droppedFileDir = e.drop.file;
+			assert(ImportFile( droppedFileDir ));
+			// Shows directory of dropped file
+			SDL_free( droppedFileDir );    // Free dropped_filedir memory
+	}
 }
 
 void BalEditor::CInterface::UpdateBuffers()
@@ -495,7 +509,7 @@ void BalEditor::CInterface::UpdateBuffers()
 	// Vertex buffer
 	if ( ( m_pVertexBuffer->GetBuffer() == VK_NULL_HANDLE ) || ( m_vertexCount != imDrawData->TotalVtxCount ) ) {
 		m_pVertexBuffer->Unmapped();
-		m_pVertexBuffer->Rebuild( vertexBufferSize, BalVulkan::EBufferUsageFlagBits::VertexBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit);
+		m_pVertexBuffer->Rebuild( vertexBufferSize, BalVulkan::EBufferUsageFlagBits::VertexBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit );
 		m_vertexCount = imDrawData->TotalVtxCount;
 		m_pVertexBuffer->Map();
 	}
@@ -508,8 +522,8 @@ void BalEditor::CInterface::UpdateBuffers()
 	}
 
 	// Upload data
-	ImDrawVert* vtxDst = static_cast<ImDrawVert*>( m_pVertexBuffer->GetMapped() );
-	ImDrawIdx* idxDst = static_cast<ImDrawIdx*>( m_pIndexBuffer->GetMapped() );
+	ImDrawVert* vtxDst = static_cast< ImDrawVert* >( m_pVertexBuffer->GetMapped() );
+	ImDrawIdx* idxDst = static_cast< ImDrawIdx* >( m_pIndexBuffer->GetMapped() );
 
 	for ( int n = 0; n < imDrawData->CmdListsCount; n++ ) {
 		const ImDrawList* cmd_list = imDrawData->CmdLists[n];
@@ -530,7 +544,7 @@ void BalEditor::CInterface::UpdateBuffers()
 	//}
 }
 
-void BalEditor::CInterface::FrameRender(BalVulkan::CCommandPool* pCommandPool) const
+void BalEditor::CInterface::FrameRender( BalVulkan::CCommandPool* pCommandPool ) const
 {
 	const ImGuiIO& io = ImGui::GetIO();
 
@@ -565,11 +579,11 @@ void BalEditor::CInterface::FrameRender(BalVulkan::CCommandPool* pCommandPool) c
 			for ( int32_t j = 0; j < cmdList->CmdBuffer.Size; j++ )
 			{
 				const ImDrawCmd* pcmd = &cmdList->CmdBuffer[j];
-				VkRect2D scissorRect;
-				scissorRect.offset.x = std::max( static_cast<int32_t>( pcmd->ClipRect.x ), 0 );
-				scissorRect.offset.y = std::max( static_cast<int32_t>( pcmd->ClipRect.y ), 0 );
-				scissorRect.extent.width = static_cast<uint32_t>( pcmd->ClipRect.z - pcmd->ClipRect.x );
-				scissorRect.extent.height = static_cast<uint32_t>( pcmd->ClipRect.w - pcmd->ClipRect.y );
+				VkRect2D scissorRect{};
+				scissorRect.offset.x = std::max( static_cast< int32_t >( pcmd->ClipRect.x ), 0 );
+				scissorRect.offset.y = std::max( static_cast< int32_t >( pcmd->ClipRect.y ), 0 );
+				scissorRect.extent.width = static_cast< uint32_t >( pcmd->ClipRect.z - pcmd->ClipRect.x );
+				scissorRect.extent.height = static_cast< uint32_t >( pcmd->ClipRect.w - pcmd->ClipRect.y );
 				vkCmdSetScissor( pCommandPool->GetCommandBuffer(), 0, 1, &scissorRect );
 				vkCmdDrawIndexed( pCommandPool->GetCommandBuffer(), pcmd->ElemCount, 1, indexOffset, vertexOffset, 0 );
 				indexOffset += pcmd->ElemCount;

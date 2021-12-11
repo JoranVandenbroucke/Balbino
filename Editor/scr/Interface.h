@@ -1,5 +1,5 @@
 #pragma once
-#include <SDL_events.h>
+#include <SDL.h>
 
 #include <vulkan/vulkan.hpp>
 
@@ -18,6 +18,7 @@ namespace BalVulkan
 struct SDL_Window;
 namespace BalEditor
 {
+	class CAssetBrowser;
 	class CGameView;
 	class CMainScreen;
 
@@ -38,6 +39,7 @@ namespace BalEditor
 	private:
 		CMainScreen* m_pMain;
 		CGameView* m_pGameView;
+		CAssetBrowser* m_pAssetBrowser;
 
 		VkDescriptorPool m_descriptorPool;
 		VkDescriptorSetLayout m_descriptorSetLayout;
@@ -53,6 +55,8 @@ namespace BalEditor
 		BalVulkan::CSampler* m_pSampler;
 		BalVulkan::CBuffer* m_pVertexBuffer;
 		BalVulkan::CBuffer* m_pIndexBuffer;
+		SDL_Window* m_pWindow;
+
 		int m_vertexCount;
 		int m_indexCount;
 
