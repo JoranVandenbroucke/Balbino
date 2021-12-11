@@ -7,12 +7,53 @@ namespace BalVulkan
 	class CCommandPool;
 	class CBuffer;
 
-	enum class EBufferType : uint8_t
+	enum class EMemoryPropertyFlagBits
 	{
-		IndexBuffer,
-		VertexBuffer,
-		StagingBuffer,
-		UniformBuffer,
+        DeviceLocalBit = 0x00000001,
+        HostVisibleBit = 0x00000002,
+        HostCoherentBit = 0x00000004,
+        HostCachedBit = 0x00000008,
+        LazilyAllocatedBit = 0x00000010,
+        ProtectedBit = 0x00000020,
+        DeviceCoherentBitAmd = 0x00000040,
+        DeviceUncachedBitAmd = 0x00000080,
+        RdmaCapableBitNv = 0x00000100,
+        FlagBitsMaxEnum = 0x7FFFFFFF
+	};
+	enum class EBufferUsageFlagBits
+	{
+        TransferSrcBit = 0x00000001,
+        TransferDstBit = 0x00000002,
+        UniformTexelBufferBit = 0x00000004,
+        StorageTexelBufferBit = 0x00000008,
+        UniformBufferBit = 0x00000010,
+        StorageBufferBit = 0x00000020,
+        IndexBufferBit = 0x00000040,
+        VertexBufferBit = 0x00000080,
+        IndirectBufferBit = 0x00000100,
+        ShaderDeviceAddressBit = 0x00020000,
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoDecodeSrcBitKhr = 0x00002000,
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoDecodeDstBitKhr = 0x00004000,
+#endif
+        TransformFeedbackBufferBitExt = 0x00000800,
+        TransformFeedbackCounterBufferBitExt = 0x00001000,
+        ConditionalRenderingBitExt = 0x00000200,
+        AccelerationStructureBuildInputReadOnlyBitKhr = 0x00080000,
+        AccelerationStructureStorageBitKhr = 0x00100000,
+        ShaderBindingTableBitKhr = 0x00000400,
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoEncodeDstBitKhr = 0x00008000,
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoEncodeSrcBitKhr = 0x00010000,
+#endif
+        RayTracingBitNv = ShaderBindingTableBitKhr,
+        ShaderDeviceAddressBitExt = ShaderDeviceAddressBit,
+        ShaderDeviceAddressBitKhr = ShaderDeviceAddressBit,
+        FlagBitsMaxEnum = 0x7FFFFFFF
 	};
 	enum class ECullMode : uint8_t
 	{
@@ -27,10 +68,55 @@ namespace BalVulkan
 		FragmentShader
 	};
 
-	enum class EImageLayout : uint8_t
+	enum class EImageLayout
 	{
-		Color,
-		Depth,
+        Undefined = 0,
+        General = 1,
+        ColorAttachmentOptimal = 2,
+        DepthStencilAttachmentOptimal = 3,
+        DepthStencilReadOnlyOptimal = 4,
+        ShaderReadOnlyOptimal = 5,
+        TransferSrcOptimal = 6,
+        TransferDstOptimal = 7,
+        Preinitialized = 8,
+        DepthReadOnlyStencilAttachmentOptimal = 1000117000,
+        DepthAttachmentStencilReadOnlyOptimal = 1000117001,
+        DepthAttachmentOptimal = 1000241000,
+        DepthReadOnlyOptimal = 1000241001,
+        StencilAttachmentOptimal = 1000241002,
+        StencilReadOnlyOptimal = 1000241003,
+        PresentSrcKhr = 1000001002,
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoDecodeDstKhr = 1000024000,
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoDecodeSrcKhr = 1000024001,
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoDecodeDpbKhr = 1000024002,
+#endif
+        SharedPresentKhr = 1000111000,
+        FragmentDensityMapOptimalExt = 1000218000,
+        FragmentShadingRateAttachmentOptimalKhr = 1000164003,
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoEncodeDstKhr = 1000299000,
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoEncodeSrcKhr = 1000299001,
+#endif
+#ifdef VK_ENABLE_BETA_EXTENSIONS
+        VideoEncodeDpbKhr = 1000299002,
+#endif
+        ReadOnlyOptimalKhr = 1000314000,
+        AttachmentOptimalKhr = 1000314001,
+        DepthReadOnlyStencilAttachmentOptimalKhr = DepthReadOnlyStencilAttachmentOptimal,
+        DepthAttachmentStencilReadOnlyOptimalKhr = DepthAttachmentStencilReadOnlyOptimal,
+        ShadingRateOptimalNv = FragmentShadingRateAttachmentOptimalKhr,
+        DepthAttachmentOptimalKhr = DepthAttachmentOptimal,
+        DepthReadOnlyOptimalKhr = DepthReadOnlyOptimal,
+        StencilAttachmentOptimalKhr = StencilAttachmentOptimal,
+        StencilReadOnlyOptimalKhr = StencilReadOnlyOptimal,
+        MaxEnum = 0x7FFFFFFF
 	};
 
     //Coppy of Vulkan VkImageUsageFlagBits
@@ -449,4 +535,6 @@ namespace BalVulkan
     };
 	void DrawMesh( const CCommandPool* command, uint32_t indexCount, uint32_t firstIndex = 0, uint32_t firstInstance = 0, uint32_t instanceCount = 1 );
     BalVulkan::EImageUsageFlagBits operator|( BalVulkan::EImageUsageFlagBits lhs, BalVulkan::EImageUsageFlagBits rhs );
+    BalVulkan::EMemoryPropertyFlagBits operator|( BalVulkan::EMemoryPropertyFlagBits lhs, BalVulkan::EMemoryPropertyFlagBits rhs );
+    BalVulkan::EBufferUsageFlagBits operator|( BalVulkan::EBufferUsageFlagBits lhs, BalVulkan::EBufferUsageFlagBits rhs );
 }

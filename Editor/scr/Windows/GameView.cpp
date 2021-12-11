@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "GameView.h"
 
-#include <cstdint>
 #include <imgui.h>
 
-void CGameView::Draw()
+void BalEditor::CGameView::Draw()
 {
 	ImGui::Begin("GameView");
 	ImGui::BeginChild("game", ImVec2{640, 500}, true);

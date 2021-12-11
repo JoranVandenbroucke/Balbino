@@ -24,7 +24,7 @@ namespace BalVulkan
 		CShaderPipeline& operator=( CShaderPipeline&& ) = default;
 		~CShaderPipeline() override;
 
-		void Initialize( const std::array<CShader*, static_cast<size_t>( EShaderType::Count )>& shaders, const CFrameBuffer& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, CSwapchain* pSwapchain, ECullMode cullModeFlag = ECullMode::Front );
+		void Initialize( const std::array<CShader*, 3>& shaders, const CFrameBuffer& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, const BalVulkan::CSwapchain* pSwapchain, ECullMode cullModeFlag = ECullMode::Front );
 		VkPipelineLayout GetPipelineLayout()const;
 		const VkDescriptorSetLayout& GetDescriptorSetLayout()const;
 		VkPipeline GetPipeline();

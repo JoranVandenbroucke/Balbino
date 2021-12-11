@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include <iostream>
 
-void CMainScreen::Draw()
+void BalEditor::CMainScreen::Draw()
 {
 	ImGuiIO& io = ImGui::GetIO();
 	(void)io;
@@ -21,7 +21,7 @@ void CMainScreen::Draw()
 		{
 			if (ImGui::MenuItem("New"))
 			{
-				m_Saved = false;
+				m_saved = false;
 			}
 			if (ImGui::MenuItem("Open"))
 			{

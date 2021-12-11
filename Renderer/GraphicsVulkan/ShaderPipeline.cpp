@@ -18,7 +18,7 @@ BalVulkan::CShaderPipeline::~CShaderPipeline()
 	vkDestroyDescriptorSetLayout( GetDevice()->GetVkDevice(), m_descriptorSetLayout, nullptr );
 }
 
-void BalVulkan::CShaderPipeline::Initialize( const std::array<BalVulkan::CShader*, static_cast<size_t>( BalVulkan::EShaderType::Count )>& shaders, const CFrameBuffer& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, BalVulkan::CSwapchain* pSwapchain, BalVulkan::ECullMode cullModeFlag )
+void BalVulkan::CShaderPipeline::Initialize( const std::array<BalVulkan::CShader*, static_cast<size_t>( BalVulkan::EShaderType::Count )>& shaders, const CFrameBuffer& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, const BalVulkan::CSwapchain* pSwapchain, BalVulkan::ECullMode cullModeFlag )
 {
 	std::vector<VkPipelineShaderStageCreateInfo> shaderStages{};
 	std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};

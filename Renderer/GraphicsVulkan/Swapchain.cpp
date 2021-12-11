@@ -78,6 +78,11 @@ const VkSwapchainKHR& BalVulkan::CSwapchain::GetVkSwapchain() const
 	return m_swapchain;
 }
 
+uint32_t BalVulkan::CSwapchain::GetMinImage() const
+{
+	return m_minImageCount;
+}
+
 BalVulkan::CSwapchain* BalVulkan::CSwapchain::CreateNew( const CDevice* device, const VkSurfaceKHR& surface )
 {
 	return new CSwapchain{ device, surface };

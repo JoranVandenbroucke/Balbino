@@ -30,7 +30,7 @@ namespace BalVulkan
 		uint32_t GetHeight() const;
 		uint32_t GetDepth() const;
 
-		void TransitionImageLayout(uint32_t mipLevels, const CBuffer* pCommand );
+		void TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, BalVulkan::EImageLayout newLayout );
 		void GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand );
 		static CImageResource* CreateNew( const CDevice* pDevice );
 

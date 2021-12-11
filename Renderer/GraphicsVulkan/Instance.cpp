@@ -42,12 +42,14 @@ BalVulkan::CInstance::CInstance()
 
 BalVulkan::CInstance::~CInstance()
 {
+#ifdef _DEBUG
 	if ( vkpfn_DestroyDebugReportCallbackEXT && m_debugReport )
 	{
 		vkpfn_DestroyDebugReportCallbackEXT( m_instanceHandle, m_debugReport, m_pCallbacks );
 	}
 	vkDestroySurfaceKHR( m_instanceHandle, m_surfaceKhr, m_pCallbacks );
 	//vkDestroyDebugReportCallbackEXT( m_instanceHandle, m_debugReport, m_pCallbacks );
+#endif
 }
 
 bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t extensionsCount )
@@ -172,6 +174,16 @@ uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex(const VkSurfaceKHR& s
 		}
 	}
 	return 0;
+}
+
+VkDebugReportCallbackEXT BalVulkan::CInstance::GetReportCallbackExt() const
+{
+	return m_debugReport;
+}
+
+VkSurfaceKHR BalVulkan::CInstance::GetSurface() const
+{
+	return m_surfaceKhr;
 }
 
 BalVulkan::CInstance* BalVulkan::CInstance::CreateNew()

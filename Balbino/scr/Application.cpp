@@ -12,11 +12,18 @@
 #include "Managers/TextureManager.h"
 #include "Renderer/Renderer.h"
 
+#ifdef BALBINO_EDITOR
+#include <scr/Interface.h>
+#endif
 
 Balbino::Application::Application()
 	: m_pWindow{ nullptr }
 	, m_manager{}
 	, m_pRenderer{ DBG_NEW CRenderer{} }
+#ifdef BALBINO_EDITOR
+	, m_pInterface{ nullptr }
+#endif // BALBINO_EDITOR
+
 {
 }
 
@@ -56,11 +63,11 @@ void Balbino::Application::Initialize()
 	m_manager.SetShaderManager( DBG_NEW CShaderManager{} );
 	m_manager.SetTextureManager( DBG_NEW CTextureManager{} );
 	m_manager.SetMaterialManager( DBG_NEW CMaterialManager{} );
-	m_manager.GetInputHandler()->Initialize();
-	m_manager.GetCameraManager()->SetRenderer(m_pRenderer);
+	CManager::GetInputHandler()->Initialize();
+	CManager::GetCameraManager()->SetRenderer(m_pRenderer);
 }
 
-void Balbino::Application::LoadGame() const
+void Balbino::Application::LoadGame()
 {
 	std::cout << "Load Engine\n";
 	CManager::GetCameraManager()->AddCamera( { 0, 1, 0 } );
@@ -78,17 +85,26 @@ void Balbino::Application::LoadGame() const
 	{
 		throw std::runtime_error( std::string( "Could not get the number of required m_Instance extensions from SDL." ) );
 	}
-	auto extensions{ DBG_NEW const char* [extenstionCount] };
+	const auto extensions{ DBG_NEW const char* [extenstionCount] };
 	if ( !SDL_Vulkan_GetInstanceExtensions( m_pWindow, &extenstionCount, extensions ) )
 	{
 		throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ) );
 	}
+#ifdef BALBINO_EDITOR
+	m_pInterface = new BalEditor::CInterface{};
+	m_pRenderer->Setup( m_pWindow, extensions, extenstionCount, m_pInterface );
+#else
 	m_pRenderer->Setup( m_pWindow, extensions, extenstionCount );
+#endif
 	delete[] extensions;
 }
 
 void Balbino::Application::Cleanup()
 {
+#ifdef BALBINO_EDITOR
+	m_pInterface->Cleanup();
+	delete m_pInterface;
+#endif
 	//m_pRenderer->Cleanup();
 	m_manager.Cleanup();
 	m_pRenderer->Cleanup();
@@ -122,6 +138,9 @@ void Balbino::Application::Run()
 		SDL_Event e;
 		while ( SDL_PollEvent( &e ) )
 		{
+#ifdef BALBINO_EDITOR
+				m_pInterface->ProcessEvent( e );
+#endif
 			switch ( e.type )
 			{
 				case SDL_QUIT:

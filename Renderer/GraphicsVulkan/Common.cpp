@@ -23,3 +23,13 @@ BalVulkan::EImageUsageFlagBits BalVulkan::operator|( BalVulkan::EImageUsageFlagB
 {
 	return ( EImageUsageFlagBits ) ( ( uint32_t ) lhs | ( uint32_t ) rhs );
 }
+
+BalVulkan::EMemoryPropertyFlagBits BalVulkan::operator|( BalVulkan::EMemoryPropertyFlagBits lhs, BalVulkan::EMemoryPropertyFlagBits rhs )
+{
+	return ( EMemoryPropertyFlagBits ) ( ( uint32_t ) lhs | ( uint32_t ) rhs );
+}
+
+BalVulkan::EBufferUsageFlagBits BalVulkan::operator|( BalVulkan::EBufferUsageFlagBits lhs, BalVulkan::EBufferUsageFlagBits rhs )
+{
+	return ( EBufferUsageFlagBits ) ( ( uint32_t ) lhs | ( uint32_t ) rhs );
+}

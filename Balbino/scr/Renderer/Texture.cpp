@@ -32,12 +32,12 @@ void Balbino::CTexture::Initialize( const void* pData, const uint32_t width, con
 	mipMaps = hasMips ? mipMaps : static_cast< uint32_t >( std::floor( std::log2( std::max( width, width ) ) ) ) + 1;
 
 	BalVulkan::CBuffer stagingBuffer{ m_pDevice, &commandPool, pQueue };
-	stagingBuffer.Initialize( imageSize, BalVulkan::EBufferType::StagingBuffer );
+	stagingBuffer.Initialize( imageSize, BalVulkan::EBufferUsageFlagBits::TransferSrcBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
 	stagingBuffer.UpdateData( pData, size );
 
 	m_pResource = BalVulkan::CImageResource::CreateNew( m_pDevice );
 	m_pResource->Initialize( width, height, mipMaps, faces * layers, layout, format);
-	m_pResource->TransitionImageLayout( mipMaps, &stagingBuffer );
+	m_pResource->TransitionImageLayout( mipMaps, &stagingBuffer, BalVulkan::EImageLayout::TransferDstOptimal );
 	stagingBuffer.CopyBufferToImage( m_pResource );
 
 	if ( !hasMips )
@@ -45,6 +45,7 @@ void Balbino::CTexture::Initialize( const void* pData, const uint32_t width, con
 
 	m_pView = BalVulkan::CImageView::CreateNew( *m_pResource, type, 0u, m_pResource->GetMipCount(), 0u, m_pResource->GetLayerCount() );
 	m_pSampler = BalVulkan::CSampler::CreateNew( m_pDevice );
+	m_pSampler->Initialize( m_pResource->GetMipCount() );
 }
 
 void Balbino::CTexture::Cleanup() const

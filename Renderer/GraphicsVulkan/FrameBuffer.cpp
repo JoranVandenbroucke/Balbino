@@ -125,9 +125,10 @@ void BalVulkan::CFrameBuffer::Initialize( const CSwapchain* pSwapchain )
 							   pSwapchain->GetExtend().height,
 							   1,
 							   1,
-							   EImageLayout::Depth,
+							   //EImageLayout::DepthAttachmentOptimal,
+							   EImageLayout::Undefined,
 							   static_cast<EFormat>( attachmentDescs[1].format ),
-							   EImageUsageFlagBits::DepthStencilAttachmentBit | EImageUsageFlagBits::SampledBit );
+							   EImageUsageFlagBits::DepthStencilAttachmentBit );
 	m_pDepthImageView = CImageView::CreateNew( *m_pDepthImage, EImageViewType::View2D, 0, 1, 0, 1 );
 	m_frameBuffer.resize( m_swapchainViews.size(), VK_NULL_HANDLE );
 	for ( size_t i = 0; i < m_swapchainViews.size(); i++ ) {

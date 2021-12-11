@@ -2,6 +2,14 @@
 #include "Core.h"
 #include "Managers/Manager.h"
 
+#ifdef BALBINO_EDITOR
+namespace BalEditor
+{
+	class CInterface;
+}
+#endif // BALBINO_EDITOR
+
+
 struct SDL_Window;
 
 namespace Balbino
@@ -23,7 +31,7 @@ namespace Balbino
 		Application& operator=(Application&&) = delete;
 
 		void Initialize();
-		virtual void LoadGame() const;
+		virtual void LoadGame();
 		void Cleanup();
 		void Run();
 
@@ -32,6 +40,9 @@ namespace Balbino
 
 		CManager m_manager;
 		CRenderer* m_pRenderer;
+#ifdef BALBINO_EDITOR
+		BalEditor::CInterface* m_pInterface;
+#endif
 	};
 
 	//to be defined in client
