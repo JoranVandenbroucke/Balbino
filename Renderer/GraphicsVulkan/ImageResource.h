@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Common.h"
+#include <vulkan/vulkan.hpp>
 
 namespace BalVulkan
 {
@@ -33,7 +34,7 @@ namespace BalVulkan
 		void TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, BalVulkan::EImageLayout newLayout );
 		void GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand );
 		static CImageResource* CreateNew( const CDevice* pDevice );
-
+		static CImageResource* LoadFromFile( const std::string& path );
 	private:
 		bool m_ownedBySwapchain;
 		uint32_t m_mipLevels;

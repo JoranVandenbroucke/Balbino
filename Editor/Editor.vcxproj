@@ -58,7 +58,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\Include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;$(SolutionDir)Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -79,8 +79,9 @@
       </Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\Vulkan\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>vulkan-1.lib;shaderc_shared.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
@@ -94,7 +95,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\Include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;$(SolutionDir)Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -116,11 +117,13 @@
       </Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>vulkan-1.lib;shaderc_shared.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\Vulkan\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Windows\SceneHierarchy.h" />
     <ClInclude Include="scr\Tools\FilesSystem\Inporter\ImageImporter.h" />
     <ClInclude Include="scr\Windows\AssetBrowser.h" />
     <ClInclude Include="scr\Tools\FilesSystem\FIleSystem.h" />
@@ -130,6 +133,7 @@
     <ClInclude Include="scr\pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Windows\SceneHierarchy.cpp" />
     <ClCompile Include="scr\Tools\FilesSystem\Inporter\ImageImporter.cpp" />
     <ClCompile Include="scr\Windows\AssetBrowser.cpp" />
     <ClCompile Include="scr\Tools\FilesSystem\FIleSystem.cpp" />

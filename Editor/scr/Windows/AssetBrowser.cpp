@@ -18,14 +18,18 @@ BalEditor::CAssetBrowser::CAssetBrowser()
 
 BalEditor::CAssetBrowser::~CAssetBrowser()
 {
-	m_pUnknownIcon->Release();
-	m_pFolderIcon->Release();
-	m_pBalbinoIcon->Release();
-	m_pImageIcon->Release();
-	m_pAudioIcon->Release();
-	m_pModelIcon->Release();
-	m_pPresetIcon->Release();
-	m_pCodeIcon->Release();
+}
+
+void BalEditor::CAssetBrowser::Initialize( BalVulkan::CDevice* pDevice)
+{
+	m_pUnknownIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	m_pFolderIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	m_pBalbinoIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	m_pImageIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	m_pAudioIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	m_pModelIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	m_pPresetIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	m_pCodeIcon = BalVulkan::CImageResource::CreateNew( pDevice );
 }
 
 void BalEditor::CAssetBrowser::Draw()
@@ -34,7 +38,7 @@ void BalEditor::CAssetBrowser::Draw()
 
 	//ImGui::SetNextWindowSizeConstraints( ImVec2( 100.0f, -1.0f ), ImVec2( -1.0f, -1.0f ), ImGuiCond_FirstUseEver );
 	ImGui::Begin( "Asset Browser", nullptr, 0 );
-	ImGui::BeginChild( "Asset Tree", ImVec2{ 100,-1 }, true, ImGuiWindowFlags_HorizontalScrollbar );
+	ImGui::BeginChild( "Asset Tree", ImVec2{ 100, -1 }, true, ImGuiWindowFlags_HorizontalScrollbar );
 	ImGui::SetNextItemOpen( true );
 	const bool open{ ImGui::TreeNode( "Data" ) };
 	if ( ImGui::IsItemClicked() )
@@ -58,67 +62,67 @@ void BalEditor::CAssetBrowser::Draw()
 	} );
 
 	ImGui::SameLine();
-	ImGui::BeginChild( "Asset File", ImVec2{ -1,-1 }, true, ImGuiWindowFlags_AlwaysAutoResize );
+	ImGui::BeginChild( "Asset File", ImVec2{ -1, -1 }, true, ImGuiWindowFlags_AlwaysAutoResize );
 
 	for ( const auto& currentFile : m_selected )
 	{
 		switch ( currentFile.type )
 		{
 			case EFileTypes::Folder:
-			{
-				ImGui::Image( m_pFolderIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pFolderIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 			case EFileTypes::Scene:
-			{
-				ImGui::Image( m_pBalbinoIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pBalbinoIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 			case EFileTypes::Image:
-			{
-				//todo:: get image data
-				//GLuint Icon = ResourceManager::LoadIcon( currentFile.path.generic_u8string() );
-				//int w{}, h{};
-				//int miplevel{};
-				//glBindIcon( GL_Icon_2D, Icon );
-				//glGetTexLevelParameteriv( GL_Icon_2D, miplevel, GL_Icon_WIDTH, &w );
-				//glGetTexLevelParameteriv( GL_Icon_2D, miplevel, GL_Icon_HEIGHT, &h );
-				//glBindIcon( GL_Icon_2D, 0 );
-				//( Icon, miplevel, GL_Icon_HEIGHT, &h );
-				//const int biggestSide{ ( w > h ) ? w : h };
-				//ImGui::Image( ( void* ) ( intptr_t ) ( Icon ), { float( w ) / biggestSide * 16, float( h ) / biggestSide * 16 } );
-				break;
-			}
+				{
+					//todo:: get image data
+					//GLuint Icon = ResourceManager::LoadIcon( currentFile.path.generic_u8string() );
+					//int w{}, h{};
+					//int miplevel{};
+					//glBindIcon( GL_Icon_2D, Icon );
+					//glGetTexLevelParameteriv( GL_Icon_2D, miplevel, GL_Icon_WIDTH, &w );
+					//glGetTexLevelParameteriv( GL_Icon_2D, miplevel, GL_Icon_HEIGHT, &h );
+					//glBindIcon( GL_Icon_2D, 0 );
+					//( Icon, miplevel, GL_Icon_HEIGHT, &h );
+					//const int biggestSide{ ( w > h ) ? w : h };
+					//ImGui::Image( ( void* ) ( intptr_t ) ( Icon ), { float( w ) / biggestSide * 16, float( h ) / biggestSide * 16 } );
+					break;
+				}
 			case EFileTypes::Audio:
-			{
-				ImGui::Image( m_pAudioIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pAudioIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 			case EFileTypes::Code:
-			{
-				ImGui::Image( m_pCodeIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pCodeIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 			case EFileTypes::Unknown:
-			{
-				ImGui::Image( m_pUnknownIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pUnknownIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 			case EFileTypes::Font:
-			{
-				ImGui::Image( m_pFolderIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pFolderIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 			case EFileTypes::Model:
-			{
-				ImGui::Image( m_pModelIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pModelIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 			case EFileTypes::Preset:
-			{
-				ImGui::Image( m_pPresetIcon->GetImage(), { 16,16 } );
-				break;
-			}
+				{
+					ImGui::Image( m_pPresetIcon->GetImage(), { 16, 16 } );
+					break;
+				}
 		}
 		ImGui::SameLine();
 		bool isSelected{ false };
@@ -142,7 +146,19 @@ void BalEditor::CAssetBrowser::Draw()
 	ImGui::End();
 }
 
-void BalEditor::CAssetBrowser::MoveIn( const std::filesystem::path& path, std::vector<BalEditor::SFile>& selectedPath )
+void BalEditor::CAssetBrowser::Cleanup()
+{
+	m_pUnknownIcon->Release();
+	m_pFolderIcon->Release();
+	m_pBalbinoIcon->Release();
+	m_pImageIcon->Release();
+	m_pAudioIcon->Release();
+	m_pModelIcon->Release();
+	m_pPresetIcon->Release();
+	m_pCodeIcon->Release();
+}
+
+void BalEditor::CAssetBrowser::MoveIn( const std::filesystem::path& path, std::vector<SFile>& selectedPath )
 {
 	static ImGuiTreeNodeFlags s_baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
 

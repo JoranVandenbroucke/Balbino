@@ -2,6 +2,7 @@
 #include "Base.h"
 #include "Common.h"
 
+#include <vulkan/vulkan.hpp>
 namespace BalVulkan
 {
 	class CSampler final : public CDeviceObject

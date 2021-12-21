@@ -17,7 +17,7 @@
 
 bool BalEditor::ImportImage( const std::filesystem::path& path )
 {
-	std::filesystem::path p{ std::string("../Data/") + path.filename().string()};
+	std::filesystem::path p{ std::string( "../Data/" ) + path.filename().string() };
 	p.replace_extension( ".basset" );
 	std::ofstream file( p.string().c_str(), std::ios::out | std::ios::binary );
 	if ( !file.is_open() )
@@ -35,7 +35,7 @@ bool BalEditor::ImportImage( const std::filesystem::path& path )
 		if ( texture.empty() )
 			return false;
 
-		BinaryReadWrite::Write( file, static_cast< uint8_t >( EFileTypes::Image ) );
+		BinaryReadWrite::Write( file, static_cast<uint8_t>( EFileTypes::Image ) );
 		BinaryReadWrite::Write( file, texture.extent().x );
 		BinaryReadWrite::Write( file, texture.extent().y );
 		BinaryReadWrite::Write( file, texture.base_face() );
@@ -59,7 +59,7 @@ bool BalEditor::ImportImage( const std::filesystem::path& path )
 		if ( pSurface->pitch / pSurface->w != 4 )
 			pSurface = SDL_ConvertSurfaceFormat( pSurface, SDL_PIXELFORMAT_RGBA8888, 0 );
 
-		BinaryReadWrite::Write( file, static_cast< uint8_t >( EFileTypes::Image ) );
+		BinaryReadWrite::Write( file, static_cast<uint8_t>( EFileTypes::Image ) );
 		BinaryReadWrite::Write( file, pSurface->w );
 		BinaryReadWrite::Write( file, pSurface->h );
 		BinaryReadWrite::Write( file, 0 );
@@ -70,7 +70,7 @@ bool BalEditor::ImportImage( const std::filesystem::path& path )
 		BinaryReadWrite::Write( file, 0 );
 		BinaryReadWrite::Write( file, static_cast<uint32_t>( BalVulkan::EFormat::R8G8B8A8Srgb ) );
 		BinaryReadWrite::Write( file, pSurface->h * pSurface->pitch );
-		BinaryReadWrite::Write( file, static_cast<uint8_t*>( pSurface->pixels ), static_cast<uint64_t>(pSurface->h) * pSurface->pitch );
+		BinaryReadWrite::Write( file, static_cast<uint8_t*>( pSurface->pixels ), static_cast<uint64_t>( pSurface->h ) * pSurface->pitch );
 		SDL_FreeSurface( pSurface );
 	}
 	file.close();
@@ -90,7 +90,7 @@ bool BalEditor::ImportFont( const std::filesystem::path& path )
 	if ( !file.is_open() )
 		return false;
 	TTF_SetFontKerning( pFont, 0 );
-	BinaryReadWrite::Write( file, static_cast< uint8_t >( EFileTypes::Font ) );
+	BinaryReadWrite::Write( file, static_cast<uint8_t>( EFileTypes::Font ) );
 	BinaryReadWrite::Write( file, TTF_FontLineSkip( pFont ) );
 	BinaryReadWrite::Write( file, TTF_GetFontHinting( pFont ) );
 	BinaryReadWrite::Write( file, TTF_FontHeight( pFont ) );
@@ -101,13 +101,13 @@ bool BalEditor::ImportFont( const std::filesystem::path& path )
 	for ( uint16_t i{}; i < 256u; ++i )
 	{
 		const char c[1]{ static_cast<char>( i ) };
-		SDL_Surface* pSurface = TTF_RenderText_Solid( pFont, c, { 255,255,255,255 } );
+		SDL_Surface* pSurface = TTF_RenderText_Solid( pFont, c, { 255, 255, 255, 255 } );
 		if ( pSurface == nullptr )
 			return false;
 		BinaryReadWrite::Write( file, pSurface->w );
 		BinaryReadWrite::Write( file, pSurface->h );
 		BinaryReadWrite::Write( file, pSurface->h * pSurface->pitch );
-		BinaryReadWrite::Write( file,static_cast<uint8_t*>( pSurface->pixels ), static_cast<uint64_t>(pSurface->h) * pSurface->pitch );
+		BinaryReadWrite::Write( file, static_cast<uint8_t*>( pSurface->pixels ), static_cast<uint64_t>( pSurface->h ) * pSurface->pitch );
 		TTF_CloseFont( pFont );
 	}
 
@@ -127,7 +127,7 @@ bool BalEditor::ImportMesh( const std::filesystem::path& path )
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile( path.string(), static_cast<unsigned>( aiProcess_Triangulate | aiProcess_RemoveRedundantMaterials | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes | aiProcess_ValidateDataStructure ) );
-	
+
 	// If the import failed, report it
 	if ( !scene )
 	{

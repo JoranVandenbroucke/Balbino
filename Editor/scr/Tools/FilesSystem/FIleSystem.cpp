@@ -21,7 +21,7 @@ bool BalEditor::ImportFile( const char* pPath )
 	}
 	if ( extenstion == ".BALBINO" || extenstion == ".BASSET" || extenstion == ".CPP" || extenstion == ".H" )
 	{
-		std::filesystem::copy( dirPath, "../Data" );
+		copy( dirPath, "../Data" );
 		return true;
 	}
 	if ( std::ranges::find( supportedImageFormat, extenstion ) != supportedImageFormat.end() )
@@ -46,7 +46,7 @@ std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::
 		EFileTypes type{};
 		for ( int i{}; i < std::size( extenstion ); ++i )
 		{
-			extenstion[i] = static_cast< char >( std::toupper( extenstion[i] ) );
+			extenstion[i] = static_cast<char>( std::toupper( extenstion[i] ) );
 		}
 
 		if ( extenstion == "" )
@@ -57,14 +57,14 @@ std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::
 		{
 			type = EFileTypes::Scene;
 		}
-		else if (std::ranges::find(supportedScriptFormat, extenstion) != supportedScriptFormat.end() )
+		else if ( std::ranges::find( supportedScriptFormat, extenstion ) != supportedScriptFormat.end() )
 		{
 			type = EFileTypes::Code;
 		}
-		else if (extenstion == ".BASSET" )
+		else if ( extenstion == ".BASSET" )
 		{
-			std::ifstream file( dirPath,std::ios::in | std::ios::binary );
-			if( !file.is_open() )
+			std::ifstream file( dirPath, std::ios::in | std::ios::binary );
+			if ( !file.is_open() )
 			{
 				uint8_t value;
 				BinaryReadWrite::Read( file, value );
@@ -76,13 +76,13 @@ std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::
 			extenstion == "",
 			type,
 			dirPath.filename().string(),
-			std::filesystem::relative( dirPath )
-						 } );
+			relative( dirPath )
+		} );
 	}
 	return files;
 }
 
-std::ostream & BalEditor::BinaryReadWrite::Write( std::ostream & file, const std::string & value )
+std::ostream& BalEditor::BinaryReadWrite::Write( std::ostream& file, const std::string& value )
 {
 	const char* pText = value.c_str();
 	const int size = static_cast<int>( value.size() );
@@ -96,8 +96,9 @@ std::istream& BalEditor::BinaryReadWrite::Read( std::istream& file, std::string&
 	value.clear();
 	int size{};
 	Read( file, size );
-	if ( size == 0 )return file;
-	char* pBuffer{ DBG_NEW char[size] };
+	if ( size == 0 )
+		return file;
+	auto pBuffer{ DBG_NEW char[size] };
 	file.read( pBuffer, size );
 	value.append( pBuffer, size );
 	delete[] pBuffer;

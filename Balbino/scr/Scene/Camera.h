@@ -15,23 +15,20 @@ namespace Balbino
 
 		bool operator==(const CCamera& other) const;
 
-		void Initialize(float aspectRatio, const glm::vec3& pos, float xAngle, float yAngle);
+		void Initialize( uint32_t width, uint32_t height, float fov = glm::radians( 45.0f ));
+		void SetDrawIndex( int index );
 
 		const glm::mat4& GetView() const;
 		const glm::mat4& GetProjection() const;
-		void SetDrawIndex(int index);
-		void Update(float dt);
-
 		int GetDrawIndex() const;
-		void Horizontal(float value);
-		void Vertical(float value);
 	private:
-		int m_index;
-		glm::vec2 m_inputDir;
 		glm::mat4 m_view;
 		glm::mat4 m_projection;
 
-		float m_pitch;
-		float m_yaw;
+		int m_index;
+		uint32_t m_width;
+		uint32_t m_height;
+		float m_fov;
+		float m_aspectRatio;
 	};
 }

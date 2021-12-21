@@ -14,6 +14,7 @@ struct SDL_Window;
 
 namespace Balbino
 {
+	class CScene;
 	class CRenderer;
 
 #ifdef BL_EDITOR
@@ -25,10 +26,10 @@ namespace Balbino
 	public:
 		Application();
 		virtual ~Application();
-		Application(const Application&) = delete;
-		Application(Application&&) = delete;
-		Application& operator=(const Application&) = delete;
-		Application& operator=(Application&&) = delete;
+		Application( const Application& ) = delete;
+		Application( Application&& ) = delete;
+		Application& operator=( const Application& ) = delete;
+		Application& operator=( Application&& ) = delete;
 
 		void Initialize();
 		virtual void LoadGame();
@@ -43,6 +44,7 @@ namespace Balbino
 #ifdef BALBINO_EDITOR
 		BalEditor::CInterface* m_pInterface;
 #endif
+		CScene* m_pScene;
 	};
 
 	//to be defined in client

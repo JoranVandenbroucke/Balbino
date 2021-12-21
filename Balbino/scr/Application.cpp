@@ -11,6 +11,7 @@
 #include "Managers/ShaderManager.h"
 #include "Managers/TextureManager.h"
 #include "Renderer/Renderer.h"
+#include "Scene/Scene.h"
 
 #ifdef BALBINO_EDITOR
 #include <scr/Interface.h>
@@ -20,6 +21,7 @@ Balbino::Application::Application()
 	: m_pWindow{ nullptr }
 	, m_manager{}
 	, m_pRenderer{ DBG_NEW CRenderer{} }
+	, m_pScene{DBG_NEW CScene{}}
 #ifdef BALBINO_EDITOR
 	, m_pInterface{ nullptr }
 #endif // BALBINO_EDITOR
@@ -64,14 +66,10 @@ void Balbino::Application::Initialize()
 	m_manager.SetTextureManager( DBG_NEW CTextureManager{} );
 	m_manager.SetMaterialManager( DBG_NEW CMaterialManager{} );
 	CManager::GetInputHandler()->Initialize();
-	CManager::GetCameraManager()->SetRenderer(m_pRenderer);
 }
 
 void Balbino::Application::LoadGame()
 {
-	std::cout << "Load Engine\n";
-	CManager::GetCameraManager()->AddCamera( { 0, 1, 0 } );
-
 	/*
 	 * if you download Vulkan from https://vulkan.lunarg.com/home/welcome
 	 * you get code for Open SDL
@@ -93,6 +91,7 @@ void Balbino::Application::LoadGame()
 #ifdef BALBINO_EDITOR
 	m_pInterface = new BalEditor::CInterface{};
 	m_pRenderer->Setup( m_pWindow, extensions, extenstionCount, m_pInterface );
+	m_pInterface->SetContext( m_pScene );
 #else
 	m_pRenderer->Setup( m_pWindow, extensions, extenstionCount );
 #endif
@@ -152,9 +151,12 @@ void Balbino::Application::Run()
 			}
 			CManager::GetInputHandler()->ProcessEvents( e );
 		}
-		CManager::GetCameraManager()->Update( deltaTime );
 		CManager::GetInputHandler()->Update();
-		m_pRenderer->Draw();
+
+		m_pScene->Update( deltaTime );
+		m_pRenderer->StartDraw();
+		m_pScene->Draw();
+		m_pRenderer->EndDraw();
 	}
 	Cleanup();
 }

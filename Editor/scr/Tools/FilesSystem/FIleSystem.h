@@ -32,6 +32,7 @@ namespace BalEditor
 		Model,
 		Preset
 	};
+
 	const struct SFile
 	{
 		bool isFolder;
@@ -41,103 +42,104 @@ namespace BalEditor
 		uint64_t size;
 		void* pData;
 	};
-	const std::array supportedImageFormat { ".BMP", ".GIF", ".JPEG", ".JPG", ".LBM", ".PCX", ".PNG", ".PNM", ".SVG", ".TGA", ".TIFF", ".WEBP", ".XCF", ".XPM", ".XV" };
-	const std::array supportedAudioFormat { ".OGG", ".MP3", ".WAV", ".MID", ".FLAC", ".MOD"/*, ".OPUS"*/ };
-	const std::array supportedFontFormat { ".TTF", ".TTC", ".CFF", ".WOFF", ".OTF", ".OTC", ".PFB", ".PFA", ".CID", ".SFNT", ".PCF", ".FNT", ".BDF", ".PFR" };
-	const std::array supportedScriptFormat { ".C", ".CPP", ".CXX", ".H", ".HPP", ".HXX", ".GLSL", ".VERT", ".FRAG" };
-	const std::array supportedMeshFormat { ".fbx", ".dae", ".gltf", " .glb", ".blend", ".3ds", ".ase", ".obj", ".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn", ".bvh", ".csm", ".xml", ".irrmesh", ".irr", ".mdl", ".md2", ".md3", ".pk3", ".mdc", ".md5*", ".smd", ".vta", ".ogex", ".3d", ".b3d", ".q3d", ".q3s", ".nff", ".nff", ".off", ".raw", ".ter", ".mdl", ".hmp", ".ndo" };
+
+	const std::array supportedImageFormat{ ".BMP", ".GIF", ".JPEG", ".JPG", ".LBM", ".PCX", ".PNG", ".PNM", ".SVG", ".TGA", ".TIFF", ".WEBP", ".XCF", ".XPM", ".XV" };
+	const std::array supportedAudioFormat{ ".OGG", ".MP3", ".WAV", ".MID", ".FLAC", ".MOD"/*, ".OPUS"*/ };
+	const std::array supportedFontFormat{ ".TTF", ".TTC", ".CFF", ".WOFF", ".OTF", ".OTC", ".PFB", ".PFA", ".CID", ".SFNT", ".PCF", ".FNT", ".BDF", ".PFR" };
+	const std::array supportedScriptFormat{ ".C", ".CPP", ".CXX", ".H", ".HPP", ".HXX", ".GLSL", ".VERT", ".FRAG" };
+	const std::array supportedMeshFormat{ ".fbx", ".dae", ".gltf", " .glb", ".blend", ".3ds", ".ase", ".obj", ".ifc", ".xgl", ".zgl", ".ply", ".dxf", ".lwo", ".lws", ".lxo", ".stl", ".x", ".ac", ".ms3d", ".cob", ".scn", ".bvh", ".csm", ".xml", ".irrmesh", ".irr", ".mdl", ".md2", ".md3", ".pk3", ".mdc", ".md5*", ".smd", ".vta", ".ogex", ".3d", ".b3d", ".q3d", ".q3s", ".nff", ".nff", ".off", ".raw", ".ter", ".mdl", ".hmp", ".ndo" };
 
 	bool ImportFile( const char* pPath );
-	std::vector<BalEditor::SFile> GetFilesInPath( const std::filesystem::path& path );
+	std::vector<SFile> GetFilesInPath( const std::filesystem::path& path );
 
 	namespace BinaryReadWrite
 	{
 		//write
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const T& value );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const T* pValue, uint64_t size );
-		template<typename T, uint64_t SIZE>
+		template <typename T, uint64_t SIZE>
 		std::ostream& Write( std::ostream& file, const std::array<T, SIZE>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::vector<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::deque<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::forward_list<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::list<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::stack<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::queue<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::priority_queue<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::set<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::multiset<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::unordered_set<T>& values );
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::unordered_multiset<T>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::map<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::multimap<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::unordered_map<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::unordered_multimap<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::pair<K, V>& values );
 
 		std::ostream& Write( std::ostream& file, const std::string& value );
 
 		//read
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, T& value );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, const T* pValue, uint64_t size );
-		template<typename T, uint64_t SIZE>
+		template <typename T, uint64_t SIZE>
 		std::istream& Read( std::istream& file, std::array<T, SIZE>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::vector<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::deque<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::forward_list<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::list<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::stack<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::queue<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::priority_queue<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::set<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::multiset<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::unordered_set<T>& values );
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, std::unordered_multiset<T>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::map<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::multimap<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::unordered_map<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::unordered_multimap<K, V>& values );
-		template<typename K, typename V>
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::pair<K, V>& values );
 
 		std::istream& Read( std::istream& file, std::string& value );
 		/////////////////////////////////////////////////////////////////////////////////////////////
 		//write
-		template<typename T>
+		template <typename T>
 		bool WriteToFile( const std::string& path, const T& value )
 		{
 			/*if ( !std::is_pod<T>::value )
@@ -157,7 +159,7 @@ namespace BalEditor
 			return true;
 		}
 
-		template<typename T>
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const T& value )
 		{
 			if ( ( file.rdstate() & std::ifstream::failbit ) != 0 )
@@ -171,7 +173,8 @@ namespace BalEditor
 			}
 			return file.write( reinterpret_cast<const char*>( &value ), sizeof( T ) );
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const T* pValue, uint64_t size )
 		{
 			for ( uint64_t i = 0; i < size; i++ )
@@ -180,7 +183,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T, uint64_t SIZE>
+
+		template <typename T, uint64_t SIZE>
 		std::ostream& Write( std::ostream& file, const std::array<T, SIZE>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -191,7 +195,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::vector<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -202,7 +207,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::deque<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -213,7 +219,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::forward_list<T>& values )
 		{
 			const int size{ static_cast<int>( std::distance( values.begin(), values.end() ) ) };
@@ -224,7 +231,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::list<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -235,7 +243,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::stack<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -246,7 +255,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::queue<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -259,7 +269,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::priority_queue<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -273,7 +284,8 @@ namespace BalEditor
 
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::set<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -284,7 +296,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::multiset<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -295,7 +308,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::unordered_set<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -306,7 +320,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::ostream& Write( std::ostream& file, const std::unordered_multiset<T>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -317,7 +332,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::map<K, V>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -328,7 +344,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::multimap<K, V>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -339,7 +356,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::unordered_map<K, V>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -350,7 +368,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::unordered_multimap<K, V>& values )
 		{
 			const int size{ static_cast<int>( values.size() ) };
@@ -361,7 +380,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::ostream& Write( std::ostream& file, const std::pair<K, V>& values )
 		{
 			Write( file, values.first );
@@ -370,7 +390,7 @@ namespace BalEditor
 		}
 
 		//read
-		template<typename T>
+		template <typename T>
 		std::istream& Read( std::istream& file, T& value )
 		{
 			if ( ( file.rdstate() & std::ifstream::failbit ) != 0 )
@@ -384,7 +404,8 @@ namespace BalEditor
 			}
 			return file.read( reinterpret_cast<char*>( &value ), sizeof( T ) );
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, const T* pValue, uint64_t size )
 		{
 			for ( uint64_t i = 0; i < size; i++ )
@@ -393,7 +414,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T, uint64_t SIZE>
+
+		template <typename T, uint64_t SIZE>
 		std::istream& Read( std::istream& file, std::array<T, SIZE>& values )
 		{
 			int size{};
@@ -404,7 +426,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::vector<T>& values )
 		{
 			int size{ static_cast<int>( values.size() ) };
@@ -416,7 +439,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::deque<T>& values )
 		{
 			int size{};
@@ -428,7 +452,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::forward_list<T>& values )
 		{
 			int size{};
@@ -446,7 +471,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::list<T>& values )
 		{
 			int size{};
@@ -457,7 +483,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::stack<T>& values )
 		{
 			int size{};
@@ -468,7 +495,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::queue<T>& values )
 		{
 			int size{};
@@ -481,7 +509,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::priority_queue<T>& values )
 		{
 			int size{};
@@ -494,7 +523,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::set<T>& values )
 		{
 			int size{};
@@ -507,7 +537,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::multiset<T>& values )
 		{
 			int size{};
@@ -520,7 +551,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::unordered_set<T>& values )
 		{
 			int size{};
@@ -533,7 +565,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename T>
+
+		template <typename T>
 		std::istream& Read( std::istream& file, std::unordered_multiset<T>& values )
 		{
 			int size{};
@@ -546,7 +579,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::map<K, V>& values )
 		{
 			int size{};
@@ -559,7 +593,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::multimap<K, V>& values )
 		{
 			int size{};
@@ -572,7 +607,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::unordered_map<K, V>& values )
 		{
 			int size{};
@@ -585,7 +621,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::unordered_multimap<K, V>& values )
 		{
 			int size{};
@@ -598,7 +635,8 @@ namespace BalEditor
 			}
 			return file;
 		}
-		template<typename K, typename V>
+
+		template <typename K, typename V>
 		std::istream& Read( std::istream& file, std::pair<K, V>& values )
 		{
 			Read( file, values.first );
@@ -607,4 +645,3 @@ namespace BalEditor
 		}
 	}
 }
-

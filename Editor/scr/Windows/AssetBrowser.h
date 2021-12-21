@@ -6,6 +6,7 @@
 
 namespace BalVulkan
 {
+	class CDevice;
 	class CImageResource;
 }
 
@@ -21,7 +22,9 @@ namespace BalEditor
 		CAssetBrowser& operator=( const CAssetBrowser& ) = delete;
 		CAssetBrowser& operator=( CAssetBrowser&& ) = delete;
 
+		void Initialize( BalVulkan::CDevice* pDevice );
 		void Draw();
+		void Cleanup();
 
 	private:
 		BalVulkan::CImageResource* m_pUnknownIcon;
@@ -35,6 +38,6 @@ namespace BalEditor
 
 		std::vector<SFile> m_selected;
 
-		void MoveIn( const std::filesystem::path& path, std::vector<BalEditor::SFile>& selectedPath );
-	};	
+		void MoveIn( const std::filesystem::path& path, std::vector<SFile>& selectedPath );
+	};
 }

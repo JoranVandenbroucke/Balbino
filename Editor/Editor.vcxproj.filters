@@ -36,6 +36,9 @@
     <ClCompile Include="scr\Tools\FilesSystem\Inporter\ImageImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scr\Windows\SceneHierarchy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scr\pch.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scr\Tools\FilesSystem\Inporter\ImageImporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Windows\SceneHierarchy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

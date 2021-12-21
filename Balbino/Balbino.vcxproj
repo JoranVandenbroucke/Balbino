@@ -96,7 +96,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BL_BUILD_DLL;BL_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;_WINDLL;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Common;$(SolutionDir)Renderer\GraphicsVulkan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -125,7 +125,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BALBINO_EDITOR;BL_BUILD_DLL;BL_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;_WINDLL;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Common;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -154,7 +154,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <PreprocessorDefinitions>BL_BUILD_DLL;BL_PLATFORM_WINDOWS;NDEBUG;_WINDLL;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Common;$(SolutionDir)Renderer\GraphicsVulkan;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -183,7 +183,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Full</Optimization>
       <PreprocessorDefinitions>BALBINO_EDITOR;BL_BUILD_DLL;BL_PLATFORM_WINDOWS;NDEBUG;_WINDLL;%(PreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\include;$(SolutionDir)Common;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Editor;$(SolutionDir)Imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -207,6 +207,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Scene\Components\CameraComponent.h" />
+    <ClInclude Include="scr\Scene\Components\IDComponent.h" />
+    <ClInclude Include="scr\Scene\Components\TransformComponent.h" />
+    <ClInclude Include="scr\Scene\Entity.h" />
     <ClInclude Include="scr\Managers\MaterialManager.h" />
     <ClInclude Include="scr\Renderer\Material.h" />
     <ClInclude Include="scr\Input\InputButtons.h" />
@@ -217,14 +221,14 @@
     <ClInclude Include="scr\Renderer\IndexBuffer.h" />
     <ClInclude Include="scr\Renderer\Mesh.h" />
     <ClInclude Include="scr\Managers\CameraManager.h" />
-    <ClInclude Include="scr\Camera.h" />
+    <ClInclude Include="scr\Scene\Camera.h" />
     <ClInclude Include="scr\Renderer\MeshMetadata.h" />
     <ClInclude Include="scr\Renderer\Renderer.h" />
     <ClInclude Include="scr\pch.h" />
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
     <ClInclude Include="scr\Renderer\Texture.h" />
-    <ClInclude Include="scr\Scene.h" />
+    <ClInclude Include="scr\Scene\Scene.h" />
     <ClInclude Include="scr\Application.h" />
     <ClInclude Include="Balbino.h" />
     <ClInclude Include="scr\Managers\Singleton.h" />
@@ -233,6 +237,10 @@
     <ClInclude Include="UBOStructs.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Scene\Components\CameraComponent.cpp" />
+    <ClCompile Include="scr\Scene\Components\IDComponent.cpp" />
+    <ClCompile Include="scr\Scene\Components\TransformComponent.cpp" />
+    <ClCompile Include="scr\Scene\Entity.cpp" />
     <ClCompile Include="scr\Renderer\Material.cpp" />
     <ClCompile Include="scr\Managers\MaterialManager.cpp" />
     <ClCompile Include="scr\Input\InputButtons.cpp" />
@@ -245,7 +253,7 @@
     <ClCompile Include="scr\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="scr\Renderer\Mesh.cpp" />
     <ClCompile Include="scr\Managers\CameraManager.cpp" />
-    <ClCompile Include="scr\Camera.cpp" />
+    <ClCompile Include="scr\Scene\Camera.cpp" />
     <ClCompile Include="scr\Renderer\Renderer.cpp" />
     <ClCompile Include="scr\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -253,12 +261,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseEditor|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="scr\Scene.cpp" />
+    <ClCompile Include="scr\Scene\Scene.cpp" />
     <ClCompile Include="scr\Application.cpp" />
     <ClCompile Include="scr\Managers\Singleton.cpp" />
     <ClCompile Include="scr\Managers\ShaderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.vcxproj">
+      <Project>{cb36359e-084e-4fc1-8131-b310b0dc713e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Editor\Editor.vcxproj">
       <Project>{c02598de-be47-4a8a-a5a1-fc9414fcb379}</Project>
     </ProjectReference>

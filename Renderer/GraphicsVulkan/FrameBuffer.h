@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.h"
 
+#include <vulkan/vulkan.hpp>
 namespace BalVulkan
 {
 	class CSampler;

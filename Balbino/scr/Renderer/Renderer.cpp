@@ -12,9 +12,7 @@
 
 #include "Fence.h"
 #include "Semaphore.h"
-#include "../Camera.h"
 #include "../../UBOStructs.h"
-#include "../Managers/CameraManager.h"
 #include "../Managers/Manager.h"
 #include "../Managers/MeshManager.h"
 #include "../Managers/ShaderManager.h"
@@ -31,7 +29,14 @@ Balbino::CRenderer::CRenderer()
 	, m_pWaitingSemaphore{ nullptr }
 	, m_pModelBuffer{ nullptr }
 	, m_pShadingBuffer{ nullptr }
+#ifdef BALBINO_EDITOR
+	, m_pInterface{ nullptr }
+#endif // BALBINO_EDITOR
+
+	, m_width{ 0 }
+	, m_height{ 0 }
 	, m_aspectRation{ 0 }
+	, m_imageIndex{ 0 }
 {
 }
 
@@ -43,7 +48,7 @@ Balbino::CRenderer::~CRenderer()
 void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface )
 {
 	Setup( pWindow, extensions, extensionsCount );
-	pInterface->Initialize( pWindow, m_width, m_height, m_pDevice, m_pQueue,m_pCommandPool, m_pFrameBuffer);
+	pInterface->Initialize( pWindow, m_width, m_height, m_pDevice, m_pQueue, m_pCommandPool, m_pFrameBuffer );
 	m_pInterface = pInterface;
 }
 #endif
@@ -76,7 +81,7 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
 	m_pModelBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
 	m_pShadingBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
 
-	m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit);
+	m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
 	m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
 
 	std::vector descriptorSets
@@ -124,7 +129,7 @@ void Balbino::CRenderer::Cleanup()
 	m_pSwapchain->Release();
 	m_pDevice->Release();
 	delete m_pInstance;
-	
+
 	m_pInstance = nullptr;
 	m_pDevice = nullptr;
 	m_pSwapchain = nullptr;
@@ -139,33 +144,28 @@ void Balbino::CRenderer::Cleanup()
 	delete this;
 }
 
-void Balbino::CRenderer::Draw()
+void Balbino::CRenderer::StartDraw()
 {
-	CCameraManager* pCameraManager{ CManager::GetCameraManager() };
-	const std::vector<Balbino::CCamera>& allCameras{ pCameraManager->GetCameras() };
-	if ( allCameras.size() )
-	{
-		uint32_t imageIndex;
-		m_pFences[m_pCommandPool->GetCurrentIndex()]->Wait();
-		m_pSwapchain->AcquireNextImage( m_pSignalingSemaphore, &imageIndex );
-		m_pCommandPool->BeginRender( m_pFrameBuffer, m_pSwapchain );
-		//todo: render
-		//CManager::GetMeshManager()->Draw( m_pCommandPool );
-#ifdef BALBINO_EDITOR
-		m_pInterface->Draw( m_pCommandPool );
-#endif // BALBINO_EDITOR
+	m_pFences[m_pCommandPool->GetCurrentIndex()]->Wait();
+	m_pSwapchain->AcquireNextImage( m_pSignalingSemaphore, &m_imageIndex );
+	m_pCommandPool->BeginRender( m_pFrameBuffer, m_pSwapchain );
+}
 
-		if ( m_pInFlightFences[imageIndex] != nullptr ) {
-			m_pInFlightFences[imageIndex]->Wait();
-		}
-		m_pInFlightFences[imageIndex] = m_pFences[m_pCommandPool->GetCurrentIndex()];
-		m_pFences[m_pCommandPool->GetCurrentIndex()]->Reset();
-		m_pCommandPool->EndRender();
-		m_pQueue->SubmitPass( m_pWaitingSemaphore, m_pSignalingSemaphore, m_pCommandPool, m_pFences[m_pCommandPool->GetCurrentIndex()]);
-		m_pQueue->PresentToScreen( m_pSwapchain, m_pWaitingSemaphore, imageIndex );
-		m_pQueue->WaitIdle();
-		m_pCommandPool->UpdateFrameIndex();
+void Balbino::CRenderer::EndDraw()
+{
+#ifdef BALBINO_EDITOR
+	m_pInterface->Draw( m_pCommandPool );
+#endif // BALBINO_EDITOR
+	if ( m_pInFlightFences[m_imageIndex] != nullptr ) {
+		m_pInFlightFences[m_imageIndex]->Wait();
 	}
+	m_pInFlightFences[m_imageIndex] = m_pFences[m_pCommandPool->GetCurrentIndex()];
+	m_pFences[m_pCommandPool->GetCurrentIndex()]->Reset();
+	m_pCommandPool->EndRender();
+	m_pQueue->SubmitPass( m_pWaitingSemaphore, m_pSignalingSemaphore, m_pCommandPool, m_pFences[m_pCommandPool->GetCurrentIndex()] );
+	m_pQueue->PresentToScreen( m_pSwapchain, m_pWaitingSemaphore, m_imageIndex );
+	m_pQueue->WaitIdle();
+	m_pCommandPool->UpdateFrameIndex();
 }
 
 float Balbino::CRenderer::GetAspectRatio() const

@@ -7,11 +7,11 @@
 #ifndef PCH_H
 #define PCH_H
 
-//#pragma comment(lib, "vulkan-1.lib")
+#pragma comment(lib, "vulkan-1.lib")
 //#pragma comment(lib, "spirv-cross-c-shared.lib")
-//#pragma comment(lib, "shaderc_shared.lib")
+#pragma comment(lib, "shaderc_shared.lib")
 
-#include <vulkan/vulkan.h>
+//#include <vulkan/vulkan.h>
 #define NOMINMAX
 #include <algorithm>
 #include <array>

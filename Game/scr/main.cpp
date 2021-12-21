@@ -1,6 +1,5 @@
 #include "pch.h"
-#include "scr/Managers/MaterialManager.h"
-
+	
 namespace Dear
 {
 	class Editor final : public Balbino::Application
@@ -18,7 +17,7 @@ namespace Dear
 
 	void Editor::LoadGame()
 	{
-		Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.ply");
+		//Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.ply");
 		//Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.obj");
 		//Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/sponza.obj");
 

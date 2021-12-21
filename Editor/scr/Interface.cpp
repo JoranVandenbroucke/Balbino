@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "Interface.h"
 
-#include <iostream>
-
-#include <imgui.h>
+#include "Windows/AssetBrowser.h"
+#include "Windows/GameView.h"
+#include "Windows/MainScreen.h"
+#include "Windows/SceneHierarchy.h"
 
 #include <Buffer.h>
 #include <CommandPool.h>
@@ -14,10 +15,9 @@
 #include <Queue.h>
 #include <Sampler.h>
 
-#include "backends/imgui_impl_sdl.h"
-#include "Windows/AssetBrowser.h"
-#include "Windows/GameView.h"
-#include "Windows/MainScreen.h"
+#include <imgui.h>
+
+#include <backends/imgui_impl_sdl.h>
 
 // glsl_shader.vert, compiled with:
 // # glslangValidator -V -x -o glsl_shader.vert.u32 glsl_shader.vert
@@ -40,47 +40,47 @@ void main()
 */
 static uint32_t g_glslShaderVertSpv[] =
 {
-	0x07230203,0x00010000,0x00080001,0x0000002e,0x00000000,0x00020011,0x00000001,0x0006000b,
-	0x00000001,0x4c534c47,0x6474732e,0x3035342e,0x00000000,0x0003000e,0x00000000,0x00000001,
-	0x000a000f,0x00000000,0x00000004,0x6e69616d,0x00000000,0x0000000b,0x0000000f,0x00000015,
-	0x0000001b,0x0000001c,0x00030003,0x00000002,0x000001c2,0x00040005,0x00000004,0x6e69616d,
-	0x00000000,0x00030005,0x00000009,0x00000000,0x00050006,0x00000009,0x00000000,0x6f6c6f43,
-	0x00000072,0x00040006,0x00000009,0x00000001,0x00005655,0x00030005,0x0000000b,0x0074754f,
-	0x00040005,0x0000000f,0x6c6f4361,0x0000726f,0x00030005,0x00000015,0x00565561,0x00060005,
-	0x00000019,0x505f6c67,0x65567265,0x78657472,0x00000000,0x00060006,0x00000019,0x00000000,
-	0x505f6c67,0x7469736f,0x006e6f69,0x00030005,0x0000001b,0x00000000,0x00040005,0x0000001c,
-	0x736f5061,0x00000000,0x00060005,0x0000001e,0x73755075,0x6e6f4368,0x6e617473,0x00000074,
-	0x00050006,0x0000001e,0x00000000,0x61635375,0x0000656c,0x00060006,0x0000001e,0x00000001,
-	0x61725475,0x616c736e,0x00006574,0x00030005,0x00000020,0x00006370,0x00040047,0x0000000b,
-	0x0000001e,0x00000000,0x00040047,0x0000000f,0x0000001e,0x00000002,0x00040047,0x00000015,
-	0x0000001e,0x00000001,0x00050048,0x00000019,0x00000000,0x0000000b,0x00000000,0x00030047,
-	0x00000019,0x00000002,0x00040047,0x0000001c,0x0000001e,0x00000000,0x00050048,0x0000001e,
-	0x00000000,0x00000023,0x00000000,0x00050048,0x0000001e,0x00000001,0x00000023,0x00000008,
-	0x00030047,0x0000001e,0x00000002,0x00020013,0x00000002,0x00030021,0x00000003,0x00000002,
-	0x00030016,0x00000006,0x00000020,0x00040017,0x00000007,0x00000006,0x00000004,0x00040017,
-	0x00000008,0x00000006,0x00000002,0x0004001e,0x00000009,0x00000007,0x00000008,0x00040020,
-	0x0000000a,0x00000003,0x00000009,0x0004003b,0x0000000a,0x0000000b,0x00000003,0x00040015,
-	0x0000000c,0x00000020,0x00000001,0x0004002b,0x0000000c,0x0000000d,0x00000000,0x00040020,
-	0x0000000e,0x00000001,0x00000007,0x0004003b,0x0000000e,0x0000000f,0x00000001,0x00040020,
-	0x00000011,0x00000003,0x00000007,0x0004002b,0x0000000c,0x00000013,0x00000001,0x00040020,
-	0x00000014,0x00000001,0x00000008,0x0004003b,0x00000014,0x00000015,0x00000001,0x00040020,
-	0x00000017,0x00000003,0x00000008,0x0003001e,0x00000019,0x00000007,0x00040020,0x0000001a,
-	0x00000003,0x00000019,0x0004003b,0x0000001a,0x0000001b,0x00000003,0x0004003b,0x00000014,
-	0x0000001c,0x00000001,0x0004001e,0x0000001e,0x00000008,0x00000008,0x00040020,0x0000001f,
-	0x00000009,0x0000001e,0x0004003b,0x0000001f,0x00000020,0x00000009,0x00040020,0x00000021,
-	0x00000009,0x00000008,0x0004002b,0x00000006,0x00000028,0x00000000,0x0004002b,0x00000006,
-	0x00000029,0x3f800000,0x00050036,0x00000002,0x00000004,0x00000000,0x00000003,0x000200f8,
-	0x00000005,0x0004003d,0x00000007,0x00000010,0x0000000f,0x00050041,0x00000011,0x00000012,
-	0x0000000b,0x0000000d,0x0003003e,0x00000012,0x00000010,0x0004003d,0x00000008,0x00000016,
-	0x00000015,0x00050041,0x00000017,0x00000018,0x0000000b,0x00000013,0x0003003e,0x00000018,
-	0x00000016,0x0004003d,0x00000008,0x0000001d,0x0000001c,0x00050041,0x00000021,0x00000022,
-	0x00000020,0x0000000d,0x0004003d,0x00000008,0x00000023,0x00000022,0x00050085,0x00000008,
-	0x00000024,0x0000001d,0x00000023,0x00050041,0x00000021,0x00000025,0x00000020,0x00000013,
-	0x0004003d,0x00000008,0x00000026,0x00000025,0x00050081,0x00000008,0x00000027,0x00000024,
-	0x00000026,0x00050051,0x00000006,0x0000002a,0x00000027,0x00000000,0x00050051,0x00000006,
-	0x0000002b,0x00000027,0x00000001,0x00070050,0x00000007,0x0000002c,0x0000002a,0x0000002b,
-	0x00000028,0x00000029,0x00050041,0x00000011,0x0000002d,0x0000001b,0x0000000d,0x0003003e,
-	0x0000002d,0x0000002c,0x000100fd,0x00010038
+	0x07230203, 0x00010000, 0x00080001, 0x0000002e, 0x00000000, 0x00020011, 0x00000001, 0x0006000b,
+	0x00000001, 0x4c534c47, 0x6474732e, 0x3035342e, 0x00000000, 0x0003000e, 0x00000000, 0x00000001,
+	0x000a000f, 0x00000000, 0x00000004, 0x6e69616d, 0x00000000, 0x0000000b, 0x0000000f, 0x00000015,
+	0x0000001b, 0x0000001c, 0x00030003, 0x00000002, 0x000001c2, 0x00040005, 0x00000004, 0x6e69616d,
+	0x00000000, 0x00030005, 0x00000009, 0x00000000, 0x00050006, 0x00000009, 0x00000000, 0x6f6c6f43,
+	0x00000072, 0x00040006, 0x00000009, 0x00000001, 0x00005655, 0x00030005, 0x0000000b, 0x0074754f,
+	0x00040005, 0x0000000f, 0x6c6f4361, 0x0000726f, 0x00030005, 0x00000015, 0x00565561, 0x00060005,
+	0x00000019, 0x505f6c67, 0x65567265, 0x78657472, 0x00000000, 0x00060006, 0x00000019, 0x00000000,
+	0x505f6c67, 0x7469736f, 0x006e6f69, 0x00030005, 0x0000001b, 0x00000000, 0x00040005, 0x0000001c,
+	0x736f5061, 0x00000000, 0x00060005, 0x0000001e, 0x73755075, 0x6e6f4368, 0x6e617473, 0x00000074,
+	0x00050006, 0x0000001e, 0x00000000, 0x61635375, 0x0000656c, 0x00060006, 0x0000001e, 0x00000001,
+	0x61725475, 0x616c736e, 0x00006574, 0x00030005, 0x00000020, 0x00006370, 0x00040047, 0x0000000b,
+	0x0000001e, 0x00000000, 0x00040047, 0x0000000f, 0x0000001e, 0x00000002, 0x00040047, 0x00000015,
+	0x0000001e, 0x00000001, 0x00050048, 0x00000019, 0x00000000, 0x0000000b, 0x00000000, 0x00030047,
+	0x00000019, 0x00000002, 0x00040047, 0x0000001c, 0x0000001e, 0x00000000, 0x00050048, 0x0000001e,
+	0x00000000, 0x00000023, 0x00000000, 0x00050048, 0x0000001e, 0x00000001, 0x00000023, 0x00000008,
+	0x00030047, 0x0000001e, 0x00000002, 0x00020013, 0x00000002, 0x00030021, 0x00000003, 0x00000002,
+	0x00030016, 0x00000006, 0x00000020, 0x00040017, 0x00000007, 0x00000006, 0x00000004, 0x00040017,
+	0x00000008, 0x00000006, 0x00000002, 0x0004001e, 0x00000009, 0x00000007, 0x00000008, 0x00040020,
+	0x0000000a, 0x00000003, 0x00000009, 0x0004003b, 0x0000000a, 0x0000000b, 0x00000003, 0x00040015,
+	0x0000000c, 0x00000020, 0x00000001, 0x0004002b, 0x0000000c, 0x0000000d, 0x00000000, 0x00040020,
+	0x0000000e, 0x00000001, 0x00000007, 0x0004003b, 0x0000000e, 0x0000000f, 0x00000001, 0x00040020,
+	0x00000011, 0x00000003, 0x00000007, 0x0004002b, 0x0000000c, 0x00000013, 0x00000001, 0x00040020,
+	0x00000014, 0x00000001, 0x00000008, 0x0004003b, 0x00000014, 0x00000015, 0x00000001, 0x00040020,
+	0x00000017, 0x00000003, 0x00000008, 0x0003001e, 0x00000019, 0x00000007, 0x00040020, 0x0000001a,
+	0x00000003, 0x00000019, 0x0004003b, 0x0000001a, 0x0000001b, 0x00000003, 0x0004003b, 0x00000014,
+	0x0000001c, 0x00000001, 0x0004001e, 0x0000001e, 0x00000008, 0x00000008, 0x00040020, 0x0000001f,
+	0x00000009, 0x0000001e, 0x0004003b, 0x0000001f, 0x00000020, 0x00000009, 0x00040020, 0x00000021,
+	0x00000009, 0x00000008, 0x0004002b, 0x00000006, 0x00000028, 0x00000000, 0x0004002b, 0x00000006,
+	0x00000029, 0x3f800000, 0x00050036, 0x00000002, 0x00000004, 0x00000000, 0x00000003, 0x000200f8,
+	0x00000005, 0x0004003d, 0x00000007, 0x00000010, 0x0000000f, 0x00050041, 0x00000011, 0x00000012,
+	0x0000000b, 0x0000000d, 0x0003003e, 0x00000012, 0x00000010, 0x0004003d, 0x00000008, 0x00000016,
+	0x00000015, 0x00050041, 0x00000017, 0x00000018, 0x0000000b, 0x00000013, 0x0003003e, 0x00000018,
+	0x00000016, 0x0004003d, 0x00000008, 0x0000001d, 0x0000001c, 0x00050041, 0x00000021, 0x00000022,
+	0x00000020, 0x0000000d, 0x0004003d, 0x00000008, 0x00000023, 0x00000022, 0x00050085, 0x00000008,
+	0x00000024, 0x0000001d, 0x00000023, 0x00050041, 0x00000021, 0x00000025, 0x00000020, 0x00000013,
+	0x0004003d, 0x00000008, 0x00000026, 0x00000025, 0x00050081, 0x00000008, 0x00000027, 0x00000024,
+	0x00000026, 0x00050051, 0x00000006, 0x0000002a, 0x00000027, 0x00000000, 0x00050051, 0x00000006,
+	0x0000002b, 0x00000027, 0x00000001, 0x00070050, 0x00000007, 0x0000002c, 0x0000002a, 0x0000002b,
+	0x00000028, 0x00000029, 0x00050041, 0x00000011, 0x0000002d, 0x0000001b, 0x0000000d, 0x0003003e,
+	0x0000002d, 0x0000002c, 0x000100fd, 0x00010038
 };
 
 // glsl_shader.frag, compiled with:
@@ -97,30 +97,30 @@ void main()
 */
 static uint32_t g_glslShaderFragSpv[] =
 {
-	0x07230203,0x00010000,0x00080001,0x0000001e,0x00000000,0x00020011,0x00000001,0x0006000b,
-	0x00000001,0x4c534c47,0x6474732e,0x3035342e,0x00000000,0x0003000e,0x00000000,0x00000001,
-	0x0007000f,0x00000004,0x00000004,0x6e69616d,0x00000000,0x00000009,0x0000000d,0x00030010,
-	0x00000004,0x00000007,0x00030003,0x00000002,0x000001c2,0x00040005,0x00000004,0x6e69616d,
-	0x00000000,0x00040005,0x00000009,0x6c6f4366,0x0000726f,0x00030005,0x0000000b,0x00000000,
-	0x00050006,0x0000000b,0x00000000,0x6f6c6f43,0x00000072,0x00040006,0x0000000b,0x00000001,
-	0x00005655,0x00030005,0x0000000d,0x00006e49,0x00050005,0x00000016,0x78655473,0x65727574,
-	0x00000000,0x00040047,0x00000009,0x0000001e,0x00000000,0x00040047,0x0000000d,0x0000001e,
-	0x00000000,0x00040047,0x00000016,0x00000022,0x00000000,0x00040047,0x00000016,0x00000021,
-	0x00000000,0x00020013,0x00000002,0x00030021,0x00000003,0x00000002,0x00030016,0x00000006,
-	0x00000020,0x00040017,0x00000007,0x00000006,0x00000004,0x00040020,0x00000008,0x00000003,
-	0x00000007,0x0004003b,0x00000008,0x00000009,0x00000003,0x00040017,0x0000000a,0x00000006,
-	0x00000002,0x0004001e,0x0000000b,0x00000007,0x0000000a,0x00040020,0x0000000c,0x00000001,
-	0x0000000b,0x0004003b,0x0000000c,0x0000000d,0x00000001,0x00040015,0x0000000e,0x00000020,
-	0x00000001,0x0004002b,0x0000000e,0x0000000f,0x00000000,0x00040020,0x00000010,0x00000001,
-	0x00000007,0x00090019,0x00000013,0x00000006,0x00000001,0x00000000,0x00000000,0x00000000,
-	0x00000001,0x00000000,0x0003001b,0x00000014,0x00000013,0x00040020,0x00000015,0x00000000,
-	0x00000014,0x0004003b,0x00000015,0x00000016,0x00000000,0x0004002b,0x0000000e,0x00000018,
-	0x00000001,0x00040020,0x00000019,0x00000001,0x0000000a,0x00050036,0x00000002,0x00000004,
-	0x00000000,0x00000003,0x000200f8,0x00000005,0x00050041,0x00000010,0x00000011,0x0000000d,
-	0x0000000f,0x0004003d,0x00000007,0x00000012,0x00000011,0x0004003d,0x00000014,0x00000017,
-	0x00000016,0x00050041,0x00000019,0x0000001a,0x0000000d,0x00000018,0x0004003d,0x0000000a,
-	0x0000001b,0x0000001a,0x00050057,0x00000007,0x0000001c,0x00000017,0x0000001b,0x00050085,
-	0x00000007,0x0000001d,0x00000012,0x0000001c,0x0003003e,0x00000009,0x0000001d,0x000100fd,
+	0x07230203, 0x00010000, 0x00080001, 0x0000001e, 0x00000000, 0x00020011, 0x00000001, 0x0006000b,
+	0x00000001, 0x4c534c47, 0x6474732e, 0x3035342e, 0x00000000, 0x0003000e, 0x00000000, 0x00000001,
+	0x0007000f, 0x00000004, 0x00000004, 0x6e69616d, 0x00000000, 0x00000009, 0x0000000d, 0x00030010,
+	0x00000004, 0x00000007, 0x00030003, 0x00000002, 0x000001c2, 0x00040005, 0x00000004, 0x6e69616d,
+	0x00000000, 0x00040005, 0x00000009, 0x6c6f4366, 0x0000726f, 0x00030005, 0x0000000b, 0x00000000,
+	0x00050006, 0x0000000b, 0x00000000, 0x6f6c6f43, 0x00000072, 0x00040006, 0x0000000b, 0x00000001,
+	0x00005655, 0x00030005, 0x0000000d, 0x00006e49, 0x00050005, 0x00000016, 0x78655473, 0x65727574,
+	0x00000000, 0x00040047, 0x00000009, 0x0000001e, 0x00000000, 0x00040047, 0x0000000d, 0x0000001e,
+	0x00000000, 0x00040047, 0x00000016, 0x00000022, 0x00000000, 0x00040047, 0x00000016, 0x00000021,
+	0x00000000, 0x00020013, 0x00000002, 0x00030021, 0x00000003, 0x00000002, 0x00030016, 0x00000006,
+	0x00000020, 0x00040017, 0x00000007, 0x00000006, 0x00000004, 0x00040020, 0x00000008, 0x00000003,
+	0x00000007, 0x0004003b, 0x00000008, 0x00000009, 0x00000003, 0x00040017, 0x0000000a, 0x00000006,
+	0x00000002, 0x0004001e, 0x0000000b, 0x00000007, 0x0000000a, 0x00040020, 0x0000000c, 0x00000001,
+	0x0000000b, 0x0004003b, 0x0000000c, 0x0000000d, 0x00000001, 0x00040015, 0x0000000e, 0x00000020,
+	0x00000001, 0x0004002b, 0x0000000e, 0x0000000f, 0x00000000, 0x00040020, 0x00000010, 0x00000001,
+	0x00000007, 0x00090019, 0x00000013, 0x00000006, 0x00000001, 0x00000000, 0x00000000, 0x00000000,
+	0x00000001, 0x00000000, 0x0003001b, 0x00000014, 0x00000013, 0x00040020, 0x00000015, 0x00000000,
+	0x00000014, 0x0004003b, 0x00000015, 0x00000016, 0x00000000, 0x0004002b, 0x0000000e, 0x00000018,
+	0x00000001, 0x00040020, 0x00000019, 0x00000001, 0x0000000a, 0x00050036, 0x00000002, 0x00000004,
+	0x00000000, 0x00000003, 0x000200f8, 0x00000005, 0x00050041, 0x00000010, 0x00000011, 0x0000000d,
+	0x0000000f, 0x0004003d, 0x00000007, 0x00000012, 0x00000011, 0x0004003d, 0x00000014, 0x00000017,
+	0x00000016, 0x00050041, 0x00000019, 0x0000001a, 0x0000000d, 0x00000018, 0x0004003d, 0x0000000a,
+	0x0000001b, 0x0000001a, 0x00050057, 0x00000007, 0x0000001c, 0x00000017, 0x0000001b, 0x00050085,
+	0x00000007, 0x0000001d, 0x00000012, 0x0000001c, 0x0003003e, 0x00000009, 0x0000001d, 0x000100fd,
 	0x00010038
 };
 
@@ -142,6 +142,7 @@ BalEditor::CInterface::CInterface()
 	, m_pSampler{ nullptr }
 	, m_pVertexBuffer{ nullptr }
 	, m_pIndexBuffer{ nullptr }
+	, m_pWindow{ nullptr }
 	, m_vertexCount{ 0 }
 	, m_indexCount{ 0 }
 {
@@ -161,7 +162,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
-	io.DisplaySize = ImVec2( ( float ) w, ( float ) h );
+	io.DisplaySize = ImVec2( static_cast<float>( w ), static_cast<float>( h ) );
 	io.DisplayFramebufferScale = ImVec2( 1.0f, 1.0f );
 	//{
 	//	io.KeyMap[ImGuiKey_Tab] = SDL_GetScancodeFromKey( SDLK_TAB );
@@ -223,7 +224,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkDescriptorPoolCreateInfo descriptorPoolInfo{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
 		.maxSets = 1,
-		.poolSizeCount = static_cast< uint32_t >( poolSizes.size() ),
+		.poolSizeCount = static_cast<uint32_t>( poolSizes.size() ),
 		.pPoolSizes = poolSizes.data(),
 	};
 	vkCreateDescriptorPool( pDevice->GetVkDevice(), &descriptorPoolInfo, nullptr, &m_descriptorPool );
@@ -239,7 +240,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	};
 	VkDescriptorSetLayoutCreateInfo descriptorLayout{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.bindingCount = static_cast< uint32_t >( setLayoutBindings.size() ),
+		.bindingCount = static_cast<uint32_t>( setLayoutBindings.size() ),
 		.pBindings = setLayoutBindings.data(),
 	};
 	vkCreateDescriptorSetLayout( pDevice->GetVkDevice(), &descriptorLayout, nullptr, &m_descriptorSetLayout );
@@ -268,7 +269,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 			.pImageInfo = &fontDescriptor,
 		}
 	};
-	vkUpdateDescriptorSets( pDevice->GetVkDevice(), static_cast< uint32_t >( writeDescriptorSets.size() ), writeDescriptorSets.data(), 0, nullptr );
+	vkUpdateDescriptorSets( pDevice->GetVkDevice(), static_cast<uint32_t>( writeDescriptorSets.size() ), writeDescriptorSets.data(), 0, nullptr );
 
 	// Pipeline cache
 	VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
@@ -321,15 +322,15 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkPipelineColorBlendStateCreateInfo colorBlendState{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
 		.attachmentCount = 1,
-		.pAttachments = &blendAttachmentState ,
+		.pAttachments = &blendAttachmentState,
 	};
 
 	VkPipelineDepthStencilStateCreateInfo depthStencilState{
-	.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-	.depthTestEnable = VK_FALSE,
-	.depthWriteEnable = VK_FALSE,
-	.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL,
-	.back{.compareOp = VK_COMPARE_OP_ALWAYS,},
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+		.depthTestEnable = VK_FALSE,
+		.depthWriteEnable = VK_FALSE,
+		.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL,
+		.back{ .compareOp = VK_COMPARE_OP_ALWAYS, },
 	};
 
 	VkPipelineViewportStateCreateInfo viewportState{
@@ -351,7 +352,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkPipelineDynamicStateCreateInfo dynamicState{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
 		.flags = 0,
-		.dynamicStateCount = static_cast< uint32_t >( dynamicStateEnables.size() ),
+		.dynamicStateCount = static_cast<uint32_t>( dynamicStateEnables.size() ),
 		.pDynamicStates = dynamicStateEnables.data(),
 	};
 
@@ -360,7 +361,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkGraphicsPipelineCreateInfo pipelineCreateInfo{
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.flags = 0,
-		.stageCount = static_cast< uint32_t >( shaderStages.size() ),
+		.stageCount = static_cast<uint32_t>( shaderStages.size() ),
 		.pStages = shaderStages.data(),
 		.pInputAssemblyState = &inputAssemblyState,
 		.pViewportState = &viewportState,
@@ -384,19 +385,22 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 		}
 	};
 	std::vector vertexInputAttributes{
-		VkVertexInputAttributeDescription{		// Location 0: Position
+		VkVertexInputAttributeDescription{
+			// Location 0: Position
 			.location = 0,
 			.binding = 0,
 			.format = VK_FORMAT_R32G32_SFLOAT,
 			.offset = offsetof( ImDrawVert, pos ),
 		},
-		VkVertexInputAttributeDescription{		// Location 1: UV
+		VkVertexInputAttributeDescription{
+			// Location 1: UV
 			.location = 1,
 			.binding = 0,
 			.format = VK_FORMAT_R32G32_SFLOAT,
 			.offset = offsetof( ImDrawVert, uv ),
 		},
-		VkVertexInputAttributeDescription{		// Location 0: Color
+		VkVertexInputAttributeDescription{
+			// Location 0: Color
 			.location = 2,
 			.binding = 0,
 			.format = VK_FORMAT_R8G8B8A8_UNORM,
@@ -405,9 +409,9 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	};
 	VkPipelineVertexInputStateCreateInfo vertexInputState{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-		.vertexBindingDescriptionCount = static_cast< uint32_t >( vertexInputBindings.size() ),
+		.vertexBindingDescriptionCount = static_cast<uint32_t>( vertexInputBindings.size() ),
 		.pVertexBindingDescriptions = vertexInputBindings.data(),
-		.vertexAttributeDescriptionCount = static_cast< uint32_t >( vertexInputAttributes.size() ),
+		.vertexAttributeDescriptionCount = static_cast<uint32_t>( vertexInputAttributes.size() ),
 		.pVertexAttributeDescriptions = vertexInputAttributes.data(),
 
 	};
@@ -416,13 +420,13 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkShaderModuleCreateInfo vertInfo = {};
 	vertInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	vertInfo.codeSize = sizeof( g_glslShaderVertSpv );
-	vertInfo.pCode = static_cast< uint32_t* >( g_glslShaderVertSpv );
+	vertInfo.pCode = static_cast<uint32_t*>( g_glslShaderVertSpv );
 	vkCreateShaderModule( pDevice->GetVkDevice(), &vertInfo, nullptr, &m_shaderModuleVert );
 
 	VkShaderModuleCreateInfo fragInfo = {};
 	fragInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	fragInfo.codeSize = sizeof( g_glslShaderFragSpv );
-	fragInfo.pCode = static_cast< uint32_t* >( g_glslShaderFragSpv );
+	fragInfo.pCode = static_cast<uint32_t*>( g_glslShaderFragSpv );
 	vkCreateShaderModule( pDevice->GetVkDevice(), &fragInfo, nullptr, &m_shaderModuleFrag );
 
 	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -440,6 +444,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	m_pMain = new CMainScreen{};
 	m_pGameView = new CGameView{};
 	m_pAssetBrowser = new CAssetBrowser{};
+	m_pSceneHierarchy = new CSceneHierarchy{};
 }
 
 void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
@@ -452,6 +457,7 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 	m_pMain->Draw();
 	m_pGameView->Draw();
 	m_pAssetBrowser->Draw();
+	m_pSceneHierarchy->Draw();
 
 	ImGui::Render();
 	UpdateBuffers();
@@ -478,6 +484,7 @@ void BalEditor::CInterface::Cleanup() const
 	delete m_pMain;
 	delete m_pGameView;
 	delete m_pAssetBrowser;
+	delete m_pSceneHierarchy;
 }
 
 void BalEditor::CInterface::ProcessEvent( SDL_Event e ) const
@@ -485,12 +492,18 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e ) const
 	ImGui_ImplSDL2_ProcessEvent( &e );
 	switch ( e.type )
 	{
-		case SDL_DROPFILE:	
+		case SDL_DROPFILE:
 			char* droppedFileDir = e.drop.file;
-			assert(ImportFile( droppedFileDir ));
-			// Shows directory of dropped file
-			SDL_free( droppedFileDir );    // Free dropped_filedir memory
+			assert( ImportFile( droppedFileDir ) );
+		// Shows directory of dropped file
+			SDL_free( droppedFileDir ); // Free dropped_filedir memory
 	}
+}
+
+void BalEditor::CInterface::SetContext( IScene* pScene ) const
+{
+	m_pMain->SetContext( pScene );
+	m_pSceneHierarchy->SetContext( pScene );
 }
 
 void BalEditor::CInterface::UpdateBuffers()
@@ -500,14 +513,16 @@ void BalEditor::CInterface::UpdateBuffers()
 	const VkDeviceSize vertexBufferSize = imDrawData->TotalVtxCount * sizeof( ImDrawVert );
 	const VkDeviceSize indexBufferSize = imDrawData->TotalIdxCount * sizeof( ImDrawIdx );
 
-	if ( ( vertexBufferSize == 0 ) || ( indexBufferSize == 0 ) ) {
+	if ( ( vertexBufferSize == 0 ) || ( indexBufferSize == 0 ) )
+	{
 		return;
 	}
 
 	// Update buffers only if vertex or index count has been changed compared to current buffer size
 
 	// Vertex buffer
-	if ( ( m_pVertexBuffer->GetBuffer() == VK_NULL_HANDLE ) || ( m_vertexCount != imDrawData->TotalVtxCount ) ) {
+	if ( ( m_pVertexBuffer->GetBuffer() == VK_NULL_HANDLE ) || ( m_vertexCount != imDrawData->TotalVtxCount ) )
+	{
 		m_pVertexBuffer->Unmapped();
 		m_pVertexBuffer->Rebuild( vertexBufferSize, BalVulkan::EBufferUsageFlagBits::VertexBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit );
 		m_vertexCount = imDrawData->TotalVtxCount;
@@ -515,17 +530,19 @@ void BalEditor::CInterface::UpdateBuffers()
 	}
 
 	// Index buffer
-	if ( ( m_pIndexBuffer->GetBuffer() == VK_NULL_HANDLE ) || ( m_indexCount < imDrawData->TotalIdxCount ) ) {
+	if ( ( m_pIndexBuffer->GetBuffer() == VK_NULL_HANDLE ) || ( m_indexCount < imDrawData->TotalIdxCount ) )
+	{
 		m_pIndexBuffer->Rebuild( indexBufferSize, BalVulkan::EBufferUsageFlagBits::IndexBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit );
 		m_indexCount = imDrawData->TotalIdxCount;
 		m_pIndexBuffer->Map();
 	}
 
 	// Upload data
-	ImDrawVert* vtxDst = static_cast< ImDrawVert* >( m_pVertexBuffer->GetMapped() );
-	ImDrawIdx* idxDst = static_cast< ImDrawIdx* >( m_pIndexBuffer->GetMapped() );
+	auto vtxDst = static_cast<ImDrawVert*>( m_pVertexBuffer->GetMapped() );
+	auto idxDst = static_cast<ImDrawIdx*>( m_pIndexBuffer->GetMapped() );
 
-	for ( int n = 0; n < imDrawData->CmdListsCount; n++ ) {
+	for ( int n = 0; n < imDrawData->CmdListsCount; n++ )
+	{
 		const ImDrawList* cmd_list = imDrawData->CmdLists[n];
 		memcpy( vtxDst, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof( ImDrawVert ) );
 		memcpy( idxDst, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof( ImDrawIdx ) );
@@ -560,13 +577,14 @@ void BalEditor::CInterface::FrameRender( BalVulkan::CCommandPool* pCommandPool )
 	vkCmdSetViewport( pCommandPool->GetCommandBuffer(), 0, 1, &viewport );
 
 	// UI scale and translate via push constants
-	const float pushConstBlock[4]{ 2.0f / io.DisplaySize.x, 2.0f / io.DisplaySize.y , -1.f, -1.f };
+	const float pushConstBlock[4]{ 2.0f / io.DisplaySize.x, 2.0f / io.DisplaySize.y, -1.f, -1.f };
 	vkCmdPushConstants( pCommandPool->GetCommandBuffer(), m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof( float ) * 4, &pushConstBlock );
 
 	// Render commands
 	const ImDrawData* imDrawData = ImGui::GetDrawData();
 
-	if ( imDrawData->CmdListsCount > 0 ) {
+	if ( imDrawData->CmdListsCount > 0 )
+	{
 		int32_t indexOffset = 0;
 		int32_t vertexOffset = 0;
 		constexpr VkDeviceSize offsets[1] = { 0 };
@@ -580,10 +598,10 @@ void BalEditor::CInterface::FrameRender( BalVulkan::CCommandPool* pCommandPool )
 			{
 				const ImDrawCmd* pcmd = &cmdList->CmdBuffer[j];
 				VkRect2D scissorRect{};
-				scissorRect.offset.x = std::max( static_cast< int32_t >( pcmd->ClipRect.x ), 0 );
-				scissorRect.offset.y = std::max( static_cast< int32_t >( pcmd->ClipRect.y ), 0 );
-				scissorRect.extent.width = static_cast< uint32_t >( pcmd->ClipRect.z - pcmd->ClipRect.x );
-				scissorRect.extent.height = static_cast< uint32_t >( pcmd->ClipRect.w - pcmd->ClipRect.y );
+				scissorRect.offset.x = std::max( static_cast<int32_t>( pcmd->ClipRect.x ), 0 );
+				scissorRect.offset.y = std::max( static_cast<int32_t>( pcmd->ClipRect.y ), 0 );
+				scissorRect.extent.width = static_cast<uint32_t>( pcmd->ClipRect.z - pcmd->ClipRect.x );
+				scissorRect.extent.height = static_cast<uint32_t>( pcmd->ClipRect.w - pcmd->ClipRect.y );
 				vkCmdSetScissor( pCommandPool->GetCommandBuffer(), 0, 1, &scissorRect );
 				vkCmdDrawIndexed( pCommandPool->GetCommandBuffer(), pcmd->ElemCount, 1, indexOffset, vertexOffset, 0 );
 				indexOffset += pcmd->ElemCount;

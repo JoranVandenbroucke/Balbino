@@ -2,6 +2,7 @@
 #include "Base.h"
 #include "DescriptorSet.h"
 
+#include <vulkan/vulkan.hpp>
 
 namespace BalVulkan
 {

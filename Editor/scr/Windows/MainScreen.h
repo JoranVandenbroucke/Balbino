@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+struct IScene;
+
 namespace BalEditor
 {
 	class CMainScreen
@@ -14,9 +16,12 @@ namespace BalEditor
 		CMainScreen& operator=( CMainScreen&& ) = delete;
 
 		void Draw();
+		void SetContext( IScene* pScene );
 
 	private:
 		std::string m_savePosition;
 		bool m_saved = false;
+
+		IScene* m_pContext;
 	};
 }

@@ -23,7 +23,6 @@ Balbino::CManager::~CManager()
 void Balbino::CManager::Cleanup()
 {
 	s_inputHandler->Cleanup();
-	s_cameraManager->Cleanup();
 	s_meshManager->Cleanup();
 	s_shaderManager->Cleanup();
 	s_textureManager->Cleanup();

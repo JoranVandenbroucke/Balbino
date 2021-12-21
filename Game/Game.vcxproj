@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Balbino;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Balbino;$(SolutionDir)3rdParty\GLI;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -96,7 +96,7 @@ xcopy "$(SolutionDir)3rdParty\Assimp\bin\$(Configuration)\*.dll" "$(OutDir)" /D 
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Balbino;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)3rdParty\GLI;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Balbino;$(SolutionDir)3rdParty\GLI;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\Vulkan\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>

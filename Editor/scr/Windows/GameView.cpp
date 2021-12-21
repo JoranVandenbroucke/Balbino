@@ -5,8 +5,8 @@
 
 void BalEditor::CGameView::Draw()
 {
-	ImGui::Begin("GameView");
-	ImGui::BeginChild("game", ImVec2{640, 500}, true);
+	ImGui::Begin( "GameView" );
+	ImGui::BeginChild( "game", ImVec2{ 640, 500 }, true );
 	//todo::Add Render Pass
 	{
 		//ImGui::Image( (void*) (uint64_t) mainCamera->GetTargetTexture(), { 640.f,480.f } );

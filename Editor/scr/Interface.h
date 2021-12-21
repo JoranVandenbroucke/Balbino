@@ -3,6 +3,8 @@
 
 #include <vulkan/vulkan.hpp>
 
+struct IScene;
+
 namespace BalVulkan
 {
 	class CFrameBuffer;
@@ -16,8 +18,10 @@ namespace BalVulkan
 }
 
 struct SDL_Window;
+
 namespace BalEditor
 {
+	class CSceneHierarchy;
 	class CAssetBrowser;
 	class CGameView;
 	class CMainScreen;
@@ -32,14 +36,16 @@ namespace BalEditor
 		CInterface& operator=( const CInterface& ) = delete;
 		CInterface& operator=( CInterface&& ) = delete;
 
-		void Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CFrameBuffer* pFrameBuffer );
+		void Initialize( SDL_Window* pWindow, int32_t w, int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CFrameBuffer* pFrameBuffer );
 		void Draw( BalVulkan::CCommandPool* pCommandPool );
 		void Cleanup() const;
-		void ProcessEvent( SDL_Event e )const;
+		void ProcessEvent( SDL_Event e ) const;
+		void SetContext( IScene* pScene ) const;
 	private:
 		CMainScreen* m_pMain;
 		CGameView* m_pGameView;
 		CAssetBrowser* m_pAssetBrowser;
+		CSceneHierarchy* m_pSceneHierarchy;
 
 		VkDescriptorPool m_descriptorPool;
 		VkDescriptorSetLayout m_descriptorSetLayout;
