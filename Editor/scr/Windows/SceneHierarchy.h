@@ -23,7 +23,7 @@ namespace BalEditor
         IEntity* m_pSelectionContext;
 
         void DrawEntityNode( IEntity* pEntity );
-        void DrawComponents( IEntity* pEntity );
+        void DrawComponents( IEntity* pEntity ) const;
     };
 }
 

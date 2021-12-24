@@ -44,12 +44,12 @@ std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::
 		const std::filesystem::path& dirPath = dirEntry.path();
 		std::string extenstion = dirPath.extension().string();
 		EFileTypes type{};
-		for ( int i{}; i < std::size( extenstion ); ++i )
+		for ( int i{}; i < (int)std::size( extenstion ); ++i )
 		{
 			extenstion[i] = static_cast<char>( std::toupper( extenstion[i] ) );
 		}
 
-		if ( extenstion == "" )
+		if ( extenstion.empty() )
 		{
 			type = EFileTypes::Folder;
 		}
@@ -64,7 +64,7 @@ std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::
 		else if ( extenstion == ".BASSET" )
 		{
 			std::ifstream file( dirPath, std::ios::in | std::ios::binary );
-			if ( !file.is_open() )
+			if ( file.is_open() )
 			{
 				uint8_t value;
 				BinaryReadWrite::Read( file, value );
@@ -73,7 +73,7 @@ std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::
 			}
 		}
 		files.push_back( {
-			extenstion == "",
+			extenstion.empty(),
 			type,
 			dirPath.filename().string(),
 			relative( dirPath )
@@ -98,7 +98,7 @@ std::istream& BalEditor::BinaryReadWrite::Read( std::istream& file, std::string&
 	Read( file, size );
 	if ( size == 0 )
 		return file;
-	auto pBuffer{ DBG_NEW char[size] };
+	const auto pBuffer{ DBG_NEW char[size] };
 	file.read( pBuffer, size );
 	value.append( pBuffer, size );
 	delete[] pBuffer;

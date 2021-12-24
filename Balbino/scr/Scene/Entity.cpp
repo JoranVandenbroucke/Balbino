@@ -47,7 +47,7 @@ bool Balbino::CEntity::operator!=( const CEntity& other ) const
 
 const CUuid& Balbino::CEntity::GetId() const
 {
-	return GetComponent<Balbino::CIDComponent>()->GetUUID();
+	return GetComponent<CIDComponent>()->GetUUID();
 }
 
 bool Balbino::CEntity::IsInitialized() const
@@ -69,7 +69,7 @@ void Balbino::CEntity::AttachChild( IEntity* pChildEntity )
 void Balbino::CEntity::DetachAll()
 {
 	if ( HasComponent<CTransformComponent>() )
-		GetComponent<CTransformComponent>()->DeleteAllChildren();
+		GetComponent<CTransformComponent>()->RemoveAllChildren();
 }
 
 void Balbino::CEntity::DetachThis()

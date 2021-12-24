@@ -156,6 +156,7 @@ void BalEditor::CAssetBrowser::Cleanup()
 	m_pModelIcon->Release();
 	m_pPresetIcon->Release();
 	m_pCodeIcon->Release();
+	m_selected.clear();
 }
 
 void BalEditor::CAssetBrowser::MoveIn( const std::filesystem::path& path, std::vector<SFile>& selectedPath )

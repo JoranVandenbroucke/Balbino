@@ -16,6 +16,7 @@
 #include <Sampler.h>
 
 #include <imgui.h>
+#include <ImGuizmo.h>
 
 #include <backends/imgui_impl_sdl.h>
 
@@ -452,6 +453,7 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 	//ImGui_ImplVulkan_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 
 	ImGui::ShowDemoWindow();
 	m_pMain->Draw();

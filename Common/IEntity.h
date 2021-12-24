@@ -108,7 +108,7 @@ private:
 template <typename ComponentType, typename ... Args>
 ComponentType* IEntity::CreateComponent( Args&&... args )
 {
-	if ( !HasComponent<ComponentType>() )
+	if ( HasComponent<ComponentType>() )
 		return GetComponent<ComponentType>();
 	ComponentType& component = m_pScene->GetRegistry().emplace<ComponentType>( m_entityHandle, this, std::forward<Args>( args )... );
 	m_pScene->OnComponentAdded<ComponentType>( this, component );
@@ -136,8 +136,8 @@ ComponentType* IEntity::CreateOrReplaceComponent( Args&&... args )
 template <typename ComponentType>
 void IEntity::RemoveComponent() const
 {
-	if ( HasComponent<ComponentType>(), "Entity does not have component!" );
-	m_pScene->GetRegistry().remove<ComponentType>( m_entityHandle );
+	if ( HasComponent<ComponentType>() )
+		m_pScene->GetRegistry().remove<ComponentType>( m_entityHandle );
 }
 
 template <typename ComponentType>

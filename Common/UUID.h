@@ -13,14 +13,20 @@ public:
 		: m_uuid{ s_uniformDistribution( s_engine ) }
 	{
 	}
-	CUuid( uint64_t uuid );
+	CUuid( uint64_t uuid )
+		: m_uuid{ uuid }
+	{
+	}
 	CUuid( const CUuid& ) = default;
 	CUuid( CUuid&& ) = default;
 	CUuid& operator=( CUuid&& ) = default;
 	CUuid& operator=( const CUuid& ) = default;
 	~CUuid() = default;
 
-	explicit operator uint64_t() const;
+	explicit operator uint64_t() const
+	{
+		return m_uuid;
+	}
 
 private:
 	uint64_t m_uuid;

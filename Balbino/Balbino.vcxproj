@@ -207,9 +207,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="scr\Scene\Components\CameraComponent.h" />
-    <ClInclude Include="scr\Scene\Components\IDComponent.h" />
-    <ClInclude Include="scr\Scene\Components\TransformComponent.h" />
     <ClInclude Include="scr\Scene\Entity.h" />
     <ClInclude Include="scr\Managers\MaterialManager.h" />
     <ClInclude Include="scr\Renderer\Material.h" />
@@ -221,7 +218,6 @@
     <ClInclude Include="scr\Renderer\IndexBuffer.h" />
     <ClInclude Include="scr\Renderer\Mesh.h" />
     <ClInclude Include="scr\Managers\CameraManager.h" />
-    <ClInclude Include="scr\Scene\Camera.h" />
     <ClInclude Include="scr\Renderer\MeshMetadata.h" />
     <ClInclude Include="scr\Renderer\Renderer.h" />
     <ClInclude Include="scr\pch.h" />
@@ -237,9 +233,6 @@
     <ClInclude Include="UBOStructs.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="scr\Scene\Components\CameraComponent.cpp" />
-    <ClCompile Include="scr\Scene\Components\IDComponent.cpp" />
-    <ClCompile Include="scr\Scene\Components\TransformComponent.cpp" />
     <ClCompile Include="scr\Scene\Entity.cpp" />
     <ClCompile Include="scr\Renderer\Material.cpp" />
     <ClCompile Include="scr\Managers\MaterialManager.cpp" />
@@ -253,7 +246,6 @@
     <ClCompile Include="scr\Renderer\VertexBuffer.cpp" />
     <ClCompile Include="scr\Renderer\Mesh.cpp" />
     <ClCompile Include="scr\Managers\CameraManager.cpp" />
-    <ClCompile Include="scr\Scene\Camera.cpp" />
     <ClCompile Include="scr\Renderer\Renderer.cpp" />
     <ClCompile Include="scr\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

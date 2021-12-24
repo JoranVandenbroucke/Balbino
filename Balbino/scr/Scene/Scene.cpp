@@ -7,13 +7,34 @@
 #include "Components/IDComponent.h"
 #include "Components/TransformComponent.h"
 
+template<>
+void IScene::OnComponentAdded<CIDComponent>( IEntity* entity, CIDComponent& component )
+{
+	( void ) entity; ( void ) component;
+}
+
+template<>
+void IScene::OnComponentAdded<CTransformComponent>( IEntity* entity, CTransformComponent& component )
+{
+	( void ) entity; ( void ) component;
+}
+
+template<>
+void IScene::OnComponentAdded<CCameraComponent>( IEntity* entity, CCameraComponent& component )
+{
+	const Balbino::CScene* pScene = reinterpret_cast< const Balbino::CScene* >( entity->GetScene() );
+	( void ) entity;
+	if ( pScene->GetViewportWidth() > 0 && pScene->GetViewportHeight() > 0 )
+		component.GetCamera().Initialize( pScene->GetViewportWidth(), pScene->GetViewportHeight() );
+}
+
 template<typename Component>
 static void CopyComponent( entt::registry& dst, entt::registry& src, const std::unordered_map<CUuid, entt::entity>& enttMap )
 {
 	auto view = src.view<Component>();
 	for ( auto e : view )
 	{
-		CUuid uuid = src.get<Balbino::CIDComponent>( e ).GetUUID();
+		CUuid uuid = src.get<CIDComponent>( e ).GetUUID();
 		assert( enttMap.find( uuid ) != enttMap.end() );
 		entt::entity dstEnttID = enttMap.at( uuid );
 
@@ -28,8 +49,21 @@ static void CopyComponentIfExists( IEntity* dst, IEntity* src )
 	if ( src->HasComponent<Component>() )
 		dst->CreateOrReplaceComponent<Component>( *src->GetComponent<Component>() );
 }
-void Balbino::CScene::Initialize()
+
+Balbino::CScene::~CScene()
 {
+	for ( std::pair<const unsigned, CEntity>& entityMap : m_entityMap )
+	{
+		m_registry.destroy( entityMap.second.GetEntity() );
+	}
+	m_entityMap.clear();
+}
+
+void Balbino::CScene::Initialize( uint32_t width, uint32_t height )
+{
+	m_viewportWidth = width;
+	m_viewportHeight = height;
+	CreateEntity()->CreateComponent<CCameraComponent>();
 	//todo: PhysX bodies
 	//m_registry.view<NativeScriptComponent>().each( [=]( auto entity, auto& nsc )
 	//{
@@ -165,7 +199,7 @@ IEntity* Balbino::CScene::GetPrimaryCameraEntity()
 	for ( const auto entity : view )
 	{
 		const CCameraComponent& camera = view.get<CCameraComponent>( entity );
-		if ( camera.GetIsPrimary())
+		if ( camera.IsPrimary())
 			return &m_entityMap.at(static_cast<uint32_t>( static_cast<entt::entity>( entity ) ));
 	}
 	return nullptr;
@@ -179,7 +213,7 @@ void Balbino::CScene::OnComponentAdded( CEntity entity, T& component )
 }
 
 template <>
-void Balbino::CScene::OnComponentAdded<Balbino::CCameraComponent>( CEntity entity, Balbino::CCameraComponent& component )
+void Balbino::CScene::OnComponentAdded<CCameraComponent>( CEntity entity, CCameraComponent& component )
 {
 	( void ) entity;
 	if ( m_viewportWidth > 0 && m_viewportHeight > 0 )
@@ -215,25 +249,4 @@ std::vector<IEntity*> Balbino::CScene::GetAllEntities()
 		entities[i++] = &snd;
 	}
 	return entities;
-}
-
-template<>
-void IScene::OnComponentAdded<Balbino::CIDComponent>( IEntity* entity, Balbino::CIDComponent& component )
-{
-	( void ) entity; ( void ) component;
-}
-
-template<>
-void IScene::OnComponentAdded<Balbino::CTransformComponent>( IEntity* entity, Balbino::CTransformComponent& component )
-{
-	( void ) entity; ( void ) component;
-}
-
-template<>
-void IScene::OnComponentAdded<Balbino::CCameraComponent>( IEntity* entity, Balbino::CCameraComponent& component )
-{
-	const Balbino::CScene* pScene = reinterpret_cast<const Balbino::CScene*>( entity->GetScene() );
-	( void ) entity;
-	if ( pScene->GetViewportWidth() > 0 && pScene->GetViewportHeight() > 0 )
-		component.GetCamera().Initialize( pScene->GetViewportWidth(), pScene->GetViewportHeight() );
 }

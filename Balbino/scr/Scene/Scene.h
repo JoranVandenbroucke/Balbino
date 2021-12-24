@@ -12,13 +12,13 @@ namespace Balbino
 	{
 	public:
 		CScene() = default;
-		virtual ~CScene() override = default;
+		virtual ~CScene() override;
 		CScene(const CScene&) = delete;
 		CScene(CScene&&) = delete;
 		CScene& operator=(const CScene&) = delete;
 		CScene& operator=(CScene&&) = delete;
 
-		void Initialize() override;
+		void Initialize( uint32_t width, uint32_t height ) override;
 		void Cleanup() override;
 
 		void PhysicsUpdate( const float deltaTime ) override;

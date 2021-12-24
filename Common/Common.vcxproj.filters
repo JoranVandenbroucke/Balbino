@@ -4,8 +4,9 @@
     <ClInclude Include="IScene.h" />
     <ClInclude Include="UUID.h" />
     <ClInclude Include="IEntity.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="UUID.cpp" />
+    <ClInclude Include="Components\CameraComponent.h" />
+    <ClInclude Include="Components\IDComponent.h" />
+    <ClInclude Include="Components\TransformComponent.h" />
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
 </Project>

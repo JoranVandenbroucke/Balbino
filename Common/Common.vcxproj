@@ -78,9 +78,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)bin\$(ProjectName)\</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -143,12 +147,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Components\CameraComponent.h" />
+    <ClInclude Include="Components\IDComponent.h" />
+    <ClInclude Include="Components\TransformComponent.h" />
     <ClInclude Include="IEntity.h" />
     <ClInclude Include="IScene.h" />
     <ClInclude Include="UUID.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="UUID.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

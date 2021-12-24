@@ -8,7 +8,7 @@ struct IEntity;
 struct IScene
 {
 	virtual ~IScene() = default;
-	virtual void Initialize() = 0;
+	virtual void Initialize( uint32_t width, uint32_t height ) = 0;
 	virtual void Cleanup() = 0;
 
 	virtual void PhysicsUpdate( const float deltaTime ) = 0;

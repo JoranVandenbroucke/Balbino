@@ -45,7 +45,7 @@ void Balbino::Application::Initialize()
 		throw std::runtime_error( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError() );
 	}
 
-	constexpr SDL_WindowFlags flags{ SDL_WINDOW_VULKAN /*| SDL_WINDOW_FULLSCREEN*/ };
+	constexpr uint32_t flags{ SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_VULKAN */};
 	m_pWindow = SDL_CreateWindow(
 		"Balbino Engine",
 		SDL_WINDOWPOS_CENTERED,
@@ -95,6 +95,10 @@ void Balbino::Application::LoadGame()
 #else
 	m_pRenderer->Setup( m_pWindow, extensions, extenstionCount );
 #endif
+
+	int32_t w, h;
+	SDL_GetWindowSize( m_pWindow, &w, &h );
+	m_pScene->Initialize( ( uint32_t ) w , ( uint32_t ) h);
 	delete[] extensions;
 }
 
@@ -105,6 +109,8 @@ void Balbino::Application::Cleanup()
 	delete m_pInterface;
 #endif
 	//m_pRenderer->Cleanup();
+	m_pScene->Cleanup();
+	delete m_pScene;
 	m_manager.Cleanup();
 	m_pRenderer->Cleanup();
 	//delete m_pRenderer;
