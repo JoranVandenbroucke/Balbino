@@ -39,6 +39,7 @@ namespace BalVulkan
 
 		void Unmapped();
 		void Map( uint64_t size = VK_WHOLE_SIZE, uint64_t offset = 0 );
+		void ReassignCommandPool( const CCommandPool* commandPool );
 	private:
 		VkBuffer m_buffer;
 		VkCommandBuffer m_commandBuffer;

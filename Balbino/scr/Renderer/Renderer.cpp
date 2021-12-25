@@ -35,8 +35,9 @@ Balbino::CRenderer::CRenderer()
 
 	, m_width{ 0 }
 	, m_height{ 0 }
-	, m_aspectRation{ 0 }
 	, m_imageIndex{ 0 }
+	, m_aspectRation{ 0 }
+	, m_pWindow{ nullptr }
 {
 }
 
@@ -52,10 +53,35 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
 	m_pInterface = pInterface;
 }
 #endif
+void Balbino::CRenderer::RecreateSwapChain()
+{
+	int width = 0, height = 0;
+	SDL_Vulkan_GetDrawableSize( m_pWindow, &width, &height );
+	while ( width == 0 || height == 0 ) {
+		SDL_GetWindowSize( m_pWindow, &width, &height );
+	}
 
+	m_pDevice->WaitIdle();
+
+	m_pSwapchain->Initialize( width, height );
+
+	m_pFrameBuffer->Release();
+	m_pCommandPool->Release();
+
+	m_pFrameBuffer = BalVulkan::CFrameBuffer::CreateNew( m_pDevice );
+	m_pCommandPool = BalVulkan::CCommandPool::CreateNew( m_pDevice );
+
+	m_pFrameBuffer->Initialize( m_pSwapchain );
+	m_pCommandPool->Initialize( m_pQueue->GetQueFamily(), m_pSwapchain );
+
+#ifdef BALBINO_EDITOR
+	m_pInterface->Resize( m_pCommandPool, m_pQueue);
+#endif
+}
 void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount )
 {
-	VkSurfaceKHR surface;;
+	m_pWindow = pWindow;
+	VkSurfaceKHR surface;
 
 	m_pInstance = BalVulkan::CInstance::CreateNew();
 	m_pInstance->Initialize( extensions, extensionsCount );
@@ -144,14 +170,19 @@ void Balbino::CRenderer::Cleanup()
 	delete this;
 }
 
-void Balbino::CRenderer::StartDraw()
+bool Balbino::CRenderer::StartDraw()
 {
 	m_pFences[m_pCommandPool->GetCurrentIndex()]->Wait();
-	m_pSwapchain->AcquireNextImage( m_pSignalingSemaphore, &m_imageIndex );
+	if ( m_pSwapchain->AcquireNextImage( m_pSignalingSemaphore, &m_imageIndex ) )
+	{
+		RecreateSwapChain();
+		return true;
+	}
 	m_pCommandPool->BeginRender( m_pFrameBuffer, m_pSwapchain );
+	return false;
 }
 
-void Balbino::CRenderer::EndDraw()
+bool Balbino::CRenderer::EndDraw()
 {
 #ifdef BALBINO_EDITOR
 	m_pInterface->Draw( m_pCommandPool );
@@ -163,9 +194,14 @@ void Balbino::CRenderer::EndDraw()
 	m_pFences[m_pCommandPool->GetCurrentIndex()]->Reset();
 	m_pCommandPool->EndRender();
 	m_pQueue->SubmitPass( m_pWaitingSemaphore, m_pSignalingSemaphore, m_pCommandPool, m_pFences[m_pCommandPool->GetCurrentIndex()] );
-	m_pQueue->PresentToScreen( m_pSwapchain, m_pWaitingSemaphore, m_imageIndex );
+	if ( m_pQueue->PresentToScreen( m_pSwapchain, m_pWaitingSemaphore, m_imageIndex ) )
+	{
+		RecreateSwapChain();
+		return true;
+	}
 	m_pQueue->WaitIdle();
 	m_pCommandPool->UpdateFrameIndex();
+	return false;
 }
 
 float Balbino::CRenderer::GetAspectRatio() const

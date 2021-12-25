@@ -58,7 +58,7 @@ void BalVulkan::CQueue::SubmitPass( const CSemaphore* signalSemaphore, const CSe
 	};
 	CheckVkResult( vkQueueSubmit( m_queue, 1, &submitInfo, pFence->Get() ) );
 }
-void BalVulkan::CQueue::PresentToScreen( const CSwapchain* pSwapchain, const CSemaphore* signalSemaphore, uint32_t imageIndex ) const
+bool BalVulkan::CQueue::PresentToScreen( const CSwapchain* pSwapchain, const CSemaphore* signalSemaphore, uint32_t imageIndex ) const
 {
 	const VkPresentInfoKHR presentInfo
 	{
@@ -69,8 +69,10 @@ void BalVulkan::CQueue::PresentToScreen( const CSwapchain* pSwapchain, const CSe
 		.pSwapchains = &pSwapchain->GetVkSwapchain(),
 		.pImageIndices = &imageIndex,
 	};
+	const VkResult result {vkQueuePresentKHR( m_queue, &presentInfo )};
 
-	CheckVkResult( vkQueuePresentKHR( m_queue, &presentInfo ) );
+	CheckVkResult( result );
+	return ( result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR );
 }
 
 const VkQueue& BalVulkan::CQueue::GetQueue() const

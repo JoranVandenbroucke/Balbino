@@ -17,11 +17,13 @@
 #include <scr/Interface.h>
 #endif
 
+#include <ini.h>
+
 Balbino::Application::Application()
 	: m_pWindow{ nullptr }
 	, m_manager{}
 	, m_pRenderer{ DBG_NEW CRenderer{} }
-	, m_pScene{DBG_NEW CScene{}}
+	, m_pScene{ DBG_NEW CScene{} }
 #ifdef BALBINO_EDITOR
 	, m_pInterface{ nullptr }
 #endif // BALBINO_EDITOR
@@ -45,13 +47,23 @@ void Balbino::Application::Initialize()
 		throw std::runtime_error( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError() );
 	}
 
-	constexpr uint32_t flags{ SDL_WINDOW_RESIZABLE /*| SDL_WINDOW_VULKAN */};
+	int w{ current.w / 2 }, h{ current.h / 2 };
+	uint32_t flags{ SDL_WINDOW_RESIZABLE | SDL_WINDOW_VULKAN };
+	const mINI::INIFile file( "DisplaySettings.ini" );
+	mINI::INIStructure ini;
+	if ( file.read( ini ) )
+	{
+		w = std::stoi( ini["WindowsClient"]["WindowedViewportWidth"] );
+		h = std::stoi( ini["WindowsClient"]["WindowedViewportHeight"] );
+		flags = ( uint32_t ) std::stoi( ini["WindowsClient"]["WindowedFlags"] );
+	}
+
 	m_pWindow = SDL_CreateWindow(
 		"Balbino Engine",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		current.w / 2,
-		current.h / 2,
+		w,
+		h,
 		flags
 	);
 	if ( m_pWindow == nullptr )
@@ -76,7 +88,7 @@ void Balbino::Application::LoadGame()
 	 *
 	 * this is code direct form it
 	 */
-	
+
 	 // Get WSI extensions from SDL (we can add more if we like - we just can't remove these)
 	unsigned int extenstionCount;
 	if ( !SDL_Vulkan_GetInstanceExtensions( m_pWindow, &extenstionCount, nullptr ) )
@@ -98,7 +110,7 @@ void Balbino::Application::LoadGame()
 
 	int32_t w, h;
 	SDL_GetWindowSize( m_pWindow, &w, &h );
-	m_pScene->Initialize( ( uint32_t ) w , ( uint32_t ) h);
+	m_pScene->Initialize( ( uint32_t ) w, ( uint32_t ) h );
 	delete[] extensions;
 }
 
@@ -144,13 +156,33 @@ void Balbino::Application::Run()
 		while ( SDL_PollEvent( &e ) )
 		{
 #ifdef BALBINO_EDITOR
-				m_pInterface->ProcessEvent( e );
+			m_pInterface->ProcessEvent( e );
 #endif
 			switch ( e.type )
 			{
 				case SDL_QUIT:
 					isRunning = false;
 					break;
+				case SDL_WINDOWEVENT:
+					switch ( e.window.event )
+					{
+						case SDL_WINDOWEVENT_SIZE_CHANGED:
+						case SDL_WINDOWEVENT_MAXIMIZED:
+						case SDL_WINDOWEVENT_RESIZED:
+						{
+							int w, h;
+							SDL_GetWindowSize( m_pWindow, &w, &h );
+							const unsigned int f = SDL_GetWindowFlags( m_pWindow );
+							const mINI::INIFile file( "DisplaySettings.ini" );
+							mINI::INIStructure ini;
+							ini["WindowsClient"]["WindowedViewportWidth"] = std::to_string( w );
+							ini["WindowsClient"]["WindowedViewportHeight"] = std::to_string( h );
+							ini["WindowsClient"]["WindowedFlags"] = std::to_string( f );
+							( void ) file.generate( ini, true );
+							break;
+						}
+						default: ;
+					}
 				default:
 					// Do nothing.
 					break;
@@ -160,9 +192,9 @@ void Balbino::Application::Run()
 		CManager::GetInputHandler()->Update();
 
 		m_pScene->Update( deltaTime );
-		m_pRenderer->StartDraw();
+		if ( m_pRenderer->StartDraw() )continue;
 		m_pScene->Draw();
-		m_pRenderer->EndDraw();
+		if ( m_pRenderer->EndDraw() )continue;
 	}
 	Cleanup();
 }

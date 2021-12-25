@@ -46,8 +46,8 @@ namespace Balbino
 
 		void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount );
 		void Cleanup();
-		void StartDraw();
-		void EndDraw();
+		bool StartDraw();
+		bool EndDraw();
 		[[nodiscard]] float GetAspectRatio() const;
 
 	private:
@@ -71,7 +71,11 @@ namespace Balbino
 
 		int32_t m_width;
 		int32_t m_height;
-		float m_aspectRation;
 		uint32_t m_imageIndex;
+		float m_aspectRation;
+
+		SDL_Window* m_pWindow;
+
+		void RecreateSwapChain();
 	};
 }

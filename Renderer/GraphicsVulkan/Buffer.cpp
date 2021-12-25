@@ -194,6 +194,11 @@ void BalVulkan::CBuffer::Map( const uint64_t size, const uint64_t offset )
 	vkMapMemory( GetDevice()->GetVkDevice(), m_bufferMemory, offset, size, 0, &m_pMappedData );
 }
 
+void BalVulkan::CBuffer::ReassignCommandPool( const CCommandPool* commandPool )
+{
+	m_commandPool = commandPool;
+}
+
 void BalVulkan::CBuffer::CopyBuffer( const BalVulkan::CBuffer& dstBuffer, uint64_t size ) const
 {
 	BeginSingleTimeCommands();

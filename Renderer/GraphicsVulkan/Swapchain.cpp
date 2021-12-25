@@ -29,9 +29,7 @@ BalVulkan::CSwapchain::~CSwapchain()
 //create swap chain (https://sopyer.github.io/Blog/post/minimal-vulkan-sample/)
 void BalVulkan::CSwapchain::Initialize( uint32_t width, uint32_t height )
 {
-	if ( m_swapchain )
-		return;
-
+	VkSwapchainKHR oldSwapchain = m_swapchain;
 	GetQueueFamiliesProperties();
 	GetSwapSurfaceFormat();
 	GetSwapExtent( width, height );
@@ -49,18 +47,28 @@ void BalVulkan::CSwapchain::Initialize( uint32_t width, uint32_t height )
 		.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 		.presentMode = m_presentMode,
 		.clipped = VK_TRUE,
+		.oldSwapchain = oldSwapchain,
 	};
 	CheckVkResult( vkCreateSwapchainKHR( GetDevice()->GetVkDevice(), &swapChainCreateInfo, nullptr, &m_swapchain ) );
+	if ( oldSwapchain != VK_NULL_HANDLE )
+	{
+		/*for ( uint32_t i = 0; i < m_imageCount; i++ )
+		{
+			vkDestroyImageView( m_pDevice->GetVkDevice(), buffers[i].view, nullptr );
+		}*/
+		vkDestroySwapchainKHR( GetDevice()->GetVkDevice(), oldSwapchain, nullptr );
+	}
 
 	CheckVkResult( vkGetSwapchainImagesKHR( GetDevice()->GetVkDevice(), m_swapchain, &m_imageCount, nullptr ) );
 	m_images.resize( m_imageCount );
 	CheckVkResult( vkGetSwapchainImagesKHR( GetDevice()->GetVkDevice(), m_swapchain, &m_imageCount, m_images.data() ) );
 }
 
-void BalVulkan::CSwapchain::AcquireNextImage( CSemaphore* presentCompleteSemaphore, uint32_t* imageIndex ) const
+bool BalVulkan::CSwapchain::AcquireNextImage( CSemaphore* presentCompleteSemaphore, uint32_t* imageIndex ) const
 {
-	CheckVkResult( vkAcquireNextImageKHR( GetDevice()->GetVkDevice(), m_swapchain, UINT64_MAX, presentCompleteSemaphore->Get(), VK_NULL_HANDLE, imageIndex ), "Could not get next Image" );
-	//todo: resize window if needed
+	const VkResult result = vkAcquireNextImageKHR( GetDevice()->GetVkDevice(), m_swapchain, UINT64_MAX, presentCompleteSemaphore->Get(), VK_NULL_HANDLE, imageIndex );
+	CheckVkResult( result, "Could not get next Image" );
+	return result == VK_ERROR_OUT_OF_DATE_KHR;
 }
 
 VkSurfaceFormatKHR BalVulkan::CSwapchain::GetSurfaceFormat() const

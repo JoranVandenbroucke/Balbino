@@ -54,7 +54,7 @@ BalVulkan::CInstance::~CInstance()
 
 bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t extensionsCount )
 {
-	if(m_instanceHandle )
+	if ( m_instanceHandle )
 		return false;
 
 	// Create Vulkan Instance
@@ -146,22 +146,21 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
 
 void BalVulkan::CInstance::SetSurface( const VkSurfaceKHR& newSurface )
 {
-	if ( !m_surfaceKhr )
-		m_surfaceKhr = newSurface;
+	m_surfaceKhr = newSurface;
 }
 
 uint8_t BalVulkan::CInstance::DeviceCount() const
 {
-	return static_cast<uint8_t>( m_physicalDevices.size() );
+	return static_cast< uint8_t >( m_physicalDevices.size() );
 }
 
 BalVulkan::CDevice* BalVulkan::CInstance::CreateDevice( uint32_t physicalDeviceIndex )
 {
-	const SPhysicalDeviceInfo& info{ m_physicalDevices[std::max( static_cast<uint32_t>( 0 ),std::min( physicalDeviceIndex, static_cast<uint32_t>( m_physicalDevices.size() ) ) )] };
+	const SPhysicalDeviceInfo& info{ m_physicalDevices[std::max( static_cast< uint32_t >( 0 ),std::min( physicalDeviceIndex, static_cast< uint32_t >( m_physicalDevices.size() ) ) )] };
 	return CDevice::Create( &info, m_pCallbacks, {}, { "VK_KHR_swapchain" } );
 }
 
-uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex(const VkSurfaceKHR& surf)
+uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf )
 {
 	for ( uint32_t i = 0; i < static_cast< uint32_t >( m_physicalDevices.size() ); ++i )
 	{
@@ -169,8 +168,8 @@ uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex(const VkSurfaceKHR& s
 		{
 			VkBool32 supportsPresent{ VK_FALSE };
 			vkGetPhysicalDeviceSurfaceSupportKHR( m_physicalDevices[i].device, j, surf, &supportsPresent );
-				if ( supportsPresent && (m_physicalDevices[i].queueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT ))
-					 return j;
+			if ( supportsPresent && ( m_physicalDevices[i].queueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT ) )
+				return j;
 		}
 	}
 	return 0;
@@ -196,12 +195,12 @@ const VkInstance& BalVulkan::CInstanceHolder::GetHandle() const
 	return m_instanceHandle;
 }
 
-VkFormat BalVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<VkFormat>&candidates, const VkImageTiling & tiling, const VkFormatFeatureFlags & features ) const
+VkFormat BalVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features ) const
 {
 	for ( const VkFormat format : candidates )
 	{
 		VkFormatProperties props;
-			vkGetPhysicalDeviceFormatProperties( device, format, &props );
+		vkGetPhysicalDeviceFormatProperties( device, format, &props );
 
 		if ( tiling == VK_IMAGE_TILING_LINEAR && ( props.linearTilingFeatures & features ) == features )
 		{

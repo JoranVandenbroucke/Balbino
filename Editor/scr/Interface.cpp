@@ -17,6 +17,7 @@
 
 #include <imgui.h>
 #include <ImGuizmo.h>
+#include <SDL_vulkan.h>
 
 #include <backends/imgui_impl_sdl.h>
 
@@ -129,6 +130,7 @@ BalEditor::CInterface::CInterface()
 	: m_pMain{ nullptr }
 	, m_pGameView{ nullptr }
 	, m_pAssetBrowser{ nullptr }
+	, m_pSceneHierarchy{ nullptr }
 	, m_descriptorPool{ nullptr }
 	, m_descriptorSetLayout{ nullptr }
 	, m_descriptorSet{ nullptr }
@@ -455,7 +457,6 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 
-	ImGui::ShowDemoWindow();
 	m_pMain->Draw();
 	m_pGameView->Draw();
 	m_pAssetBrowser->Draw();
@@ -506,6 +507,15 @@ void BalEditor::CInterface::SetContext( IScene* pScene ) const
 {
 	m_pMain->SetContext( pScene );
 	m_pSceneHierarchy->SetContext( pScene );
+}
+
+void BalEditor::CInterface::Resize( const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
+{
+	m_pVertexBuffer->Release();
+	m_pIndexBuffer->Release();
+
+	m_pVertexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
+	m_pIndexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
 }
 
 void BalEditor::CInterface::UpdateBuffers()
@@ -612,6 +622,7 @@ void BalEditor::CInterface::FrameRender( BalVulkan::CCommandPool* pCommandPool )
 		}
 	}
 }
+
 
 void BalEditor::CInterface::SetImGuiStyle()
 {

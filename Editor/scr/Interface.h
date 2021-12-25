@@ -41,6 +41,7 @@ namespace BalEditor
 		void Cleanup() const;
 		void ProcessEvent( SDL_Event e ) const;
 		void SetContext( IScene* pScene ) const;
+		void Resize( const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue );
 	private:
 		CMainScreen* m_pMain;
 		CGameView* m_pGameView;

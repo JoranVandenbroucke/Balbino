@@ -18,7 +18,7 @@ namespace BalVulkan
 
 		void Initialize();
 		void SubmitPass( const CSemaphore* signalSemaphore, const CSemaphore* waitableSemaphores, const CCommandPool* cmdList, const CFence* pFence ) const;
-		void PresentToScreen( const CSwapchain* pSwapchain, const CSemaphore* signalSemaphore, uint32_t imageIndex ) const;
+		bool PresentToScreen( const CSwapchain* pSwapchain, const CSemaphore* signalSemaphore, uint32_t imageIndex ) const;
 		const VkQueue& GetQueue() const;
 		uint32_t GetQueFamily()const;
 		void WaitIdle() const;
