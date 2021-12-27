@@ -208,44 +208,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="scr\Scene\Entity.h" />
-    <ClInclude Include="scr\Managers\MaterialManager.h" />
     <ClInclude Include="scr\Renderer\Material.h" />
     <ClInclude Include="scr\Input\InputButtons.h" />
     <ClInclude Include="scr\Input\InputHandler.h" />
     <ClInclude Include="scr\Managers\Manager.h" />
-    <ClInclude Include="scr\Managers\MeshManager.h" />
-    <ClInclude Include="scr\Managers\TextureManager.h" />
     <ClInclude Include="scr\Renderer\IndexBuffer.h" />
-    <ClInclude Include="scr\Renderer\Mesh.h" />
-    <ClInclude Include="scr\Managers\CameraManager.h" />
     <ClInclude Include="scr\Renderer\MeshMetadata.h" />
     <ClInclude Include="scr\Renderer\Renderer.h" />
     <ClInclude Include="scr\pch.h" />
     <ClInclude Include="scr\Core.h" />
     <ClInclude Include="scr\EntryPoint.h" />
-    <ClInclude Include="scr\Renderer\Texture.h" />
     <ClInclude Include="scr\Scene\Scene.h" />
     <ClInclude Include="scr\Application.h" />
     <ClInclude Include="Balbino.h" />
     <ClInclude Include="scr\Managers\Singleton.h" />
-    <ClInclude Include="scr\Managers\ShaderManager.h" />
     <ClInclude Include="scr\Renderer\VertexBuffer.h" />
     <ClInclude Include="UBOStructs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scr\Scene\Entity.cpp" />
     <ClCompile Include="scr\Renderer\Material.cpp" />
-    <ClCompile Include="scr\Managers\MaterialManager.cpp" />
     <ClCompile Include="scr\Input\InputButtons.cpp" />
     <ClCompile Include="scr\Input\InputHandler.cpp" />
     <ClCompile Include="scr\Managers\Manager.cpp" />
-    <ClCompile Include="scr\Managers\MeshManager.cpp" />
-    <ClCompile Include="scr\Managers\TextureManager.cpp" />
     <ClCompile Include="scr\Renderer\IndexBuffer.cpp" />
-    <ClCompile Include="scr\Renderer\Texture.cpp" />
     <ClCompile Include="scr\Renderer\VertexBuffer.cpp" />
-    <ClCompile Include="scr\Renderer\Mesh.cpp" />
-    <ClCompile Include="scr\Managers\CameraManager.cpp" />
     <ClCompile Include="scr\Renderer\Renderer.cpp" />
     <ClCompile Include="scr\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -256,7 +243,6 @@
     <ClCompile Include="scr\Scene\Scene.cpp" />
     <ClCompile Include="scr\Application.cpp" />
     <ClCompile Include="scr\Managers\Singleton.cpp" />
-    <ClCompile Include="scr\Managers\ShaderManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.vcxproj">

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "../Tools/FilesSystem/FIleSystem.h"
+#include "Components/TextureComponent.h"
 
 namespace BalVulkan
 {
@@ -22,19 +23,19 @@ namespace BalEditor
 		CAssetBrowser& operator=( const CAssetBrowser& ) = delete;
 		CAssetBrowser& operator=( CAssetBrowser&& ) = delete;
 
-		void Initialize( BalVulkan::CDevice* pDevice );
+		void Initialize( const VkDescriptorPool& descriptorPool, const VkDescriptorSetLayout& descriptorSetLayout );
 		void Draw();
 		void Cleanup();
 
 	private:
-		BalVulkan::CImageResource* m_pUnknownIcon;
-		BalVulkan::CImageResource* m_pFolderIcon;
-		BalVulkan::CImageResource* m_pBalbinoIcon;
-		BalVulkan::CImageResource* m_pImageIcon;
-		BalVulkan::CImageResource* m_pAudioIcon;
-		BalVulkan::CImageResource* m_pModelIcon;
-		BalVulkan::CImageResource* m_pPresetIcon;
-		BalVulkan::CImageResource* m_pCodeIcon;
+		Balbino::CTextureComponent* m_pUnknownIcon;
+		Balbino::CTextureComponent* m_pFolderIcon;
+		Balbino::CTextureComponent* m_pBalbinoIcon;
+		Balbino::CTextureComponent* m_pImageIcon;
+		Balbino::CTextureComponent* m_pAudioIcon;
+		Balbino::CTextureComponent* m_pModelIcon;
+		Balbino::CTextureComponent* m_pPresetIcon;
+		Balbino::CTextureComponent* m_pCodeIcon;
 
 		std::vector<SFile> m_selected;
 

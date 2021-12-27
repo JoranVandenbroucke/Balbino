@@ -1,5 +1,5 @@
 // https://github.com/CedricGuillemet/ImGuizmo
-// v 1.84 WIP
+// v 1.83
 //
 // The MIT License(MIT)
 //
@@ -50,7 +50,7 @@ static ImVec2 GetInputSlotPos(Delegate& delegate, const Node& node, SlotIndex sl
     ImVec2 Size = node.mRect.GetSize() * factor;
     size_t InputsCount = delegate.GetTemplate(node.mTemplateIndex).mInputCount;
     return ImVec2(node.mRect.Min.x * factor,
-                  node.mRect.Min.y * factor + Size.y * (static_cast<float>( slotIndex ) + 1) / (static_cast<float>( InputsCount ) + 1) + 8.f);
+                  node.mRect.Min.y * factor + Size.y * ((float)slotIndex + 1) / ((float)InputsCount + 1) + 8.f);
 }
 
 static ImVec2 GetOutputSlotPos(Delegate& delegate, const Node& node, SlotIndex slotIndex, float factor)
@@ -58,7 +58,7 @@ static ImVec2 GetOutputSlotPos(Delegate& delegate, const Node& node, SlotIndex s
     ImVec2 Size = node.mRect.GetSize() * factor;
     size_t OutputsCount = delegate.GetTemplate(node.mTemplateIndex).mOutputCount;
     return ImVec2(node.mRect.Min.x * factor + Size.x,
-                  node.mRect.Min.y * factor + Size.y * (static_cast<float>( slotIndex ) + 1) / (static_cast<float>( OutputsCount ) + 1) + 8.f);
+                  node.mRect.Min.y * factor + Size.y * ((float)slotIndex + 1) / ((float)OutputsCount + 1) + 8.f);
 }
 
 static ImRect GetNodeRect(const Node& node, float factor)
@@ -366,15 +366,15 @@ static bool HandleConnections(ImDrawList* drawList,
 
     size_t InputsCount = nodeTemplate.mInputCount;
     size_t OutputsCount = nodeTemplate.mOutputCount;
-    inputSlotOver = static_cast<uint64_t>( -1 );
-    outputSlotOver = static_cast<uint64_t>( -1 );
+    inputSlotOver = ( SlotIndex ) - 1;
+    outputSlotOver = ( SlotIndex ) -1;
 
     // draw/use inputs/outputs
     bool hoverSlot = false;
     for (int i = 0; i < 2; i++)
     {
         float closestDistance = FLT_MAX;
-        SlotIndex closestConn = static_cast<uint64_t>( -1 );
+        SlotIndex closestConn = ( SlotIndex ) -1;
         ImVec2 closestTextPos;
         ImVec2 closestPos;
         const size_t slotCount[2] = {InputsCount, OutputsCount};
@@ -866,7 +866,7 @@ void Show(Delegate& delegate, const Options& options, ViewState& viewState, bool
 
     if (enabled)
     {
-        static NodeIndex hoveredNode = static_cast<uint64_t>( -1 );
+        static NodeIndex hoveredNode = ( SlotIndex ) -1;
         // Display links
         drawList->ChannelsSplit(3);
 
@@ -895,11 +895,11 @@ void Show(Delegate& delegate, const Options& options, ViewState& viewState, bool
 
         // Display nodes
         drawList->PushClipRect(regionRect.Min, regionRect.Max, true);
-        hoveredNode = static_cast<uint64_t>( -1 );
+        hoveredNode = ( SlotIndex ) -1;
         
-        SlotIndex inputSlotOver = static_cast<uint64_t>( -1 );
-        SlotIndex outputSlotOver = static_cast<uint64_t>( -1 );
-        NodeIndex nodeOver = static_cast<uint64_t>( -1 );
+        SlotIndex inputSlotOver = ( SlotIndex ) -1;
+        SlotIndex outputSlotOver = ( SlotIndex ) -1;
+        NodeIndex nodeOver = ( SlotIndex ) -1;
 
         const auto nodeCount = delegate.GetNodeCount();
         for (int i = 0; i < 2; i++)
@@ -922,9 +922,9 @@ void Show(Delegate& delegate, const Options& options, ViewState& viewState, bool
                     continue;
                 }
 
-                ImGui::PushID(static_cast<int>( nodeIndex ));
-                SlotIndex inputSlot = static_cast<uint64_t>( -1 );
-                SlotIndex outputSlot = static_cast<uint64_t>( -1 );
+                ImGui::PushID((int)nodeIndex);
+                SlotIndex inputSlot = ( SlotIndex ) -1;
+                SlotIndex outputSlot = ( SlotIndex ) -1;
 
                 bool overInput = (!inMinimap) && HandleConnections(drawList, nodeIndex, offset, viewState.mFactor, delegate, options, false, inputSlot, outputSlot, inMinimap);
 

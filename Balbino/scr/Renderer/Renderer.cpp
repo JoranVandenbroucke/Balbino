@@ -11,12 +11,10 @@
 #include <Swapchain.h>
 
 #include "Fence.h"
+#include "Importer.h"
 #include "Semaphore.h"
 #include "../../UBOStructs.h"
-#include "../Managers/Manager.h"
-#include "../Managers/MeshManager.h"
-#include "../Managers/ShaderManager.h"
-#include "../Managers/TextureManager.h"
+
 
 Balbino::CRenderer::CRenderer()
 	: m_pInstance{ nullptr }
@@ -49,6 +47,9 @@ Balbino::CRenderer::~CRenderer()
 void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface )
 {
 	Setup( pWindow, extensions, extensionsCount );
+	g_pDevice = m_pDevice;
+	g_pCommandPool = m_pCommandPool;
+	g_pQueue = m_pQueue;
 	pInterface->Initialize( pWindow, m_width, m_height, m_pDevice, m_pQueue, m_pCommandPool, m_pFrameBuffer );
 	m_pInterface = pInterface;
 }
@@ -117,10 +118,6 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
 		BalVulkan::SDescriptorSet{BalVulkan::SDescriptorSet::EType::Image, m_pShadingBuffer},
 	};
 	m_pFrameBuffer->Initialize( m_pSwapchain );
-
-	CManager::GetMeshManager()->Initialize( m_pDevice, m_pCommandPool, m_pQueue );
-	CManager::GetTextureManager()->Initialize();
-	CManager::GetShaderManager()->Initialize( m_pDevice );
 
 	m_pSignalingSemaphore = BalVulkan::CSemaphore::CreateNew( m_pDevice );
 	m_pWaitingSemaphore = BalVulkan::CSemaphore::CreateNew( m_pDevice );

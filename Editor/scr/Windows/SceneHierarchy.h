@@ -17,6 +17,7 @@ namespace BalEditor
         void Draw();
         void SetContext( IScene* pScene );
 
+        IEntity* GetSelectedEntity()const;
 
     private:
         IScene* m_pContext;

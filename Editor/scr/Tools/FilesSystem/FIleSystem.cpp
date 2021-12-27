@@ -1,8 +1,9 @@
 #include "pch.h"
-#include "FIleSystem.h"
-#include <fstream>
-
+#include "FileSystem.h"
+#include "FileParcer.h"
 #include "Inporter/ImageImporter.h"
+
+#include <fstream>
 
 bool BalEditor::ImportFile( const char* pPath )
 {
@@ -35,7 +36,7 @@ bool BalEditor::ImportFile( const char* pPath )
 	return false;
 }
 
-std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::path& path )
+std::vector<SFile> BalEditor::GetFilesInPath( const std::filesystem::path& path )
 {
 	std::vector<SFile> files;
 
@@ -80,27 +81,4 @@ std::vector<BalEditor::SFile> BalEditor::GetFilesInPath( const std::filesystem::
 		} );
 	}
 	return files;
-}
-
-std::ostream& BalEditor::BinaryReadWrite::Write( std::ostream& file, const std::string& value )
-{
-	const char* pText = value.c_str();
-	const int size = static_cast<int>( value.size() );
-
-	Write( file, size );
-	return file.write( pText, size );
-}
-
-std::istream& BalEditor::BinaryReadWrite::Read( std::istream& file, std::string& value )
-{
-	value.clear();
-	int size{};
-	Read( file, size );
-	if ( size == 0 )
-		return file;
-	const auto pBuffer{ DBG_NEW char[size] };
-	file.read( pBuffer, size );
-	value.append( pBuffer, size );
-	delete[] pBuffer;
-	return file;
 }

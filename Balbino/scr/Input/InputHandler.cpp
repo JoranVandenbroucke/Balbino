@@ -6,12 +6,13 @@ Balbino::CInputHandler::CInputHandler()
 	, m_inputsAxisBinding{}
 	, m_mousePosition{}
 	, m_mouseRelativePosition{}
+	, m_visible{ false }
 {
 }
 
 bool Balbino::CInputHandler::Initialize()
 {
-	ToggleCursor();
+	//ToggleCursor();
 	return true;
 }
 
@@ -46,8 +47,8 @@ void Balbino::CInputHandler::ProcessEvents(SDL_Event e)
 				}
 			}
 		}
-		if (e.key.keysym.sym == SDLK_ESCAPE)
-			ToggleCursor();
+		//if (e.key.keysym.sym == SDLK_ESCAPE)
+		//	ToggleCursor();
 		break;
 	case SDL_KEYUP:
 		for (auto axis : m_inputsAxis)

@@ -1,5 +1,5 @@
 // https://github.com/CedricGuillemet/ImGuizmo
-// v 1.84 WIP
+// v 1.83
 //
 // The MIT License(MIT)
 //
@@ -206,9 +206,9 @@ namespace ImCurveEdit
 
       int localOverCurve = -1;
       // make sure highlighted curve is rendered last
-      int* curvesIndex = static_cast<int*>( ( 0 ) );
+      int* curvesIndex = (int*)_malloca(sizeof(int) * curveCount);
       for (size_t c = 0; c < curveCount; c++)
-         curvesIndex[c] = static_cast<int>( c );
+         curvesIndex[c] = int(c);
       int highLightedCurveIndex = -1;
       if (overCurve != -1 && curveCount)
       {
@@ -240,10 +240,10 @@ namespace ImCurveEdit
             if (curveType == CurveSmooth || curveType == CurveLinear)
             {
                size_t subStepCount = (curveType == CurveSmooth) ? 20 : 2;
-               float step = 1.f / static_cast<float>( subStepCount - 1 );
+               float step = 1.f / float(subStepCount - 1);
                for (size_t substep = 0; substep < subStepCount - 1; substep++)
                {
-                  float t = static_cast<float>( substep ) * step;
+                  float t = float(substep) * step;
 
                   const ImVec2 sp1 = ImLerp(p1, p2, t);
                   const ImVec2 sp2 = ImLerp(p1, p2, t + step);
@@ -256,8 +256,8 @@ namespace ImCurveEdit
 
                   if (distance(io.MousePos.x, io.MousePos.y, pos1.x, pos1.y, pos2.x, pos2.y) < 8.f && !scrollingV)
                   {
-                     localOverCurve = static_cast<int>( c );
-                     overCurve = static_cast<int>( c );
+                     localOverCurve = int(c);
+                     overCurve = int(c);
                      overCurveOrPoint = true;
                   }
 
@@ -276,8 +276,8 @@ namespace ImCurveEdit
                   distance(io.MousePos.x, io.MousePos.y, dp3.x, dp1.y, dp3.x, dp3.y) < 8.f)
                   /*&& localOverCurve == -1*/)
                {
-                  localOverCurve = static_cast<int>( c );
-                  overCurve = static_cast<int>( c );
+                  localOverCurve = int(c);
+                  overCurve = int(c);
                   overCurveOrPoint = true;
                }
             }
@@ -285,7 +285,7 @@ namespace ImCurveEdit
 
          for (size_t p = 0; p < ptCount; p++)
          {
-            const int drawState = DrawPoint(draw_list, pointToRange(pts[p]), viewSize, offset, (selection.find({ static_cast<int>( c ), static_cast<int>( p ) }) != selection.end() && movingCurve == -1 && !scrollingV));
+            const int drawState = DrawPoint(draw_list, pointToRange(pts[p]), viewSize, offset, (selection.find({ int(c), int(p) }) != selection.end() && movingCurve == -1 && !scrollingV));
             if (drawState && movingCurve == -1 && !selectingQuad)
             {
                overCurveOrPoint = true;
@@ -293,9 +293,9 @@ namespace ImCurveEdit
                overCurve = -1;
                if (drawState == 2)
                {
-                  if (!io.KeyShift && selection.find({ static_cast<int>( c ), static_cast<int>( p ) }) == selection.end())
+                  if (!io.KeyShift && selection.find({ int(c), int(p) }) == selection.end())
                      selection.clear();
-                  selection.insert({ static_cast<int>( c ), static_cast<int>( p ) });
+                  selection.insert({ int(c), int(p) });
                }
             }
          }
@@ -382,7 +382,7 @@ namespace ImCurveEdit
          {
             for (size_t p = 0; p < ptCount; p++)
             {
-               delegate.EditPoint(movingCurve, static_cast<int>( p ), rangeToPoint(pointToRange(originalPoints[p]) + (io.MousePos - mousePosOrigin) * sizeOfPixel));
+               delegate.EditPoint(movingCurve, int(p), rangeToPoint(pointToRange(originalPoints[p]) + (io.MousePos - mousePosOrigin) * sizeOfPixel));
             }
             ret = 1;
          }
@@ -426,7 +426,7 @@ namespace ImCurveEdit
                {
                   const ImVec2 center = pointToRange(pts[p]) * viewSize + offset;
                   if (selectionQuad.Contains(center))
-                     selection.insert({ static_cast<int>( c ), static_cast<int>( p ) });
+                     selection.insert({ int(c), int(p) });
                }
             }
             // done
@@ -447,7 +447,7 @@ namespace ImCurveEdit
 
       if (selectedPoints)
       {
-         selectedPoints->resize(static_cast<int>( selection.size() ));
+         selectedPoints->resize(int(selection.size()));
          int index = 0;
          for (auto& point : selection)
             (*selectedPoints)[index++] = point;

@@ -1,5 +1,5 @@
 // https://github.com/CedricGuillemet/ImGuizmo
-// v 1.84 WIP
+// v 1.83
 //
 // The MIT License(MIT)
 //
@@ -75,7 +75,7 @@ namespace ImGradient
       const ImVec4* pts = delegate.GetPoints();
       static int currentSelection = -1;
       static int movingPt = -1;
-      if (currentSelection >= static_cast<int>( delegate.GetPointCount() ))
+      if (currentSelection >= int(delegate.GetPointCount()))
          currentSelection = -1;
       if (movingPt != -1)
       {
@@ -92,12 +92,12 @@ namespace ImGradient
          int ptSel = DrawPoint(draw_list, pts[i], size, i == currentSelection, offset);
          if (ptSel == 2)
          {
-            currentSelection = static_cast<int>( i );
+            currentSelection = int(i);
             ret = true;
          }
          if (ptSel == 1 && io.MouseDown[0] && movingPt == -1)
          {
-            movingPt = static_cast<int>( i );
+            movingPt = int(i);
          }
       }
       ImRect rc(offset, offset + size);

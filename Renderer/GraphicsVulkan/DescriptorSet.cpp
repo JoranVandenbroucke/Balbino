@@ -3,6 +3,7 @@
 
 #include "Device.h"
 #include "Funtions.h"
+#include "ImageResource.h"
 #include "ShaderPipeline.h"
 
 BalVulkan::CDescriptorSet::CDescriptorSet( const CDevice* pDevice )
@@ -84,6 +85,61 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
 	}
 
 	vkUpdateDescriptorSets( GetDevice()->GetVkDevice(), static_cast< uint32_t >( descriptorWrites.size() ), descriptorWrites.data(), 0, nullptr );
+}
+
+void BalVulkan::CDescriptorSet::Initialize( const VkDescriptorPool& descriptorPool, const VkDescriptorSetLayout& descriptorSetLayout, CSampler* pSampler, CImageView* pImageView, CImageResource* pResource )
+{
+	if ( m_descriptorPool || descriptorPool == VK_NULL_HANDLE || descriptorSetLayout == VK_NULL_HANDLE || !pSampler || !pImageView || !pResource )
+		return;
+	m_descriptorPool = descriptorPool;
+	// Create Descriptor Set:
+	{
+		VkDescriptorSetAllocateInfo allocInfo = {};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = descriptorPool;
+		allocInfo.descriptorSetCount = 1;
+		allocInfo.pSetLayouts = &descriptorSetLayout;
+		CheckVkResult( vkAllocateDescriptorSets(GetDevice()->GetVkDevice(), &allocInfo, &m_descriptorSet));
+	}
+	//VkDescriptorSetAllocateInfo allocInfo{
+	//.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
+	//.descriptorPool = m_descriptorPool,
+	//.descriptorSetCount = 1,
+	//.pSetLayouts = &descriptorSetLayout,
+	//};
+	//CheckVkResult(vkAllocateDescriptorSets( GetDevice()->GetVkDevice(), &allocInfo, &m_descriptorSet ));
+
+	// Update the Descriptor Set:
+	{
+		VkDescriptorImageInfo descImage[1] = {};
+		descImage[0].sampler = pSampler->GetSampler();
+		descImage[0].imageView = pImageView->GetImageView();
+		descImage[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		VkWriteDescriptorSet writeDesc[1] = {};
+		writeDesc[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writeDesc[0].dstSet = m_descriptorSet;
+		writeDesc[0].descriptorCount = 1;
+		writeDesc[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		writeDesc[0].pImageInfo = descImage;
+		vkUpdateDescriptorSets( GetDevice()->GetVkDevice(), 1, writeDesc, 0, NULL );
+	}
+	//VkDescriptorImageInfo fontDescriptor{
+	//	.sampler = pSampler->GetSampler(),
+	//	.imageView = pImageView->GetImageView(),
+	//	.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+	//};
+	//const std::vector writeDescriptorSets
+	//{
+	//	VkWriteDescriptorSet{
+	//		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+	//		.dstSet = m_descriptorSet,
+	//		.dstBinding = 0,
+	//		.descriptorCount = 1,
+	//		.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+	//		.pImageInfo = &fontDescriptor,
+	//	}
+	//};
+	//vkUpdateDescriptorSets( GetDevice()->GetVkDevice(), static_cast< uint32_t >( writeDescriptorSets.size() ), writeDescriptorSets.data(), 0, nullptr );
 }
 
 const VkDescriptorSet& BalVulkan::CDescriptorSet::GetDescriptorSet() const

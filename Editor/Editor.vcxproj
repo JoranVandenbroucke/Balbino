@@ -126,7 +126,7 @@
     <ClInclude Include="scr\Windows\SceneHierarchy.h" />
     <ClInclude Include="scr\Tools\FilesSystem\Inporter\ImageImporter.h" />
     <ClInclude Include="scr\Windows\AssetBrowser.h" />
-    <ClInclude Include="scr\Tools\FilesSystem\FIleSystem.h" />
+    <ClInclude Include="scr\Tools\FilesSystem\FileSystem.h" />
     <ClInclude Include="scr\Windows\GameView.h" />
     <ClInclude Include="scr\Windows\MainScreen.h" />
     <ClInclude Include="scr\Interface.h" />
@@ -136,7 +136,7 @@
     <ClCompile Include="scr\Windows\SceneHierarchy.cpp" />
     <ClCompile Include="scr\Tools\FilesSystem\Inporter\ImageImporter.cpp" />
     <ClCompile Include="scr\Windows\AssetBrowser.cpp" />
-    <ClCompile Include="scr\Tools\FilesSystem\FIleSystem.cpp" />
+    <ClCompile Include="scr\Tools\FilesSystem\FileSystem.cpp" />
     <ClCompile Include="scr\Windows\GameView.cpp" />
     <ClCompile Include="scr\Windows\MainScreen.cpp" />
     <ClCompile Include="scr\Interface.cpp" />

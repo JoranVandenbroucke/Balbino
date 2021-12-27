@@ -17,6 +17,7 @@ namespace BalVulkan
 
 		VkResult InitFromSwapchain( VkImage image, VkImageLayout layout, uint32_t width, uint32_t height, VkFormat format );
 		VkResult Initialize( uint32_t width, uint32_t height, uint32_t mipLevels, uint32_t layers, EImageLayout layout, EFormat format, const BalVulkan::EImageUsageFlagBits usage = ( EImageUsageFlagBits::TransferSrcBit | EImageUsageFlagBits::TransferDstBit | EImageUsageFlagBits::SampledBit ) );
+		VkImage GetImage();
 
 		const VkImage& GetImage() const;
 		const VkImageLayout& GetImageLayout() const;
@@ -33,6 +34,7 @@ namespace BalVulkan
 
 		void TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, BalVulkan::EImageLayout newLayout );
 		void GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand );
+		VkImageLayout GetLayout()const;
 		static CImageResource* CreateNew( const CDevice* pDevice );
 		static CImageResource* LoadFromFile( const std::string& path );
 	private:

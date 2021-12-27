@@ -53,6 +53,12 @@ void BalEditor::CSceneHierarchy::SetContext( IScene* pScene )
 {
 	m_pContext = pScene;
 }
+
+IEntity* BalEditor::CSceneHierarchy::GetSelectedEntity() const
+{
+	return m_pSelectionContext;
+}
+
 static void DrawVec3Control( const std::string& label, glm::vec3& values, const float resetValue = 0.0f, const float columnWidth = 100.0f )
 {
 	const ImGuiIO& io = ImGui::GetIO();

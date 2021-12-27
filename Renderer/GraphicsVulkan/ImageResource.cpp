@@ -275,6 +275,11 @@ void BalVulkan::CImageResource::GenerateMipMaps( uint32_t mipLevels, const CBuff
 	pCommand->EndSingleTimeCommands();
 }
 
+VkImageLayout BalVulkan::CImageResource::GetLayout() const
+{
+	return {};
+}
+
 BalVulkan::CImageResource* BalVulkan::CImageResource::CreateNew( const CDevice* pDevice )
 {
 	return new CImageResource{pDevice};
@@ -355,6 +360,10 @@ VkResult BalVulkan::CImageResource::Initialize( const uint32_t width,
 	return VK_SUCCESS;
 }
 
+VkImage BalVulkan::CImageResource::GetImage()
+{
+	return m_image;
+}
 const VkImage& BalVulkan::CImageResource::GetImage() const
 {
 	return m_image;

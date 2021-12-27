@@ -5,11 +5,6 @@
 #include <SDL_vulkan.h>
 
 #include "Input/InputHandler.h"
-#include "Managers/CameraManager.h"
-#include "Managers/MaterialManager.h"
-#include "Managers/MeshManager.h"
-#include "Managers/ShaderManager.h"
-#include "Managers/TextureManager.h"
 #include "Renderer/Renderer.h"
 #include "Scene/Scene.h"
 
@@ -72,11 +67,6 @@ void Balbino::Application::Initialize()
 	}
 
 	m_manager.SetInputHandler( DBG_NEW CInputHandler{} );
-	m_manager.SetCameraManager( DBG_NEW CCameraManager{} );
-	m_manager.SetMeshManager( DBG_NEW CMeshManager{} );
-	m_manager.SetShaderManager( DBG_NEW CShaderManager{} );
-	m_manager.SetTextureManager( DBG_NEW CTextureManager{} );
-	m_manager.SetMaterialManager( DBG_NEW CMaterialManager{} );
 	CManager::GetInputHandler()->Initialize();
 }
 
@@ -128,11 +118,6 @@ void Balbino::Application::Cleanup()
 	//delete m_pRenderer;
 
 	m_manager.SetInputHandler( nullptr );
-	m_manager.SetCameraManager( nullptr );
-	m_manager.SetMeshManager( nullptr );
-	m_manager.SetShaderManager( nullptr );
-	m_manager.SetTextureManager( nullptr );
-	m_manager.SetMaterialManager( nullptr );
 
 	SDL_DestroyWindow( m_pWindow );
 	SDL_Quit();
@@ -161,11 +146,41 @@ void Balbino::Application::Run()
 			switch ( e.type )
 			{
 				case SDL_QUIT:
+				{
 					isRunning = false;
 					break;
+				}
 				case SDL_WINDOWEVENT:
+				{
 					switch ( e.window.event )
 					{
+						case SDL_WINDOWEVENT_MINIMIZED:
+						{
+							SDL_Event minEvent;
+							bool isMin{ true };
+							while ( isMin && isRunning && SDL_WaitEvent( &minEvent ) )
+							{
+								switch ( e.window.event )
+								{
+									case SDL_WINDOWEVENT_SIZE_CHANGED:
+									case SDL_WINDOWEVENT_MAXIMIZED:
+									case SDL_WINDOWEVENT_MINIMIZED:
+									case SDL_WINDOWEVENT_RESIZED:
+									{
+										isMin = false;
+										break;
+									}
+									case SDL_WINDOWEVENT_CLOSE:
+									{
+										isRunning = false;
+										break;
+									}
+									default:
+										break;
+								}
+							}
+							break;
+						}
 						case SDL_WINDOWEVENT_SIZE_CHANGED:
 						case SDL_WINDOWEVENT_MAXIMIZED:
 						case SDL_WINDOWEVENT_RESIZED:
@@ -181,10 +196,12 @@ void Balbino::Application::Run()
 							( void ) file.generate( ini, true );
 							break;
 						}
-						default: ;
+						default:
+						break;
 					}
+					break;
+				}
 				default:
-					// Do nothing.
 					break;
 			}
 			CManager::GetInputHandler()->ProcessEvents( e );

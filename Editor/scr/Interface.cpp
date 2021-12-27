@@ -21,6 +21,7 @@
 
 #include <backends/imgui_impl_sdl.h>
 
+
 // glsl_shader.vert, compiled with:
 // # glslangValidator -V -x -o glsl_shader.vert.u32 glsl_shader.vert
 /*
@@ -165,7 +166,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
-	io.DisplaySize = ImVec2( static_cast<float>( w ), static_cast<float>( h ) );
+	io.DisplaySize = ImVec2( static_cast< float >( w ), static_cast< float >( h ) );
 	io.DisplayFramebufferScale = ImVec2( 1.0f, 1.0f );
 	//{
 	//	io.KeyMap[ImGuiKey_Tab] = SDL_GetScancodeFromKey( SDLK_TAB );
@@ -218,16 +219,18 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	m_pIndexBuffer = BalVulkan::CBuffer::CreateNew( pDevice, pCommandPool, pQueue );
 
 	// Descriptor pool
-	std::vector poolSizes{
+	constexpr uint32_t poolSize{ 100 };
+	std::array poolSizes{
 		VkDescriptorPoolSize{
 			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = 1,
+			.descriptorCount = poolSize,
 		}
 	};
 	VkDescriptorPoolCreateInfo descriptorPoolInfo{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-		.maxSets = 1,
-		.poolSizeCount = static_cast<uint32_t>( poolSizes.size() ),
+		.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT,
+		.maxSets = poolSize * static_cast< uint32_t >( poolSizes.size() ),
+		.poolSizeCount = static_cast< uint32_t >( poolSizes.size() ),
 		.pPoolSizes = poolSizes.data(),
 	};
 	vkCreateDescriptorPool( pDevice->GetVkDevice(), &descriptorPoolInfo, nullptr, &m_descriptorPool );
@@ -243,7 +246,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	};
 	VkDescriptorSetLayoutCreateInfo descriptorLayout{
 		.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-		.bindingCount = static_cast<uint32_t>( setLayoutBindings.size() ),
+		.bindingCount = static_cast< uint32_t >( setLayoutBindings.size() ),
 		.pBindings = setLayoutBindings.data(),
 	};
 	vkCreateDescriptorSetLayout( pDevice->GetVkDevice(), &descriptorLayout, nullptr, &m_descriptorSetLayout );
@@ -272,7 +275,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 			.pImageInfo = &fontDescriptor,
 		}
 	};
-	vkUpdateDescriptorSets( pDevice->GetVkDevice(), static_cast<uint32_t>( writeDescriptorSets.size() ), writeDescriptorSets.data(), 0, nullptr );
+	vkUpdateDescriptorSets( pDevice->GetVkDevice(), static_cast< uint32_t >( writeDescriptorSets.size() ), writeDescriptorSets.data(), 0, nullptr );
 
 	// Pipeline cache
 	VkPipelineCacheCreateInfo pipelineCacheCreateInfo = {};
@@ -333,7 +336,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 		.depthTestEnable = VK_FALSE,
 		.depthWriteEnable = VK_FALSE,
 		.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL,
-		.back{ .compareOp = VK_COMPARE_OP_ALWAYS, },
+		.back{.compareOp = VK_COMPARE_OP_ALWAYS, },
 	};
 
 	VkPipelineViewportStateCreateInfo viewportState{
@@ -355,7 +358,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkPipelineDynamicStateCreateInfo dynamicState{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
 		.flags = 0,
-		.dynamicStateCount = static_cast<uint32_t>( dynamicStateEnables.size() ),
+		.dynamicStateCount = static_cast< uint32_t >( dynamicStateEnables.size() ),
 		.pDynamicStates = dynamicStateEnables.data(),
 	};
 
@@ -364,7 +367,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkGraphicsPipelineCreateInfo pipelineCreateInfo{
 		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
 		.flags = 0,
-		.stageCount = static_cast<uint32_t>( shaderStages.size() ),
+		.stageCount = static_cast< uint32_t >( shaderStages.size() ),
 		.pStages = shaderStages.data(),
 		.pInputAssemblyState = &inputAssemblyState,
 		.pViewportState = &viewportState,
@@ -412,9 +415,9 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	};
 	VkPipelineVertexInputStateCreateInfo vertexInputState{
 		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-		.vertexBindingDescriptionCount = static_cast<uint32_t>( vertexInputBindings.size() ),
+		.vertexBindingDescriptionCount = static_cast< uint32_t >( vertexInputBindings.size() ),
 		.pVertexBindingDescriptions = vertexInputBindings.data(),
-		.vertexAttributeDescriptionCount = static_cast<uint32_t>( vertexInputAttributes.size() ),
+		.vertexAttributeDescriptionCount = static_cast< uint32_t >( vertexInputAttributes.size() ),
 		.pVertexAttributeDescriptions = vertexInputAttributes.data(),
 
 	};
@@ -423,13 +426,13 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	VkShaderModuleCreateInfo vertInfo = {};
 	vertInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	vertInfo.codeSize = sizeof( g_glslShaderVertSpv );
-	vertInfo.pCode = static_cast<uint32_t*>( g_glslShaderVertSpv );
+	vertInfo.pCode = static_cast< uint32_t* >( g_glslShaderVertSpv );
 	vkCreateShaderModule( pDevice->GetVkDevice(), &vertInfo, nullptr, &m_shaderModuleVert );
 
 	VkShaderModuleCreateInfo fragInfo = {};
 	fragInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 	fragInfo.codeSize = sizeof( g_glslShaderFragSpv );
-	fragInfo.pCode = static_cast<uint32_t*>( g_glslShaderFragSpv );
+	fragInfo.pCode = static_cast< uint32_t* >( g_glslShaderFragSpv );
 	vkCreateShaderModule( pDevice->GetVkDevice(), &fragInfo, nullptr, &m_shaderModuleFrag );
 
 	shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -448,6 +451,8 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	m_pGameView = new CGameView{};
 	m_pAssetBrowser = new CAssetBrowser{};
 	m_pSceneHierarchy = new CSceneHierarchy{};
+
+	m_pAssetBrowser->Initialize( m_descriptorPool, m_descriptorSetLayout );
 }
 
 void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
@@ -484,6 +489,8 @@ void BalEditor::CInterface::Cleanup() const
 	vkDestroyDescriptorPool( m_pDevice->GetVkDevice(), m_descriptorPool, nullptr );
 	vkDestroyDescriptorSetLayout( m_pDevice->GetVkDevice(), m_descriptorSetLayout, nullptr );
 
+	m_pAssetBrowser->Cleanup();
+
 	delete m_pMain;
 	delete m_pGameView;
 	delete m_pAssetBrowser;
@@ -496,17 +503,101 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e ) const
 	switch ( e.type )
 	{
 		case SDL_DROPFILE:
+		{
 			char* droppedFileDir = e.drop.file;
 			assert( ImportFile( droppedFileDir ) );
-		// Shows directory of dropped file
+			// Shows directory of dropped file
 			SDL_free( droppedFileDir ); // Free dropped_filedir memory
+			break;
+		}
+		case SDL_KEYDOWN:
+		{
+			int key{ m_pGameView->GetGuizmoType()};
+			bool snap{};
+			switch ( e.key.keysym.sym )
+			{
+				case SDLK_g:
+					key = ImGuizmo::OPERATION::TRANSLATE;
+					break;
+				case SDLK_s:
+					key = ImGuizmo::OPERATION::SCALE;
+					break;
+				case SDLK_r:
+					if ( key == ImGuizmo::OPERATION::ROTATE )
+						key = ImGuizmo::OPERATION::ROTATE_SCREEN;
+					else
+						key = ImGuizmo::OPERATION::ROTATE;
+					break;
+				case SDLK_x:
+					if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_Y || key & ImGuizmo::OPERATION::TRANSLATE_Z )
+						key = ImGuizmo::OPERATION::TRANSLATE_X;
+					else if ( key == ImGuizmo::OPERATION::TRANSLATE_X )
+						key = ImGuizmo::OPERATION::TRANSLATE;
+
+					else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_Y || key & ImGuizmo::OPERATION::ROTATE_Z )
+						key = ImGuizmo::OPERATION::ROTATE_X;
+					else if ( key == ImGuizmo::OPERATION::ROTATE_X )
+						key = ImGuizmo::OPERATION::ROTATE;
+
+					else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_Y || key & ImGuizmo::OPERATION::SCALE_Z )
+						key = ImGuizmo::OPERATION::SCALE_X;
+					else if ( key == ImGuizmo::OPERATION::SCALE_X )
+						key = ImGuizmo::OPERATION::SCALE;
+					break;
+				case SDLK_y:
+					if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_X || key & ImGuizmo::OPERATION::TRANSLATE_Z )
+						key = ImGuizmo::OPERATION::TRANSLATE_Y;
+					else if ( key == ImGuizmo::OPERATION::TRANSLATE_Y )
+						key = ImGuizmo::OPERATION::TRANSLATE;
+
+					else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Z )
+						key = ImGuizmo::OPERATION::ROTATE_Y;
+					else if ( key == ImGuizmo::OPERATION::ROTATE_Y )
+						key = ImGuizmo::OPERATION::ROTATE;
+
+					else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Z )
+						key = ImGuizmo::OPERATION::SCALE_Y;
+					else if ( key == ImGuizmo::OPERATION::SCALE_Y )
+						key = ImGuizmo::OPERATION::SCALE;
+					break;
+				case SDLK_z:
+					if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_X || key & ImGuizmo::OPERATION::TRANSLATE_Y )
+						key = ImGuizmo::OPERATION::TRANSLATE_Z;
+					else if ( key == ImGuizmo::OPERATION::TRANSLATE_Z )
+						key = ImGuizmo::OPERATION::TRANSLATE;
+
+					else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Y )
+						key = ImGuizmo::OPERATION::ROTATE_Z;
+					else if ( key == ImGuizmo::OPERATION::ROTATE_Z )
+						key = ImGuizmo::OPERATION::ROTATE;
+
+					else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Y )
+						key = ImGuizmo::OPERATION::SCALE_Z;
+					else if ( key == ImGuizmo::OPERATION::SCALE_Z )
+						key = ImGuizmo::OPERATION::SCALE;
+					break;
+				case SDLK_LCTRL:
+				case SDLK_RCTRL:
+					snap = true;
+				default:;
+			}
+			m_pGameView->SetGuizmo( key );
+			m_pGameView->SetSnap( snap );
+			break;
+		}
+		case SDL_KEYUP:
+			if ( e.key.keysym.sym == SDLK_LCTRL || e.key.keysym.sym == SDLK_RCTRL )
+				m_pGameView->SetSnap( false );
+		default:;
 	}
 }
 
-void BalEditor::CInterface::SetContext( IScene* pScene ) const
+void BalEditor::CInterface::SetContext( IScene* pScene )
 {
 	m_pMain->SetContext( pScene );
 	m_pSceneHierarchy->SetContext( pScene );
+	m_pGameView->SetContext( pScene, m_pSceneHierarchy );
+	m_pContext = pScene;
 }
 
 void BalEditor::CInterface::Resize( const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
@@ -550,8 +641,8 @@ void BalEditor::CInterface::UpdateBuffers()
 	}
 
 	// Upload data
-	auto vtxDst = static_cast<ImDrawVert*>( m_pVertexBuffer->GetMapped() );
-	auto idxDst = static_cast<ImDrawIdx*>( m_pIndexBuffer->GetMapped() );
+	auto vtxDst = static_cast< ImDrawVert* >( m_pVertexBuffer->GetMapped() );
+	auto idxDst = static_cast< ImDrawIdx* >( m_pIndexBuffer->GetMapped() );
 
 	for ( int n = 0; n < imDrawData->CmdListsCount; n++ )
 	{
@@ -610,10 +701,10 @@ void BalEditor::CInterface::FrameRender( BalVulkan::CCommandPool* pCommandPool )
 			{
 				const ImDrawCmd* pcmd = &cmdList->CmdBuffer[j];
 				VkRect2D scissorRect{};
-				scissorRect.offset.x = std::max( static_cast<int32_t>( pcmd->ClipRect.x ), 0 );
-				scissorRect.offset.y = std::max( static_cast<int32_t>( pcmd->ClipRect.y ), 0 );
-				scissorRect.extent.width = static_cast<uint32_t>( pcmd->ClipRect.z - pcmd->ClipRect.x );
-				scissorRect.extent.height = static_cast<uint32_t>( pcmd->ClipRect.w - pcmd->ClipRect.y );
+				scissorRect.offset.x = std::max( static_cast< int32_t >( pcmd->ClipRect.x ), 0 );
+				scissorRect.offset.y = std::max( static_cast< int32_t >( pcmd->ClipRect.y ), 0 );
+				scissorRect.extent.width = static_cast< uint32_t >( pcmd->ClipRect.z - pcmd->ClipRect.x );
+				scissorRect.extent.height = static_cast< uint32_t >( pcmd->ClipRect.w - pcmd->ClipRect.y );
 				vkCmdSetScissor( pCommandPool->GetCommandBuffer(), 0, 1, &scissorRect );
 				vkCmdDrawIndexed( pCommandPool->GetCommandBuffer(), pcmd->ElemCount, 1, indexOffset, vertexOffset, 0 );
 				indexOffset += pcmd->ElemCount;

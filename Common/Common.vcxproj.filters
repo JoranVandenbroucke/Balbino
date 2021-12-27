@@ -8,5 +8,9 @@
     <ClInclude Include="Components\IDComponent.h" />
     <ClInclude Include="Components\TransformComponent.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Importer.h" />
+    <ClInclude Include="Components\TextureComponent.h" />
+    <ClInclude Include="FileParcer.h" />
+    <ClInclude Include="BalMath.h" />
   </ItemGroup>
 </Project>

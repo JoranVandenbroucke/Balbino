@@ -151,8 +151,12 @@
     <ClInclude Include="Components\CameraComponent.h" />
     <ClInclude Include="Components\IDComponent.h" />
     <ClInclude Include="Components\TransformComponent.h" />
+    <ClInclude Include="FileParcer.h" />
     <ClInclude Include="IEntity.h" />
+    <ClInclude Include="Importer.h" />
     <ClInclude Include="IScene.h" />
+    <ClInclude Include="Components\TextureComponent.h" />
+    <ClInclude Include="BalMath.h" />
     <ClInclude Include="UUID.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

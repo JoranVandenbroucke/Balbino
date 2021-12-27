@@ -40,7 +40,7 @@ namespace BalEditor
 		void Draw( BalVulkan::CCommandPool* pCommandPool );
 		void Cleanup() const;
 		void ProcessEvent( SDL_Event e ) const;
-		void SetContext( IScene* pScene ) const;
+		void SetContext( IScene* pScene );
 		void Resize( const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue );
 	private:
 		CMainScreen* m_pMain;
@@ -66,6 +66,7 @@ namespace BalEditor
 
 		int m_vertexCount;
 		int m_indexCount;
+		IScene* m_pContext;
 
 		void UpdateBuffers();
 		void FrameRender( BalVulkan::CCommandPool* pCommandPool ) const;

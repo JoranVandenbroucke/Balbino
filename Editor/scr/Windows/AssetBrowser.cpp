@@ -3,6 +3,7 @@
 
 #include "ImageResource.h"
 #include "imgui.h"
+#include "Importer.h"
 
 BalEditor::CAssetBrowser::CAssetBrowser()
 	: m_pUnknownIcon{ nullptr }
@@ -20,16 +21,16 @@ BalEditor::CAssetBrowser::~CAssetBrowser()
 {
 }
 
-void BalEditor::CAssetBrowser::Initialize( BalVulkan::CDevice* pDevice)
+void BalEditor::CAssetBrowser::Initialize(const VkDescriptorPool& descriptorPool, const VkDescriptorSetLayout& descriptorSetLayout)
 {
-	m_pUnknownIcon = BalVulkan::CImageResource::CreateNew( pDevice );
-	m_pFolderIcon = BalVulkan::CImageResource::CreateNew( pDevice );
-	m_pBalbinoIcon = BalVulkan::CImageResource::CreateNew( pDevice );
-	m_pImageIcon = BalVulkan::CImageResource::CreateNew( pDevice );
-	m_pAudioIcon = BalVulkan::CImageResource::CreateNew( pDevice );
-	m_pModelIcon = BalVulkan::CImageResource::CreateNew( pDevice );
-	m_pPresetIcon = BalVulkan::CImageResource::CreateNew( pDevice );
-	m_pCodeIcon = BalVulkan::CImageResource::CreateNew( pDevice );
+	ImportTexture("../Data/UnknownFile.basset", m_pUnknownIcon, descriptorPool, descriptorSetLayout );
+	ImportTexture("../Data/Folder.basset", m_pFolderIcon, descriptorPool, descriptorSetLayout );
+	ImportTexture("../Data/Balbino.basset", m_pBalbinoIcon, descriptorPool, descriptorSetLayout );
+	ImportTexture("../Data/FontFile.basset", m_pImageIcon, descriptorPool, descriptorSetLayout );	//todo: change
+	ImportTexture("../Data/AudioFile.basset", m_pAudioIcon, descriptorPool, descriptorSetLayout );
+	ImportTexture("../Data/FontFile.basset", m_pModelIcon, descriptorPool, descriptorSetLayout );	//todo: change
+	ImportTexture("../Data/FontFile.basset", m_pPresetIcon, descriptorPool, descriptorSetLayout );	//todo: change
+	ImportTexture("../Data/Code.basset", m_pCodeIcon, descriptorPool, descriptorSetLayout );
 }
 
 void BalEditor::CAssetBrowser::Draw()
@@ -63,19 +64,22 @@ void BalEditor::CAssetBrowser::Draw()
 
 	ImGui::SameLine();
 	ImGui::BeginChild( "Asset File", ImVec2{ -1, -1 }, true, ImGuiWindowFlags_AlwaysAutoResize );
-
+	int id{};
 	for ( const auto& currentFile : m_selected )
 	{
+		ImGui::PushID( id++ );
 		switch ( currentFile.type )
 		{
 			case EFileTypes::Folder:
 				{
-					ImGui::Image( m_pFolderIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( m_pFolderIcon->GetDescriptorSet(), { 32, 32 } );
+					ImGui::Image( m_pFolderIcon->GetImageView(), { 32, 32 } );
+					ImGui::Image( m_pFolderIcon->GetImage(), { 32, 32 } );
 					break;
 				}
 			case EFileTypes::Scene:
 				{
-					ImGui::Image( m_pBalbinoIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( ( void* ) ( intptr_t ) m_pBalbinoIcon->GetDescriptorSet(), { 16, 16 } );
 					break;
 				}
 			case EFileTypes::Image:
@@ -95,32 +99,32 @@ void BalEditor::CAssetBrowser::Draw()
 				}
 			case EFileTypes::Audio:
 				{
-					ImGui::Image( m_pAudioIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( m_pAudioIcon->GetDescriptorSet(), { 16, 16 } );
 					break;
 				}
 			case EFileTypes::Code:
 				{
-					ImGui::Image( m_pCodeIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( m_pCodeIcon->GetDescriptorSet(), { 16, 16 } );
 					break;
 				}
 			case EFileTypes::Unknown:
 				{
-					ImGui::Image( m_pUnknownIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( m_pUnknownIcon->GetDescriptorSet(), { 16, 16 } );
 					break;
 				}
 			case EFileTypes::Font:
 				{
-					ImGui::Image( m_pFolderIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( m_pFolderIcon->GetDescriptorSet(), { 16, 16 } );
 					break;
 				}
 			case EFileTypes::Model:
 				{
-					ImGui::Image( m_pModelIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( m_pModelIcon->GetDescriptorSet(), { 16, 16 } );
 					break;
 				}
 			case EFileTypes::Preset:
 				{
-					ImGui::Image( m_pPresetIcon->GetImage(), { 16, 16 } );
+					ImGui::Image( m_pPresetIcon->GetDescriptorSet(), { 16, 16 } );
 					break;
 				}
 		}
@@ -141,6 +145,8 @@ void BalEditor::CAssetBrowser::Draw()
 			ImGui::Text( currentFile.alias.c_str() );
 			ImGui::EndDragDropSource();
 		}
+		ImGui::NewLine();
+		ImGui::PopID();
 	}
 	ImGui::EndChild();
 	ImGui::End();
@@ -148,14 +154,14 @@ void BalEditor::CAssetBrowser::Draw()
 
 void BalEditor::CAssetBrowser::Cleanup()
 {
-	m_pUnknownIcon->Release();
-	m_pFolderIcon->Release();
-	m_pBalbinoIcon->Release();
-	m_pImageIcon->Release();
-	m_pAudioIcon->Release();
-	m_pModelIcon->Release();
-	m_pPresetIcon->Release();
-	m_pCodeIcon->Release();
+	delete m_pUnknownIcon;
+	delete m_pFolderIcon;
+	delete m_pBalbinoIcon;
+	delete m_pImageIcon;
+	delete m_pAudioIcon;
+	delete m_pModelIcon;
+	delete m_pPresetIcon;
+	delete m_pCodeIcon;
 	m_selected.clear();
 }
 
