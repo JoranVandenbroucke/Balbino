@@ -127,6 +127,7 @@ Global
 		{9299980C-B6F5-4B32-803F-4EFFC90472E1}.Release|x86.ActiveCfg = Release|x64
 		{9299980C-B6F5-4B32-803F-4EFFC90472E1}.Release|x86.Build.0 = Release|x64
 		{9299980C-B6F5-4B32-803F-4EFFC90472E1}.ReleaseEditor|x64.ActiveCfg = Release|x64
+		{9299980C-B6F5-4B32-803F-4EFFC90472E1}.ReleaseEditor|x64.Build.0 = Release|x64
 		{9299980C-B6F5-4B32-803F-4EFFC90472E1}.ReleaseEditor|x86.ActiveCfg = Release|x64
 		{9299980C-B6F5-4B32-803F-4EFFC90472E1}.ReleaseEditor|x86.Build.0 = Release|x64
 		{10041672-034E-3220-8A4C-353080E69005}.Debug|x64.ActiveCfg = Debug|x64

@@ -96,6 +96,7 @@ struct Template
     ImU8 mOutputCount;
     const char** mOutputNames; // can be nullptr. No text displayed.
     ImU32* mOutputColors; // can be nullptr, default slot color will be used.
+    Template( ImU32 headerColor, ImU32 backgroundColor, ImU32 backgroundColorOver, ImU8 inputCount, const char** inputNames, ImU32* inputColors, ImU8 outputCount, const char** outputNames, ImU32* outputColors );
 };
 
 struct Node
@@ -116,7 +117,8 @@ struct Link
 
 struct Delegate
 {
-    virtual bool AllowedLink(NodeIndex from, NodeIndex to) = 0;
+	virtual ~Delegate() = default;
+	virtual bool AllowedLink(NodeIndex from, NodeIndex to) = 0;
 
     virtual void SelectNode(NodeIndex nodeIndex, bool selected) = 0;
     virtual void MoveSelectedNodes(const ImVec2 delta) = 0;

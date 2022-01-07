@@ -19,7 +19,7 @@ namespace BalEditor
 		void SetSnap( bool snap );
 		void SetGuizmo( int key );
 
-		int GetGuizmoType() const;
+		[[nodiscard]] int GetGuizmoType() const;
 	private:
 		CSceneHierarchy* m_pSceneHierarchy;
 		IScene* m_pContext;

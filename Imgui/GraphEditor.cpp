@@ -819,6 +819,19 @@ bool DrawMiniMap(ImDrawList* drawList, Delegate& delegate, ViewState& viewState,
     return mouseInMinimap;
 }
 
+Template::Template( ImU32 headerColor, ImU32 backgroundColor, ImU32 backgroundColorOver, ImU8 inputCount, const char** inputNames, ImU32* inputColors, ImU8 outputCount, const char** outputNames, ImU32* outputColors )
+	: mHeaderColor{ headerColor }
+	, mBackgroundColor{ backgroundColor }
+	, mBackgroundColorOver{ backgroundColorOver }
+	, mInputCount{ inputCount }
+	, mInputNames{ inputNames }
+	, mInputColors{ inputColors }
+	, mOutputCount{ outputCount }
+	, mOutputNames{ outputNames }
+	, mOutputColors{ outputColors }
+{
+}
+
 void Show(Delegate& delegate, const Options& options, ViewState& viewState, bool enabled, FitOnScreen* fit)
 {
     ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.f);

@@ -39,43 +39,7 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
 
 	EPipelineStageFlagBits sourceStage{};
 	EPipelineStageFlagBits destinationStage{};
-	//VkImageMemoryBarrier barrier{
-	//	.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-	//	.oldLayout = m_imageLayout,
-	//	.newLayout = (VkImageLayout) newLayout,	//todo:: make this "cusomizable"
-	//	.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-	//	.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-	//	.image = m_image,
-	//	.subresourceRange{
-	//		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-	//		.baseMipLevel = 0,
-	//		.levelCount = mipLevels,
-	//		.baseArrayLayer = 0,
-	//		.layerCount = 1,
-	//	},
-	//};
-
-	//if ( m_imageLayout == VK_IMAGE_LAYOUT_UNDEFINED && barrier.newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL )
-	//{
-	//	barrier.srcAccessMask = 0;
-	//	barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
-	//	sourceStage = EPipelineStageFlagBits::TopOfPipeBit;
-	//	destinationStage = EPipelineStageFlagBits::TransferBit;
-	//}
-	//else if ( m_imageLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && barrier.newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL )
-	//{
-	//	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-	//	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-	//	sourceStage = EPipelineStageFlagBits::TransferBit;
-	//	destinationStage = EPipelineStageFlagBits::FragmentShaderBit;
-	//}
-	//else
-	//{
-	//	throw std::invalid_argument( "unsupported layout transition!" );
-	//}
-
+	
 	// Create an image barrier object
 	VkImageMemoryBarrier barrier{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,

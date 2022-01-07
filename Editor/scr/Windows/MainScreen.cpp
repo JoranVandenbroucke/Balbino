@@ -7,6 +7,10 @@
 
 #include <iostream>
 
+#include "AssetBrowser.h"
+#include "SceneHierarchy.h"
+#include "ShaderGraph.h"
+
 
 void BalEditor::CMainScreen::Draw()
 {
@@ -47,7 +51,6 @@ void BalEditor::CMainScreen::Draw()
 			if ( ImGui::MenuItem( "Empty" ) )
 			{
 				m_pContext->CreateEntity();
-				//todo: add empty object;
 				
 				std::cout << "add empty object\n";
 			}
@@ -65,6 +68,22 @@ void BalEditor::CMainScreen::Draw()
 			}
 			ImGui::EndMenu();
 		}
+		if ( ImGui::BeginMenu( "View" ) )
+		{
+			if ( ImGui::MenuItem( "Hierarchy" ) )
+			{
+				m_pSceneHierarchy->ShowWindow();
+			}
+			if ( ImGui::MenuItem( "Asset Browser" ) )
+			{
+				m_pAssetBrowser->ShowWindow();
+			}
+			if ( ImGui::MenuItem( "Shader Graph" ) )
+			{
+				m_pShaderGraph->ShowWindow();
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMenuBar();
 		static constexpr ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 		dockspaceID = ImGui::GetID( "MainWindowDockspace" );
@@ -75,7 +94,10 @@ void BalEditor::CMainScreen::Draw()
 	ImGui::SetNextWindowDockID( dockspaceID, ImGuiCond_FirstUseEver );
 }
 
-void BalEditor::CMainScreen::SetContext( IScene* pScene )
+void BalEditor::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph )
 {
 	m_pContext = pScene;
+	m_pAssetBrowser = pAssetBrowser;
+	m_pSceneHierarchy = pHierarchy;
+	m_pShaderGraph = pGraph;
 }

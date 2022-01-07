@@ -39,9 +39,6 @@
     <ClInclude Include="backends\imgui_impl_vulkan.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImCurveEdit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -55,6 +52,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImZoomSlider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imnodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,9 +86,6 @@
     <ClCompile Include="backends\imgui_impl_vulkan.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphEditor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImCurveEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -93,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ImSequencer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imnodes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

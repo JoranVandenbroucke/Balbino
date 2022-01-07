@@ -20,6 +20,7 @@ namespace BalVulkan
 		void GetImages( std::vector<CImageResource*>& swapChainImages, uint32_t& count) const;
 		const VkSwapchainKHR& GetVkSwapchain() const;
 		uint32_t GetMinImage()const;
+		uint32_t GetImageCount() const;
 
 		static CSwapchain* CreateNew( const CDevice* device, const VkSurfaceKHR& surface );
 	private:

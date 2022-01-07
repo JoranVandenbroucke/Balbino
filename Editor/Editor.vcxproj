@@ -66,7 +66,6 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <SupportJustMyCode>true</SupportJustMyCode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -123,6 +122,19 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Windows\Nodes\BrickTexture.h" />
+    <ClInclude Include="scr\Windows\Nodes\Bump.h" />
+    <ClInclude Include="scr\Windows\Nodes\ColorNodes.h" />
+    <ClInclude Include="scr\Windows\Nodes\Displacement.h" />
+    <ClInclude Include="scr\Windows\Nodes\Mapping.h" />
+    <ClInclude Include="scr\Windows\Nodes\NormalMap.h" />
+    <ClInclude Include="scr\Windows\Nodes\RGBtoBW.h" />
+    <ClInclude Include="scr\Windows\Nodes\Clamp.h" />
+    <ClInclude Include="scr\Windows\Nodes\Attribute.h" />
+    <ClInclude Include="scr\Windows\Nodes\FragmentOutput.h" />
+    <ClInclude Include="scr\Windows\Nodes\INode.h" />
+    <ClInclude Include="scr\Windows\Nodes\MathNode.h" />
+    <ClInclude Include="scr\Windows\Nodes\VertexOutput.h" />
     <ClInclude Include="scr\Windows\SceneHierarchy.h" />
     <ClInclude Include="scr\Tools\FilesSystem\Inporter\ImageImporter.h" />
     <ClInclude Include="scr\Windows\AssetBrowser.h" />
@@ -131,8 +143,21 @@
     <ClInclude Include="scr\Windows\MainScreen.h" />
     <ClInclude Include="scr\Interface.h" />
     <ClInclude Include="scr\pch.h" />
+    <ClInclude Include="scr\Windows\ShaderGraph.h" />
+    <ClInclude Include="scr\Windows\Nodes\VectorMath.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Windows\Nodes\BrickTexture.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\Bump.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\ColorNodes.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\Displacement.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\Mapping.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\NormalMap.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\RGBtoBW.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\Clamp.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\FragmentOutput.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\MathNode.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\VertexOutput.cpp" />
     <ClCompile Include="scr\Windows\SceneHierarchy.cpp" />
     <ClCompile Include="scr\Tools\FilesSystem\Inporter\ImageImporter.cpp" />
     <ClCompile Include="scr\Windows\AssetBrowser.cpp" />
@@ -144,6 +169,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="scr\Windows\ShaderGraph.cpp" />
+    <ClCompile Include="scr\Windows\Nodes\VectorMath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Imgui\Imgui.vcxproj">

@@ -13,45 +13,62 @@
 
 #include "Components/CameraComponent.h"
 
+BalEditor::CSceneHierarchy::CSceneHierarchy()
+	: m_pContext{ nullptr }
+	, m_pSelectionContext{ nullptr }
+	, m_isVisible{ true }
+{
+}
+
 void BalEditor::CSceneHierarchy::Draw()
 {
-	ImGui::Begin( "Scene Hierarchy" );
-
-	if ( m_pContext )
+	if( m_isVisible && ImGui::Begin( "Scene Hierarchy", &m_isVisible ))
 	{
-		const auto entities = m_pContext->GetAllEntities();
-		for ( const auto& entity : entities )
+		if ( m_pContext )
 		{
-			DrawEntityNode( entity );
+			const auto entities = m_pContext->GetAllEntities();
+			for ( const auto& entity : entities )
+			{
+				DrawEntityNode( entity );
+			}
+
+			if ( ImGui::IsMouseDown( 0 ) && ImGui::IsWindowHovered() )
+				m_pSelectionContext = {};
+
+			// Right-click on blank space
+			if ( ImGui::BeginPopupContextWindow( nullptr, 1, false ) )
+			{
+				if ( ImGui::MenuItem( "Create Empty Entity" ) )
+					m_pContext->CreateEntity();
+
+				ImGui::EndPopup();
+			}
+
 		}
-
-		if ( ImGui::IsMouseDown( 0 ) && ImGui::IsWindowHovered() )
-			m_pSelectionContext = {};
-
-		// Right-click on blank space
-		if ( ImGui::BeginPopupContextWindow( nullptr, 1, false ) )
-		{
-			if ( ImGui::MenuItem( "Create Empty Entity" ) )
-				m_pContext->CreateEntity();
-
-			ImGui::EndPopup();
-		}
-
-	}
-	ImGui::End();
-
-	ImGui::Begin( "Properties" );
-	if ( m_pSelectionContext )
-	{
-		DrawComponents( m_pSelectionContext );
+		ImGui::End();
 	}
 
-	ImGui::End();
+	if ( m_isVisible && ImGui::Begin( "Properties", &m_isVisible ) )
+	{
+		if ( m_pSelectionContext )
+		{
+			DrawComponents( m_pSelectionContext );
+		}
+
+		ImGui::End();
+	}
 }
 
 void BalEditor::CSceneHierarchy::SetContext( IScene* pScene )
 {
 	m_pContext = pScene;
+}
+
+void BalEditor::CSceneHierarchy::ShowWindow()
+{
+	m_isVisible = true;
+	ImGui::SetWindowFocus( "Scene Hierarchy" );
+	ImGui::SetWindowFocus( "Properties" );
 }
 
 IEntity* BalEditor::CSceneHierarchy::GetSelectedEntity() const

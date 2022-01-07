@@ -1,0 +1,34 @@
+#pragma once
+#include <array>
+
+#include "INode.h"
+class CMapping final : public INode
+{
+public:
+	CMapping( const int id, int& attributeStartId );
+
+	~CMapping() override;
+	void Draw() override;
+	void Attach( int endAttr ) override;
+	void Detach( int endAttr ) override;
+	void Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType ) override;
+	[[nodiscard]] bool HasFreeAttachment( int endAttr ) const override;
+	[[nodiscard]] int GetId() const override;
+	[[nodiscard]] std::vector<int> GetInputs() const override;
+private:
+	enum EMode
+	{
+		Point,
+		Texture,
+		Vector,
+		Normal,
+		MaxIndex
+	}m_type;
+	bool m_connected[4];
+	std::array<float, 3> m_vector;
+	std::array<float, 3> m_position;
+	std::array<float, 3> m_rotation;
+	std::array<float, 3> m_scale;
+	static const char* ToString( EMode type );
+};
+

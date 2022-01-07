@@ -8,7 +8,7 @@ namespace BalEditor
     class CSceneHierarchy
     {
     public:
-        CSceneHierarchy() = default;
+        CSceneHierarchy();
         ~CSceneHierarchy() = default;
         CSceneHierarchy( const CSceneHierarchy& ) = delete;
         CSceneHierarchy( CSceneHierarchy&& ) = delete;
@@ -16,13 +16,14 @@ namespace BalEditor
         CSceneHierarchy& operator=( CSceneHierarchy&& ) = delete;
         void Draw();
         void SetContext( IScene* pScene );
+        void ShowWindow();
 
-        IEntity* GetSelectedEntity()const;
+        [[nodiscard]] IEntity* GetSelectedEntity()const;
 
     private:
         IScene* m_pContext;
         IEntity* m_pSelectionContext;
-
+        bool m_isVisible;
         void DrawEntityNode( IEntity* pEntity );
         void DrawComponents( IEntity* pEntity ) const;
     };

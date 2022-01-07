@@ -50,7 +50,7 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
 	g_pDevice = m_pDevice;
 	g_pCommandPool = m_pCommandPool;
 	g_pQueue = m_pQueue;
-	pInterface->Initialize( pWindow, m_width, m_height, m_pDevice, m_pQueue, m_pCommandPool, m_pFrameBuffer );
+	pInterface->Initialize( pWindow, m_width, m_height, m_pDevice, m_pQueue, m_pCommandPool, m_pFrameBuffer, m_pSwapchain );
 	m_pInterface = pInterface;
 }
 #endif
@@ -76,7 +76,7 @@ void Balbino::CRenderer::RecreateSwapChain()
 	m_pCommandPool->Initialize( m_pQueue->GetQueFamily(), m_pSwapchain );
 
 #ifdef BALBINO_EDITOR
-	m_pInterface->Resize( m_pCommandPool, m_pQueue);
+	//m_pInterface->Resize( m_pCommandPool, m_pQueue);
 #endif
 }
 void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount )

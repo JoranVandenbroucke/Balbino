@@ -9,7 +9,7 @@ inline BalVulkan::CDevice* g_pDevice{nullptr};
 inline BalVulkan::CCommandPool* g_pCommandPool{ nullptr };
 inline BalVulkan::CQueue* g_pQueue{ nullptr };
 
-inline void ImportTexture( const std::string_view value, Balbino::CTextureComponent*& pTexture, const VkDescriptorPool descriptorPool = VK_NULL_HANDLE, const VkDescriptorSetLayout descriptorSetLayout = VK_NULL_HANDLE )
+inline void ImportTexture( const std::string_view value, Balbino::CTextureComponent*& pTexture )
 {
 	if ( pTexture )
 		return;
@@ -45,7 +45,7 @@ inline void ImportTexture( const std::string_view value, Balbino::CTextureCompon
 	BinaryReadWrite::Read( file, pData, size );
 	//file.read( reinterpret_cast< char* >( pData ), size );
 	pTexture = new Balbino::CTextureComponent{ g_pDevice };
-	pTexture->Initialize( pData, width, height, mip, layers, faces, size,static_cast<BalVulkan::EImageLayout>( layout ), static_cast<BalVulkan::EImageViewType>( type ), static_cast<BalVulkan::EFormat>( format ), g_pCommandPool, g_pQueue, descriptorPool, descriptorSetLayout );
+	pTexture->Initialize( pData, width, height, mip, layers, faces, size,static_cast<BalVulkan::EImageLayout>( layout ), static_cast<BalVulkan::EImageViewType>( type ), static_cast<BalVulkan::EFormat>( format ), g_pCommandPool, g_pQueue );
 	free( pData );
 	file.close();
 }
