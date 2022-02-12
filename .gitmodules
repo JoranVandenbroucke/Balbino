@@ -1,12 +1,27 @@
-[submodule "SDL"]
-	path = 3rdParty/SDL
-	url = https://github.com/libsdl-org/SDL.git
-[submodule "SDL_Image"]
-	path = 3rdParty/SDL_image
+[submodule "3rdParty/SDL_Image"]
+	path = 3rdParty/SDL_Image
 	url = https://github.com/libsdl-org/SDL_image.git
-[submodule "SDL_mixer"]
-	path = 3rdParty/SDL_mixer
-	url = https://github.com/libsdl-org/SDL_mixer.git
-[submodule "SDL_ttf"]
+[submodule "3rdParty/SDL_ttf"]
 	path = 3rdParty/SDL_ttf
 	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "3rdParty/SDL_mixer"]
+	path = 3rdParty/SDL_mixer
+	url = https://github.com/libsdl-org/SDL_mixer.git
+[submodule "3rdParty/SDL"]
+	path = 3rdParty/SDL
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "3rdParty/ASSIMP"]
+	path = 3rdParty/ASSIMP
+	url = https://github.com/assimp/assimp.git
+[submodule "3rdParty/SDL_net"]
+	path = 3rdParty/SDL_net
+	url = https://github.com/libsdl-org/SDL_net.git
+[submodule "3rdParty/EnTT"]
+	path = 3rdParty/EnTT
+	url = https://github.com/skypjack/entt.git
+[submodule "3rdParty/GLI"]
+	path = 3rdParty/GLI
+	url = https://github.com/g-truc/gli.git
+[submodule "3rdParty/GLM"]
+	path = 3rdParty/GLM
+	url = https://github.com/g-truc/glm.git
