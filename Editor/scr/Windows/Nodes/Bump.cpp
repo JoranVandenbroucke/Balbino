@@ -15,9 +15,9 @@ CBump::CBump( const int id, int& attributeStartId )
 	, m_strength{ 1 }
 	, m_distance{ 1 }
 	, m_height{ 0 }
-	, m_normal{0,1,0}
+	, m_normal{ 0, 1, 0 }
 {
-	attributeStartId += 5;	
+	attributeStartId += 5;
 }
 
 CBump::~CBump()
@@ -83,11 +83,11 @@ void CBump::Evaluate( std::vector<INode*>::iterator& begin, const std::vector<IN
 	//vec3 Bump( bool invert, float strength, float dist, float height, vec3 normal, vec3 position )
 	if ( attributeType == EAttributeType::Float )
 		output << "( ";
-	output << "Bump( " << std::to_string(m_invert) << ", ";
-	if( m_connections[0] )
+	output << "Bump( " << std::to_string( m_invert ) << ", ";
+	if ( m_connections[0] )
 		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
 	else
-		output << std::to_string(m_strength);
+		output << std::to_string( m_strength );
 
 	output << ", ";
 	if ( m_connections[1] )

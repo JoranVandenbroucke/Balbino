@@ -10,7 +10,7 @@
 CNormalMap::CNormalMap( const int id, int& attributeStartId )
 	: INode{ id, attributeStartId }
 	, m_connections{}
-	, m_strength{  }
+	, m_strength{}
 	, m_normal{}
 {
 	attributeStartId += 3;

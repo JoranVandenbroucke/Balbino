@@ -1,28 +1,60 @@
 #include "pch.h"
 #include "Manager.h"
 
+#include "IResourceManager.h"
+#include "ResourceManager.h"
 #include "../Input/InputHandler.h"
 
-Balbino::CInputHandler* Balbino::CManager::s_inputHandler{nullptr};
-Balbino::CManager::CManager()
-= default;
-
-Balbino::CManager::~CManager()
-= default;
-
-void Balbino::CManager::Cleanup()
+Balbino::CSystem::CSystem()
+	: m_inputHandler{ nullptr }
+	, m_resourceManager{ nullptr }
+	, m_pCurrentScene{ nullptr }
 {
-	s_inputHandler->Cleanup();
-
-	delete s_inputHandler;
-	s_inputHandler = nullptr;
-}
-void Balbino::CManager::SetInputHandler(CInputHandler* pInputHandler)
-{
-	s_inputHandler = pInputHandler;
 }
 
-Balbino::CInputHandler* Balbino::CManager::GetInputHandler()
+void Balbino::CSystem::Initialize()
 {
-	return s_inputHandler;
+	m_resourceManager = new CResourceManager{};
+	m_resourceManager->Initialize( this );
+}
+
+void Balbino::CSystem::Cleanup()
+{
+	m_inputHandler->Cleanup();
+	m_resourceManager->Cleanup();
+	delete m_inputHandler;
+	delete m_resourceManager;
+	m_inputHandler = nullptr;
+	m_resourceManager = nullptr;
+}
+
+void Balbino::CSystem::SetInputHandler( CInputHandler* pInputHandler )
+{
+	m_inputHandler = pInputHandler;
+}
+
+void Balbino::CSystem::SetCurrentScene( IScene* pScene )
+{
+	m_pCurrentScene = pScene;
+}
+
+bool Balbino::CSystem::Update( bool isPause )
+{
+	( void ) isPause;
+	return false;
+}
+
+IResourceManager* Balbino::CSystem::GetResourceManager() const
+{
+	return m_resourceManager;
+}
+
+Balbino::CInputHandler* Balbino::CSystem::GetInputHandler() const
+{
+	return m_inputHandler;
+}
+
+IScene* Balbino::CSystem::GetCurrentActiveScene() const
+{
+	return m_pCurrentScene;
 }

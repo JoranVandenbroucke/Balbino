@@ -8,9 +8,17 @@
     <ClInclude Include="Components\IDComponent.h" />
     <ClInclude Include="Components\TransformComponent.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Importer.h" />
-    <ClInclude Include="Components\TextureComponent.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="FileParcer.h" />
     <ClInclude Include="BalMath.h" />
+    <ClInclude Include="MeshMetadata.h" />
+    <ClInclude Include="Components\MeshComponent.h" />
+    <ClInclude Include="IShader.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="IResourceManager.h" />
+    <ClInclude Include="IManager.h" />
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="Components\MeshRendererComponent.h" />
+    <ClInclude Include="IMesh.h" />
   </ItemGroup>
 </Project>

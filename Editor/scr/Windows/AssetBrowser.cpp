@@ -1,9 +1,16 @@
 #include "pch.h"
 #include "AssetBrowser.h"
 
+#include "IManager.h"
+#include "IResourceManager.h"
+#include "MaterialEditor.h"
+#include "Shader.h"
+#include "ShaderGraph.h"
+#include "ShaderPipeline.h"
+#include "UUID.h"
+
 #include "imgui.h"
 #include "backends/imgui_impl_vulkan.h"
-#include "Importer.h"
 
 BalEditor::CAssetBrowser::CAssetBrowser()
 	: m_pUnknownIcon{ nullptr }
@@ -15,6 +22,8 @@ BalEditor::CAssetBrowser::CAssetBrowser()
 	, m_pPresetIcon{ nullptr }
 	, m_pCodeIcon{ nullptr }
 	, m_pFontIcon{ nullptr }
+	, m_pMaterialIcon{ nullptr }
+	, m_pShaderIcon{ nullptr }
 	, m_pVkDescriptorSetUnknownIcon{ VK_NULL_HANDLE }
 	, m_pVkDescriptorSetFolderIcon{ VK_NULL_HANDLE }
 	, m_pVkDescriptorSetBalbinoIcon{ VK_NULL_HANDLE }
@@ -24,8 +33,14 @@ BalEditor::CAssetBrowser::CAssetBrowser()
 	, m_pVkDescriptorSetPresetIcon{ VK_NULL_HANDLE }
 	, m_pVkDescriptorSetCodeIcon{ VK_NULL_HANDLE }
 	, m_pVkDescriptorSetFontIcon{ VK_NULL_HANDLE }
+	, m_pVkDescriptorSetMaterialIcon{ VK_NULL_HANDLE }
+	, m_pVkDescriptorSetShaderIcon{ VK_NULL_HANDLE }
+	, m_pShaderGraph{ nullptr }
+	, m_pMaterialEditor{ nullptr }
+	, m_pSystem{ nullptr }
 	, m_isVisible{ true }
-	, m_size{ 32 }
+	, m_newFile{ false }
+	, m_size{ 32.f }
 {
 }
 
@@ -33,55 +48,50 @@ BalEditor::CAssetBrowser::~CAssetBrowser()
 {
 }
 
-void BalEditor::CAssetBrowser::Initialize()
+void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
 {
-	ImportTexture( "../Data/Editor/Icons/UnknownFile.basset", m_pUnknownIcon );
-	ImportTexture( "../Data/Editor/Icons/Folder.basset", m_pFolderIcon );
-	ImportTexture( "../Data/Editor/Icons/Balbino.basset", m_pBalbinoIcon );
-	ImportTexture( "../Data/Editor/Icons/ImageFile.basset", m_pImageIcon );
-	ImportTexture( "../Data/Editor/Icons/AudioFile.basset", m_pAudioIcon );
-	ImportTexture( "../Data/Editor/Icons/ModelFile.basset", m_pModelIcon );
-	ImportTexture( "../Data/Editor/Icons/PresetFile.basset", m_pPresetIcon );
-	ImportTexture( "../Data/Editor/Icons/CodeFile.basset", m_pCodeIcon );
-	ImportTexture( "../Data/Editor/Icons/FontFile.basset", m_pFontIcon );
-	m_pVkDescriptorSetUnknownIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pUnknownIcon->GetSampler(), m_pUnknownIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetFolderIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pFolderIcon->GetSampler(), m_pFolderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetBalbinoIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pBalbinoIcon->GetSampler(), m_pBalbinoIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetImageIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pImageIcon->GetSampler(), m_pImageIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetAudioIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pAudioIcon->GetSampler(), m_pAudioIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetModelIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pModelIcon->GetSampler(), m_pModelIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetPresetIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pPresetIcon->GetSampler(), m_pPresetIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetCodeIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pCodeIcon->GetSampler(), m_pCodeIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-	m_pVkDescriptorSetFontIcon = ( VkDescriptorSet ) ImGui_ImplVulkan_AddTexture( m_pFontIcon->GetSampler(), m_pFontIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL );
-
+	m_pSystem = pSystem;
+	m_pUnknownIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/UnknownFile.basset" );
+	m_pFolderIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/Folder.basset" );
+	m_pBalbinoIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/Balbino.basset" );
+	m_pImageIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/ImageFile.basset" );
+	m_pAudioIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/AudioFile.basset" );
+	m_pModelIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/ModelFile.basset" );
+	m_pPresetIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/PresetFile.basset" );
+	m_pCodeIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/CodeFile.basset" );
+	m_pFontIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/FontFile.basset" );
+	m_pMaterialIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/MaterialFile.basset" );
+	m_pShaderIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/ShaderFile.basset" );
+	m_pVkDescriptorSetUnknownIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pUnknownIcon->GetSampler(), m_pUnknownIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetFolderIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pFolderIcon->GetSampler(), m_pFolderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetBalbinoIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pBalbinoIcon->GetSampler(), m_pBalbinoIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetImageIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pImageIcon->GetSampler(), m_pImageIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetAudioIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pAudioIcon->GetSampler(), m_pAudioIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetModelIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pModelIcon->GetSampler(), m_pModelIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetPresetIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pPresetIcon->GetSampler(), m_pPresetIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetCodeIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pCodeIcon->GetSampler(), m_pCodeIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetFontIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pFontIcon->GetSampler(), m_pFontIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetMaterialIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pMaterialIcon->GetSampler(), m_pMaterialIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
+	m_pVkDescriptorSetShaderIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture( m_pShaderIcon->GetSampler(), m_pShaderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ) );
 }
 
 void BalEditor::CAssetBrowser::Draw()
 {
-	const std::filesystem::path path( "../Data" );
-
-	//ImGui::SetNextWindowSizeConstraints( ImVec2( 100.0f, -1.0f ), ImVec2( -1.0f, -1.0f ), ImGuiCond_FirstUseEver );
-	if( m_isVisible && ImGui::Begin( "Asset Browser", &m_isVisible ))
+	FindAllFiles();
+	//ImGui::SetNextWindowSizeConstraints( ImVec2( 100.0f, 100.0f ), ImVec2( -1.0f, -1.0f ) );
+	if ( m_isVisible && ImGui::Begin( "Asset Browser", &m_isVisible ) )
 	{
+
 		ImGui::BeginChild( "Asset Tree", ImVec2{ 128, -1 }, true, ImGuiWindowFlags_HorizontalScrollbar );
-		ImGui::SetNextItemOpen( true );
-		const bool open{ ImGui::TreeNode( "Data" ) };
-		if ( ImGui::IsItemClicked() )
-		{
-			m_selected = GetFilesInPath( path );
-		}
-		if ( open )
-		{
-			MoveIn( path, m_selected );
-			ImGui::TreePop();
-		}
+		uint32_t nodeIdx{};
+		DrawTree( "..\\Data", nodeIdx );
 		ImGui::EndChild();
 
-		std::ranges::sort( m_selected, []( const SFile& left, const SFile& right )
+		std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
 		{
-			return left.alias < right.alias;
+			return left.fileName < right.fileName;
 		} );
-		std::ranges::sort( m_selected, []( const SFile& left, const SFile& right )
+		std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
 		{
 			return left.isFolder > right.isFolder;
 		} );
@@ -89,90 +99,154 @@ void BalEditor::CAssetBrowser::Draw()
 		ImGui::SameLine();
 		ImGui::BeginChild( "Asset File", ImVec2{ -1, -1 }, true, ImGuiWindowFlags_AlwaysAutoResize );
 		int id{};
-		for ( const auto& currentFile : m_selected )
+		bool isSelected{ false };
+		for ( const auto& currentFile : m_currentDirectory )
 		{
-			ImGui::PushID( id++ );
+			ImGui::PushID( id );
+			ImGui::Selectable( ( "##file" + std::to_string( id++ ) ).c_str(), &isSelected, ImGuiSelectableFlags_AllowDoubleClick, ImVec2{ 0, m_size * 1.05f } );
+			if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ) )
+			{
+				ImGui::SetDragDropPayload( ToString( currentFile.type ), &currentFile, sizeof( SFile ) );
+				ImGui::Text( currentFile.fileName.c_str() );
+				ImGui::EndDragDropSource();
+			}
+			ImGui::SameLine();
 			switch ( currentFile.type )
 			{
 				case EFileTypes::Folder:
-					{
-						ImGui::Image( m_pVkDescriptorSetFolderIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					ImGui::Image( m_pVkDescriptorSetFolderIcon, { m_size, m_size } );
+					break;
+				}
 				case EFileTypes::Scene:
-					{
-						ImGui::Image( m_pVkDescriptorSetBalbinoIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					ImGui::Image( m_pVkDescriptorSetBalbinoIcon, { m_size, m_size } );
+					break;
+				}
 				case EFileTypes::Image:
-					{
-						//todo:: get image data
-						//GLuint Icon = ResourceManager::LoadIcon( currentFile.path.generic_u8string() );
-						//int w{}, h{};
-						//int miplevel{};
-						//glBindIcon( GL_Icon_2D, Icon );
-						//glGetTexLevelParameteriv( GL_Icon_2D, miplevel, GL_Icon_WIDTH, &w );
-						//glGetTexLevelParameteriv( GL_Icon_2D, miplevel, GL_Icon_HEIGHT, &h );
-						//glBindIcon( GL_Icon_2D, 0 );
-						//( Icon, miplevel, GL_Icon_HEIGHT, &h );
-						//const int biggestSide{ ( w > h ) ? w : h };
-						ImGui::Image( m_pVkDescriptorSetImageIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					//todo:: get image data
+					ImGui::Image( m_pVkDescriptorSetImageIcon, { m_size, m_size } );
+					break;
+				}
 				case EFileTypes::Audio:
-					{
-						ImGui::Image( m_pVkDescriptorSetAudioIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					ImGui::Image( m_pVkDescriptorSetAudioIcon, { m_size, m_size } );
+					break;
+				}
 				case EFileTypes::Code:
-					{
-						ImGui::Image( m_pVkDescriptorSetCodeIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					ImGui::Image( m_pVkDescriptorSetCodeIcon, { m_size, m_size } );
+					break;
+				}
 				case EFileTypes::Unknown:
-					{
-						ImGui::Image( m_pVkDescriptorSetUnknownIcon, { m_size, m_size } );
-						break;
-					}
-				case EFileTypes::Font:	//todo add font icon
-					{
-						ImGui::Image( m_pVkDescriptorSetUnknownIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					ImGui::Image( m_pVkDescriptorSetUnknownIcon, { m_size, m_size } );
+					break;
+				}
+				case EFileTypes::Font: //todo add font icon
+				{
+					ImGui::Image( m_pVkDescriptorSetFontIcon, { m_size, m_size } );
+					break;
+				}
 				case EFileTypes::Model:
-					{
-						ImGui::Image( m_pVkDescriptorSetModelIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					ImGui::Image( m_pVkDescriptorSetModelIcon, { m_size, m_size } );
+					break;
+				}
 				case EFileTypes::Preset:
-					{
-						ImGui::Image( m_pVkDescriptorSetPresetIcon, { m_size, m_size } );
-						break;
-					}
+				{
+					ImGui::Image( m_pVkDescriptorSetPresetIcon, { m_size, m_size } );
+					break;
+				}
+				case EFileTypes::Shader:
+				{
+					ImGui::Image( m_pVkDescriptorSetShaderIcon, { m_size, m_size } );
+					break;
+				}
+				case EFileTypes::Material:
+					ImGui::Image( m_pVkDescriptorSetMaterialIcon, { m_size, m_size } );
+					break;
+				default:;
 			}
 			ImGui::SameLine();
-			bool isSelected{ false };
-			ImGui::Selectable( currentFile.alias.c_str(), &isSelected, ImGuiSelectableFlags_AllowDoubleClick );
+			ImGui::Text( currentFile.fileName.c_str() );
+			ImGui::PopID();
 			if ( isSelected )
 			{
 				if ( currentFile.isFolder && ImGui::IsMouseDoubleClicked( 0 ) )
 				{
-					m_selected = GetFilesInPath( currentFile.path );
-					ImGui::PopID();
+					GetAllFilesInSelectedPath( relative( currentFile.path ).string(), m_currentDirectory );
 					break;
 				}
 			}
-			if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ) )
+			if ( currentFile.type == EFileTypes::Shader )
 			{
-				ImGui::SetDragDropPayload( "asset", &currentFile, sizeof( SFile ) );
-				ImGui::Text( currentFile.alias.c_str() );
-				ImGui::EndDragDropSource();
+				if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+				{
+					m_pShaderGraph->OpenShader( currentFile.path );
+					m_pShaderGraph->ShowWindow();
+				}
+				if ( ImGui::BeginPopupContextItem( "##ShaderOptions" ) )
+				{
+					if ( ImGui::MenuItem( "Open Shader Editor" ) )
+					{
+						m_pShaderGraph->OpenShader( currentFile.path );
+						m_pShaderGraph->ShowWindow();
+					}
+					if ( ImGui::MenuItem( "Create Material" ) )
+					{
+						m_newFile = true;
+						m_currentName = "";
+					}
+					ImGui::EndPopup();
+				}
+				if ( m_newFile && m_currentName.empty() )
+				{
+					ImGui::OpenPopup( "Enter Name" );
+
+					// Always center this window when appearing
+					ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+					ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ) );
+					if ( ImGui::BeginPopupModal( "Enter Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize ) )
+					{
+						char name[64]{};
+						if ( ImGui::InputText( "##material name", name, 64, ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue ) )
+						{
+							m_currentName.append( name, std::find_if( name, name + 64, []( char c )
+							{
+								return c == '\0';
+							} ) );
+							CreateMaterial( currentFile, m_currentName );
+							m_newFile = false;
+						}
+						ImGui::EndPopup();
+					}
+				}
+			}
+			else if ( currentFile.type == EFileTypes::Material )
+			{
+				if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+				{
+					m_pMaterialEditor->SetMaterial( currentFile );
+					m_pMaterialEditor->ShowWindow();
+				}
+				if ( ImGui::BeginPopupContextItem( "##MaterialOptions" ) )
+				{
+					if ( ImGui::MenuItem( "Open Material Editor" ) )
+					{
+						m_pMaterialEditor->SetMaterial( currentFile );
+						m_pMaterialEditor->ShowWindow();
+					}
+					ImGui::EndPopup();
+				}
 			}
 			ImGui::NewLine();
-			ImGui::PopID();
 		}
-		ImGui::SliderFloat( "Icon Size", &m_size, 8.0f, 128.f, "%.0f", ImGuiSliderFlags_NoInput);
+		ImGui::SliderFloat( "Icon Size", &m_size, 8.0f, 128.f, "%.0f", ImGuiSliderFlags_NoInput );
 		ImGui::EndChild();
+
+
 		ImGui::End();
 	}
 }
@@ -188,16 +262,14 @@ void BalEditor::CAssetBrowser::Cleanup()
 	ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetPresetIcon );
 	ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetCodeIcon );
 	ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetFontIcon );
-	delete m_pUnknownIcon;
-	delete m_pFolderIcon;
-	delete m_pBalbinoIcon;
-	delete m_pImageIcon;
-	delete m_pAudioIcon;
-	delete m_pModelIcon;
-	delete m_pPresetIcon;
-	delete m_pCodeIcon;
-	delete m_pFontIcon;
-	m_selected.clear();
+	ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetShaderIcon );
+	ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetMaterialIcon );
+	m_currentDirectory.clear();
+	for ( const auto& [isFolder, type, uuid, size, pData, fileName, path, lastWrittenTime, depth] : m_files )
+	{
+		free( pData );
+	}
+	m_files.clear();
 }
 
 void BalEditor::CAssetBrowser::ShowWindow()
@@ -206,28 +278,161 @@ void BalEditor::CAssetBrowser::ShowWindow()
 	ImGui::SetWindowFocus( "Asset Browser" );
 }
 
-void BalEditor::CAssetBrowser::MoveIn( const std::filesystem::path& path, std::vector<SFile>& selectedPath )
+void BalEditor::CAssetBrowser::SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor )
 {
-	constexpr ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_FramePadding;
+	m_pShaderGraph = pShaderGraph;
+	m_pMaterialEditor = pMaterialEditor;
+}
 
-	const std::vector<SFile> files = GetFilesInPath( path );
-	for ( const auto& file : files )
+void BalEditor::CAssetBrowser::FindAllFiles()
+{
+	auto it = m_files.begin();
+	while ( it != m_files.end() )
 	{
-		ImGuiTreeNodeFlags nodeFlags = baseFlags;
-		nodeFlags |= ( file.isFolder == false ? ImGuiTreeNodeFlags_Leaf : 0 );
-
-		if ( file.isFolder )
+		if ( !std::filesystem::exists( it->path ) )
 		{
-			const bool open = ImGui::TreeNodeEx( file.alias.c_str(), nodeFlags );
-			if ( ImGui::IsItemClicked() )
+			//Remove
+			free( it->pData );
+			it = m_files.erase( it );
+		}
+		else
+		{
+			++it;
+		}
+	}
+	const auto dataFolder = std::ranges::find_if( m_files, []( const SFile& f )->bool
+	{
+		return f.path.string() == "..\\Data";
+	} );
+	if ( m_files.empty() )
+	{
+		m_files.push_back( GetData( std::filesystem::relative( "..\\Data" ) ) );
+		m_files.back().lastWrittenTime = std::filesystem::last_write_time( "..\\Data" );
+	}
+
+	for ( auto file = std::filesystem::recursive_directory_iterator( "..\\Data" );
+		  file != std::filesystem::recursive_directory_iterator();
+		  ++file )
+	{
+
+		auto currentFileLastWriteTime = std::filesystem::last_write_time( *file );
+
+		// File creation
+		auto filetIt = std::ranges::find_if( m_files, [&file]( const SFile& filePair )->bool
+		{
+			return filePair.path == file->path();
+		} );
+		if ( filetIt == m_files.end() )
+		{
+			//Create
+			m_files.push_back( GetData( relative( file->path() ) ) );
+			m_files.back().lastWrittenTime = currentFileLastWriteTime;
+			m_files.back().depth = file.depth() + 1;
+		}
+		else
+		{
+			if ( filetIt->lastWrittenTime != currentFileLastWriteTime )
 			{
-				selectedPath = GetFilesInPath( file.path );
+				//Modifi
+				( *filetIt ) = GetData( relative( file->path() ) );
+				filetIt->lastWrittenTime = currentFileLastWriteTime;
+				filetIt->depth = file.depth() + 1;
 			}
-			if ( open )
-			{
-				MoveIn( file.path, selectedPath );
-				ImGui::TreePop();
-			}
+		}
+	}
+}
+
+void BalEditor::CAssetBrowser::CreateMaterial( const SFile& file, std::string_view name ) const
+{
+	auto path = file.path;
+	path.replace_filename( name );
+	path.replace_extension( ".basset" );
+	const BalVulkan::CShaderPipeline* pResources = m_pSystem->GetResourceManager()->LoadShader( file.path.string() );
+	std::ofstream materialFile( path, std::ios::out | std::ios::binary );
+	if ( !materialFile.is_open() && pResources )
+		return;
+
+	const std::unordered_map<std::string, BalVulkan::SShaderResource>& resources = pResources->GetShaderResources();
+	std::vector<BalVulkan::SShaderResource> shaderResource;
+	shaderResource.reserve( resources.size() );
+	/*** Copy all value fields from map to a vector using transform() & Lambda function ***/
+	std::ranges::transform( resources, std::back_inserter( shaderResource ), []( const std::pair<std::string, BalVulkan::SShaderResource>& pair )
+	{
+		return pair.second;
+	} );
+	BinaryReadWrite::Write( materialFile, ( uint64_t ) CUuid() );
+	BinaryReadWrite::Write( materialFile, ( uint8_t ) EFileTypes::Material );
+	BinaryReadWrite::Write( materialFile, file.uuid );
+	BinaryReadWrite::Write( materialFile, shaderResource );
+	materialFile.close();
+}
+
+void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& nodeIdx )
+{
+	const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [&path]( const SFile& f )->bool
+	{
+		return f.path.string() == path;
+	} );
+	if ( fileIter == m_files.cend() )
+		return;
+
+	std::vector<std::string> files;
+	constexpr ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	ImGuiTreeNodeFlags nodeFlags = baseFlags;
+	for ( auto& f : m_files )
+	{
+		if ( f.path.string() != path && f.path.string().find( path ) != std::string::npos && f.isFolder && f.depth - fileIter->depth <= 1 && std::ranges::find_if( files, [&f]( const std::string& string )
+		{
+			return string.find( f.path.string() ) != std::string::npos;
+		} ) == files.cend() )
+		{
+			files.push_back( f.path.string() );
+		}
+	}
+	if ( files.empty() )
+		nodeFlags |= ImGuiTreeNodeFlags_Leaf /*| ImGuiTreeNodeFlags_NoTreePushOnOpen*/;
+	if ( !fileIter->depth )
+	{
+		nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
+		ImGui::SetNextTreeNodeOpen( true );
+	}
+	if ( ImGui::TreeNodeEx( fileIter->fileName.c_str(), nodeFlags ) )
+	{
+		if ( ImGui::IsItemClicked( ImGuiMouseButton_Left ) )
+			GetAllFilesInSelectedPath( relative( fileIter->path ).string(), m_currentDirectory );
+		for ( const auto& f : files )
+		{
+			DrawTree( f, nodeIdx );
+		}
+		ImGui::TreePop();
+	}
+	else
+	{
+		if ( ImGui::IsItemClicked( ImGuiMouseButton_Left ) )
+			GetAllFilesInSelectedPath( relative( fileIter->path ).string(), m_currentDirectory );
+	}
+}
+
+void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory )
+{
+	const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [&path]( const SFile& f )->bool
+	{
+		return f.path.string() == path;
+	} );
+	if ( fileIter == m_files.cend() )
+		return;
+	for ( char& c : path )
+		if ( c == '/' )
+			c = '\\';
+	filesInDirectory.clear();
+	for ( auto& f : m_files )
+	{
+		if ( f.path.string() != path && f.path.string().find( path ) != std::string::npos && f.depth - fileIter->depth == 1 && std::find_if( filesInDirectory.cbegin(), filesInDirectory.cend(), [&f]( const SFile& string )
+		{
+			return string.path.string().find( f.path.string() ) != std::string::npos;
+		} ) == filesInDirectory.cend() )
+		{
+			filesInDirectory.push_back( f );
 		}
 	}
 }

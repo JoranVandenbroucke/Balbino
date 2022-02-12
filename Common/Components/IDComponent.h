@@ -1,6 +1,6 @@
 #pragma once
-#include "../UUID.h"
 #include "../IEntity.h"
+#include "../UUID.h"
 
 class CIDComponent final
 {
@@ -12,23 +12,24 @@ public:
 		, m_pEntity{ pEntity }
 	{
 	}
+
 	~CIDComponent() = default;
 	CIDComponent( const CIDComponent& ) = default;
 	CIDComponent( CIDComponent&& ) = default;
 	CIDComponent& operator=( const CIDComponent& ) = default;
 	CIDComponent& operator=( CIDComponent&& ) = default;
 
-	[[nodiscard]] const CUuid& GetUUID()const
+	[[nodiscard]] const CUuid& GetUUID() const
 	{
 		return m_id;
 	}
 
-	IEntity* GetEntity()const
+	[[nodiscard]] IEntity* GetEntity() const
 	{
 		return m_pEntity;
 	}
+
 private:
 	CUuid m_id;
 	IEntity* m_pEntity;
 };
-

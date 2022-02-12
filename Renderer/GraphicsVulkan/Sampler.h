@@ -3,6 +3,7 @@
 #include "Common.h"
 
 #include <vulkan/vulkan.hpp>
+
 namespace BalVulkan
 {
 	class CSampler final : public CDeviceObject
@@ -24,4 +25,3 @@ namespace BalVulkan
 		VkSampler m_sampler;
 	};
 }
-

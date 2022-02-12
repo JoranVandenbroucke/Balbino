@@ -2,10 +2,11 @@
 #include <array>
 
 #include "INode.h"
+
 class CNormalMap final : public INode
 {
 public:
-	CNormalMap( const int id, int& attributeStartId );
+	CNormalMap( int id, int& attributeStartId );
 
 	~CNormalMap() override;
 	void Draw() override;

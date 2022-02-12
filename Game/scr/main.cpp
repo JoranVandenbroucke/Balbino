@@ -1,5 +1,5 @@
 #include "pch.h"
-	
+
 namespace Dear
 {
 	class Editor final : public Balbino::Application
@@ -7,10 +7,10 @@ namespace Dear
 	public:
 		Editor() = default;
 		~Editor() override = default;
-		Editor(const Editor&) = delete;
-		Editor(Editor&&) = delete;
-		Editor& operator=(const Editor&) = delete;
-		Editor& operator=(Editor&&) = delete;
+		Editor( const Editor& ) = delete;
+		Editor( Editor&& ) = delete;
+		Editor& operator=( const Editor& ) = delete;
+		Editor& operator=( Editor&& ) = delete;
 
 		void LoadGame() override;
 	};

@@ -2,9 +2,9 @@
 #include "Shader.h"
 
 #include <fstream>
-#include <shaderc/shaderc.hpp>
 #include <spirv_cross.hpp>
 #include <spirv_reflect.hpp>
+#include <shaderc/shaderc.hpp>
 
 #include "Device.h"
 #include "Funtions.h"
@@ -30,104 +30,27 @@ BalVulkan::CShader::CShader( const CShader& other )
 {
 }
 
-VkShaderModule BalVulkan::CShader::CreateShaderModule( const std::vector<uint32_t>& data ) const
-{
-	VkShaderModuleCreateInfo createInfo{};
-	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = data.size() * sizeof( uint32_t ) / sizeof( uint8_t );
-	createInfo.pCode = data.data();
-
-	VkShaderModule shaderModule;
-	CheckVkResult( vkCreateShaderModule( GetDevice()->GetVkDevice(), &createInfo, nullptr, &shaderModule ), "failed to create shader module!" );
-	//if ( vkCreateShaderModule( GetDevice()->GetVkDevice(), &createInfo, nullptr, &shaderModule ) != VK_SUCCESS )
-	//{
-	//	throw std::runtime_error( "failed to create shader module!" );
-	//}
-
-	return shaderModule;
-}
-
-BalVulkan::CFileIncluder::~CFileIncluder() = default;
-
-shaderc_include_result* BalVulkan::CFileIncluder::GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth )
-{
-	( void ) includeDepth;
-	std::filesystem::path src{ requestingSource };
-	src.remove_filename();
-	const std::filesystem::path dest{ src.remove_filename().string() + requestedSource };
-	//const std::string fullPath = ( type == shaderc_include_type_relative ) ? std::filesystem::relative( dest, src ).string() : std::filesystem::absolute( dest ).string();
-	const std::string fullPath = ( type == shaderc_include_type_relative ) ? absolute( dest ).string() : requestedSource;
-	if ( fullPath.empty() )
-		return nullptr;
-
-	// In principle, several threads could be resolving includes at the same
-	// time.  Protect the included_files.
-
-	// Read the file and save its full path and contents into stable addresses.
-	//SFileInfo* newFileInfo = new SFileInfo{ full_path, {} };
-	//if ( !shaderc_util::ReadFile( full_path, &( newFileInfo->contents ) ) ) {
-	//return nullptr;
-	//}
-
-	std::ifstream newFileInfo( fullPath, std::ios::in | std::ios::binary );
-	if ( !newFileInfo.is_open() )
-		return nullptr;
-	const std::string newFileInfoContent( ( std::istreambuf_iterator<char>( newFileInfo ) ), std::istreambuf_iterator<char>() );
-	newFileInfo.close();
-
-	m_includedFiles.insert( fullPath );
-
-	char* pFilePath{ new char[fullPath.size()] };
-	char* pData{ new char[newFileInfoContent.size()] };
-	memcpy( pFilePath, fullPath.data(), fullPath.size() );
-	memcpy( pData, newFileInfoContent.data(), newFileInfoContent.size() );
-	return new shaderc_include_result{ pFilePath, fullPath.size(), pData, newFileInfoContent.size(), nullptr };
-}
-
-void BalVulkan::CFileIncluder::ReleaseInclude( shaderc_include_result * include_result )
-{
-	delete[] include_result->source_name;
-	delete[] include_result->content;
-	delete include_result;
-}
-
-void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeSize, BalVulkan::EShaderStage stage, const char* path )
+void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage stage )
 {
 	VkShaderStageFlagBits stageBits{};
-	shaderc_shader_kind stageKind{};
 	switch ( stage )
 	{
 		case EShaderStage::VertexShader:
 			stageBits = VK_SHADER_STAGE_VERTEX_BIT;
-			stageKind = shaderc_vertex_shader;
 			break;
 		case EShaderStage::GeometryShader:
 			stageBits = VK_SHADER_STAGE_GEOMETRY_BIT;
-			stageKind = shaderc_geometry_shader;
 			break;
 		case EShaderStage::FragmentShader:
 			stageBits = VK_SHADER_STAGE_FRAGMENT_BIT;
-			stageKind = shaderc_fragment_shader;
 			break;
 	}
 
-	const shaderc::Compiler compiler;
-	shaderc::CompileOptions options;
-	options.SetTargetEnvironment( shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2 );
-	options.SetOptimizationLevel( shaderc_optimization_level_performance );
-	options.SetIncluder( std::make_unique<CFileIncluder>() );
-	const shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv( ( const char* ) pShaderCode, shaderCodeSize, stageKind, path, options );
-	if ( result.GetCompilationStatus() != shaderc_compilation_status_success )
-	{
-		//handle errors
-		std::cout << result.GetErrorMessage();
-		assert( false );
-	}
-	const std::vector vertexSPRV( result.cbegin(), result.cend() );
+	std::vector<uint32_t> sprv;
+	sprv.assign( ( uint32_t* ) pShaderCode, ( uint32_t* ) pShaderCode + shaderCodeSize );
 
-	spirv_cross::CompilerReflection reflection{ vertexSPRV };
+	spirv_cross::CompilerReflection reflection{ sprv };
 	const spirv_cross::ShaderResources& resources{ reflection.get_shader_resources() };
-	//std::cout << reflection.compile();
 
 	for ( const auto& stageInput : resources.stage_inputs )
 	{
@@ -286,7 +209,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 	for ( const auto& uniformBuffer : resources.uniform_buffers )
 	{
 		const auto& bufferType{ reflection.get_type( uniformBuffer.base_type_id ) };
-		const uint32_t bufferSize{ static_cast< uint32_t >( reflection.get_declared_struct_size( bufferType ) ) };
+		const uint32_t bufferSize{ static_cast<uint32_t>( reflection.get_declared_struct_size( bufferType ) ) };
 		const uint32_t set{ reflection.get_decoration( uniformBuffer.id, spv::DecorationDescriptorSet ) };
 		const uint32_t binding{ reflection.get_decoration( uniformBuffer.id, spv::DecorationBinding ) };
 		const auto& spirvType = reflection.get_type_from_variable( uniformBuffer.id );
@@ -314,7 +237,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 	for ( const auto& storageBuffer : resources.storage_buffers )
 	{
 		const auto& spirvType = reflection.get_type_from_variable( storageBuffer.id );
-		const uint32_t bufferSize{ static_cast< uint32_t >( reflection.get_declared_struct_size( spirvType ) ) };
+		const uint32_t bufferSize{ static_cast<uint32_t>( reflection.get_declared_struct_size( spirvType ) ) };
 		const uint32_t set{ reflection.get_decoration( storageBuffer.id, spv::DecorationDescriptorSet ) };
 		const uint32_t binding{ reflection.get_decoration( storageBuffer.id, spv::DecorationBinding ) };
 
@@ -339,8 +262,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		m_resources.push_back( shaderResource );
 	}
 
-	//const std::string source{ reflection.compile() };
-	m_shaderHandle = CreateShaderModule( vertexSPRV );
+	m_shaderHandle = CreateShaderModule( sprv );
 }
 
 const std::vector<BalVulkan::SShaderResource>& BalVulkan::CShader::GetShaderResources() const
@@ -353,7 +275,57 @@ const VkShaderModule& BalVulkan::CShader::GetShaderModule() const
 	return m_shaderHandle;
 }
 
-BalVulkan::CShader* BalVulkan::CShader::CreateNew( const CDevice * pDevice )
+BalVulkan::CShader* BalVulkan::CShader::CreateNew( const CDevice* pDevice )
 {
 	return new CShader{ pDevice };
+}
+
+VkShaderModule BalVulkan::CShader::CreateShaderModule( const std::vector<uint32_t>& data ) const
+{
+	VkShaderModuleCreateInfo createInfo{};
+	createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = data.size() * sizeof( uint32_t ) / sizeof( uint8_t );
+	createInfo.pCode = data.data();
+
+	VkShaderModule shaderModule;
+	CheckVkResult( vkCreateShaderModule( GetDevice()->GetVkDevice(), &createInfo, nullptr, &shaderModule ), "failed to create shader module!" );
+
+	return shaderModule;
+}
+
+shaderc_include_result* BalVulkan::CFileIncluder::GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth )
+{
+	( void ) includeDepth;
+	std::filesystem::path src{ requestingSource };
+	src.remove_filename();
+	const std::filesystem::path dest{ src.remove_filename().string() + requestedSource };
+	const std::string fullPath = ( type == shaderc_include_type_relative ) ? absolute( dest ).string() : requestedSource;
+	if ( fullPath.empty() )
+		return nullptr;
+
+	std::ifstream newFileInfo( fullPath, std::ios::in | std::ios::binary );
+	if ( !newFileInfo.is_open() )
+		return nullptr;
+	const std::string newFileInfoContent( ( std::istreambuf_iterator<char>( newFileInfo ) ), std::istreambuf_iterator<char>() );
+	newFileInfo.close();
+
+	m_includedFiles.insert( fullPath );
+
+	auto pFilePath{ new char[fullPath.size()] };
+	auto pData{ new char[newFileInfoContent.size()] };
+	memcpy( pFilePath, fullPath.data(), fullPath.size() );
+	memcpy( pData, newFileInfoContent.data(), newFileInfoContent.size() );
+	return new shaderc_include_result{ pFilePath, fullPath.size(), pData, newFileInfoContent.size(), nullptr };
+}
+
+void BalVulkan::CFileIncluder::ReleaseInclude( shaderc_include_result* include_result )
+{
+	delete[] include_result->source_name;
+	delete[] include_result->content;
+	delete include_result;
+}
+
+const std::unordered_set<std::string>& BalVulkan::CFileIncluder::FilePathTrace() const
+{
+	return m_includedFiles;
 }

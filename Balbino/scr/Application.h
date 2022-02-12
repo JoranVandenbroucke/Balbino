@@ -39,7 +39,7 @@ namespace Balbino
 	private:
 		SDL_Window* m_pWindow;
 
-		CManager m_manager;
+		CSystem m_manager;
 		CRenderer* m_pRenderer;
 #ifdef BALBINO_EDITOR
 		BalEditor::CInterface* m_pInterface;

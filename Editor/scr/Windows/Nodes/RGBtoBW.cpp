@@ -58,7 +58,7 @@ void CRGBtoBW::Evaluate( std::vector<INode*>::iterator& begin, const std::vector
 	if ( attributeType != EAttributeType::Float )
 		output << "vec3( ";
 	output << "RGBtoBW( ";
-	if(m_connections)
+	if ( m_connections )
 		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Color );
 	else
 		output << "vec3( " << std::to_string( m_color[0] ) << ", " << std::to_string( m_color[0] ) << ", " << std::to_string( m_color[0] ) << " )";

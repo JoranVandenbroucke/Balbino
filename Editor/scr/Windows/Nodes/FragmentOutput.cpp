@@ -83,8 +83,7 @@ layout( location = 0) in vec4 fragColor;
 layout( location = 1 ) in vec2 fragTexCoord;
 layout( location = 2 ) in vec3 fragNormal;
 layout( location = 3 ) in vec3 fragTangent;
-layout( location = 4 ) in vec3 fragBinormal;
-layout( location = 5 ) in vec4 fragWorldPosition;
+layout( location = 4 ) in vec4 fragWorldPosition;
 
 layout (location = 0) out vec4 outFragcolor;
 
@@ -151,7 +150,7 @@ vec3 mon2lin(vec3 x)
     return vec3(pow(x[0], 2.2), pow(x[1], 2.2), pow(x[2], 2.2));
 }
 
-void main(void)
+void main()
 {
 )";
 	if ( m_connections[0] )
@@ -163,9 +162,9 @@ void main(void)
 	else
 	{
 		output << "\tvec3 baseColor = vec3(";
-		output << std::to_string(m_color[0]) << ", ";
-		output << std::to_string(m_color[1]) << ", ";
-		output << std::to_string(m_color[2]);
+		output << std::to_string( m_color[0] ) << ", ";
+		output << std::to_string( m_color[1] ) << ", ";
+		output << std::to_string( m_color[2] );
 		output << " ); " << std::endl;
 	}
 
@@ -268,7 +267,7 @@ void main(void)
 	}
 	else
 	{
-		output << "float sheenTint = ";
+		output << "\tfloat sheenTint = ";
 		output << std::to_string( m_sheenTint );
 		output << ";" << std::endl;
 	}
@@ -294,7 +293,7 @@ void main(void)
 	}
 	else
 	{
-		output << "\tfloat clearcoatGloss = " ;
+		output << "\tfloat clearcoatGloss = ";
 		output << std::to_string( m_clearcoatGloss );
 		output << ";" << std::endl;
 	}
@@ -307,7 +306,7 @@ void main(void)
 	}
 	else
 	{
-		output << "float alpha = ";
+		output << "\tfloat alpha = ";
 		output << std::to_string( m_alpha );
 		output << ";" << std::endl;
 	}
@@ -319,7 +318,7 @@ void main(void)
 		output << ";" << std::endl;
 	}
 	else
-		output << "vec3 normal = normalize(fragNormal);" << std::endl << "\tvec3 tangent = normalize( fragTangent );" << std::endl << "\tvec3 bitangent = normalize( fragTangent );";
+		output << "\tvec3 normal = normalize(fragNormal);" << std::endl << "\tvec3 tangent = normalize( fragTangent );" << std::endl << "\tvec3 bitangent = normalize( fragTangent );";
 
 	output << R"(
 	vec3 view = normalize(ubo.viewPos.xyz - fragWorldPosition.xyz);

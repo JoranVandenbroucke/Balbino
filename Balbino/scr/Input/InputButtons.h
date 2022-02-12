@@ -22,6 +22,6 @@ namespace Balbino
 	struct CInputAxisBinding
 	{
 		float value;
-		std::function<void(float)> function;
+		std::function<void( float )> function;
 	};
 }

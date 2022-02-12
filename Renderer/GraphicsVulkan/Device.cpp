@@ -102,20 +102,20 @@ BalVulkan::CDevice* BalVulkan::CDevice::Create( const SPhysicalDeviceInfo* pDevi
 	};
 	const VkDeviceCreateInfo createInfo{
 		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.queueCreateInfoCount = static_cast< uint32_t >( std::size( queueInfo ) ),
+		.queueCreateInfoCount = static_cast<uint32_t>( std::size( queueInfo ) ),
 		.pQueueCreateInfos = queueInfo,
 		.enabledExtensionCount = deviceExtensionCount,
 		.ppEnabledExtensionNames = deviceExtensions,
 	};
 	VkDevice device;
 	CheckVkResult( vkCreateDevice( pDeviceInfo->device, &createInfo, pCallbacks, &device ), "Could not create a device" );
-	CDevice* pDevice{ new CDevice{ pDeviceInfo, pCallbacks, device } };
+	auto pDevice{ new CDevice{ pDeviceInfo, pCallbacks, device } };
 	return pDevice;
 }
 
 BalVulkan::CDevice::SRenderPass::SRenderPass( SRenderPass&& ) noexcept = default;
 
-BalVulkan::CDevice::SRenderPass::SRenderPass( const VkDevice & s, const VkRenderPass & r, const VkFramebuffer & f )
+BalVulkan::CDevice::SRenderPass::SRenderPass( const VkDevice& s, const VkRenderPass& r, const VkFramebuffer& f )
 	: self( s )
 	, renderPass( r )
 	, frameBuffer( f )
@@ -130,7 +130,7 @@ BalVulkan::CDevice::SRenderPass::~SRenderPass()
 
 BalVulkan::CDevice::SPipeline::SPipeline( SPipeline&& ) noexcept = default;
 
-BalVulkan::CDevice::SPipeline::SPipeline( const VkDevice & s, const VkPipeline & p )
+BalVulkan::CDevice::SPipeline::SPipeline( const VkDevice& s, const VkPipeline& p )
 	: self( s )
 	, pipeline( p )
 {

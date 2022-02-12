@@ -56,9 +56,9 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\Include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;$(SolutionDir)Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\uuid\include;$(SolutionDir)3rdParty\Vulkan\Include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;$(SolutionDir)Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -66,6 +66,7 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <SupportJustMyCode>false</SupportJustMyCode>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,9 +93,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BL_PLATFORM_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\Vulkan\Include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;$(SolutionDir)Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\entt;$(SolutionDir)3rdParty\Assimp\include;$(SolutionDir)3rdParty\gli;$(SolutionDir)3rdParty\glm\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SDL2_mixer\include;$(SolutionDir)3rdParty\SDL2_net\include;$(SolutionDir)3rdParty\SDL2_ttf\include;$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\uuid\include;$(SolutionDir)3rdParty\Vulkan\Include;$(SolutionDir)Renderer\GraphicsVulkan;$(SolutionDir)Imgui;$(SolutionDir)Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpp20</LanguageStandard>
@@ -122,6 +123,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="scr\Tools\FilesSystem\Inporter\CalcTangents.h" />
+    <ClInclude Include="scr\Tools\FilesSystem\Inporter\mikktspace.h" />
+    <ClInclude Include="scr\Windows\MaterialEditor.h" />
     <ClInclude Include="scr\Windows\Nodes\BrickTexture.h" />
     <ClInclude Include="scr\Windows\Nodes\Bump.h" />
     <ClInclude Include="scr\Windows\Nodes\ColorNodes.h" />
@@ -147,6 +151,12 @@
     <ClInclude Include="scr\Windows\Nodes\VectorMath.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="scr\Tools\FilesSystem\Inporter\CalcTangents.cpp" />
+    <ClCompile Include="scr\Tools\FilesSystem\Inporter\mikktspace.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="scr\Windows\MaterialEditor.cpp" />
     <ClCompile Include="scr\Windows\Nodes\BrickTexture.cpp" />
     <ClCompile Include="scr\Windows\Nodes\Bump.cpp" />
     <ClCompile Include="scr\Windows\Nodes\ColorNodes.cpp" />

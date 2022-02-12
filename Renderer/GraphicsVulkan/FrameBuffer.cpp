@@ -23,7 +23,7 @@ BalVulkan::CFrameBuffer::~CFrameBuffer()
 {
 	m_pDepthImageView->Release();
 	m_pDepthImage->Release();
-	for ( const auto & frameBuffer : m_frameBuffer )
+	for ( const auto& frameBuffer : m_frameBuffer )
 	{
 		vkDestroyFramebuffer( GetDevice()->GetVkDevice(), frameBuffer, nullptr );
 	}
@@ -87,7 +87,7 @@ void BalVulkan::CFrameBuffer::Initialize( const CSwapchain* pSwapchain )
 		.attachment = 1,
 		.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 	};
-	
+
 	const VkSubpassDescription surpass{
 		.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
 		.inputAttachmentCount = 0,
@@ -111,7 +111,7 @@ void BalVulkan::CFrameBuffer::Initialize( const CSwapchain* pSwapchain )
 	};
 	const VkRenderPassCreateInfo renderPassInfo{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-		.attachmentCount = static_cast< uint32_t >( attachmentDescs.size() ),
+		.attachmentCount = static_cast<uint32_t>( attachmentDescs.size() ),
 		.pAttachments = attachmentDescs.data(),
 		.subpassCount = 1,
 		.pSubpasses = &surpass,
@@ -119,20 +119,20 @@ void BalVulkan::CFrameBuffer::Initialize( const CSwapchain* pSwapchain )
 		.pDependencies = &dependency,
 	};
 	CheckVkResult( vkCreateRenderPass( GetDevice()->GetVkDevice(), &renderPassInfo, nullptr, &m_renderPass ), "failed to create render pass!" );
-	
+
 	m_pDepthImage = CImageResource::CreateNew( GetDevice() );
 	m_pDepthImage->Initialize( pSwapchain->GetExtend().width,
-							   pSwapchain->GetExtend().height,
-							   1,
-							   1,
-							   //EImageLayout::DepthAttachmentOptimal,
-							   EImageLayout::Undefined,
-							   static_cast<EFormat>( attachmentDescs[1].format ),
-							   EImageUsageFlagBits::DepthStencilAttachmentBit );
+	                           pSwapchain->GetExtend().height,
+	                           1,
+	                           1,
+	                           //EImageLayout::DepthAttachmentOptimal,
+	                           EImageLayout::Undefined,
+	                           static_cast<EFormat>( attachmentDescs[1].format ),
+	                           EImageUsageFlagBits::DepthStencilAttachmentBit );
 	m_pDepthImageView = CImageView::CreateNew( *m_pDepthImage, EImageViewType::View2D, 0, 1, 0, 1 );
 	m_frameBuffer.resize( m_swapchainViews.size(), VK_NULL_HANDLE );
-	for ( size_t i = 0; i < m_swapchainViews.size(); i++ ) {
-
+	for ( size_t i = 0; i < m_swapchainViews.size(); i++ )
+	{
 		std::vector attachments{
 			//m_imageViews[0]->GetImageView(),
 			//m_imageViews[1]->GetImageView(),
@@ -143,13 +143,13 @@ void BalVulkan::CFrameBuffer::Initialize( const CSwapchain* pSwapchain )
 			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 			.pNext = VK_NULL_HANDLE,
 			.renderPass = m_renderPass,
-			.attachmentCount = static_cast< uint32_t >( attachments.size() ),
+			.attachmentCount = static_cast<uint32_t>( attachments.size() ),
 			.pAttachments = attachments.data(),
 			.width = pSwapchain->GetExtend().width,
 			.height = pSwapchain->GetExtend().height,
 			.layers = 1,
 		};
-		CheckVkResult( vkCreateFramebuffer( GetDevice()->GetVkDevice(), &bufCreateInfo, nullptr, &m_frameBuffer[i]), "failed to create frame buffer!");
+		CheckVkResult( vkCreateFramebuffer( GetDevice()->GetVkDevice(), &bufCreateInfo, nullptr, &m_frameBuffer[i] ), "failed to create frame buffer!" );
 	}
 }
 
@@ -165,7 +165,7 @@ VkFramebuffer BalVulkan::CFrameBuffer::GetFrameBuffer( const uint32_t idx ) cons
 
 BalVulkan::CFrameBuffer* BalVulkan::CFrameBuffer::CreateNew( const CDevice* pDevice )
 {
-	return new CFrameBuffer{pDevice};
+	return new CFrameBuffer{ pDevice };
 }
 
 BalVulkan::CImageView* BalVulkan::CFrameBuffer::GetImageView( const uint32_t idx ) const
@@ -178,12 +178,12 @@ VkFormat BalVulkan::CFrameBuffer::GetDepthFormat() const
 {
 	return GetSupportedFormat(
 		std::vector{
-				VK_FORMAT_D32_SFLOAT_S8_UINT,
-				VK_FORMAT_D32_SFLOAT,
-				VK_FORMAT_D24_UNORM_S8_UINT,
-				VK_FORMAT_D16_UNORM_S8_UINT,
-				VK_FORMAT_D16_UNORM
-		} ,
+			VK_FORMAT_D32_SFLOAT_S8_UINT,
+			VK_FORMAT_D32_SFLOAT,
+			VK_FORMAT_D24_UNORM_S8_UINT,
+			VK_FORMAT_D16_UNORM_S8_UINT,
+			VK_FORMAT_D16_UNORM
+		},
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
 	);

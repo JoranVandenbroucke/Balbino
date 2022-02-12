@@ -4,16 +4,21 @@
 #include "UUID.h"
 
 struct IEntity;
-
+struct ISystem;
+namespace BalVulkan
+{
+	class CBuffer;
+}
 struct IScene
 {
 	virtual ~IScene() = default;
-	virtual void Initialize( uint32_t width, uint32_t height ) = 0;
+	virtual void Initialize( ISystem* pSystem, uint32_t width, uint32_t height ) = 0;
 	virtual void Cleanup() = 0;
 
-	virtual void PhysicsUpdate( const float deltaTime ) = 0;
-	virtual void Update( const float deltaTime ) = 0;
-	virtual void Draw()const = 0;
+	virtual void PhysicsUpdate( float deltaTime ) = 0;
+	virtual void Update( float deltaTime ) = 0;
+	virtual void PrepareDraw() = 0;
+	virtual void Draw() = 0;
 	virtual void OnViewportResize( uint32_t w, uint32_t h ) = 0;
 
 	virtual IEntity* CreateEntity() = 0;
@@ -24,17 +29,21 @@ struct IScene
 
 	virtual IEntity* GetPrimaryCameraEntity() = 0;
 
-	[[nodiscard]] virtual const entt::registry& GetRegistry()const = 0;
+	[[nodiscard]] virtual const entt::registry& GetRegistry() const = 0;
 	virtual entt::registry& GetRegistry() = 0;
 	[[nodiscard]] virtual std::vector<IEntity*> GetAllEntities() = 0;
+	virtual ISystem* GetSystem()const = 0;
+	virtual BalVulkan::CBuffer* GetModelBuffer()const = 0;
+	virtual BalVulkan::CBuffer* GetShadingBuffer()const = 0;
 
-	template<typename T>
+	template <typename T>
 	static void OnComponentAdded( IEntity* entity, T& component );
 };
 
 template <typename T>
 void IScene::OnComponentAdded( IEntity* entity, T& component )
 {
-	( void ) entity; ( void ) component;
+	( void ) entity;
+	( void ) component;
 	//static_assert( false );
 }

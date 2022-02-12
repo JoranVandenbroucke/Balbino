@@ -6,11 +6,13 @@
 class CCameraComponent final
 {
 public:
-	CCameraComponent( IEntity* pEntity )
+	CCameraComponent() = default;
+	explicit CCameraComponent( IEntity* pEntity )
 		: m_primary{ true }
 		, m_pEntity{ pEntity }
 	{
 	}
+
 	~CCameraComponent() = default;
 	CCameraComponent( const CCameraComponent& ) = default;
 	CCameraComponent( CCameraComponent&& ) = default;
@@ -21,6 +23,7 @@ public:
 	{
 		m_camera = camera;
 	}
+
 	void SetIsPrimary( const bool isPrimary )
 	{
 		m_primary = isPrimary;
@@ -31,19 +34,21 @@ public:
 		return m_camera;
 	}
 
-	[[nodiscard]] const Balbino::CCamera& GetCamera()const
+	[[nodiscard]] const Balbino::CCamera& GetCamera() const
 	{
 		return m_camera;
 	}
-	[[nodiscard]] bool IsPrimary()const
+
+	[[nodiscard]] bool IsPrimary() const
 	{
 		return m_primary;
 	}
 
-	[[nodiscard]] IEntity* GetEntity()const
+	[[nodiscard]] IEntity* GetEntity() const
 	{
 		return m_pEntity;
 	}
+
 private:
 	bool m_primary;
 	Balbino::CCamera m_camera;

@@ -6,6 +6,7 @@
 #include <IEntity.h>
 #include <Components/CameraComponent.h>
 #include <Components/TransformComponent.h>
+#include <Components/MeshRendererComponent.h>
 
 #include "SceneHierarchy.h"
 
@@ -13,11 +14,16 @@
 #include <ImGuizmo.h>
 
 #include "BalMath.h"
+#include "FileParcer.h"
+#include "IManager.h"
+#include "IResourceManager.h"
+#include "IMesh.h"
 
 
 void BalEditor::CGameView::Draw()
 {
 	ImGui::Begin( "GameView" );
+	ImGui::BeginChild( "GameViewChild" );
 	if ( const IEntity* selected = m_pSceneHierarchy->GetSelectedEntity() )
 	{
 		ImGuizmo::SetOrthographic( false );
@@ -26,7 +32,7 @@ void BalEditor::CGameView::Draw()
 
 		const auto camera = m_pContext->GetPrimaryCameraEntity();
 		const auto cameraComponent = camera->GetComponent<CCameraComponent>();
-		glm::mat4 view = glm::inverse( camera->GetComponent<CTransformComponent>()->GetTransform() );
+		glm::mat4 view = inverse( camera->GetComponent<CTransformComponent>()->GetTransform() );
 		const glm::mat4& projection = cameraComponent->GetCamera().GetProjection();
 
 		const auto tc = selected->GetComponent<CTransformComponent>();
@@ -40,29 +46,45 @@ void BalEditor::CGameView::Draw()
 
 		const float snapValues[3] = { snapValue, snapValue, snapValue };
 
-		ImGuizmo::Manipulate( glm::value_ptr( view ), glm::value_ptr( projection ),
-							  static_cast< ImGuizmo::OPERATION >( m_gizmoType ), ImGuizmo::LOCAL, glm::value_ptr( transform ),
-							  nullptr, m_snap ? snapValues : nullptr );
+		Manipulate( value_ptr( view ), value_ptr( projection ),
+		            static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::LOCAL, value_ptr( transform ),
+		            nullptr, m_snap ? snapValues : nullptr );
 
 		if ( ImGuizmo::IsUsing() )
 		{
 			glm::vec3 translation, rotation, scale;
 			Balbino::BalMath::DecomposeTransform( transform, translation, rotation, scale );
 
-			const glm::vec3 rotEuler = glm::eulerAngles( tc->GetRotation() );
+			const glm::vec3 rotEuler = eulerAngles( tc->GetRotation() );
 			const glm::vec3 deltaRotation = rotation - rotEuler;
 			tc->SetTranslation( translation );
 			tc->SetRotation( glm::quat( rotEuler + deltaRotation ) );
 			tc->SetScale( scale );
 		}
 	}
+	ImGui::EndChild();
+	if ( ImGui::BeginDragDropTarget() )
+	{
+		if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Model ) ) )
+		{
+			std::cout << "loading model: ";
+			std::cout << payload->DataSize;
+			std::cout << "\n";
+			//todo: make model
+			const Balbino::IMesh* pModel = m_pSystem->GetResourceManager()->LoadModel(static_cast<SFile*>( payload->Data )->path.generic_string());
+			IEntity* pEnt = m_pContext->CreateEntity();
+			pEnt->CreateComponent<CMeshRenderComponent>( pModel->GetUuid() )->SetMaterialCount( pModel->GetMaterialCount() );
+		}
+		ImGui::EndDragDropTarget();
+	}
 	ImGui::End();
 }
 
-void BalEditor::CGameView::SetContext( IScene* pContext, CSceneHierarchy* pSceneHierarchy )
+void BalEditor::CGameView::SetContext( ISystem* pSystem, IScene* pContext, CSceneHierarchy* pSceneHierarchy )
 {
 	m_pSceneHierarchy = pSceneHierarchy;
 	m_pContext = pContext;
+	m_pSystem = pSystem;
 }
 
 void BalEditor::CGameView::SetSnap( bool snap )

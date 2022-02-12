@@ -2,6 +2,7 @@
 #include "Base.h"
 
 #include <vulkan/vulkan.hpp>
+
 namespace BalVulkan
 {
 	class CSampler;
@@ -9,10 +10,10 @@ namespace BalVulkan
 	class CImageResource;
 	class CImageView;
 
-	class CFrameBuffer final: public CDeviceObject
+	class CFrameBuffer final : public CDeviceObject
 	{
 	public:
-		explicit CFrameBuffer( const CDevice* device);
+		explicit CFrameBuffer( const CDevice* device );
 		CFrameBuffer( CFrameBuffer&& ) = default;
 		CFrameBuffer& operator=( CFrameBuffer&& ) = default;
 		~CFrameBuffer() override;
@@ -21,7 +22,7 @@ namespace BalVulkan
 		VkRenderPass GetRenderPass() const;
 		VkFramebuffer GetFrameBuffer( uint32_t idx ) const;
 		static CFrameBuffer* CreateNew( const CDevice* pDevice );
-		CImageView* GetImageView( uint32_t idx )const;
+		CImageView* GetImageView( uint32_t idx ) const;
 	private:
 		VkRenderPass m_renderPass;
 		std::vector<VkFramebuffer> m_frameBuffer;
@@ -36,6 +37,4 @@ namespace BalVulkan
 		VkFormat GetDepthFormat() const;
 		VkFormat GetSupportedFormat( const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features ) const;
 	};
-
 }
-

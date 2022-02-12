@@ -59,14 +59,6 @@ std::vector<VkVertexInputAttributeDescription> BalVulkan::SVertex::GetAttributeD
 					static_cast<uint32_t>( offsetof( SVertex, tangent ) )
 				);
 				break;
-			case EVertexComponent::Bitangent:
-				attributeDescriptions.emplace_back(
-					location,
-					binding,
-					VK_FORMAT_R32G32B32_SFLOAT,
-					static_cast<uint32_t>( offsetof( SVertex, bitangent ) )
-				);
-				break;
 			default:
 				break;
 		}
@@ -76,12 +68,11 @@ std::vector<VkVertexInputAttributeDescription> BalVulkan::SVertex::GetAttributeD
 }
 
 BalVulkan::SVertex::SVertex( const glm::vec3& position, const glm::vec4& color, const glm::vec2& uv,
-							 const glm::vec3& normal, const glm::vec3& tangent, const glm::vec3& bitangent )
+                             const glm::vec3& normal, const glm::vec4& tangent )
 	: position{ position }
 	, color{ color }
 	, uv{ uv }
 	, normal{ normal }
 	, tangent{ tangent }
-	, bitangent{ bitangent }
 {
 }

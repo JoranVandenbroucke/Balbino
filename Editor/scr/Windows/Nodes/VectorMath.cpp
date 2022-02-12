@@ -34,11 +34,11 @@ void CVectorMath::Draw()
 	{
 		if ( ImGui::BeginCombo( "##Mode", ToString( m_mode ) ) )
 		{
-			for ( int n = 0; n < ( int ) EMode::MaxIndex; n++ )
+			for ( int n = 0; n < static_cast<int>( EMode::MaxIndex ); n++ )
 			{
-				const bool isSelected = ( ( int ) m_mode == n );
-				if ( ImGui::Selectable( ToString( EMode( n ) ), isSelected ) )
-					m_mode = EMode( n );
+				const bool isSelected = ( static_cast<int>( m_mode ) == n );
+				if ( ImGui::Selectable( ToString( static_cast<EMode>( n ) ), isSelected ) )
+					m_mode = static_cast<EMode>( n );
 
 				if ( n == 10 || n == 18 || n == 27 || n == 37 )
 					ImGui::Separator();
@@ -81,7 +81,7 @@ void CVectorMath::Draw()
 			DrawInputVectorAttribute( m_vectorB, m_attributeStartId + 1, m_connected[1] );
 			DrawInputFloatAttribute( m_fac, m_attributeStartId + 2, m_connected[2] );
 			break;
-		default:;
+		default: ;
 	}
 
 	ImGui::Spacing();
@@ -116,393 +116,393 @@ void CVectorMath::Evaluate( std::vector<INode*>::iterator& begin, const std::vec
 	( void ) end;
 	( void ) output;
 	( void ) attributeType;
-			if ( attributeType == EAttributeType::Float )
-				output << "( ";
+	if ( attributeType == EAttributeType::Float )
+		output << "( ";
 	switch ( m_mode )
 	{
 		case EMode::Add:
-		{
-			output << "Add( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Add( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Subtract:
-		{
-			output << "Subtract( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Subtract( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Multiply:
-		{
-			output << "Multiply( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Multiply( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Divide:
-		{
-			output << "Divide( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Divide( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::MultiplyAdd:
-		{
-			output << "MultiplyAdd( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << ", ";
-			if ( m_connected[2] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorC[0] ) << ", " << std::to_string( m_vectorC[1] ) << ", " << std::to_string( m_vectorC[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "MultiplyAdd( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << ", ";
+				if ( m_connected[2] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorC[0] ) << ", " << std::to_string( m_vectorC[1] ) << ", " << std::to_string( m_vectorC[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::CrossProduct:
-		{
-			output << "CrossProduct( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "CrossProduct( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Project:
-		{
-			output << "Project( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Project( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Reflect:
-		{
-			output << "Reflect( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Reflect( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Refract:
-		{
-			output << "Refract( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << ", ";
-			if ( m_connected[2] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_fac );
-			output << " )";
-			break;
-		}
+			{
+				output << "Refract( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << ", ";
+				if ( m_connected[2] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
+				else
+					output << std::to_string( m_fac );
+				output << " )";
+				break;
+			}
 		case EMode::Faceforward:
-		{
-			output << "Faceforward( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << ", ";
-			if ( m_connected[2] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorC[0] ) << ", " << std::to_string( m_vectorC[1] ) << ", " << std::to_string( m_vectorC[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Faceforward( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << ", ";
+				if ( m_connected[2] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorC[0] ) << ", " << std::to_string( m_vectorC[1] ) << ", " << std::to_string( m_vectorC[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::DotProduct:
-		{
-			output << "EMode( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "EMode( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Distance:
-		{
-			output << "Distance( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Distance( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Length:
-		{
-			output << "Length( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Length( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Scale:
-		{
-			output << "Scale( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[2] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_fac );
-			output << " )";
-			break;
-		}
+			{
+				output << "Scale( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[2] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
+				else
+					output << std::to_string( m_fac );
+				output << " )";
+				break;
+			}
 		case EMode::Normalize:
-		{
-			output << "Normalize( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Normalize( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Wrap:
-		{
-			output << "Wrap( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << ", ";
-			if ( m_connected[2] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorC[0] ) << ", " << std::to_string( m_vectorC[1] ) << ", " << std::to_string( m_vectorC[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Wrap( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << ", ";
+				if ( m_connected[2] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorC[0] ) << ", " << std::to_string( m_vectorC[1] ) << ", " << std::to_string( m_vectorC[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Snap:
-		{
-			output << "Snap( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Snap( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Floor:
-		{
-			output << "Floor( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Floor( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Ceil:
-		{
-			output << "Ceil( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Ceil( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Modulo:
-		{
-			output << "Modulo( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Modulo( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Fraction:
-		{
-			output << "Fraction( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Fraction( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Absolute:
-		{
-			output << "Absolute( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Absolute( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Minimum:
-		{
-			output << "Minimum( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Minimum( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Maximum:
-		{
-			output << "Maximum( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << ", ";
-			if ( m_connected[1] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Maximum( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << ", ";
+				if ( m_connected[1] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorB[0] ) << ", " << std::to_string( m_vectorB[1] ) << ", " << std::to_string( m_vectorB[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Sine:
-		{
-			output << "Sine( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Sine( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Cosine:
-		{
-			output << "Cosine( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Cosine( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 		case EMode::Tangent:
-		{
-			output << "Tangent( ";
-			if ( m_connected[0] )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-			else
-				output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
-			output << " )";
-			break;
-		}
+			{
+				output << "Tangent( ";
+				if ( m_connected[0] )
+					( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
+				else
+					output << "vec3( " << std::to_string( m_vectorA[0] ) << ", " << std::to_string( m_vectorA[1] ) << ", " << std::to_string( m_vectorA[2] ) << " )";
+				output << " )";
+				break;
+			}
 	}
-			if ( attributeType == EAttributeType::Float )
-				output << " ).x";
+	if ( attributeType == EAttributeType::Float )
+		output << " ).x";
 }
 
 bool CVectorMath::HasFreeAttachment( int endAttr ) const

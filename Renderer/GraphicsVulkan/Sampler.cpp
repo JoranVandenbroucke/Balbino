@@ -32,12 +32,12 @@ void BalVulkan::CSampler::Initialize( uint32_t mipLevels, EFilter filter, ESampl
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 		.pNext = VK_NULL_HANDLE,
 		.flags = 0,
-		.magFilter = static_cast< VkFilter >( filter ),
-		.minFilter = static_cast< VkFilter >( filter ),
+		.magFilter = static_cast<VkFilter>( filter ),
+		.minFilter = static_cast<VkFilter>( filter ),
 		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-		.addressModeU = static_cast< VkSamplerAddressMode >( samplerAddressMode ),
-		.addressModeV = static_cast< VkSamplerAddressMode >( samplerAddressMode ),
-		.addressModeW = static_cast< VkSamplerAddressMode >( samplerAddressMode ),
+		.addressModeU = static_cast<VkSamplerAddressMode>( samplerAddressMode ),
+		.addressModeV = static_cast<VkSamplerAddressMode>( samplerAddressMode ),
+		.addressModeW = static_cast<VkSamplerAddressMode>( samplerAddressMode ),
 		.mipLodBias = 0.0f,
 		//.anisotropyEnable = supportedFeatures.samplerAnisotropy,
 		//.maxAnisotropy = supportedFeatures.samplerAnisotropy == VK_TRUE? properties.limits.maxSamplerAnisotropy : 1,
@@ -46,7 +46,7 @@ void BalVulkan::CSampler::Initialize( uint32_t mipLevels, EFilter filter, ESampl
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_ALWAYS,
 		.minLod = 0.0f,
-		.maxLod = static_cast< float >( mipLevels ),
+		.maxLod = static_cast<float>( mipLevels ),
 		.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
 		.unnormalizedCoordinates = VK_FALSE,
 	};
@@ -60,7 +60,7 @@ VkSampler BalVulkan::CSampler::GetSampler() const
 
 BalVulkan::CSampler* BalVulkan::CSampler::CreateNew( const CDevice* pDevice )
 {
-	return new CSampler{pDevice};
+	return new CSampler{ pDevice };
 }
 
 void BalVulkan::CSampler::Destroy()

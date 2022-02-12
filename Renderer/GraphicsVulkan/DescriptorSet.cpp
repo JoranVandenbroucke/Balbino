@@ -50,37 +50,37 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
 	}
 
 	std::vector<VkWriteDescriptorSet> descriptorWrites( descriptorSetsInfo.size() );
-	for ( uint32_t i = 0; i < ( uint32_t ) descriptorSetsInfo.size(); ++i )
+	std::vector<VkDescriptorBufferInfo> bufferInfos( descriptorSetsInfo.size() );
+	std::vector<VkDescriptorImageInfo> imageInfos( descriptorSetsInfo.size() );
+	for ( uint32_t i = 0; i < static_cast< uint32_t >( descriptorSetsInfo.size() ); ++i )
 	{
 		if ( descriptorSetsInfo[i].descriptorType == SDescriptorSet::EType::Buffer )
 		{
-			const VkDescriptorBufferInfo info{
-				.buffer = descriptorSetsInfo[i].unition.buffer.buffer->GetBuffer(),
-				.offset = 0,
-				.range = descriptorSetsInfo[i].unition.buffer.buffer->GetRange(),
-			};
+			bufferInfos[i].buffer = descriptorSetsInfo[i].description.buffer.buffer->GetBuffer();
+			bufferInfos[i].offset = 0;
+			bufferInfos[i].range = descriptorSetsInfo[i].description.buffer.buffer->GetRange();
+
 			descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[i].dstSet = m_descriptorSet;
 			descriptorWrites[i].dstBinding = i;
 			descriptorWrites[i].dstArrayElement = 0;
 			descriptorWrites[i].descriptorCount = 1;
 			descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrites[i].pBufferInfo = &info;
+			descriptorWrites[i].pBufferInfo = &bufferInfos[i];
 		}
 		else
 		{
-			const VkDescriptorImageInfo info{
-				.sampler = descriptorSetsInfo[i].unition.image.sampler->GetSampler(),
-				.imageView = descriptorSetsInfo[i].unition.image.view->GetImageView(),
-				.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-			};
+			imageInfos[i].sampler = descriptorSetsInfo[i].description.image.sampler->GetSampler();
+			imageInfos[i].imageView = descriptorSetsInfo[i].description.image.view->GetImageView();
+			imageInfos[i].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
 			descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[i].dstSet = m_descriptorSet;
 			descriptorWrites[i].dstBinding = i;
 			descriptorWrites[i].dstArrayElement = 0;
 			descriptorWrites[i].descriptorCount = 1;
 			descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptorWrites[i].pImageInfo = &info;
+			descriptorWrites[i].pImageInfo = &imageInfos[i];
 		}
 	}
 

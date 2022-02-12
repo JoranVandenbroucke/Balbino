@@ -3,7 +3,9 @@
 #include <vector>
 
 #include "../Tools/FilesSystem/FileSystem.h"
-#include "Components/TextureComponent.h"
+#include "Texture.h"
+
+struct ISystem;
 
 namespace BalVulkan
 {
@@ -13,6 +15,9 @@ namespace BalVulkan
 
 namespace BalEditor
 {
+	class CShaderGraph;
+	class CMaterialEditor;
+
 	class CAssetBrowser
 	{
 	public:
@@ -23,21 +28,23 @@ namespace BalEditor
 		CAssetBrowser& operator=( const CAssetBrowser& ) = delete;
 		CAssetBrowser& operator=( CAssetBrowser&& ) = delete;
 
-		void Initialize();
+		void Initialize( const ISystem* pSystem );
 		void Draw();
 		void Cleanup();
 		void ShowWindow();
+		void SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor );
 	private:
-		Balbino::CTextureComponent* m_pUnknownIcon;
-		Balbino::CTextureComponent* m_pFolderIcon;
-		Balbino::CTextureComponent* m_pBalbinoIcon;
-		Balbino::CTextureComponent* m_pImageIcon;
-		Balbino::CTextureComponent* m_pAudioIcon;
-		Balbino::CTextureComponent* m_pModelIcon;
-		Balbino::CTextureComponent* m_pPresetIcon;
-		Balbino::CTextureComponent* m_pCodeIcon;
-		Balbino::CTextureComponent* m_pFontIcon;
-
+		Balbino::CTexture* m_pUnknownIcon;
+		Balbino::CTexture* m_pFolderIcon;
+		Balbino::CTexture* m_pBalbinoIcon;
+		Balbino::CTexture* m_pImageIcon;
+		Balbino::CTexture* m_pAudioIcon;
+		Balbino::CTexture* m_pModelIcon;
+		Balbino::CTexture* m_pPresetIcon;
+		Balbino::CTexture* m_pCodeIcon;
+		Balbino::CTexture* m_pFontIcon;
+		Balbino::CTexture* m_pMaterialIcon;
+		Balbino::CTexture* m_pShaderIcon;
 
 		VkDescriptorSet m_pVkDescriptorSetUnknownIcon;
 		VkDescriptorSet m_pVkDescriptorSetFolderIcon;
@@ -48,11 +55,24 @@ namespace BalEditor
 		VkDescriptorSet m_pVkDescriptorSetPresetIcon;
 		VkDescriptorSet m_pVkDescriptorSetCodeIcon;
 		VkDescriptorSet m_pVkDescriptorSetFontIcon;
+		VkDescriptorSet m_pVkDescriptorSetMaterialIcon;
+		VkDescriptorSet m_pVkDescriptorSetShaderIcon;
+
+		CShaderGraph* m_pShaderGraph;
+		CMaterialEditor* m_pMaterialEditor;
+
+		const ISystem* m_pSystem;
 
 		bool m_isVisible;
+		bool m_newFile;
 		float m_size;
-		std::vector<SFile> m_selected;
 
-		void MoveIn( const std::filesystem::path& path, std::vector<SFile>& selectedPath );
+		std::vector<SFile> m_currentDirectory;
+		std::vector<SFile> m_files;
+		std::string m_currentName;
+		void FindAllFiles();
+		void CreateMaterial( const SFile& file, std::string_view name ) const;
+		void DrawTree(const std::string& path, uint32_t& nodeIdx );
+		void GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory );
 	};
 }

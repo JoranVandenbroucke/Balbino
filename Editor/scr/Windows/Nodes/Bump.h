@@ -6,7 +6,7 @@
 class CBump final : public INode
 {
 public:
-	CBump( const int id, int& attributeStartId );
+	CBump( int id, int& attributeStartId );
 
 	~CBump() override;
 	void Draw() override;
@@ -24,4 +24,3 @@ private:
 	float m_height;
 	std::array<float, 3> m_normal;
 };
-

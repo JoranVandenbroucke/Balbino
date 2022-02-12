@@ -8,6 +8,7 @@
 namespace BalVulkan
 {
 	class CSwapchain;
+
 	class CShaderPipeline final : public CDeviceObject
 	{
 	public:
@@ -23,11 +24,12 @@ namespace BalVulkan
 		CShaderPipeline( CShaderPipeline&& ) = default;
 		CShaderPipeline& operator=( CShaderPipeline&& ) = default;
 		~CShaderPipeline() override;
-
-		void Initialize( const std::array<CShader*, 3>& shaders, const CFrameBuffer& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, const BalVulkan::CSwapchain* pSwapchain, ECullMode cullModeFlag = ECullMode::Front );
-		VkPipelineLayout GetPipelineLayout()const;
-		const VkDescriptorSetLayout& GetDescriptorSetLayout()const;
+		void Initialize( const std::array<CShader*, 3>& shaders, const CFrameBuffer& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode cullModeFlag = ECullMode::Back );
+		VkPipelineLayout GetPipelineLayout() const;
+		const VkDescriptorSetLayout& GetDescriptorSetLayout() const;
 		VkPipeline GetPipeline();
+		const std::unordered_map<std::string, SShaderResource>& GetShaderResources() const;
+
 		static CShaderPipeline* CreateNew( const CDevice* pDevice );
 	private:
 		VkDescriptorSetLayout m_descriptorSetLayout;
@@ -39,5 +41,5 @@ namespace BalVulkan
 		std::unordered_map<uint32_t, std::vector<SShaderResource>> m_shaderSets;
 
 		static VkDescriptorType FindDescriptorType( EShaderResourceType resource_type, bool dynamic );
-	}; 
+	};
 }

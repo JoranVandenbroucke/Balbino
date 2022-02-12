@@ -21,7 +21,7 @@ namespace Balbino
 
 		bool operator==( const CEntity& other ) const;
 		bool operator!=( const CEntity& other ) const;
-	
+
 		[[nodiscard]] const CUuid& GetId() const override;
 		[[nodiscard]] bool IsInitialized() const override;
 		[[nodiscard]] bool IsLoadedFromLevelFile() const override;

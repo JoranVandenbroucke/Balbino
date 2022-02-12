@@ -25,13 +25,13 @@ namespace Balbino
 		}
 
 		~CCamera() = default;
-		CCamera(const CCamera& other) = default;
+		CCamera( const CCamera& other ) = default;
 
-		CCamera(CCamera&&) = default;
-		CCamera& operator=(const CCamera&) = default;
-		CCamera& operator=(CCamera&&) = default;
+		CCamera( CCamera&& ) = default;
+		CCamera& operator=( const CCamera& ) = default;
+		CCamera& operator=( CCamera&& ) = default;
 
-		bool operator==(const CCamera& other) const
+		bool operator==( const CCamera& other ) const
 		{
 			return this->m_index == other.m_index &&
 				fabs( this->m_aspectRatio - other.m_aspectRatio ) < 0.001f &&
@@ -44,50 +44,59 @@ namespace Balbino
 			m_height = height;
 			m_fov = fov;
 			m_index = 0;
-			m_aspectRatio = ( float ) width / ( float ) height;
+			m_aspectRatio = static_cast<float>( width ) / static_cast<float>( height );
 			m_nearClip = nearPlane;
 			m_farClip = farPlane;
-			m_projection = glm::perspective( fov, m_aspectRatio, nearPlane, farPlane);
+			m_projection = glm::perspective( fov, m_aspectRatio, nearPlane, farPlane );
 			m_projection[1][1] *= -1;
 
-			m_view = lookAt( glm::vec3{ 0,0,0 }, glm::vec3{ 0,0,1 }, glm::vec3{ 0,1,0 } );
+			m_view = lookAt( glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 0, 1 }, glm::vec3{ 0, 1, 0 } );
 		}
+
 		void UpdateProjectionMatrix( float fov = glm::radians( 45.0f ), float nearPlane = 0.001f, float farPlane = 1000 )
 		{
 			m_fov = fov;
-			m_nearClip = std::max(nearPlane, 0.0001f);
+			m_nearClip = std::max( nearPlane, 0.0001f );
 			m_farClip = farPlane;
 			m_projection = glm::perspective( fov, m_aspectRatio, nearPlane, farPlane );
 			m_projection[1][1] *= -1;
 		}
+
 		void SetDrawIndex( int index )
 		{
 			m_index = index;
 		}
-		const glm::mat4& GetView() const
+
+		[[nodiscard]] const glm::mat4& GetView() const
 		{
 			return m_view;
 		}
-		const glm::mat4& GetProjection() const
+
+		[[nodiscard]] const glm::mat4& GetProjection() const
 		{
 			return m_projection;
 		}
-		int GetDrawIndex() const
+
+		[[nodiscard]] int GetDrawIndex() const
 		{
 			return m_index;
 		}
-		float GetFov()const
+
+		[[nodiscard]] float GetFov() const
 		{
 			return m_fov;
 		}
-		float GetNearClip() const
+
+		[[nodiscard]] float GetNearClip() const
 		{
 			return m_nearClip;
 		}
-		float GetFarClip() const
+
+		[[nodiscard]] float GetFarClip() const
 		{
 			return m_farClip;
 		}
+
 	private:
 		glm::mat4 m_view;
 		glm::mat4 m_projection;

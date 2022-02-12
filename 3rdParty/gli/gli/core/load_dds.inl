@@ -295,7 +295,7 @@ namespace detail
 
 		std::size_t const SourceSize = Offset + Texture.size();
 		GLI_ASSERT(SourceSize == Size);
-
+		( void ) SourceSize;
 		std::memcpy(Texture.data(), Data + Offset, Texture.size());
 
 		return Texture;

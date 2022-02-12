@@ -1,5 +1,7 @@
 #pragma once
+#include <filesystem>
 #include <glm.hpp>
+#include <string>
 #include <vector>
 
 struct INode;
@@ -22,6 +24,7 @@ namespace BalEditor
 		CShaderGraph& operator=( CShaderGraph&& ) = delete;
 		void Draw();
 		void ShowWindow();
+		void OpenShader( const std::filesystem::path& path ) const;
 	private:
 		enum class EUiNodeType
 		{
@@ -29,6 +32,7 @@ namespace BalEditor
 			VertexOutput,
 			FragmentOutput,
 
+			////////blender nodes////////
 			//Input
 			//todo AmbientOcclusion,
 			//todo Attribute,
@@ -41,22 +45,22 @@ namespace BalEditor
 			//todo LightPath,
 			//todo ObjectInfo,
 			//todo ParticleInfo,
-			//RGB,
+			//todo RGB,
 			//todo Tangent,
 			//todo TextureCoordinate,
 			//todo UVMap,
-			//Value,
+			//todo Value,
 			//todo VertexColor,
 			//todo VolumeInfo,
 			//todo Wireframe,
 
 			//Texture
-			//BrickTexture,
-			//CheckerTexture,
+			//todo BrickTexture,
+			//todo CheckerTexture,
 			//todo EnvironmentTexture,
-			//GradientTexture,
+			//todo GradientTexture,
 			//todo IESTexture,
-			//ImageTexture,
+			//todo ImageTexture,
 			//todo MagicTexture,
 			//todo MusgraveTexture,
 			//todo NoiseTexture,
@@ -97,21 +101,30 @@ namespace BalEditor
 			//todo Wavelength,
 			MaxIndex
 			//todo ScreenDoorTransparency
-			//Atmospheric Fog Color
+
+			////////UE4 nodes////////
+			//todo Atmospheric Fog Color
 		};
+
 		struct SLink
 		{
 			int id;
 			int startNodeId, endNodeId;
 			int startAttr, endAttr;
 		};
+
 		std::vector<INode*> m_nodes;
 		std::vector<SLink> m_links;
+
 		int m_currentId = 0;
 		int m_currentAttributeId = 0;
 		bool m_isVisible;
+		bool m_wantsToSave;
+		std::string m_currentName;
 
-		std::vector<SLink>GetNeighbors( const int currentNode );
+		ImNodes::EditorContext* m_pSelfRef;
+
+		std::vector<SLink> GetNeighbors( int currentNode );
 		void Evaluate();
 		void AddNode( EUiNodeType type, const glm::vec2& position );
 		static const char* ToString( EUiNodeType type );

@@ -6,7 +6,7 @@
 class CBrightContrast final : public INode
 {
 public:
-	CBrightContrast( const int id, int& attributeStartId );
+	CBrightContrast( int id, int& attributeStartId );
 	~CBrightContrast() override;
 
 	void Draw() override;
@@ -22,10 +22,11 @@ private:
 	float m_brightness;
 	float m_contrast;
 };
+
 class CGamma final : public INode
 {
 public:
-	CGamma( const int id, int& attributeStartId );
+	CGamma( int id, int& attributeStartId );
 	~CGamma() override;
 
 	void Draw() override;
@@ -40,10 +41,11 @@ private:
 	std::array<float, 3> m_color;
 	float m_gamma;
 };
-class CHueSaturationValue final: public INode
+
+class CHueSaturationValue final : public INode
 {
 public:
-	CHueSaturationValue( const int id, int& attributeStartId );
+	CHueSaturationValue( int id, int& attributeStartId );
 	~CHueSaturationValue() override;
 
 	void Draw() override;
@@ -61,10 +63,11 @@ private:
 	float m_value;
 	float m_factor;
 };
+
 class CInvert final : public INode
 {
 public:
-	CInvert( const int id, int& attributeStartId );
+	CInvert( int id, int& attributeStartId );
 	~CInvert() override;
 
 	void Draw() override;
@@ -79,10 +82,11 @@ private:
 	std::array<float, 3> m_color;
 	float m_factor;
 };
+
 class CMix final : public INode
 {
 public:
-	CMix( const int id, int& attributeStartId );
+	CMix( int id, int& attributeStartId );
 	~CMix() override;
 
 	void Draw() override;
@@ -113,7 +117,8 @@ private:
 		SoftLight,
 		LinearLight,
 		MaxIndex
-	}m_type;
+	} m_type;
+
 	bool m_connected[3];
 	std::array<float, 3> m_color1;
 	std::array<float, 3> m_color2;

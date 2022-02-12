@@ -119,11 +119,11 @@ void CMathNode::Draw()
 	{
 		if ( ImGui::BeginCombo( "##Mode", ToString( m_currentMode ) ) )
 		{
-			for ( int n = 0; n < ( int ) EMode::MaxIndex; n++ )
+			for ( int n = 0; n < static_cast<int>( EMode::MaxIndex ); n++ )
 			{
-				const bool isSelected = ( ( int ) m_currentMode == n );
-				if ( ImGui::Selectable( ToString( EMode( n ) ), isSelected ) )
-					m_currentMode = EMode( n );
+				const bool isSelected = ( static_cast<int>( m_currentMode ) == n );
+				if ( ImGui::Selectable( ToString( static_cast<EMode>( n ) ), isSelected ) )
+					m_currentMode = static_cast<EMode>( n );
 
 				if ( n == 10 || n == 18 || n == 27 || n == 37 )
 					ImGui::Separator();

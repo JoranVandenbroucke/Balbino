@@ -1,26 +1,40 @@
 #pragma once
-#include "../Core.h"
+#include "IManager.h"
+
+#include "Core.h"
+
+class CResourceManager;
 
 namespace Balbino
 {
+	class CRenderer;
 	class CInputHandler;
+	class CAssetManager;
 
-	class BALBINO_API CManager
+	class BALBINO_API CSystem final : public ISystem
 	{
 	public:
-		CManager();
-		~CManager();
-		CManager(const CManager&) = delete;
-		CManager(CManager&&) = delete;
-		CManager& operator=(const CManager&) = delete;
-		CManager& operator=(CManager&&) = delete;
+		CSystem();
+		~CSystem() override = default;
+		CSystem( const CSystem& ) = delete;
+		CSystem( CSystem&& ) = delete;
+		CSystem& operator=( const CSystem& ) = delete;
+		CSystem& operator=( CSystem&& ) = delete;
 
+		void Initialize();
 		void Cleanup();
 
-		void SetInputHandler(CInputHandler* pInputHandler);
+		void SetInputHandler( CInputHandler* pInputHandler );
+		void SetCurrentScene( IScene* pScene );
 
-		static CInputHandler* GetInputHandler();
+		bool Update( bool isPause ) override;
+		[[nodiscard]] IResourceManager* GetResourceManager() const override;
+		[[nodiscard]] CInputHandler* GetInputHandler() const;
+		[[nodiscard]] IScene* GetCurrentActiveScene() const override;
+		
 	private:
-		static CInputHandler* s_inputHandler;
+		CInputHandler* m_inputHandler;
+		CResourceManager* m_resourceManager;
+		IScene* m_pCurrentScene;
 	};
 }

@@ -32,7 +32,7 @@ Balbino::CEntity::operator entt::entity() const
 
 Balbino::CEntity::operator unsigned() const
 {
-	return ( uint32_t ) GetEntity();
+	return static_cast<uint32_t>( GetEntity() );
 }
 
 bool Balbino::CEntity::operator==( const CEntity& other ) const

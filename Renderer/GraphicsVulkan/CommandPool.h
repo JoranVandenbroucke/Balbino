@@ -24,11 +24,11 @@ namespace BalVulkan
 		void UpdateFrameIndex();
 		void BeginRender( CFrameBuffer* pFrameBuffer, CSwapchain* pSwapchain ) const;
 		void BindShader( CShaderPipeline* pPipeline, CDescriptorSet* pDescriptorSet ) const;
-		uint32_t GetCommandBufferCount()const;
-		uint32_t GetCurrentIndex()const;
+		uint32_t GetCommandBufferCount() const;
+		uint32_t GetCurrentIndex() const;
 
-		const VkCommandPool& GetCommandPool()const;
-		const VkCommandBuffer& GetCommandBuffer()const;
+		const VkCommandPool& GetCommandPool() const;
+		const VkCommandBuffer& GetCommandBuffer() const;
 		void EndRender() const;
 
 		static CCommandPool* CreateNew( const CDevice* pDevice );
@@ -38,5 +38,4 @@ namespace BalVulkan
 		std::vector<CImageResource*> m_imageResources;
 		uint32_t m_currentFrameIndex;
 	};
-
 }

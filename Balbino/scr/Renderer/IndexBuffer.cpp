@@ -4,13 +4,13 @@
 #include <Buffer.h>
 
 Balbino::CIndexBuffer::CIndexBuffer()
-	: m_pIndexBuffer{nullptr}
+	: m_pIndexBuffer{ nullptr }
 {
 }
 
 Balbino::CIndexBuffer::~CIndexBuffer()
 {
-	if (m_pIndexBuffer != nullptr )
+	if ( m_pIndexBuffer != nullptr )
 		std::cerr << "index buffer was not destroyed" << std::endl;
 }
 

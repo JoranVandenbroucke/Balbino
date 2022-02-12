@@ -5,34 +5,34 @@
 #include "Funtions.h"
 #include "ImageResource.h"
 
-BalVulkan::CImageView::CImageView( const CImageResource& pImage, BalVulkan::EImageViewType type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
-	:CDeviceObject{ pImage.GetDevice() }
-	,m_ownedBySwapchain{ false }
+BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
+	: CDeviceObject{ pImage.GetDevice() }
+	, m_ownedBySwapchain{ false }
 {
 	const uint32_t actualNumMips = ( numMips == VK_REMAINING_MIP_LEVELS ) ? pImage.GetMipCount() - firstMip : numMips;
 	const uint32_t actualNumLayers = ( numLayers == VK_REMAINING_ARRAY_LAYERS ) ? pImage.GetLayerCount() - firstLayer : numLayers;
 	VkImageViewType viewType{ VK_IMAGE_VIEW_TYPE_MAX_ENUM };
 	switch ( type )
 	{
-		case BalVulkan::EImageViewType::Cube:
+		case EImageViewType::Cube:
 			viewType = VK_IMAGE_VIEW_TYPE_CUBE;
 			break;
-		case BalVulkan::EImageViewType::CubeArray:
+		case EImageViewType::CubeArray:
 			viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
 			break;
-		case BalVulkan::EImageViewType::View1D:
+		case EImageViewType::View1D:
 			viewType = VK_IMAGE_VIEW_TYPE_1D;
 			break;
-		case BalVulkan::EImageViewType::View1DArray:
+		case EImageViewType::View1DArray:
 			viewType = VK_IMAGE_VIEW_TYPE_1D_ARRAY;
 			break;
-		case BalVulkan::EImageViewType::View2D:
+		case EImageViewType::View2D:
 			viewType = VK_IMAGE_VIEW_TYPE_2D;
 			break;
-		case BalVulkan::EImageViewType::View2DArray:
+		case EImageViewType::View2DArray:
 			viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
 			break;
-		case BalVulkan::EImageViewType::View3D:
+		case EImageViewType::View3D:
 			viewType = VK_IMAGE_VIEW_TYPE_3D;
 			break;
 	}
@@ -48,28 +48,25 @@ BalVulkan::CImageView::CImageView( const CImageResource& pImage, BalVulkan::EIma
 				if ( actualNumLayers <= 6 )
 					if ( actualNumLayers == 6 )
 						viewType = VK_IMAGE_VIEW_TYPE_CUBE;
+					else if ( actualNumLayers == 1 )
+						viewType = VK_IMAGE_VIEW_TYPE_2D;
 					else
-						if ( actualNumLayers == 1 )
-							viewType = VK_IMAGE_VIEW_TYPE_2D;
-						else
-							viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+						viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+				else if ( actualNumLayers == 1 )
+					if ( actualNumLayers == 6 )
+						viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+					else
+						viewType = VK_IMAGE_VIEW_TYPE_2D;
+				else if ( actualNumLayers == 6 )
+					viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
 				else
-					if ( actualNumLayers == 1 )
-						if ( actualNumLayers == 6 )
-							viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
-						else
-							viewType = VK_IMAGE_VIEW_TYPE_2D;
-					else
-						if ( actualNumLayers == 6 )
-							viewType = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
-						else
-							viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+					viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
 				break;
 			case VK_IMAGE_TYPE_3D:
 				viewType = VK_IMAGE_VIEW_TYPE_3D;
 				break;
 
-				//just to be complete
+			//just to be complete
 			case VK_IMAGE_TYPE_MAX_ENUM:
 			default:
 				assert( false && "Used Wrong Dementionality" );
@@ -120,8 +117,8 @@ BalVulkan::CImageView::CImageView( const CImageResource& pImage, BalVulkan::EIma
 			case VK_FORMAT_D32_SFLOAT:
 				bHasDepth = !bHasDepth;
 
-				//bHasDepth &= swizzle != kImageSwizzleSS00;
-				//bHasStencil &= swizzle != kImageSwizzleDD00;
+			//bHasDepth &= swizzle != kImageSwizzleSS00;
+			//bHasStencil &= swizzle != kImageSwizzleDD00;
 				assert( ( bHasDepth || bHasStencil ) && "Invalid swizzle for depth/stencil format" );
 
 				info.format = pImage.GetFormat(); // Views can never re-interpret depth/stencil formats
@@ -153,5 +150,5 @@ void BalVulkan::CImageView::Destroy()
 
 BalVulkan::CImageView* BalVulkan::CImageView::CreateNew( const CImageResource& pResource, EImageViewType type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
 {
-	return new CImageView{pResource, type, firstMip, numMips, firstLayer, numLayers};
+	return new CImageView{ pResource, type, firstMip, numMips, firstLayer, numLayers };
 }

@@ -3,10 +3,10 @@
 
 #include <array>
 
-class CDisplacement final: public INode
+class CDisplacement final : public INode
 {
 public:
-	CDisplacement( const int id, int& attributeStartId );
+	CDisplacement( int id, int& attributeStartId );
 
 	~CDisplacement() override;
 	void Draw() override;
@@ -23,4 +23,3 @@ private:
 	float m_strength;
 	std::array<float, 3> m_normal;
 };
-

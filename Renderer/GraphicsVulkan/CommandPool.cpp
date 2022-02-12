@@ -85,12 +85,12 @@ void BalVulkan::CCommandPool::EndRender() const
 void BalVulkan::CCommandPool::BeginRender( CFrameBuffer* pFrameBuffer, CSwapchain* pSwapchain ) const
 {
 	const VkCommandBufferBeginInfo beginInfo{
-			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-			.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
+		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+		.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
 	};
 	std::vector clearColor{
-		VkClearValue{.color = { 0.165f, 0.306f, 0.243f, 1.0f } },
-		VkClearValue{.depthStencil = {1.0f,0}},
+		VkClearValue{ .color = { 0.165f, 0.306f, 0.243f, 1.0f } },
+		VkClearValue{ .depthStencil = { 1.0f, 0 } },
 	};
 	const VkRenderPassBeginInfo renderPassInfo{
 		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
@@ -117,7 +117,7 @@ BalVulkan::CCommandPool* BalVulkan::CCommandPool::CreateNew( const CDevice* pDev
 
 uint32_t BalVulkan::CCommandPool::GetCommandBufferCount() const
 {
-	return ( uint32_t ) m_commandBuffers.size();
+	return static_cast<uint32_t>( m_commandBuffers.size() );
 }
 
 uint32_t BalVulkan::CCommandPool::GetCurrentIndex() const

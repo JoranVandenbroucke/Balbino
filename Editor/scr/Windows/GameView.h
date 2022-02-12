@@ -1,9 +1,11 @@
 #pragma once
+#include "IManager.h"
 #include "IScene.h"
 
 namespace BalEditor
 {
 	class CSceneHierarchy;
+
 	class CGameView
 	{
 	public:
@@ -15,7 +17,7 @@ namespace BalEditor
 		CGameView& operator=( CGameView&& ) = delete;
 		void Draw();
 
-		void SetContext( IScene* pContext, CSceneHierarchy* pSceneHierarchy );
+		void SetContext( ISystem* pSystem, IScene* pContext, CSceneHierarchy* pSceneHierarchy );
 		void SetSnap( bool snap );
 		void SetGuizmo( int key );
 
@@ -25,5 +27,6 @@ namespace BalEditor
 		IScene* m_pContext;
 		int m_gizmoType = 7;
 		bool m_snap;
+		ISystem* m_pSystem;
 	};
 }

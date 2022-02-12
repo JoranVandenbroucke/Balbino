@@ -1,7 +1,7 @@
 #pragma once
+#include <vulkan/vulkan.hpp>
 #include "Base.h"
 #include "Common.h"
-#include <vulkan/vulkan.hpp>
 
 namespace BalVulkan
 {
@@ -16,7 +16,7 @@ namespace BalVulkan
 		~CImageResource() override;
 
 		VkResult InitFromSwapchain( VkImage image, VkImageLayout layout, uint32_t width, uint32_t height, VkFormat format );
-		VkResult Initialize( uint32_t width, uint32_t height, uint32_t mipLevels, uint32_t layers, EImageLayout layout, EFormat format, const BalVulkan::EImageUsageFlagBits usage = ( EImageUsageFlagBits::TransferSrcBit | EImageUsageFlagBits::TransferDstBit | EImageUsageFlagBits::SampledBit ) );
+		VkResult Initialize( uint32_t width, uint32_t height, uint32_t mipLevels, uint32_t layers, EImageLayout layout, EFormat format, EImageUsageFlagBits usage = ( EImageUsageFlagBits::TransferSrcBit | EImageUsageFlagBits::TransferDstBit | EImageUsageFlagBits::SampledBit ) );
 		VkImage GetImage();
 
 		const VkImage& GetImage() const;
@@ -32,9 +32,9 @@ namespace BalVulkan
 		uint32_t GetHeight() const;
 		uint32_t GetDepth() const;
 
-		void TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, BalVulkan::EImageLayout newLayout );
+		void TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout newLayout );
 		void GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand );
-		VkImageLayout GetLayout()const;
+		VkImageLayout GetLayout() const;
 		static CImageResource* CreateNew( const CDevice* pDevice );
 		static CImageResource* LoadFromFile( const std::string& path );
 	private:

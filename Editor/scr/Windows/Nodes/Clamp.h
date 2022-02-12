@@ -4,8 +4,7 @@
 class CClamp : public INode
 {
 public:
-
-	CClamp(int id, int& firstAttributeId);
+	CClamp( int id, int& firstAttributeId );
 	~CClamp() override = default;
 	CClamp( const CClamp& ) = delete;
 	CClamp( CClamp&& ) = delete;
@@ -23,4 +22,3 @@ private:
 	bool m_connected[3];
 	float m_value[3];
 };
-

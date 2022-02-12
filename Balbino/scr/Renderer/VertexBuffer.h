@@ -1,8 +1,9 @@
 #pragma once
-#include <Vertex.h>
+#include <vector>
 
 namespace BalVulkan
 {
+	struct SVertex;
 	class CDevice;
 	class CCommandPool;
 	class CQueue;

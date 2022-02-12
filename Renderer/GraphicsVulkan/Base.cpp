@@ -38,7 +38,8 @@ void BalVulkan::CRefCounted::Destroy()
 	delete this;
 }
 
-BalVulkan::CDeviceObject::CDeviceObject( const CDevice* device ) : m_pDevice{ device }
+BalVulkan::CDeviceObject::CDeviceObject( const CDevice* device )
+	: m_pDevice{ device }
 {
 }
 

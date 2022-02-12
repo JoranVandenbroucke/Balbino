@@ -2,10 +2,11 @@
 #include "INode.h"
 
 #include <array>
+
 class CRGBtoBW final : public INode
 {
 public:
-	CRGBtoBW( const int id, int& attributeStartId );
+	CRGBtoBW( int id, int& attributeStartId );
 
 	~CRGBtoBW() override;
 	void Draw() override;
@@ -19,4 +20,3 @@ private:
 	bool m_connections;
 	std::array<float, 3> m_color;
 };
-

@@ -2,10 +2,11 @@
 #include <array>
 
 #include "INode.h"
+
 class CMapping final : public INode
 {
 public:
-	CMapping( const int id, int& attributeStartId );
+	CMapping( int id, int& attributeStartId );
 
 	~CMapping() override;
 	void Draw() override;
@@ -23,7 +24,8 @@ private:
 		Vector,
 		Normal,
 		MaxIndex
-	}m_type;
+	} m_type;
+
 	bool m_connected[4];
 	std::array<float, 3> m_vector;
 	std::array<float, 3> m_position;
@@ -31,4 +33,3 @@ private:
 	std::array<float, 3> m_scale;
 	static const char* ToString( EMode type );
 };
-

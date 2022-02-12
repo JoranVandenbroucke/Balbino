@@ -14,7 +14,7 @@ namespace BalVulkan
 		std::cout << location.file_name() << "("
 			<< location.line() << ":"
 			<< location.column() << ") `"
-			<< location.function_name() << "`: " << std::format( "[Vulkan] Error: VkResult = {0} \r\n{1}", static_cast< uint32_t >( err ), failMessage ) << std::endl;
+			<< location.function_name() << "`: " << std::format( "[Vulkan] Error: VkResult = {0} \r\n{1}", static_cast<uint32_t>( err ), failMessage ) << std::endl;
 		if ( err < 0 )
 			abort();
 		return true;

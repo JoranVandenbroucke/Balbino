@@ -2,17 +2,18 @@
 #include "../IEntity.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
+#define GLM_FORCE_RADIANS
 #include <glm.hpp>
 #include <gtx/quaternion.hpp>
-#include <gtc/matrix_transform.hpp>
 
 class CTransformComponent final
 {
 public:
 	CTransformComponent() = default;
+
 	explicit CTransformComponent( IEntity* pEntity, const glm::vec3& translation )
 		: m_translate( translation )
-		, m_scale{ 1,1,1 }
+		, m_scale{ 1, 1, 1 }
 		, m_rotation{}
 		, m_pParent{ nullptr }
 		, m_pEntity{ pEntity }
@@ -27,21 +28,24 @@ public:
 
 	[[nodiscard]] glm::mat4 GetTransform() const
 	{
-		const glm::mat4 rotation{ glm::toMat4( m_rotation ) };
+		const glm::mat4 rotation{ toMat4( m_rotation ) };
 
-		return glm::translate( glm::mat4( 1.0f ), m_translate )
+		return translate( glm::mat4( 1.0f ), m_translate )
 			* rotation
-			* glm::scale( glm::mat4( 1.0f ), m_scale );
+			* scale( glm::mat4( 1.0f ), m_scale );
 	}
-	[[nodiscard]] const glm::vec3& GetTranslation()const
+
+	[[nodiscard]] const glm::vec3& GetTranslation() const
 	{
 		return m_translate;
 	}
-	[[nodiscard]] const glm::vec3& GetScale()const
+
+	[[nodiscard]] const glm::vec3& GetScale() const
 	{
 		return m_scale;
 	}
-	[[nodiscard]] const glm::quat& GetRotation()const
+
+	[[nodiscard]] const glm::quat& GetRotation() const
 	{
 		return m_rotation;
 	}
@@ -50,10 +54,12 @@ public:
 	{
 		m_translate = translate;
 	}
+
 	void SetScale( const glm::vec3& scale )
 	{
 		m_scale = scale;
 	}
+
 	void SetRotation( const glm::quat& rotation )
 	{
 		m_rotation = rotation;
@@ -63,35 +69,42 @@ public:
 	{
 		return m_pParent;
 	}
+
 	[[nodiscard]] CTransformComponent* GetChild( int index ) const
 	{
 		return m_childeren[index];
 	}
+
 	[[nodiscard]] uint32_t GetChildCount() const
 	{
-		return ( uint32_t ) m_childeren.size();
+		return static_cast<uint32_t>( m_childeren.size() );
 	}
+
 	void RemoveChild( CTransformComponent* transformComponent )
 	{
 		( void ) std::ranges::remove( m_childeren, transformComponent );
 	}
+
 	void RemoveAllChildren()
 	{
 		m_childeren.clear();
 	}
+
 	void ClearParent()
 	{
 		m_pParent = nullptr;
 	}
+
 	void AddChild( CTransformComponent* entity )
 	{
 		m_childeren.push_back( entity );
 	}
 
-	IEntity* GetEntity()const
+	[[nodiscard]] IEntity* GetEntity() const
 	{
 		return m_pEntity;
 	}
+
 private:
 	glm::vec3 m_translate;
 	glm::vec3 m_scale;
@@ -100,6 +113,4 @@ private:
 	CTransformComponent* m_pParent;
 	std::vector<CTransformComponent*> m_childeren;
 	IEntity* m_pEntity;
-
 };
-

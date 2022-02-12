@@ -18,7 +18,7 @@ bool BalEditor::ImportFile( const char* pPath )
 	std::string extenstion = dirPath.extension().string();
 	for ( char& character : extenstion )
 	{
-		character = static_cast<char>( std::toupper( character ) );
+		character = static_cast< char >( std::toupper( character ) );
 	}
 	if ( extenstion == ".BALBINO" || extenstion == ".BASSET" || extenstion == ".CPP" || extenstion == ".H" )
 	{
@@ -36,49 +36,47 @@ bool BalEditor::ImportFile( const char* pPath )
 	return false;
 }
 
-std::vector<SFile> BalEditor::GetFilesInPath( const std::filesystem::path& path )
+SFile BalEditor::GetData( const std::filesystem::path& path )
 {
-	std::vector<SFile> files;
-
-	for ( const auto& dirEntry : std::filesystem::directory_iterator( path ) )
+	SFile file{};
+	std::string extenstion = path.extension().string();
+	file.path = std::filesystem::relative( path );
+	file.fileName = path.filename().string();
+	for ( int i{}; i < static_cast< int >( std::size( extenstion ) ); ++i )
 	{
-		const std::filesystem::path& dirPath = dirEntry.path();
-		std::string extenstion = dirPath.extension().string();
-		EFileTypes type{};
-		for ( int i{}; i < (int)std::size( extenstion ); ++i )
-		{
-			extenstion[i] = static_cast<char>( std::toupper( extenstion[i] ) );
-		}
-
-		if ( extenstion.empty() )
-		{
-			type = EFileTypes::Folder;
-		}
-		else if ( extenstion == ".BalEditor" )
-		{
-			type = EFileTypes::Scene;
-		}
-		else if ( std::ranges::find( supportedScriptFormat, extenstion ) != supportedScriptFormat.end() )
-		{
-			type = EFileTypes::Code;
-		}
-		else if ( extenstion == ".BASSET" )
-		{
-			std::ifstream file( dirPath, std::ios::in | std::ios::binary );
-			if ( file.is_open() )
-			{
-				uint8_t value;
-				BinaryReadWrite::Read( file, value );
-				type = static_cast<EFileTypes>( value );
-				file.close();
-			}
-		}
-		files.push_back( {
-			extenstion.empty(),
-			type,
-			dirPath.filename().string(),
-			relative( dirPath )
-		} );
+		extenstion[i] = static_cast< char >( std::toupper( extenstion[i] ) );
 	}
-	return files;
+	if ( extenstion.empty() )
+	{
+		file.type = EFileTypes::Folder;
+		file.isFolder = true;
+	}
+	else if ( extenstion == ".BalEditor" )
+	{
+		file.type = EFileTypes::Scene;
+	}
+	else if ( std::ranges::find( supportedScriptFormat, extenstion ) != supportedScriptFormat.end() )
+	{
+		file.type = EFileTypes::Code;
+	}
+	else if ( extenstion == ".BASSET" )
+	{
+		std::ifstream fileStream( path, std::ios::in | std::ios::binary );
+		if ( fileStream.is_open() )
+		{
+			uint8_t value;
+			BinaryReadWrite::Read( fileStream, file.uuid );
+			BinaryReadWrite::Read( fileStream, value );
+			BinaryReadWrite::MoveCursorToEnd( fileStream );
+			BinaryReadWrite::GetCursorPosition( fileStream, file.size );
+			BinaryReadWrite::MoveCursorToStart( fileStream );
+
+			file.type = static_cast< EFileTypes >( value );
+			file.pData = malloc( file.size );
+			BinaryReadWrite::GetData( fileStream, (char*)file.pData, file.size );
+			
+			fileStream.close();
+		}
+	}
+	return file;
 }

@@ -3,15 +3,24 @@
 
 #include <IEntity.h>
 #include <IScene.h>
+
+#include "FileParcer.h"
+
 #include "Components/IDComponent.h"
 #include "Components/TransformComponent.h"
+#include "Components/MeshRendererComponent.h"
+#include "Components/CameraComponent.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <iostream>
 
 #include <string>
 
-#include "Components/CameraComponent.h"
+#include "IManager.h"
+#include "IResourceManager.h"
+#include "Material.h"
+
 
 BalEditor::CSceneHierarchy::CSceneHierarchy()
 	: m_pContext{ nullptr }
@@ -22,7 +31,7 @@ BalEditor::CSceneHierarchy::CSceneHierarchy()
 
 void BalEditor::CSceneHierarchy::Draw()
 {
-	if( m_isVisible && ImGui::Begin( "Scene Hierarchy", &m_isVisible ))
+	if ( m_isVisible && ImGui::Begin( "Scene Hierarchy", &m_isVisible ) )
 	{
 		if ( m_pContext )
 		{
@@ -43,9 +52,18 @@ void BalEditor::CSceneHierarchy::Draw()
 
 				ImGui::EndPopup();
 			}
-
 		}
 		ImGui::End();
+		if ( ImGui::BeginDragDropTarget() )
+		{
+			if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Model ) ) )
+			{
+				std::cout << "loading model: ";
+				std::cout << payload->DataSize;
+				std::cout << "\n";
+			}
+			ImGui::EndDragDropTarget();
+		}
 	}
 
 	if ( m_isVisible && ImGui::Begin( "Properties", &m_isVisible ) )
@@ -142,7 +160,7 @@ static void DrawVec3Control( const std::string& label, glm::vec3& values, const 
 	ImGui::PopID();
 }
 
-template<typename T, typename UIFunction>
+template <typename T, typename UIFunction>
 static void DrawComponent( const std::string& name, IEntity* entity, UIFunction uiFunction )
 {
 	constexpr ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
@@ -154,7 +172,7 @@ static void DrawComponent( const std::string& name, IEntity* entity, UIFunction 
 		ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 } );
 		const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
 		ImGui::Separator();
-		const bool open = ImGui::TreeNodeEx( ( void* )typeid( T ).hash_code(), treeNodeFlags, name.c_str() );
+		const bool open = ImGui::TreeNodeEx( ( void* ) typeid( T ).hash_code(), treeNodeFlags, name.c_str() );
 		ImGui::PopStyleVar(
 		);
 		ImGui::SameLine( contentRegionAvailable.x - lineHeight * 0.5f );
@@ -182,17 +200,18 @@ static void DrawComponent( const std::string& name, IEntity* entity, UIFunction 
 			entity->RemoveComponent<T>();
 	}
 }
+
 void BalEditor::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
 {
 	CIDComponent* pIdComponent = pEntity->GetComponent<CIDComponent>();
 	if ( !pIdComponent )
 		return;
 
-	const std::string tag = std::to_string( ( uint64_t ) pIdComponent->GetUUID() );
+	const std::string tag = std::to_string( static_cast<uint64_t>( pIdComponent->GetUUID() ) );
 	//todo if childeren but closed, skip
 	const uint32_t childCount{ pEntity->GetComponent<CTransformComponent>()->GetChildCount() };
 	const ImGuiTreeNodeFlags flags = ( m_pSelectionContext == pEntity ? ImGuiTreeNodeFlags_Selected : 0 ) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ( !childCount ? ImGuiTreeNodeFlags_Leaf : 0 );
-	const bool opened = ImGui::TreeNodeEx( ( void* )static_cast< uint64_t >( static_cast< uint32_t >( *pEntity ) ), flags, tag.c_str() );
+	const bool opened = ImGui::TreeNodeEx( ( void* ) static_cast<uint64_t>( static_cast<uint32_t>( *pEntity ) ), flags, tag.c_str() );
 	if ( ImGui::IsItemClicked() )
 	{
 		m_pSelectionContext = pEntity;
@@ -212,7 +231,7 @@ void BalEditor::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
 		if ( childCount )
 		{
 			constexpr ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			if ( ImGui::TreeNodeEx( reinterpret_cast< void* >( 9817239 ), treeFlags, tag.c_str() ) )
+			if ( ImGui::TreeNodeEx( reinterpret_cast<void*>( 9817239 ), treeFlags, tag.c_str() ) )
 				ImGui::TreePop();
 		}
 		ImGui::TreePop();
@@ -238,7 +257,7 @@ void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
 		DrawVec3Control( "Rotation", rotation );
 		DrawVec3Control( "Scale", scale, 1.0f );
 		component->SetScale( scale );
-		component->SetRotation( glm::quat( glm::radians( rotation ) ) );
+		component->SetRotation( glm::quat( radians( rotation ) ) );
 		component->SetTranslation( translation );
 	} );
 
@@ -258,5 +277,26 @@ void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
 		if ( changed )
 			camera.UpdateProjectionMatrix( glm::radians( perspectiveVerticalFov ), perspectiveNear, perspectiveFar );
 	} );
-}
 
+	DrawComponent<CMeshRenderComponent>( "Mesh Render Component", pEntity, [&]( auto component )
+	{
+		const CUuid meshID = component->GetMeshId();
+		const std::vector<CUuid>& materials = component->GetMaterials();
+		const std::map<uint64_t, Balbino::CMaterial*>& loadedMaterials = m_pContext->GetSystem()->GetResourceManager()->GetAllLoadedMaterials();
+		ImGui::Text( ("mesh ID: " + std::to_string(( uint64_t ) meshID)).c_str() );
+		for(auto& material : materials)
+		{
+			ImGui::Text( ("material ID: " + std::to_string(( uint64_t ) material )).c_str() );
+		}
+		for ( auto& loadedMaterial : loadedMaterials )
+		{
+			ImGui::Separator();
+			const auto& mat = loadedMaterial.second;
+			const std::unordered_map<std::string, BalVulkan::SShaderResource>& resources = mat->GetShaderResourcesMap();
+			for ( const auto & resource : resources )
+			{
+				ImGui::Text( resource.first.c_str() );
+			}
+		}
+	} );
+}

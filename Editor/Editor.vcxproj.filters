@@ -78,6 +78,15 @@
     <ClCompile Include="scr\Windows\Nodes\BrickTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="scr\Tools\FilesSystem\Inporter\CalcTangents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Tools\FilesSystem\Inporter\mikktspace.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scr\Windows\MaterialEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scr\pch.h">
@@ -147,6 +156,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="scr\Windows\Nodes\BrickTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Tools\FilesSystem\Inporter\CalcTangents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Tools\FilesSystem\Inporter\mikktspace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="scr\Windows\MaterialEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

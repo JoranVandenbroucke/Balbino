@@ -33,11 +33,11 @@ void CMapping::Draw()
 	{
 		if ( ImGui::BeginCombo( "##Mode", ToString( m_type ) ) )
 		{
-			for ( int n = 0; n < ( int ) EMode::MaxIndex; n++ )
+			for ( int n = 0; n < static_cast<int>( EMode::MaxIndex ); n++ )
 			{
-				const bool isSelected = ( ( int ) m_type == n );
-				if ( ImGui::Selectable( ToString( EMode( n ) ), isSelected ) )
-					m_type = EMode( n );
+				const bool isSelected = ( static_cast<int>( m_type ) == n );
+				if ( ImGui::Selectable( ToString( static_cast<EMode>( n ) ), isSelected ) )
+					m_type = static_cast<EMode>( n );
 
 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 				if ( isSelected )

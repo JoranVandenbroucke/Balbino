@@ -1,11 +1,17 @@
 #include "pch.h"
 #include "ShaderGraph.h"
 
+#include <FileParcer.h>
+#include <filesystem>
 #include <fstream>
 #include <imgui.h>
 #include <imnodes.h>
-#include <SDL_scancode.h>
+#include <SDL.h>
+#include <Shader.h>
+#include <sstream>
+#include <shaderc/shaderc.hpp>
 
+#include "UUID.h"
 #include "Nodes/Bump.h"
 #include "Nodes/Clamp.h"
 #include "Nodes/ColorNodes.h"
@@ -19,10 +25,10 @@
 #include "Nodes/VertexOutput.h"
 
 BalEditor::CShaderGraph::CShaderGraph()
-	:m_isVisible{ false }
+	: m_isVisible{ false }
 {
 	AddNode( EUiNodeType::VertexOutput, glm::vec2{ 420, 128 } );
-	AddNode( EUiNodeType::FragmentOutput, glm::vec2{ 420, 240 } );
+	AddNode( EUiNodeType::FragmentOutput, glm::vec2{ 420, 256 } );
 }
 
 BalEditor::CShaderGraph::~CShaderGraph()
@@ -37,25 +43,27 @@ BalEditor::CShaderGraph::~CShaderGraph()
 
 void BalEditor::CShaderGraph::Draw()
 {
-	if( m_isVisible && ImGui::Begin( "Shader Graph", &m_isVisible, ImGuiWindowFlags_MenuBar ))
+	if ( m_isVisible && ImGui::Begin( "Shader Graph", &m_isVisible, ImGuiWindowFlags_MenuBar ) )
 	{
-		if ( ImGui::BeginMenuBar() )
-		{
-			if ( ImGui::Button( "Save " ) )
-				Evaluate();
-			ImGui::EndMenuBar();
-		}
+		if ( !m_pSelfRef )
+			if ( ImGui::BeginMenuBar() )
+			{
+				if ( ImGui::Button( "Save " ) )
+					m_wantsToSave = true;
+				ImGui::EndMenuBar();
+			}
 
 		ImNodes::BeginNodeEditor();
 		if ( ImGui::BeginPopupContextWindow( "Add Node", 1, false ) )
 		{
 			ImGui::Text( "Add Node" );
-			for ( int n = 2; n < ( int ) EUiNodeType::MaxIndex; n++ )
+			ImGui::Separator();
+			for ( int n = 2; n < static_cast<int>( EUiNodeType::MaxIndex ); n++ )
 			{
-				if ( ImGui::MenuItem( ToString( EUiNodeType( n ) ) ) )
+				if ( ImGui::MenuItem( ToString( static_cast<EUiNodeType>( n ) ) ) )
 				{
 					const ImVec2 mousePos = ImGui::GetMousePos();
-					AddNode( ( EUiNodeType )n, glm::vec2{mousePos.x, mousePos.y});
+					AddNode( static_cast<EUiNodeType>( n ), glm::vec2{ mousePos.x, mousePos.y } );
 				}
 			}
 			ImGui::EndPopup();
@@ -78,7 +86,7 @@ void BalEditor::CShaderGraph::Draw()
 			if ( ImNodes::IsLinkCreated( &link.startNodeId, &link.startAttr, &link.endNodeId, &link.endAttr ) )
 			{
 				int nodeId{ link.endNodeId };
-				const auto it = std::ranges::find_if( m_nodes, [&nodeId]( INode* node )
+				const auto it = std::ranges::find_if( m_nodes, [&nodeId]( const INode* node )
 				{
 					return node->GetId() == nodeId;
 				} );
@@ -96,13 +104,13 @@ void BalEditor::CShaderGraph::Draw()
 			if ( ImNodes::IsLinkDestroyed( &linkId ) )
 			{
 				const auto iterator = std::ranges::find_if( m_links
-															, [linkId]( const SLink& link ) -> bool
-				{
-					return link.id == linkId;
-				} );
+				                                            , [linkId]( const SLink& link ) -> bool
+				                                            {
+					                                            return link.id == linkId;
+				                                            } );
 				assert( iterator != m_links.end() );
 				int nodeId{ iterator->endNodeId };
-				const auto it = std::ranges::find_if( m_nodes, [&nodeId]( INode* node )
+				const auto it = std::ranges::find_if( m_nodes, [&nodeId]( const INode* node )
 				{
 					return node->GetId() == nodeId;
 				} );
@@ -110,6 +118,8 @@ void BalEditor::CShaderGraph::Draw()
 				m_links.erase( iterator );
 			}
 		}
+		if ( m_wantsToSave )
+			Evaluate();
 		ImGui::End();
 	}
 }
@@ -120,10 +130,34 @@ void BalEditor::CShaderGraph::ShowWindow()
 	ImGui::SetWindowFocus( "Shader Graph" );
 }
 
+void BalEditor::CShaderGraph::OpenShader( const std::filesystem::path& path ) const
+{
+	std::ifstream file( path.string().c_str(), std::ios::in | std::ios::binary );
+	if ( !file.is_open() )
+		return;
+
+	uint64_t uuid;
+	uint8_t type;
+	uint64_t graphSize;
+	uint64_t vertexSPRV;
+	uint64_t fragmentSPRV;
+	BinaryReadWrite::Read( file, uuid );
+	BinaryReadWrite::Read( file, type );
+	BinaryReadWrite::Read( file, graphSize );
+	BinaryReadWrite::Read( file, vertexSPRV );
+	BinaryReadWrite::Read( file, fragmentSPRV );
+	auto pGraphData = static_cast<char*>( malloc( graphSize ) );
+	BinaryReadWrite::Read( file, pGraphData, graphSize );
+
+	ImNodes::LoadCurrentEditorStateFromIniString( pGraphData, graphSize );
+	free( pGraphData );
+	file.close();
+}
+
 std::vector<BalEditor::CShaderGraph::SLink> BalEditor::CShaderGraph::GetNeighbors( const int currentNode )
 {
 	std::vector<SLink> links;
-	std::vector<SLink>::iterator it = m_links.begin();
+	auto it = m_links.begin();
 
 	while ( ( it = std::find_if( it, m_links.end(), [&currentNode]( const SLink& link )
 	{
@@ -133,84 +167,151 @@ std::vector<BalEditor::CShaderGraph::SLink> BalEditor::CShaderGraph::GetNeighbor
 		links.push_back( *it );
 		++it;
 	}
-	std::reverse( links.begin(), links.end() );
+	std::ranges::reverse( links );
 	return links;
 }
 
 void BalEditor::CShaderGraph::Evaluate()
 {
-	std::vector<INode*> postOrder;
-	std::vector<INode*> stack;
-
-	stack.push_back( m_nodes[0] );
-
-	//todo: save nodes that are used multiple times to separate variable
-	while ( !stack.empty() )
+	if ( m_currentName.empty() )
 	{
-		INode* pCurrentNode = stack.back();
-		stack.pop_back();
+		ImGui::OpenPopup( "Enter Name" );
 
-		postOrder.push_back( pCurrentNode );
-
-		std::vector connected{ GetNeighbors( pCurrentNode->GetId() ) };
-		for ( const SLink& neighbor : connected )
+		// Always center this window when appearing
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ) );
+		if ( ImGui::BeginPopupModal( "Enter Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize ) )
 		{
-			int nodeId = neighbor.startNodeId;
-			auto nodeIterator = std::ranges::find_if( m_nodes, [nodeId]( INode* pNode )
+			char name[64]{};
+			if ( ImGui::InputText( "##shader name", name, 64, ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue ) )
 			{
-				return pNode->GetId() == nodeId;
-			} );
-			stack.push_back( *nodeIterator );
+				m_currentName.append( name, std::find_if( name, name + 64, []( char c )
+				{
+					return c == '\0';
+				} ) );
+			}
+			ImGui::EndPopup();
 		}
 	}
 
-	std::ofstream verextFile{ "shader.vert", std::ios::out | std::ios::binary };
-	std::vector<INode*>::iterator nextNode{};
-	if ( postOrder.empty() )
-		nextNode = postOrder.end();
-	else
-		nextNode = postOrder.begin() + 1;
-
-	m_nodes[0]->Evaluate( nextNode, postOrder.end(), verextFile );
-
-	//add fragment shader
-	postOrder.clear();
-	stack.clear();
-
-	stack.push_back( m_nodes[1] );
-
-	//todo: save nodes that are used multiple times to separate variable
-	while ( !stack.empty() )
+	if ( !m_currentName.empty() )
 	{
-		INode* pCurrentNode = stack.back();
-		stack.pop_back();
+		std::vector<INode*> postOrder;
+		std::vector<INode*> stack;
 
-		postOrder.push_back( pCurrentNode );
+		stack.push_back( m_nodes[0] );
 
-		std::vector connected{ GetNeighbors( pCurrentNode->GetId() ) };
-		for ( const SLink& neighbor : connected )
+		//todo: save nodes that are used multiple times to separate variable
+		while ( !stack.empty() )
 		{
-			int nodeId = neighbor.startNodeId;
-			auto nodeIterator = std::ranges::find_if( m_nodes, [nodeId]( INode* pNode )
+			INode* pCurrentNode = stack.back();
+			stack.pop_back();
+
+			postOrder.push_back( pCurrentNode );
+
+			std::vector connected{ GetNeighbors( pCurrentNode->GetId() ) };
+			for ( const SLink& neighbor : connected )
 			{
-				return pNode->GetId() == nodeId;
-			} );
-			stack.push_back( *nodeIterator );
+				int nodeId = neighbor.startNodeId;
+				auto nodeIterator = std::ranges::find_if( m_nodes, [nodeId]( const INode* pNode )
+				{
+					return pNode->GetId() == nodeId;
+				} );
+				stack.push_back( *nodeIterator );
+			}
 		}
+
+		std::stringstream vertexFile{ std::ios::out | std::ios::binary };
+		std::vector<INode*>::iterator nextNode{};
+		if ( postOrder.empty() )
+			nextNode = postOrder.end();
+		else
+			nextNode = postOrder.begin() + 1;
+
+		m_nodes[0]->Evaluate( nextNode, postOrder.end(), vertexFile );
+
+		//add fragment shader
+		postOrder.clear();
+		stack.clear();
+
+		stack.push_back( m_nodes[1] );
+
+		//todo: save nodes that are used multiple times to separate variable
+		while ( !stack.empty() )
+		{
+			INode* pCurrentNode = stack.back();
+			stack.pop_back();
+
+			postOrder.push_back( pCurrentNode );
+
+			std::vector connected{ GetNeighbors( pCurrentNode->GetId() ) };
+			for ( const SLink& neighbor : connected )
+			{
+				int nodeId = neighbor.startNodeId;
+				auto nodeIterator = std::ranges::find_if( m_nodes, [nodeId]( const INode* pNode )
+				{
+					return pNode->GetId() == nodeId;
+				} );
+				stack.push_back( *nodeIterator );
+			}
+		}
+
+		std::stringstream fragmentFile{ std::ios::out | std::ios::binary };
+		if ( postOrder.empty() )
+			nextNode = postOrder.end();
+		else
+			nextNode = postOrder.begin() + 1;
+
+		m_nodes[1]->Evaluate( nextNode, postOrder.end(), fragmentFile );
+
+		//todo: save nodes graph
+		uint64_t graphSize{};
+		const char* pGraphData{ ImNodes::SaveCurrentEditorStateToIniString( &graphSize ) };
+
+		const shaderc::Compiler compiler;
+		shaderc::CompileOptions options;
+		options.SetTargetEnvironment( shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2 );
+		options.SetOptimizationLevel( shaderc_optimization_level_performance );
+		options.SetIncluder( std::make_unique<BalVulkan::CFileIncluder>() );
+		shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv( vertexFile.str().data(), vertexFile.str().size(), shaderc_vertex_shader, ( "../Data/Editor/Shaders/" + m_currentName + ".vert" ).c_str(), options );
+		if ( result.GetCompilationStatus() != shaderc_compilation_status_success )
+		{
+			//handle errors
+			std::cout << result.GetErrorMessage();
+			assert( false );
+		}
+		const std::vector vertexSPRV( result.cbegin(), result.cend() );
+
+		result = compiler.CompileGlslToSpv( fragmentFile.str().data(), fragmentFile.str().size(), shaderc_fragment_shader, ( "../Data/Editor/Shaders/" + m_currentName + ".frag" ).c_str(), options );
+		if ( result.GetCompilationStatus() != shaderc_compilation_status_success )
+		{
+			//handle errors
+			std::cout << result.GetErrorMessage();
+			assert( false );
+		}
+		const std::vector fragmentSPRV( result.cbegin(), result.cend() );
+
+
+		std::filesystem::path p{ std::string( "../Data/" ) + m_currentName };
+		p.replace_extension( ".basset" );
+		std::ofstream file( p.string().c_str(), std::ios::out | std::ios::binary );
+		if ( !file.is_open() )
+			return;
+
+		BinaryReadWrite::Write( file, (uint64_t)CUuid() );
+		BinaryReadWrite::Write( file, static_cast<uint8_t>( EFileTypes::Shader ) );
+		BinaryReadWrite::Write( file, graphSize );
+		BinaryReadWrite::Write( file, vertexSPRV.size() );
+		BinaryReadWrite::Write( file, fragmentSPRV.size() );
+		BinaryReadWrite::Write( file, pGraphData, graphSize );
+		BinaryReadWrite::Write( file, vertexSPRV.data(), vertexSPRV.size() * sizeof uint32_t );
+		BinaryReadWrite::Write( file, fragmentSPRV.data(), fragmentSPRV.size() * sizeof uint32_t );
+		file.close();
+		m_wantsToSave = false;
 	}
-
-	std::ofstream fragmentFile{ "shader.frag", std::ios::out | std::ios::binary };
-	if ( postOrder.empty() )
-		nextNode = postOrder.end();
-	else
-		nextNode = postOrder.begin() + 1;
-
-	m_nodes[1]->Evaluate( nextNode, postOrder.end(), fragmentFile );
-
-	//todo: save nodes graph
 }
 
-void BalEditor::CShaderGraph::AddNode( EUiNodeType type, const glm::vec2& position )
+void BalEditor::CShaderGraph::AddNode( const EUiNodeType type, const glm::vec2& position )
 {
 	INode* pNode{ nullptr };
 	const int id = m_currentId++;
@@ -261,13 +362,13 @@ void BalEditor::CShaderGraph::AddNode( EUiNodeType type, const glm::vec2& positi
 		case EUiNodeType::VectorMath:
 			pNode = new CVectorMath{ id, m_currentAttributeId };
 			break;
-		default:;
+		default: ;
 	}
-	ImNodes::SetNodeGridSpacePos( id, { position.x ,position.y } );
+	ImNodes::SetNodeScreenSpacePos( id, { position.x, position.y } );
 	m_nodes.push_back( pNode );
 }
 
-const char* BalEditor::CShaderGraph::ToString( EUiNodeType type )
+const char* BalEditor::CShaderGraph::ToString( const EUiNodeType type )
 {
 	switch ( type )
 	{

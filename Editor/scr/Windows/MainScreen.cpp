@@ -51,7 +51,7 @@ void BalEditor::CMainScreen::Draw()
 			if ( ImGui::MenuItem( "Empty" ) )
 			{
 				m_pContext->CreateEntity();
-				
+
 				std::cout << "add empty object\n";
 			}
 			if ( ImGui::MenuItem( "Image" ) )
@@ -85,7 +85,7 @@ void BalEditor::CMainScreen::Draw()
 			ImGui::EndMenu();
 		}
 		ImGui::EndMenuBar();
-		static constexpr ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+		static constexpr ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_AutoHideTabBar;
 		dockspaceID = ImGui::GetID( "MainWindowDockspace" );
 		ImGui::DockSpace( dockspaceID, ImVec2( 0.0f, 0.0f ), dockspaceFlags );
 	}

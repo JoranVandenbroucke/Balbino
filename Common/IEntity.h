@@ -1,6 +1,6 @@
 #pragma once
-#include <glm.hpp>
 #include <entt.hpp>
+#include <glm.hpp>
 
 #include "IScene.h"
 #include "UUID.h"
@@ -8,25 +8,29 @@
 struct IEntity
 {
 	IEntity( entt::entity entity, IScene* scene )
-		:m_entityHandle{ entity }
+		: m_entityHandle{ entity }
 		, m_pScene{ scene }
 	{
 	}
-	IEntity( const IEntity& other) = default;
+
+	IEntity( const IEntity& other ) = default;
+
 	IEntity( IEntity&& other ) noexcept
 		: m_entityHandle{ other.m_entityHandle }
 		, m_pScene{ other.m_pScene }
 	{
 	}
-	IEntity& operator=( const IEntity& other)
+
+	IEntity& operator=( const IEntity& other )
 	{
-		if(*this != other)
+		if ( *this != other )
 		{
 			this->m_pScene = other.m_pScene;
 			this->m_entityHandle = other.m_entityHandle;
 		}
 		return *this;
 	}
+
 	IEntity& operator=( IEntity&& other ) noexcept
 	{
 		if ( *this != other )
@@ -36,10 +40,12 @@ struct IEntity
 		}
 		return *this;
 	}
+
 	virtual ~IEntity() = default;
 	virtual operator bool() const = 0;
 	virtual operator entt::entity() const = 0;
 	virtual operator uint32_t() const = 0;
+
 	bool operator==( const IEntity& other ) const
 	{
 		return m_entityHandle == other.m_entityHandle && m_pScene == other.m_pScene;
@@ -61,44 +67,46 @@ struct IEntity
 	[[nodiscard]] virtual IEntity* GetParent() const = 0;
 	[[nodiscard]] virtual IEntity* GetLocalSimParent() const = 0;
 
-	[[nodiscard]] virtual const glm::vec3& GetPosition()const = 0;
-	[[nodiscard]] virtual const glm::quat& GetRotation()const = 0;
-	[[nodiscard]] virtual const glm::vec3& GetScale()const = 0;
+	[[nodiscard]] virtual const glm::vec3& GetPosition() const = 0;
+	[[nodiscard]] virtual const glm::quat& GetRotation() const = 0;
+	[[nodiscard]] virtual const glm::vec3& GetScale() const = 0;
 	[[nodiscard]] virtual glm::vec3 GetWorldPosition() const = 0;
 	[[nodiscard]] virtual glm::quat GetWorldRotation() const = 0;
 	[[nodiscard]] virtual glm::vec3 GetWorldScale() const = 0;
 
-	virtual void SetPosition( const glm::vec3& position )const = 0;
-	virtual void SetRotation( const glm::quat& rotation )const = 0;
-	virtual void SetScale( const glm::vec3& scale )const = 0;
-	virtual void SetPosRotScale( const glm::vec3& pos, const glm::quat& rot, const glm::vec3& scale )const = 0;
+	virtual void SetPosition( const glm::vec3& position ) const = 0;
+	virtual void SetRotation( const glm::quat& rotation ) const = 0;
+	virtual void SetScale( const glm::vec3& scale ) const = 0;
+	virtual void SetPosRotScale( const glm::vec3& pos, const glm::quat& rot, const glm::vec3& scale ) const = 0;
 
 	/////////////////////////////////////////////////
 
 	virtual bool IsUpdateEnabled() = 0;
 
-	template<typename ComponentType, typename ... Args>
+	template <typename ComponentType, typename ... Args>
 	ComponentType* CreateComponent( Args&&... args );
-	template<typename ComponentType>
+	template <typename ComponentType>
 	ComponentType* GetComponent() const;
-	template<typename ComponentType, typename ... Args>
+	template <typename ComponentType, typename ... Args>
 	ComponentType* CreateOrReplaceComponent( Args&&... args );
 
-	template<typename ComponentType>
+	template <typename ComponentType>
 	void RemoveComponent() const;
-	template<typename ComponentType>
+	template <typename ComponentType>
 	[[nodiscard]] bool HasComponent() const;
 
 	virtual void RemoveAllComponents() = 0;
 
-	[[nodiscard]] const entt::entity& GetEntity()const
+	[[nodiscard]] const entt::entity& GetEntity() const
 	{
 		return m_entityHandle;
 	}
-	[[nodiscard]] const IScene* GetScene()const
+
+	[[nodiscard]] const IScene* GetScene() const
 	{
 		return m_pScene;
 	}
+
 private:
 	entt::entity m_entityHandle{ entt::null };
 	IScene* m_pScene;

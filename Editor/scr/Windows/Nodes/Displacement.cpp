@@ -13,7 +13,7 @@ CDisplacement::CDisplacement( const int id, int& attributeStartId )
 	, m_height{ 0 }
 	, m_midLevel{ 0 }
 	, m_strength{ 0 }
-	, m_normal{0,1,0}
+	, m_normal{ 0, 1, 0 }
 {
 	attributeStartId += 5;
 }
@@ -104,11 +104,11 @@ bool CDisplacement::HasFreeAttachment( int endAttr ) const
 {
 	if ( m_attributeStartId == endAttr )
 		return m_connections[0];
-	else if ( m_attributeStartId + 1 == endAttr )
+	if ( m_attributeStartId + 1 == endAttr )
 		return m_connections[1];
-	else if ( m_attributeStartId + 2 == endAttr )
+	if ( m_attributeStartId + 2 == endAttr )
 		return m_connections[2];
-	else if ( m_attributeStartId + 3 == endAttr )
+	if ( m_attributeStartId + 3 == endAttr )
 		return m_connections[3];
 	return false;
 }
@@ -120,5 +120,5 @@ int CDisplacement::GetId() const
 
 std::vector<int> CDisplacement::GetInputs() const
 {
-	return { m_attributeStartId ,m_attributeStartId + 1, m_attributeStartId + 2, m_attributeStartId + 3};
+	return { m_attributeStartId, m_attributeStartId + 1, m_attributeStartId + 2, m_attributeStartId + 3 };
 }

@@ -33,18 +33,18 @@ uint32_t BalVulkan::CImageResource::GetDepth() const
 	return m_createInfo.extent.depth;
 }
 
-void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, BalVulkan::EImageLayout newLayout )
+void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout newLayout )
 {
 	pCommand->BeginSingleTimeCommands();
 
 	EPipelineStageFlagBits sourceStage{};
 	EPipelineStageFlagBits destinationStage{};
-	
+
 	// Create an image barrier object
 	VkImageMemoryBarrier barrier{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		.oldLayout = m_imageLayout,
-		.newLayout = ( VkImageLayout ) newLayout,	//todo:: make this "cusomizable"
+		.newLayout = static_cast<VkImageLayout>( newLayout ), //todo:: make this "cusomizable"
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.image = m_image,
@@ -144,7 +144,7 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
 		case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
 			// Image will be read in a shader (sampler, input attachment)
 			// Make sure any writes to the image have been finished
-				destinationStage = EPipelineStageFlagBits::FragmentShaderBit;
+			destinationStage = EPipelineStageFlagBits::FragmentShaderBit;
 			if ( barrier.srcAccessMask == 0 )
 			{
 				barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -186,8 +186,8 @@ void BalVulkan::CImageResource::GenerateMipMaps( uint32_t mipLevels, const CBuff
 		},
 	};
 
-	int32_t mipWidth = static_cast< int32_t >( m_createInfo.extent.width );
-	int32_t mipHeight = static_cast< int32_t >( m_createInfo.extent.height );
+	int32_t mipWidth = static_cast<int32_t>( m_createInfo.extent.width );
+	int32_t mipHeight = static_cast<int32_t>( m_createInfo.extent.height );
 
 	for ( uint32_t i = 1; i < mipLevels; i++ )
 	{
@@ -246,7 +246,7 @@ VkImageLayout BalVulkan::CImageResource::GetLayout() const
 
 BalVulkan::CImageResource* BalVulkan::CImageResource::CreateNew( const CDevice* pDevice )
 {
-	return new CImageResource{pDevice};
+	return new CImageResource{ pDevice };
 }
 
 BalVulkan::CImageResource::~CImageResource()
@@ -276,20 +276,20 @@ VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, cons
 }
 
 VkResult BalVulkan::CImageResource::Initialize( const uint32_t width,
-												const uint32_t height,
-												const uint32_t mipLevels,
-												const uint32_t layers,
-												const BalVulkan::EImageLayout layout,
-												const BalVulkan::EFormat format,
-												const BalVulkan::EImageUsageFlagBits usage)
+                                                const uint32_t height,
+                                                const uint32_t mipLevels,
+                                                const uint32_t layers,
+                                                const EImageLayout layout,
+                                                const EFormat format,
+                                                const EImageUsageFlagBits usage )
 {
 	if ( m_image )
 		return VK_ERROR_UNKNOWN;
 
-	const VkImageLayout imageLayout{( VkImageLayout ) layout};
-	const VkImageUsageFlagBits usageflags{( VkImageUsageFlagBits ) usage };
-	const VkFormat imageFormat{( VkFormat )format};
-	
+	const auto imageLayout{ static_cast<VkImageLayout>( layout ) };
+	const auto usageflags{ static_cast<VkImageUsageFlagBits>( usage ) };
+	const auto imageFormat{ static_cast<VkFormat>( format ) };
+
 	m_imageLayout = imageLayout;
 	m_createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	m_createInfo.flags = 0;
@@ -316,11 +316,12 @@ VkResult BalVulkan::CImageResource::Initialize( const uint32_t width,
 	allocInfo.allocationSize = memRequirements.size;
 	allocInfo.memoryTypeIndex = FindMemoryType( GetDevice()->GetPhysicalDeviceInfo()->device, memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT );
 
-	if ( vkAllocateMemory( GetDevice()->GetVkDevice(), &allocInfo, nullptr, &m_memory ) != VK_SUCCESS ) {
+	if ( vkAllocateMemory( GetDevice()->GetVkDevice(), &allocInfo, nullptr, &m_memory ) != VK_SUCCESS )
+	{
 		throw std::runtime_error( "failed to allocate image memory!" );
 	}
 
-	CheckVkResult( vkBindImageMemory( GetDevice()->GetVkDevice(), m_image, m_memory, 0 ));
+	CheckVkResult( vkBindImageMemory( GetDevice()->GetVkDevice(), m_image, m_memory, 0 ) );
 	return VK_SUCCESS;
 }
 
@@ -328,6 +329,7 @@ VkImage BalVulkan::CImageResource::GetImage()
 {
 	return m_image;
 }
+
 const VkImage& BalVulkan::CImageResource::GetImage() const
 {
 	return m_image;

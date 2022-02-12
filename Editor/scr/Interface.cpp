@@ -6,15 +6,12 @@
 #include "Windows/MainScreen.h"
 #include "Windows/SceneHierarchy.h"
 #include "Windows/ShaderGraph.h"
+#include "Windows/MaterialEditor.h"
 
-#include <Buffer.h>
 #include <CommandPool.h>
 #include <Device.h>
 #include <FrameBuffer.h>
-#include <ImageResource.h>
-#include <ImageView.h>
 #include <Queue.h>
-#include <Sampler.h>
 
 #include <imgui.h>
 #include <ImGuizmo.h>
@@ -33,16 +30,18 @@ BalEditor::CInterface::CInterface()
 	, m_pAssetBrowser{ nullptr }
 	, m_pSceneHierarchy{ nullptr }
 	, m_pShaderGraph{ nullptr }
+	, m_pMaterialEditor{ nullptr }
 	, m_descriptorPool{ nullptr }
 	, m_pWindow{ nullptr }
 	, m_vertexCount{ 0 }
 	, m_indexCount{ 0 }
 	, m_pContext{ nullptr }
+	, m_pDevice{ nullptr }
 {
 }
 
 
-void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CFrameBuffer* pFrameBuffer, BalVulkan::CSwapchain* pSwapchain )
+void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CFrameBuffer* pFrameBuffer, const BalVulkan::CSwapchain* pSwapchain, ISystem* pSystem )
 {
 	m_pWindow = pWindow;
 	m_pDevice = pDevice;
@@ -70,13 +69,13 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 		pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 		pool_info.maxSets = 1000 * IM_ARRAYSIZE( pool_sizes );
-		pool_info.poolSizeCount = ( uint32_t ) IM_ARRAYSIZE( pool_sizes );
+		pool_info.poolSizeCount = static_cast<uint32_t>( IM_ARRAYSIZE( pool_sizes ) );
 		pool_info.pPoolSizes = pool_sizes;
 		vkCreateDescriptorPool( pDevice->GetVkDevice(), &pool_info, nullptr, &m_descriptorPool );
 	}
 
 	ImGui_ImplVulkan_InitInfo info{};
-	info.Instance = nullptr;		//todo maybe?
+	info.Instance = nullptr; //todo maybe?
 	info.PhysicalDevice = pDevice->GetPhysicalDeviceInfo()->device;
 	info.Device = pDevice->GetVkDevice();
 	info.QueueFamily = pQueue->GetQueFamily();
@@ -99,7 +98,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 	//io.ConfigViewportsNoAutoMerge = true;
 	//io.ConfigViewportsNoTaskBarIcon = true;
-	io.DisplaySize = ImVec2( static_cast< float >( w ), static_cast< float >( h ) );
+	io.DisplaySize = ImVec2( static_cast<float>( w ), static_cast<float>( h ) );
 	io.DisplayFramebufferScale = ImVec2( 1.0f, 1.0f );
 
 	// Setup Dear ImGui style
@@ -141,8 +140,10 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 	m_pAssetBrowser = new CAssetBrowser{};
 	m_pSceneHierarchy = new CSceneHierarchy{};
 	m_pShaderGraph = new CShaderGraph{};
+	m_pMaterialEditor = new CMaterialEditor{};
 
-	m_pAssetBrowser->Initialize();
+	m_pAssetBrowser->Initialize(pSystem);
+	m_pMaterialEditor->Initialize(pSystem);
 }
 
 void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
@@ -157,6 +158,7 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 	m_pAssetBrowser->Draw();
 	m_pSceneHierarchy->Draw();
 	m_pShaderGraph->Draw();
+	m_pMaterialEditor->Draw();
 
 	ImGui::Render();
 	ImGui_ImplVulkan_RenderDrawData( ImGui::GetDrawData(), pCommandPool->GetCommandBuffer() );
@@ -178,6 +180,7 @@ void BalEditor::CInterface::Cleanup() const
 	delete m_pAssetBrowser;
 	delete m_pSceneHierarchy;
 	delete m_pShaderGraph;
+	delete m_pMaterialEditor;
 }
 
 void BalEditor::CInterface::ProcessEvent( SDL_Event e ) const
@@ -186,92 +189,92 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e ) const
 	switch ( e.type )
 	{
 		case SDL_DROPFILE:
-		{
-			char* droppedFileDir = e.drop.file;
-			assert( ImportFile( droppedFileDir ) );
-			// Shows directory of dropped file
-			SDL_free( droppedFileDir ); // Free dropped_filedir memory
-			break;
-		}
-		case SDL_KEYDOWN:
-		{
-			int key{ m_pGameView->GetGuizmoType() };
-			bool snap{};
-			switch ( e.key.keysym.sym )
 			{
-				case SDLK_g:
-					key = ImGuizmo::OPERATION::TRANSLATE;
-					break;
-				case SDLK_s:
-					key = ImGuizmo::OPERATION::SCALE;
-					break;
-				case SDLK_r:
-					if ( key == ImGuizmo::OPERATION::ROTATE )
-						key = ImGuizmo::OPERATION::ROTATE_SCREEN;
-					else
-						key = ImGuizmo::OPERATION::ROTATE;
-					break;
-				case SDLK_x:
-					if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_Y || key & ImGuizmo::OPERATION::TRANSLATE_Z )
-						key = ImGuizmo::OPERATION::TRANSLATE_X;
-					else if ( key == ImGuizmo::OPERATION::TRANSLATE_X )
-						key = ImGuizmo::OPERATION::TRANSLATE;
-
-					else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_Y || key & ImGuizmo::OPERATION::ROTATE_Z )
-						key = ImGuizmo::OPERATION::ROTATE_X;
-					else if ( key == ImGuizmo::OPERATION::ROTATE_X )
-						key = ImGuizmo::OPERATION::ROTATE;
-
-					else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_Y || key & ImGuizmo::OPERATION::SCALE_Z )
-						key = ImGuizmo::OPERATION::SCALE_X;
-					else if ( key == ImGuizmo::OPERATION::SCALE_X )
-						key = ImGuizmo::OPERATION::SCALE;
-					break;
-				case SDLK_y:
-					if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_X || key & ImGuizmo::OPERATION::TRANSLATE_Z )
-						key = ImGuizmo::OPERATION::TRANSLATE_Y;
-					else if ( key == ImGuizmo::OPERATION::TRANSLATE_Y )
-						key = ImGuizmo::OPERATION::TRANSLATE;
-
-					else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Z )
-						key = ImGuizmo::OPERATION::ROTATE_Y;
-					else if ( key == ImGuizmo::OPERATION::ROTATE_Y )
-						key = ImGuizmo::OPERATION::ROTATE;
-
-					else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Z )
-						key = ImGuizmo::OPERATION::SCALE_Y;
-					else if ( key == ImGuizmo::OPERATION::SCALE_Y )
-						key = ImGuizmo::OPERATION::SCALE;
-					break;
-				case SDLK_z:
-					if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_X || key & ImGuizmo::OPERATION::TRANSLATE_Y )
-						key = ImGuizmo::OPERATION::TRANSLATE_Z;
-					else if ( key == ImGuizmo::OPERATION::TRANSLATE_Z )
-						key = ImGuizmo::OPERATION::TRANSLATE;
-
-					else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Y )
-						key = ImGuizmo::OPERATION::ROTATE_Z;
-					else if ( key == ImGuizmo::OPERATION::ROTATE_Z )
-						key = ImGuizmo::OPERATION::ROTATE;
-
-					else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Y )
-						key = ImGuizmo::OPERATION::SCALE_Z;
-					else if ( key == ImGuizmo::OPERATION::SCALE_Z )
-						key = ImGuizmo::OPERATION::SCALE;
-					break;
-				case SDLK_LCTRL:
-				case SDLK_RCTRL:
-					snap = true;
-				default:;
+				char* droppedFileDir = e.drop.file;
+				assert( ImportFile( droppedFileDir ) );
+				// Shows directory of dropped file
+				SDL_free( droppedFileDir ); // Free dropped_filedir memory
+				break;
 			}
-			m_pGameView->SetGuizmo( key );
-			m_pGameView->SetSnap( snap );
-			break;
-		}
+		case SDL_KEYDOWN:
+			{
+				int key{ m_pGameView->GetGuizmoType() };
+				bool snap{};
+				switch ( e.key.keysym.sym )
+				{
+					case SDLK_g:
+						key = ImGuizmo::OPERATION::TRANSLATE;
+						break;
+					case SDLK_s:
+						key = ImGuizmo::OPERATION::SCALE;
+						break;
+					case SDLK_r:
+						if ( key == ImGuizmo::OPERATION::ROTATE )
+							key = ImGuizmo::OPERATION::ROTATE_SCREEN;
+						else
+							key = ImGuizmo::OPERATION::ROTATE;
+						break;
+					case SDLK_x:
+						if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_Y || key & ImGuizmo::OPERATION::TRANSLATE_Z )
+							key = ImGuizmo::OPERATION::TRANSLATE_X;
+						else if ( key == ImGuizmo::OPERATION::TRANSLATE_X )
+							key = ImGuizmo::OPERATION::TRANSLATE;
+
+						else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_Y || key & ImGuizmo::OPERATION::ROTATE_Z )
+							key = ImGuizmo::OPERATION::ROTATE_X;
+						else if ( key == ImGuizmo::OPERATION::ROTATE_X )
+							key = ImGuizmo::OPERATION::ROTATE;
+
+						else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_Y || key & ImGuizmo::OPERATION::SCALE_Z )
+							key = ImGuizmo::OPERATION::SCALE_X;
+						else if ( key == ImGuizmo::OPERATION::SCALE_X )
+							key = ImGuizmo::OPERATION::SCALE;
+						break;
+					case SDLK_y:
+						if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_X || key & ImGuizmo::OPERATION::TRANSLATE_Z )
+							key = ImGuizmo::OPERATION::TRANSLATE_Y;
+						else if ( key == ImGuizmo::OPERATION::TRANSLATE_Y )
+							key = ImGuizmo::OPERATION::TRANSLATE;
+
+						else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Z )
+							key = ImGuizmo::OPERATION::ROTATE_Y;
+						else if ( key == ImGuizmo::OPERATION::ROTATE_Y )
+							key = ImGuizmo::OPERATION::ROTATE;
+
+						else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Z )
+							key = ImGuizmo::OPERATION::SCALE_Y;
+						else if ( key == ImGuizmo::OPERATION::SCALE_Y )
+							key = ImGuizmo::OPERATION::SCALE;
+						break;
+					case SDLK_z:
+						if ( key & ImGuizmo::OPERATION::TRANSLATE || key & ImGuizmo::OPERATION::TRANSLATE_X || key & ImGuizmo::OPERATION::TRANSLATE_Y )
+							key = ImGuizmo::OPERATION::TRANSLATE_Z;
+						else if ( key == ImGuizmo::OPERATION::TRANSLATE_Z )
+							key = ImGuizmo::OPERATION::TRANSLATE;
+
+						else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Y )
+							key = ImGuizmo::OPERATION::ROTATE_Z;
+						else if ( key == ImGuizmo::OPERATION::ROTATE_Z )
+							key = ImGuizmo::OPERATION::ROTATE;
+
+						else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Y )
+							key = ImGuizmo::OPERATION::SCALE_Z;
+						else if ( key == ImGuizmo::OPERATION::SCALE_Z )
+							key = ImGuizmo::OPERATION::SCALE;
+						break;
+					case SDLK_LCTRL:
+					case SDLK_RCTRL:
+						snap = true;
+					default: ;
+				}
+				m_pGameView->SetGuizmo( key );
+				m_pGameView->SetSnap( snap );
+				break;
+			}
 		case SDL_KEYUP:
 			if ( e.key.keysym.sym == SDLK_LCTRL || e.key.keysym.sym == SDLK_RCTRL )
 				m_pGameView->SetSnap( false );
-		default:;
+		default: ;
 	}
 }
 
@@ -279,17 +282,18 @@ void BalEditor::CInterface::SetContext( IScene* pScene )
 {
 	m_pMain->SetContext( pScene, m_pAssetBrowser, m_pSceneHierarchy, m_pShaderGraph );
 	m_pSceneHierarchy->SetContext( pScene );
-	m_pGameView->SetContext( pScene, m_pSceneHierarchy );
+	m_pGameView->SetContext( pScene->GetSystem(), pScene, m_pSceneHierarchy);
+	m_pAssetBrowser->SetShaderGraphReference( m_pShaderGraph, m_pMaterialEditor );
 	m_pContext = pScene;
 }
 
 //void BalEditor::CInterface::Resize( const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
 //{
-	//m_pVertexBuffer->Release();
-	//m_pIndexBuffer->Release();
-	//m_pVertexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
-	//m_pIndexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
-	//ImGui_ImplVulkanH_CreateWindow( pCommandPool->GetCommandPool(), pQueue->GetQueue() );
+//m_pVertexBuffer->Release();
+//m_pIndexBuffer->Release();
+//m_pVertexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
+//m_pIndexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
+//ImGui_ImplVulkanH_CreateWindow( pCommandPool->GetCommandPool(), pQueue->GetQueue() );
 //}
 
 void BalEditor::CInterface::SetImGuiStyle()

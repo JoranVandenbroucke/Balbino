@@ -5,8 +5,8 @@
 
 #if defined(_DEBUG) && !defined(BL_EDITOR)
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType,
-												   uint64_t object, size_t location, int32_t messageCode,
-												   const char* pLayerPrefix, const char* pMessage, void* pUserData )
+                                                   uint64_t object, size_t location, int32_t messageCode,
+                                                   const char* pLayerPrefix, const char* pMessage, void* pUserData )
 {
 	( void ) flags;
 	( void ) object;
@@ -62,7 +62,7 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
 		VkApplicationInfo applicationInfo
 		{
 			.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-			.pNext = NULL,
+			.pNext = nullptr,
 			.pApplicationName = "Balbino",
 			.applicationVersion = 0,
 			.pEngineName = "Balbino Engine",
@@ -88,7 +88,7 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
 		createInfo.ppEnabledLayerNames = layers;
 
 		// Enable debug report extension (we need additional storage, so we duplicate the user array to add our new extension to it)
-		const auto extensionsExt{ static_cast< const char** >( malloc( sizeof( const char* ) * ( extensionsCount + 1 ) ) ) };
+		const auto extensionsExt{ static_cast<const char**>( malloc( sizeof( const char* ) * ( extensionsCount + 1 ) ) ) };
 		memcpy( extensionsExt, extensions, extensionsCount * sizeof( const char* ) );
 		extensionsExt[extensionsCount] = "VK_EXT_debug_report";
 		createInfo.enabledExtensionCount = extensionsCount + 1;
@@ -100,9 +100,9 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
 		if ( err == VK_SUCCESS )
 		{
 			vkpfn_CreateDebugReportCallbackEXT =
-				reinterpret_cast< PFN_vkCreateDebugReportCallbackEXT >( vkGetInstanceProcAddr( m_instanceHandle, "vkCreateDebugReportCallbackEXT" ) );
+				reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>( vkGetInstanceProcAddr( m_instanceHandle, "vkCreateDebugReportCallbackEXT" ) );
 			vkpfn_DestroyDebugReportCallbackEXT =
-				reinterpret_cast< PFN_vkDestroyDebugReportCallbackEXT >( vkGetInstanceProcAddr( m_instanceHandle, "vkDestroyDebugReportCallbackEXT" ) );
+				reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>( vkGetInstanceProcAddr( m_instanceHandle, "vkDestroyDebugReportCallbackEXT" ) );
 			if ( vkpfn_CreateDebugReportCallbackEXT && vkpfn_DestroyDebugReportCallbackEXT )
 			{
 				VkDebugReportCallbackCreateInfoEXT debugReportCi{};
@@ -151,20 +151,20 @@ void BalVulkan::CInstance::SetSurface( const VkSurfaceKHR& newSurface )
 
 uint8_t BalVulkan::CInstance::DeviceCount() const
 {
-	return static_cast< uint8_t >( m_physicalDevices.size() );
+	return static_cast<uint8_t>( m_physicalDevices.size() );
 }
 
 BalVulkan::CDevice* BalVulkan::CInstance::CreateDevice( uint32_t physicalDeviceIndex )
 {
-	const SPhysicalDeviceInfo& info{ m_physicalDevices[std::max( static_cast< uint32_t >( 0 ),std::min( physicalDeviceIndex, static_cast< uint32_t >( m_physicalDevices.size() ) ) )] };
+	const SPhysicalDeviceInfo& info{ m_physicalDevices[std::max( static_cast<uint32_t>( 0 ), std::min( physicalDeviceIndex, static_cast<uint32_t>( m_physicalDevices.size() ) ) )] };
 	return CDevice::Create( &info, m_pCallbacks, {}, { "VK_KHR_swapchain" } );
 }
 
 uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf )
 {
-	for ( uint32_t i = 0; i < static_cast< uint32_t >( m_physicalDevices.size() ); ++i )
+	for ( uint32_t i = 0; i < static_cast<uint32_t>( m_physicalDevices.size() ); ++i )
 	{
-		for ( uint32_t j = 0; i < static_cast< uint32_t >( m_physicalDevices[i].queueFamilyProperties.size() ); ++j )
+		for ( uint32_t j = 0; i < static_cast<uint32_t>( m_physicalDevices[i].queueFamilyProperties.size() ); ++j )
 		{
 			VkBool32 supportsPresent{ VK_FALSE };
 			vkGetPhysicalDeviceSurfaceSupportKHR( m_physicalDevices[i].device, j, surf, &supportsPresent );

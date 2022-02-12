@@ -1,6 +1,5 @@
 #pragma once
 #include <random>
-#include <xhash>
 
 static std::random_device s_randomDevice;
 static std::mt19937_64 s_engine( s_randomDevice() );
@@ -13,10 +12,12 @@ public:
 		: m_uuid{ s_uniformDistribution( s_engine ) }
 	{
 	}
+
 	CUuid( uint64_t uuid )
 		: m_uuid{ uuid }
 	{
 	}
+
 	CUuid( const CUuid& ) = default;
 	CUuid( CUuid&& ) = default;
 	CUuid& operator=( CUuid&& ) = default;
@@ -35,12 +36,12 @@ private:
 
 namespace std
 {
-	template<>
+	template <>
 	struct hash<CUuid>
 	{
 		std::size_t operator()( const CUuid& uuid ) const noexcept
 		{
-			return hash<uint64_t>()( static_cast< uint64_t >( uuid ) );
+			return hash<uint64_t>()( static_cast<uint64_t>( uuid ) );
 		}
 	};
 }

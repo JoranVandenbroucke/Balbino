@@ -30,7 +30,6 @@ BalVulkan::CBuffer::~CBuffer()
 	m_bufferMemory = VK_NULL_HANDLE;
 	m_commandPool = nullptr;
 	m_queue = nullptr;
-
 }
 
 void BalVulkan::CBuffer::Bind( const bool isIndexBuffer ) const
@@ -38,10 +37,13 @@ void BalVulkan::CBuffer::Bind( const bool isIndexBuffer ) const
 	if ( isIndexBuffer )
 		vkCmdBindIndexBuffer( m_commandPool->GetCommandBuffer(), m_buffer, 0, VK_INDEX_TYPE_UINT32 );
 	else
-		vkCmdBindVertexBuffers( m_commandPool->GetCommandBuffer(), 0, 1, &m_buffer, VK_NULL_HANDLE );
+	{
+		constexpr VkDeviceSize offsets[] = { 0 };
+		vkCmdBindVertexBuffers( m_commandPool->GetCommandBuffer(), 0, 1, &m_buffer, offsets );
+	}
 }
 
-void BalVulkan::CBuffer::CopyBufferToImage( const BalVulkan::CImageResource* pResource ) const
+void BalVulkan::CBuffer::CopyBufferToImage( const CImageResource* pResource ) const
 {
 	BeginSingleTimeCommands();
 
@@ -75,7 +77,7 @@ void BalVulkan::CBuffer::UpdateData( const void* pData, const uint64_t size )
 	vkUnmapMemory( GetDevice()->GetVkDevice(), m_bufferMemory );
 }
 
-void BalVulkan::CBuffer::Initialize( uint64_t size, BalVulkan::EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty )
+void BalVulkan::CBuffer::Initialize( uint64_t size, EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty )
 {
 	m_currentSize = size;
 	//VkBufferUsageFlags usage{};
@@ -114,7 +116,7 @@ void BalVulkan::CBuffer::Initialize( uint64_t size, BalVulkan::EBufferUsageFlagB
 	const VkMemoryAllocateInfo allocInfo{
 		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
 		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType( GetDevice()->GetPhysicalDeviceInfo()->device, memRequirements.memoryTypeBits, VkMemoryPropertyFlagBits( memoryProperty ) ),
+		.memoryTypeIndex = FindMemoryType( GetDevice()->GetPhysicalDeviceInfo()->device, memRequirements.memoryTypeBits, static_cast<VkMemoryPropertyFlagBits>( memoryProperty ) ),
 	};
 
 	CheckVkResult( vkAllocateMemory( GetDevice()->GetVkDevice(), &allocInfo, nullptr, &m_bufferMemory ), "failed to allocate buffer memory!" );
@@ -139,7 +141,7 @@ uint64_t BalVulkan::CBuffer::GetRange() const
 	return m_currentSize;
 }
 
-void BalVulkan::CBuffer::Rebuild(uint64_t size, BalVulkan::EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty )
+void BalVulkan::CBuffer::Rebuild( uint64_t size, EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty )
 {
 	if ( m_buffer )
 	{
@@ -151,7 +153,7 @@ void BalVulkan::CBuffer::Rebuild(uint64_t size, BalVulkan::EBufferUsageFlagBits 
 		vkFreeMemory( GetDevice()->GetVkDevice(), m_bufferMemory, nullptr );
 		m_bufferMemory = nullptr;
 	}
-	if(m_commandBuffer )
+	if ( m_commandBuffer )
 	{
 		vkFreeCommandBuffers( GetDevice()->GetVkDevice(), m_commandPool->GetCommandPool(), 1, &m_commandBuffer );
 		m_commandBuffer = nullptr;
@@ -199,7 +201,7 @@ void BalVulkan::CBuffer::ReassignCommandPool( const CCommandPool* commandPool )
 	m_commandPool = commandPool;
 }
 
-void BalVulkan::CBuffer::CopyBuffer( const BalVulkan::CBuffer& dstBuffer, uint64_t size ) const
+void BalVulkan::CBuffer::CopyBuffer( const CBuffer& dstBuffer, uint64_t size ) const
 {
 	BeginSingleTimeCommands();
 
@@ -236,12 +238,10 @@ void BalVulkan::CBuffer::EndSingleTimeCommands() const
 
 void BalVulkan::CBuffer::PipelineBarrier( EPipelineStageFlagBits srcStageMask, EPipelineStageFlagBits destStageMask, VkImageMemoryBarrier* pBarrier ) const
 {
-	vkCmdPipelineBarrier( m_commandBuffer, ( VkPipelineStageFlagBits ) srcStageMask, ( VkPipelineStageFlagBits ) destStageMask, 0, 0, nullptr, 0, nullptr, 1, pBarrier );
-
+	vkCmdPipelineBarrier( m_commandBuffer, static_cast<VkPipelineStageFlagBits>( srcStageMask ), static_cast<VkPipelineStageFlagBits>( destStageMask ), 0, 0, nullptr, 0, nullptr, 1, pBarrier );
 }
 
 void BalVulkan::CBuffer::Blit( const VkImage* pImage, const VkImageBlit* pBlit ) const
 {
 	vkCmdBlitImage( m_commandBuffer, *pImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, *pImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, pBlit, VK_FILTER_LINEAR );
-
 }
