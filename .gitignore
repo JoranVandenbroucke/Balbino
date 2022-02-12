@@ -35,6 +35,8 @@ bld/
 [Bb]in/
 [Bb]in-int/
 3rdParty/Vulkan/
+cmake-build-debug/
+CMakeFiles/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 .idea/
