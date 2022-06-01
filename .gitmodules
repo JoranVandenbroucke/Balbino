@@ -1,0 +1,19 @@
+[submodule "3rdParty/ASSIMP"]
+    path = 3rdParty/ASSIMP
+    url = ../../assimp/assimp.git
+    branch = master
+[submodule "3rdParty/EnTT"]
+    path = 3rdParty/EnTT
+    url = ../../skypjack/entt.git
+    branch = master
+[submodule "3rdParty/GLI"]
+    path = 3rdParty/GLI
+    url = ../../g-truc/gli.git
+    branch = master
+[submodule "3rdParty/GLM"]
+    path = 3rdParty/GLM
+    url = ../../g-truc/glm.git
+    branch = master
+[submodule "3rdParty/mINI"]
+    path = 3rdParty/mINI
+    url = ../../pulzed/mINI.git
