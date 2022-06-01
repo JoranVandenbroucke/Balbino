@@ -528,7 +528,8 @@ namespace BalVulkan
 		enum class EType
 		{
 			Image,
-			Buffer
+			Buffer,
+			DynamicBuffer
 		} descriptorType;
 
 		union DescriptorInfo
@@ -536,9 +537,10 @@ namespace BalVulkan
 			SDescriptorImageInfo image;
 			SDescriptorBufferInfo buffer;
 		} description;
+        uint32_t set, binding;
 		SDescriptorSet() = default;
-		SDescriptorSet( EType buffer, CBuffer* pModelBuffer );
-		SDescriptorSet( EType buffer, CImageView* pModelBuffer, CSampler* pSampler );
+		SDescriptorSet( EType buffer, CBuffer* pModelBuffer, uint32_t set, uint32_t binding );
+		SDescriptorSet( EType buffer, CImageView* pModelBuffer, CSampler* pSampler, uint32_t set, uint32_t binding  );
 	};
 
 	void DrawMesh( const CCommandPool* command, uint32_t indexCount, uint32_t firstIndex = 0, uint32_t firstInstance = 0, uint32_t instanceCount = 1 );

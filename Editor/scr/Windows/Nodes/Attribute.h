@@ -17,7 +17,7 @@ inline void DrawInputFloatAttribute( float& value, const int id, const bool conn
 	}
 	else
 	{
-		ImGui::Text( title );
+		ImGui::Text( "%s", title );
 	}
 	ImNodes::EndInputAttribute();
 	ImNodes::PopColorStyle();
@@ -40,7 +40,7 @@ inline void DrawInputColorAttribute( std::array<float, 3>& value, int id, bool c
 	}
 	else
 	{
-		ImGui::Text( title );
+		ImGui::Text( "%s", title );
 	}
 	ImNodes::EndInputAttribute();
 	ImNodes::PopColorStyle();
@@ -52,7 +52,7 @@ inline void DrawInputVectorAttribute( std::array<float, 3>& value, int id, bool 
 	PushColorStyle( ImNodes::ColorStyle_Pin, 0xffc76363 );
 	PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffc76363 );
 	ImNodes::BeginInputAttribute( id );
-	ImGui::Text( title );
+	ImGui::Text( "%s", title );
 	if ( !connected )
 	{
 		ImGui::PushItemWidth( 128 );
@@ -71,7 +71,7 @@ inline void DrawOutputFloatAttribute( int id, const char* title = "output:" )
 	PushColorStyle( ImNodes::ColorStyle_Pin, 0xffa1a1a1 );
 	PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffa1a1a1 );
 	ImNodes::BeginOutputAttribute( id );
-	ImGui::Text( title );
+	ImGui::Text( "%s", title );
 	ImNodes::EndOutputAttribute();
 	ImNodes::PopColorStyle();
 	ImNodes::PopColorStyle();
@@ -82,7 +82,7 @@ inline void DrawOutputColorAttribute( int id, const char* title = "output:" )
 	PushColorStyle( ImNodes::ColorStyle_Pin, 0xff29c7c7 );
 	PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xff29c7c7 );
 	ImNodes::BeginOutputAttribute( id );
-	ImGui::Text( title );
+	ImGui::Text( "%s", title );
 	ImNodes::EndOutputAttribute();
 	ImNodes::PopColorStyle();
 	ImNodes::PopColorStyle();
@@ -93,8 +93,19 @@ inline void DrawOutputVectorAttribute( int id, const char* title = "output:" )
 	PushColorStyle( ImNodes::ColorStyle_Pin, 0xffc76363 );
 	PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffc76363 );
 	ImNodes::BeginOutputAttribute( id );
-	ImGui::Text( title );
+	ImGui::Text( "%s", title );
 	ImNodes::EndOutputAttribute();
 	ImNodes::PopColorStyle();
 	ImNodes::PopColorStyle();
+}
+
+inline void DrawOutputTextureAttribute(int id, const char* title = "output: ")
+{
+    PushColorStyle( ImNodes::ColorStyle_Pin, 0xff6363c7 );
+    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xff6363c7 );
+    ImNodes::BeginOutputAttribute( id );
+    ImGui::Text( "%s", title );
+    ImNodes::EndOutputAttribute();
+    ImNodes::PopColorStyle();
+    ImNodes::PopColorStyle();
 }

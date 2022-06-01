@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Base.h"
 #include "Common.h"
 
@@ -6,20 +7,26 @@
 
 namespace BalVulkan
 {
-	class CImageResource;
-	class CShaderPipeline;
+    class CImageResource;
+    class CShaderPipeline;
 
-	class CDescriptorSet final : public CDeviceObject
-	{
-	public:
-		explicit CDescriptorSet( const CDevice* device );
+    class CDescriptorSet final : public CDeviceObject
+    {
+    public:
+        explicit CDescriptorSet(const CDevice* device);
 
-		void Initialize( const CShaderPipeline* pShaderPipeline, const std::vector<SDescriptorSet>& descriptorSetsInfo );
-		const VkDescriptorSet& GetDescriptorSet() const;
+        void Initialize(const CShaderPipeline* pShaderPipeline, const std::vector< SDescriptorSet >& descriptorSetsInfo);
+        const VkDescriptorSet* GetDescriptorSets() const;
 
-		static CDescriptorSet* CreateNew( const CDevice* pDevice );
-	private:
-		VkDescriptorSet m_descriptorSet;
-		VkDescriptorPool m_descriptorPool;
-	};
+        static CDescriptorSet* CreateNew(const CDevice* pDevice);
+
+        uint32_t GetDynamicCount() const;
+        uint32_t GetDescriptorSetCount() const;
+
+    private:
+        uint32_t m_dynamicCount;
+
+        VkDescriptorSet m_descriptorSet;
+        VkDescriptorPool m_descriptorPool;
+    };
 }

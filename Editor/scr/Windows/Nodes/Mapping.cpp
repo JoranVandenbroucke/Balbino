@@ -1,7 +1,7 @@
-#include "pch.h"
 #include "Mapping.h"
 
 #include <string>
+#include <format>
 
 #include "Attribute.h"
 #include "imgui.h"
@@ -14,13 +14,13 @@ CMapping::CMapping( const int id, int& attributeStartId )
 	, m_position{}
 	, m_rotation{}
 	, m_scale{}
+	, m_type{Point}
 {
 	attributeStartId += 5;
 }
 
 CMapping::~CMapping()
-{
-}
+= default;
 
 void CMapping::Draw()
 {
@@ -28,7 +28,7 @@ void CMapping::Draw()
 	ImNodes::BeginNode( m_id );
 
 	ImNodes::BeginNodeTitleBar();
-	ImGui::Text( ToString( m_type ) );
+	ImGui::Text( "%s", ToString( m_type ) );
 	ImNodes::EndNodeTitleBar();
 	{
 		if ( ImGui::BeginCombo( "##Mode", ToString( m_type ) ) )
@@ -81,69 +81,67 @@ void CMapping::Detach( int endAttr )
 		m_connected[3] = false;
 }
 
-void CMapping::Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType )
+std::string CMapping::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
 {
 	( void ) begin;
-	( void ) end;
-	( void ) output;
+	( void ) bindings;
 	( void ) attributeType;
-	//todo add include
-	if ( attributeType == EAttributeType::Float )
-		output << "( ";
+    includes.insert("mapping.glsl");
+    std::string shader;
 	switch ( m_type )
 	{
 		case Point:
-			output << "MappingPoint( ";
-			break;
-		case Texture:
-			output << "MappingTexture( ";
-			break;
+            shader = std::format( "MappingPoint({},{},{},{})"
+                    , m_connected[0] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_vector[0] , m_vector[1] , m_vector[2] )
+                    , m_connected[1] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_position[0] , m_position[1] , m_position[2] )
+                    , m_connected[2] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_rotation[0] , m_rotation[1] , m_rotation[2] )
+                    , m_connected[3] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_scale[0] , m_scale[1] , m_scale[2] )
+            );
+            break;
+        case Texture:
+            shader = std::format( "MappingTexture({},{},{},{})"
+                    , m_connected[0] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_vector[0] , m_vector[1] , m_vector[2] )
+                    , m_connected[1] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_position[0] , m_position[1] , m_position[2] )
+                    , m_connected[2] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_rotation[0] , m_rotation[1] , m_rotation[2] )
+                    , m_connected[3] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_scale[0] , m_scale[1] , m_scale[2] )
+            );
+            break;
 		case Vector:
-			output << "MappingVector( ";
+            shader = std::format( "MappingVector({},{},{},{})"
+                    , m_connected[0] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_vector[0] , m_vector[1] , m_vector[2] )
+                    , m_connected[1] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_position[0] , m_position[1] , m_position[2] )
+                    , m_connected[2] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_rotation[0] , m_rotation[1] , m_rotation[2] )
+                    , m_connected[3] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_scale[0] , m_scale[1] , m_scale[2] )
+            );
+
 			break;
 		case Normal:
-			output << "MappingNormal( ";
+            shader = std::format( "MappingNormal({},{},{},{})"
+                    , m_connected[0] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_vector[0] , m_vector[1] , m_vector[2] )
+                    , m_connected[1] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_position[0] , m_position[1] , m_position[2] )
+                    , m_connected[2] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_rotation[0] , m_rotation[1] , m_rotation[2] )
+                    , m_connected[3] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : std::format("vec3({},{},{})" , m_scale[0] , m_scale[1] , m_scale[2] )
+            );
 			break;
-	}
+        case MaxIndex:
+            break;
+    }
 
-	if ( m_connected[0] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-	else
-		output << "vec3( " << std::to_string( m_vector[0] ) << ", " << std::to_string( m_vector[1] ) << ", " << std::to_string( m_vector[2] ) << ")";
-
-	output << ", ";
-	if ( m_connected[1] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-	else
-		output << "vec3( " << std::to_string( m_position[0] ) << ", " << std::to_string( m_position[1] ) << ", " << std::to_string( m_position[2] ) << ")";
-
-	output << ", ";
-	if ( m_connected[2] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-	else
-		output << "vec3( " << std::to_string( m_rotation[0] ) << ", " << std::to_string( m_rotation[1] ) << ", " << std::to_string( m_rotation[2] ) << ")";
-
-	output << ", ";
-	if ( m_connected[3] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-	else
-		output << "vec3( " << std::to_string( m_scale[0] ) << ", " << std::to_string( m_scale[1] ) << ", " << std::to_string( m_scale[2] ) << ")";
-
-	output << " )";
 	if ( attributeType == EAttributeType::Float )
-		output << " ).x";
+        shader += ".x";
+    return shader;
 }
 
 bool CMapping::HasFreeAttachment( int endAttr ) const
 {
 	if ( m_attributeStartId == endAttr )
-		return m_connected[0];
+		return !m_connected[0];
 	if ( m_attributeStartId + 1 == endAttr )
-		return m_connected[1];
+		return !m_connected[1];
 	if ( m_attributeStartId + 2 == endAttr )
-		return m_connected[2];
+		return !m_connected[2];
 	if ( m_attributeStartId + 3 == endAttr )
-		return m_connected[3];
+		return !m_connected[3];
 	return false;
 }
 
@@ -169,6 +167,8 @@ const char* CMapping::ToString( EMode type )
 			return "Vector";
 		case Normal:
 			return "Normal";
-	}
+        case MaxIndex:
+            break;
+    }
 	return "";
 }

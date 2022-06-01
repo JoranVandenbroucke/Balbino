@@ -1,6 +1,6 @@
 #pragma once
 //#include "UUID.h"
-#include <entt.hpp>
+#include "entt/entt.hpp"
 #include "Entity.h"
 #include "IScene.h"
 #include "../Renderer/VertexBuffer.h"
@@ -13,7 +13,7 @@ namespace Balbino
 	class CScene final : public IScene
 	{
 	public:
-		CScene() = default;
+		CScene();
 		~CScene() override;
 		CScene( const CScene& ) = delete;
 		CScene( CScene&& ) = delete;
@@ -66,6 +66,8 @@ namespace Balbino
 		uint32_t m_viewportHeight;
 		SLightObject m_sLightObject;
 		std::unordered_map<uint32_t, CEntity> m_entityMap;
+
+        float m_timer;
 
 		Balbino::CVertexBuffer* m_instanceBuffer;
 		BalVulkan::CBuffer* m_pModelBuffer;

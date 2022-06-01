@@ -7,7 +7,7 @@
 //#pragma warning(disable:4324)
 //#define GLM_FORCE_RADIANS
 //#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include "InputButtons.h"
 
 namespace Balbino
@@ -66,7 +66,7 @@ bool Balbino::CInputHandler::BindAxis( const char* axisName, UserClass* pObject,
 	if ( !pObject )
 		return false;
 	std::function<void( float )> funct = std::bind( std::move( func ), pObject, std::placeholders::_1 );
-	m_inputsAxisBinding.emplace( axisName, DBG_NEW CInputAxisBinding{ .value = 0, .function = funct } );
+	m_inputsAxisBinding.emplace( axisName, new CInputAxisBinding{ .value = 0, .function = funct } );
 
 	return true;
 }

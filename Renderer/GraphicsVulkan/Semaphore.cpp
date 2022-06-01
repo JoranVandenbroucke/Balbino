@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Semaphore.h"
 
 #include "Device.h"

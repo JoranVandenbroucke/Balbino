@@ -1,8 +1,8 @@
 #pragma once
 #include <cmath>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
-#include <gtx/matrix_decompose.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
 
 namespace Balbino::BalMath
 {

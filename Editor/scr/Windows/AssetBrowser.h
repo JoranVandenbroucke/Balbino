@@ -63,9 +63,10 @@ namespace BalEditor
 
 		const ISystem* m_pSystem;
 
-		bool m_isVisible;
-		bool m_newFile;
-		float m_size;
+        uint64_t m_newFileFronID;
+        float m_size;
+        bool m_isVisible;
+        bool m_newFile;
 
 		std::vector<SFile> m_currentDirectory;
 		std::vector<SFile> m_files;
@@ -74,5 +75,6 @@ namespace BalEditor
 		void CreateMaterial( const SFile& file, std::string_view name ) const;
 		void DrawTree(const std::string& path, uint32_t& nodeIdx );
 		void GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory );
-	};
+        void HandelSelected(const SFile& currentFile, bool isSelected);
+    };
 }

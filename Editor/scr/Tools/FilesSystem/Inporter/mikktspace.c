@@ -924,7 +924,8 @@ static SVec3 GetTexCoord( const SMikkTSpaceContext* pContext, const int index )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-
+#pragma warning(push)
+#pragma warning(disable:4201)
 typedef union
 {
 	struct
@@ -933,6 +934,7 @@ typedef union
 	};
 	int array[3];
 } SEdge;
+#pragma warning(pop)
 
 static void BuildNeighborsFast( STriInfo pTriInfos[], SEdge* pEdges, const int piTriListIn[], const int iNrTrianglesIn );
 static void BuildNeighborsSlow( STriInfo pTriInfos[], const int piTriListIn[], const int iNrTrianglesIn );

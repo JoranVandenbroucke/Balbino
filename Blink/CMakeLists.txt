@@ -33,5 +33,5 @@ if(MSVC)
 endif()
 
 target_compile_definitions(blink PUBLIC
-        NOMINMAX
+        "NOMINMAX;"
         )

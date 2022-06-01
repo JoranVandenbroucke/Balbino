@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Queue.h"
 
 #include "CommandPool.h"
@@ -72,7 +71,7 @@ bool BalVulkan::CQueue::PresentToScreen( const CSwapchain* pSwapchain, const CSe
 	};
 	const VkResult result{ vkQueuePresentKHR( m_queue, &presentInfo ) };
 
-	CheckVkResult( result );
+	CheckVkResult( result, "", static_cast<VkResult>(VK_SUCCESS | VK_ERROR_OUT_OF_DATE_KHR | VK_SUBOPTIMAL_KHR));
 	return ( result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR );
 }
 

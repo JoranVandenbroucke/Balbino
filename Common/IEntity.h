@@ -1,6 +1,8 @@
 #pragma once
-#include <entt.hpp>
-#include <glm.hpp>
+#include <entt/entt.hpp>
+#pragma warning(push)
+#pragma warning(disable:4201)
+#include <glm/glm.hpp>
 
 #include "IScene.h"
 #include "UUID.h"
@@ -153,3 +155,4 @@ bool IEntity::HasComponent() const
 {
 	return m_pScene->GetRegistry().all_of<ComponentType>( m_entityHandle );
 }
+#pragma warning(pop)

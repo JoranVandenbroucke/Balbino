@@ -1,16 +1,20 @@
-#include "pch.h"
 #include "Common.h"
 #include "CommandPool.h"
 
-BalVulkan::SDescriptorSet::SDescriptorSet( EType buffer, CBuffer* pModelBuffer )
+BalVulkan::SDescriptorSet::SDescriptorSet( EType buffer, CBuffer* pModelBuffer, uint32_t set, uint32_t binding  )
 	: descriptorType{ buffer }
-	, description{ .buffer = pModelBuffer }
+	, description{ .buffer = {pModelBuffer} }
+    , set(set)
+    , binding{binding}
 {
 }
 
-BalVulkan::SDescriptorSet::SDescriptorSet( EType buffer, CImageView* pModelBuffer, CSampler* pSampler )
+BalVulkan::SDescriptorSet::SDescriptorSet( EType buffer, CImageView* pModelBuffer, CSampler* pSampler, uint32_t set, uint32_t binding  )
 	: descriptorType{ buffer }
 	, description{ .image = { pModelBuffer, pSampler } }
+    , set(set)
+    , binding{binding}
+
 {
 }
 

@@ -16,7 +16,7 @@ public:
 	void Draw() override;
 	void Attach( int endAttr ) override;
 	void Detach( int endAttr ) override;
-	void Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType = EAttributeType::None ) override;
+	std::string Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType ) override;
 	[[nodiscard]] bool HasFreeAttachment( int endAttr ) const override;
 	[[nodiscard]] int GetId() const override;
 	[[nodiscard]] std::vector<int> GetInputs() const override;
@@ -31,8 +31,8 @@ private:
 	 *  7.  float anisotropic 0 1 0
 	 *  8.  float sheen 0 1 0
 	 *  9.  float sheenTint 0 1 .5
-	 *  10. float clearcoat 0 1 0
-	 *  11. float clearcoatGloss 0 1 1
+	 *  10. float clearCoat 0 1 0
+	 *  11. float clearCoatGloss 0 1 1
 	 *  12. float alpha 0 1 1
 	 *  13. vector normal 0 1 0
 	 */
@@ -47,8 +47,8 @@ private:
 	float m_anisotropic{ 0.0f };
 	float m_sheen{ 0.0f };
 	float m_sheenTint{ 0.5f };
-	float m_clearcoat{ 0.0f };
-	float m_clearcoatGloss{ 0.1f };
+	float m_clearCoat{ 0.0f };
+	float m_clearCoatGloss{ 0.1f };
 	float m_alpha{ 1.0f };
 	std::array<float, 3> m_normal{ 0.0f, 1.0f, 0.0f };
 };

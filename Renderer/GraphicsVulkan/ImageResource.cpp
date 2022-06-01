@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ImageResource.h"
 
 #include "Buffer.h"
@@ -40,7 +39,7 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
 	EPipelineStageFlagBits sourceStage{};
 	EPipelineStageFlagBits destinationStage{};
 
-	// Create an image barrier object
+	// CreateNew an image barrier object
 	VkImageMemoryBarrier barrier{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		.oldLayout = m_imageLayout,
@@ -363,4 +362,10 @@ uint32_t BalVulkan::CImageResource::GetLayerCount() const
 VkFormat BalVulkan::CImageResource::GetFormat() const
 {
 	return m_createInfo.format;
+}
+
+[[maybe_unused]] BalVulkan::CImageResource* BalVulkan::CImageResource::LoadFromFile(const std::string& path)
+{
+    (void) path;
+    return nullptr;
 }

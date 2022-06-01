@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "Mesh.h"
 
 #include <utility>
@@ -16,7 +16,7 @@ Balbino::CMesh::~CMesh()
 {
 	m_vertices.clear();
 	m_indices.clear();
-};
+}
 
 void Balbino::CMesh::Initialize( const BalVulkan::CDevice * pDevice, const BalVulkan::CCommandPool * pCommandPool, const BalVulkan::CQueue * pQueue )
 {
@@ -49,4 +49,9 @@ uint64_t Balbino::CMesh::GetMaterialCount() const
 const std::vector<Balbino::SMeshMetadata>& Balbino::CMesh::GetMetaData() const
 {
 	return m_metadatas;
+}
+
+Balbino::CMesh* Balbino::CMesh::CreateNew(std::vector< BalVulkan::SVertex >& vertices, std::vector< uint32_t >& indices, std::vector< SMeshMetadata >& metaData, uint64_t uuid)
+{
+    return new CMesh{ vertices, indices, metaData, uuid};
 }

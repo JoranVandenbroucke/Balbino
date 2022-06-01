@@ -57,6 +57,7 @@ public:
 
 	const std::map<uint64_t, Balbino::CMaterial*>& GetAllLoadedMaterials() const override;
 	void ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue )override;
+    void UnloadMaterial(CUuid materialId)override;
 private:
 	std::map<uint64_t, Balbino::CTexture*> m_loadedTextureMap;
 	std::map<uint64_t, BalVulkan::CShaderPipeline*> m_loadedShaderMap;

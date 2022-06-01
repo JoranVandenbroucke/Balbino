@@ -1,6 +1,6 @@
 #pragma once
 #include <filesystem>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 
@@ -60,7 +60,7 @@ namespace BalEditor
 			//todo EnvironmentTexture,
 			//todo GradientTexture,
 			//todo IESTexture,
-			//todo ImageTexture,
+			ImageTexture,
 			//todo MagicTexture,
 			//todo MusgraveTexture,
 			//todo NoiseTexture,
@@ -121,8 +121,6 @@ namespace BalEditor
 		bool m_isVisible;
 		bool m_wantsToSave;
 		std::string m_currentName;
-
-		ImNodes::EditorContext* m_pSelfRef;
 
 		std::vector<SLink> GetNeighbors( int currentNode );
 		void Evaluate();

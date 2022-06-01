@@ -14,7 +14,7 @@ public:
 	void Draw() override;
 	void Attach( int endAttr ) override;
 	void Detach( int endAttr ) override;
-	void Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType = EAttributeType::None ) override;
+    std::string Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType = EAttributeType::None ) override;
 	[[nodiscard]] bool HasFreeAttachment( int endAttr ) const override;
 	[[nodiscard]] int GetId() const override;
 	[[nodiscard]] std::vector<int> GetInputs() const override;

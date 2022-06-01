@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "ImageView.h"
 
 #include "Device.h"

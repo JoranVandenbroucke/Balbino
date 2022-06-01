@@ -5,8 +5,7 @@ vec3 BrickTile(vec3 point, float size, float offset, float offsetFrequency, floa
 //  Here is where the offset is happening
 //  point.x += step(1.0, mod(point.y,2.0)) * offset;
 //  point.x = (rownum % offset_frequency) ? 0.0 : (brick_width * offset_amount); /* offset */
-    
-  	float rownum = floor(point[1]);
+    float rownum = floor(point[1]);
     point.x *= mod(rownum, squashFrequecy)!= 0. ? 1.0 : squash;           /* squash */
     point.x += mod(rownum, offsetFrequency) != 0.  ? 0.0 : offset; /* offset */
     return fract(point);

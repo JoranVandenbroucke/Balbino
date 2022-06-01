@@ -311,7 +311,7 @@ static void HandleQuadSelection(Delegate& delegate, ImDrawList* drawList, const 
 
             nodeOperation = NO_None;
             ImRect selectionRect(bmin, bmax);
-            for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
+            for (unsigned int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
             {
                 const auto node = delegate.GetNode(nodeIndex);
                 ImVec2 nodeRectangleMin = offset + node.mRect.Min * factor;
@@ -469,7 +469,7 @@ static bool HandleConnections(ImDrawList* drawList,
 
                     if (!alreadyExisting)
                     {
-                        for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                        for (unsigned int linkIndex = 0; linkIndex < linkCount; linkIndex++)
                         {
                             const auto link = delegate.GetLink(linkIndex);
                             if (link.mOutputNodeIndex == nl.mOutputNodeIndex && link.mOutputSlotIndex == nl.mOutputSlotIndex)
@@ -497,7 +497,7 @@ static bool HandleConnections(ImDrawList* drawList,
                 if (editingInput)
                 {
                     // remove existing link
-                    for (int linkIndex = 0; linkIndex < linkCount; linkIndex++)
+                    for (unsigned int linkIndex = 0; linkIndex < linkCount; linkIndex++)
                     {
                         const auto link = delegate.GetLink(linkIndex);
                         if (link.mOutputNodeIndex == nodeIndex && link.mOutputSlotIndex == closestConn)
@@ -856,7 +856,7 @@ void Show(Delegate& delegate, const Options& options, ViewState& viewState, bool
 
     ImGuiIO& io = ImGui::GetIO();
 
-    // Create our child canvas
+    // CreateNew our child canvas
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(1, 1));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(30, 30, 30, 200));

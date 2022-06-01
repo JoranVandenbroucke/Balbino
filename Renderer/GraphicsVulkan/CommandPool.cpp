@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "CommandPool.h"
 
 #include "DescriptorSet.h"
@@ -106,8 +105,10 @@ void BalVulkan::CCommandPool::BeginRender( CFrameBuffer* pFrameBuffer, CSwapchai
 
 void BalVulkan::CCommandPool::BindShader( CShaderPipeline* pPipeline, CDescriptorSet* pDescriptorSet ) const
 {
+    uint32_t offset{};
+//    uint32_t offset{sizeof(glm::mat4) * 3};
 	vkCmdBindPipeline( m_commandBuffers[m_currentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetPipeline() );
-	vkCmdBindDescriptorSets( m_commandBuffers[m_currentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetPipelineLayout(), 0, 1, &pDescriptorSet->GetDescriptorSet(), 0, nullptr );
+	vkCmdBindDescriptorSets( m_commandBuffers[m_currentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS, pPipeline->GetPipelineLayout(), 0, pDescriptorSet->GetDescriptorSetCount(), pDescriptorSet->GetDescriptorSets(), pDescriptorSet->GetDynamicCount(), &offset );
 }
 
 BalVulkan::CCommandPool* BalVulkan::CCommandPool::CreateNew( const CDevice* pDevice )

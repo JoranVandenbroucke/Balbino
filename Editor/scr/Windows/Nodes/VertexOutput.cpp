@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "VertexOutput.h"
 
 #include "Attribute.h"
@@ -21,10 +20,10 @@ void CVertexOutputNode::Draw()
 	ImNodes::EndNodeTitleBar();
 
 	//position
-	DrawInputVectorAttribute( m_dummy, m_attributeStartId, m_position, ":position" );
+	DrawInputVectorAttribute( m_positionFloats, m_attributeStartId, true, ":position" );
 
 	//color
-	DrawInputColorAttribute( m_dummy, m_attributeStartId + 1, m_color, ":color" );
+	DrawInputColorAttribute( m_colorFloats, m_attributeStartId + 1, true, ":color" );
 
 	ImNodes::EndNode();
 }
@@ -45,13 +44,15 @@ void CVertexOutputNode::Detach( int endAttr )
 		m_color = false;
 }
 
-void CVertexOutputNode::Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType )
+std::string CVertexOutputNode::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
 {
-	( void ) attributeType;
-	output <<
-		R"(#version 450
+	( void ) begin;
+    ( void ) bindings;
+    ( void ) includes;
+    ( void ) attributeType;
+    std::string shader{ R"(#version 450
 
-layout(set = 0, binding = 0) uniform UniformBufferObject {
+layout(set=0, binding=0) uniform UniformBufferObject {
     mat4 model;
     mat4 view;
     mat4 proj;
@@ -67,39 +68,18 @@ layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragNormal;
 layout(location = 3) out vec3 fragTangent;
-layout(location = 4) out vec4 fragWorldPosition;
+layout(location = 4) out vec4 fragWorldPos;
 
-void main() {
-)";
-
-	if ( m_position )
-	{
-		output << "    vec3 offset = ";
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-		output << R"(;
-	gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition + offset, 1.0f);
-)";
-	}
-	else
-	{
-		output << R"(    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0f);
-)";
-	}
-	if ( m_color )
-	{
-		output << "    vec3 color = ";
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Color );
-		output << R"(    fragColor = inColor * color;)";
-	}
-	else
-	{
-		output << R"(    fragColor = inColor;)";
-	}
-	output << R"(fragTexCoord = inTexCoord;
-	fragWorldPosition = ubo.model * vec4(inPosition, 1.0f);
-	fragNormal = normalize( mat3(ubo.model) * inNormal);
-	fragTangent = normalize(mat3 (ubo.model) * vec3(inTangent)) * inTangent.w;
-})";
+void main()
+{
+    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0f);
+    fragColor = inColor;
+    fragTexCoord = inTexCoord;
+    fragNormal = normalize( mat3(ubo.model) * inNormal);
+    fragTangent = normalize( mat3(ubo.model) * inTangent.xyz) * inTangent.w;
+    fragWorldPos = ubo.model * vec4(inPosition, 1.0f);
+})"};
+    return shader;
 }
 
 bool CVertexOutputNode::HasFreeAttachment( int endAttr ) const

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Fence.h"
 
 #include "Device.h"
@@ -6,7 +5,7 @@
 
 BalVulkan::CFence::CFence( const CDevice* pDevice )
 	: CDeviceObject{ pDevice }
-	, m_fence{ nullptr }
+	, m_fence{ VK_NULL_HANDLE }
 {
 }
 

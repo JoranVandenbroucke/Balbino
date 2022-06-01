@@ -368,7 +368,7 @@ namespace ImNodes
 		bool alt_mouse_dragging;
 	};
 
-	Context* g = NULL;
+	Context* g = nullptr;
 
 	namespace
 	{
@@ -376,7 +376,7 @@ namespace ImNodes
 		EditorContext& editor_context_get()
 		{
 			// No editor context was set! Did you forget to call imnodes::Initialize?
-			assert( g->editor_ctx != NULL );
+			assert( g->editor_ctx != nullptr );
 			return *g->editor_ctx;
 		}
 
@@ -1081,7 +1081,7 @@ namespace ImNodes
 			// modifier pressed. This may also result in a link detach via clicking.
 			else
 			{
-				const bool modifier_pressed = g->io.link_detach_with_modifier_click.modifier == NULL
+				const bool modifier_pressed = g->io.link_detach_with_modifier_click.modifier == nullptr
 					? false
 					: *g->io.link_detach_with_modifier_click.modifier;
 
@@ -2078,11 +2078,11 @@ namespace ImNodes
 
 	// [SECTION] API implementation
 
-	IO::EmulateThreeButtonMouse::EmulateThreeButtonMouse() : modifier( NULL )
+	IO::EmulateThreeButtonMouse::EmulateThreeButtonMouse() : modifier( nullptr )
 	{
 	}
 
-	IO::LinkDetachWithModifierClick::LinkDetachWithModifierClick() : modifier( NULL )
+	IO::LinkDetachWithModifierClick::LinkDetachWithModifierClick() : modifier( nullptr )
 	{
 	}
 
@@ -2105,7 +2105,7 @@ namespace ImNodes
 	Context* CreateContext()
 	{
 		Context* ctx = IM_NEW( Context )( );
-		if ( g == NULL )
+		if ( g == nullptr )
 			SetCurrentContext( ctx );
 		initialize( ctx );
 		return ctx;
@@ -2113,11 +2113,11 @@ namespace ImNodes
 
 	void DestroyContext( Context* ctx )
 	{
-		if ( ctx == NULL )
+		if ( ctx == nullptr )
 			ctx = g;
 		shutdown( ctx );
 		if ( g == ctx )
-			SetCurrentContext( NULL );
+			SetCurrentContext( nullptr );
 		IM_DELETE( ctx );
 	}
 
@@ -2281,12 +2281,12 @@ namespace ImNodes
 		g->mouse_pos = ImGui::GetIO().MousePos;
 		g->left_mouse_clicked = ImGui::IsMouseClicked( 0 );
 		g->left_mouse_released = ImGui::IsMouseReleased( 0 );
-		g->alt_mouse_clicked = ( g->io.emulate_three_button_mouse.modifier != NULL &&
+		g->alt_mouse_clicked = ( g->io.emulate_three_button_mouse.modifier != nullptr &&
 								 *g->io.emulate_three_button_mouse.modifier && g->left_mouse_clicked ) ||
 			ImGui::IsMouseClicked( g->io.alt_mouse_button );
 		g->left_mouse_dragging = ImGui::IsMouseDragging( 0, 0.0f );
 		g->alt_mouse_dragging =
-			( g->io.emulate_three_button_mouse.modifier != NULL && g->left_mouse_dragging &&
+			( g->io.emulate_three_button_mouse.modifier != nullptr && g->left_mouse_dragging &&
 			  ( *g->io.emulate_three_button_mouse.modifier ) ) ||
 			ImGui::IsMouseDragging( g->io.alt_mouse_button, 0.0f );
 
@@ -2738,7 +2738,7 @@ namespace ImNodes
 	bool IsNodeHovered( int* const node_id )
 	{
 		assert( g->current_scope == Scope_None );
-		assert( node_id != NULL );
+		assert( node_id != nullptr );
 
 		const bool is_hovered = g->hovered_node_idx.has_value();
 		if ( is_hovered )
@@ -2752,7 +2752,7 @@ namespace ImNodes
 	bool IsLinkHovered( int* const link_id )
 	{
 		assert( g->current_scope == Scope_None );
-		assert( link_id != NULL );
+		assert( link_id != nullptr );
 
 		const bool is_hovered = g->hovered_link_idx.has_value();
 		if ( is_hovered )
@@ -2766,7 +2766,7 @@ namespace ImNodes
 	bool IsPinHovered( int* const attr )
 	{
 		assert( g->current_scope == Scope_None );
-		assert( attr != NULL );
+		assert( attr != nullptr );
 
 		const bool is_hovered = g->hovered_pin_idx.has_value();
 		if ( is_hovered )
@@ -2793,7 +2793,7 @@ namespace ImNodes
 
 	void GetSelectedNodes( int* node_ids )
 	{
-		assert( node_ids != NULL );
+		assert( node_ids != nullptr );
 
 		const EditorContext& editor = editor_context_get();
 		for ( int i = 0; i < editor.selected_node_indices.size(); ++i )
@@ -2805,7 +2805,7 @@ namespace ImNodes
 
 	void GetSelectedLinks( int* link_ids )
 	{
-		assert( link_ids != NULL );
+		assert( link_ids != nullptr );
 
 		const EditorContext& editor = editor_context_get();
 		for ( int i = 0; i < editor.selected_link_indices.size(); ++i )
@@ -2848,7 +2848,7 @@ namespace ImNodes
 			return false;
 		}
 
-		if ( attribute_id != NULL )
+		if ( attribute_id != nullptr )
 		{
 			*attribute_id = g->active_attribute_id;
 		}
@@ -2860,7 +2860,7 @@ namespace ImNodes
 	{
 		// Call this function after EndNodeEditor()!
 		assert( g->current_scope == Scope_None );
-		assert( started_at_id != NULL );
+		assert( started_at_id != nullptr );
 
 		const bool is_started = ( g->element_state_change & ElementStateChange_LinkStarted ) != 0;
 		if ( is_started )
@@ -2900,8 +2900,8 @@ namespace ImNodes
 		bool* const created_from_snap )
 	{
 		assert( g->current_scope == Scope_None );
-		assert( started_at_pin_id != NULL );
-		assert( ended_at_pin_id != NULL );
+		assert( started_at_pin_id != nullptr );
+		assert( ended_at_pin_id != nullptr );
 
 		const bool is_created = ( g->element_state_change & ElementStateChange_LinkCreated ) != 0;
 
@@ -2941,10 +2941,10 @@ namespace ImNodes
 		bool* created_from_snap )
 	{
 		assert( g->current_scope == Scope_None );
-		assert( started_at_node_id != NULL );
-		assert( started_at_pin_id != NULL );
-		assert( ended_at_node_id != NULL );
-		assert( ended_at_pin_id != NULL );
+		assert( started_at_node_id != nullptr );
+		assert( started_at_pin_id != nullptr );
+		assert( ended_at_node_id != nullptr );
+		assert( ended_at_pin_id != nullptr );
 
 		const bool is_created = ( g->element_state_change & ElementStateChange_LinkCreated ) != 0;
 
@@ -3032,7 +3032,7 @@ namespace ImNodes
 		const EditorContext* const editor_ptr,
 		size_t* const data_size )
 	{
-		assert( editor_ptr != NULL );
+		assert( editor_ptr != nullptr );
 		const EditorContext& editor = *editor_ptr;
 
 		g->text_buffer.clear();
@@ -3052,7 +3052,7 @@ namespace ImNodes
 			}
 		}
 
-		if ( data_size != NULL )
+		if ( data_size != nullptr )
 		{
 			*data_size = g->text_buffer.size();
 		}
@@ -3075,7 +3075,7 @@ namespace ImNodes
 			return;
 		}
 
-		EditorContext& editor = editor_ptr == NULL ? editor_context_get() : *editor_ptr;
+		EditorContext& editor = editor_ptr == nullptr ? editor_context_get() : *editor_ptr;
 
 		char* buf = ( char* ) ImGui::MemAlloc( data_size + 1 );
 		const char* buf_end = buf + data_size;
@@ -3083,8 +3083,8 @@ namespace ImNodes
 		buf[data_size] = 0;
 
 		void ( *line_handler )( EditorContext&, const char* );
-		line_handler = NULL;
-		char* line_end = NULL;
+		line_handler = nullptr;
+		char* line_end = nullptr;
 		for ( char* line = buf; line < buf_end; line = line_end + 1 )
 		{
 			while ( *line == '\n' || *line == '\r' )
@@ -3116,7 +3116,7 @@ namespace ImNodes
 				}
 			}
 
-			if ( line_handler != NULL )
+			if ( line_handler != nullptr )
 			{
 				line_handler( editor, line );
 			}

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "DescriptorSet.h"
 
 #include "Device.h"
@@ -9,6 +8,7 @@
 BalVulkan::CDescriptorSet::CDescriptorSet( const CDevice* pDevice )
 	: CDeviceObject{ pDevice }
 	, m_descriptorSet{}
+	, m_dynamicCount{}
 	, m_descriptorPool{ VK_NULL_HANDLE }
 {
 }
@@ -21,8 +21,10 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
 	{
 		if ( i.descriptorType == SDescriptorSet::EType::Buffer )
 			poolSizes.emplace_back( VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 );
+        else if ( i.descriptorType == SDescriptorSet::EType::DynamicBuffer )
+            poolSizes.emplace_back( VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1 );
 		else
-			poolSizes.emplace_back( VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 );
+            poolSizes.emplace_back( VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 );
 	}
 
 	const VkDescriptorPoolCreateInfo poolInfo{
@@ -54,20 +56,35 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
 	std::vector<VkDescriptorImageInfo> imageInfos( descriptorSetsInfo.size() );
 	for ( uint32_t i = 0; i < static_cast< uint32_t >( descriptorSetsInfo.size() ); ++i )
 	{
-		if ( descriptorSetsInfo[i].descriptorType == SDescriptorSet::EType::Buffer )
-		{
-			bufferInfos[i].buffer = descriptorSetsInfo[i].description.buffer.buffer->GetBuffer();
-			bufferInfos[i].offset = 0;
-			bufferInfos[i].range = descriptorSetsInfo[i].description.buffer.buffer->GetRange();
+        if ( descriptorSetsInfo[i].descriptorType == SDescriptorSet::EType::Buffer )
+        {
+            bufferInfos[i].buffer = descriptorSetsInfo[i].description.buffer.buffer->GetBuffer();
+            bufferInfos[i].offset = 0;
+            bufferInfos[i].range = descriptorSetsInfo[i].description.buffer.buffer->GetRange();
 
-			descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrites[i].dstSet = m_descriptorSet;
-			descriptorWrites[i].dstBinding = i;
-			descriptorWrites[i].dstArrayElement = 0;
-			descriptorWrites[i].descriptorCount = 1;
-			descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrites[i].pBufferInfo = &bufferInfos[i];
-		}
+            descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[i].dstSet = m_descriptorSet;
+            descriptorWrites[i].dstBinding = descriptorSetsInfo[i].binding;
+            descriptorWrites[i].dstArrayElement = 0;
+            descriptorWrites[i].descriptorCount = 1;
+            descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            descriptorWrites[i].pBufferInfo = &bufferInfos[i];
+        }
+        else if ( descriptorSetsInfo[i].descriptorType == SDescriptorSet::EType::DynamicBuffer )
+        {
+            bufferInfos[i].buffer = descriptorSetsInfo[i].description.buffer.buffer->GetBuffer();
+            bufferInfos[i].offset = 0;
+            bufferInfos[i].range = descriptorSetsInfo[i].description.buffer.buffer->GetRange();
+
+            descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            descriptorWrites[i].dstSet = m_descriptorSet;
+            descriptorWrites[i].dstBinding = descriptorSetsInfo[i].binding;
+            descriptorWrites[i].dstArrayElement = 0;
+            descriptorWrites[i].descriptorCount = 1;
+            descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+            descriptorWrites[i].pBufferInfo = &bufferInfos[i];
+            ++m_dynamicCount;
+        }
 		else
 		{
 			imageInfos[i].sampler = descriptorSetsInfo[i].description.image.sampler->GetSampler();
@@ -76,7 +93,7 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
 
 			descriptorWrites[i].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[i].dstSet = m_descriptorSet;
-			descriptorWrites[i].dstBinding = i;
+			descriptorWrites[i].dstBinding = descriptorSetsInfo[i].binding;
 			descriptorWrites[i].dstArrayElement = 0;
 			descriptorWrites[i].descriptorCount = 1;
 			descriptorWrites[i].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -87,12 +104,22 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
 	vkUpdateDescriptorSets( GetDevice()->GetVkDevice(), static_cast< uint32_t >( descriptorWrites.size() ), descriptorWrites.data(), 0, nullptr );
 }
 
-const VkDescriptorSet& BalVulkan::CDescriptorSet::GetDescriptorSet() const
+const VkDescriptorSet* BalVulkan::CDescriptorSet::GetDescriptorSets() const
 {
-	return m_descriptorSet;
+	return &m_descriptorSet;
 }
 
 BalVulkan::CDescriptorSet* BalVulkan::CDescriptorSet::CreateNew( const CDevice* pDevice )
 {
 	return new CDescriptorSet{ pDevice };
+}
+
+uint32_t BalVulkan::CDescriptorSet::GetDynamicCount() const
+{
+    return m_dynamicCount;
+}
+
+uint32_t BalVulkan::CDescriptorSet::GetDescriptorSetCount() const
+{
+    return 1u;
 }

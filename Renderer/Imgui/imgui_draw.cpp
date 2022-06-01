@@ -2076,7 +2076,7 @@ ImFont* ImFontAtlas::AddFont(const ImFontConfig* font_cfg)
     IM_ASSERT(font_cfg->FontData != NULL && font_cfg->FontDataSize > 0);
     IM_ASSERT(font_cfg->SizePixels > 0.0f);
 
-    // Create new font
+    // CreateNew new font
     if (!font_cfg->MergeMode)
         Fonts.push_back(IM_NEW(ImFont));
     else
@@ -3170,7 +3170,7 @@ void ImFont::BuildLookupTable()
         Used4kPagesMap[page_n >> 3] |= 1 << (page_n & 7);
     }
 
-    // Create a glyph to handle TAB
+    // CreateNew a glyph to handle TAB
     // FIXME: Needs proper TAB handling but it needs to be contextualized (or we could arbitrary say that each string starts at "column 0" ?)
     if (FindGlyph((ImWchar)' '))
     {

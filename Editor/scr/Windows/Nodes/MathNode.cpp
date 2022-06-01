@@ -1,7 +1,8 @@
-#include "pch.h"
+
 #include "MathNode.h"
 
 #include <string>
+#include <format>
 
 #include "Attribute.h"
 #include "imgui.h"
@@ -114,7 +115,7 @@ void CMathNode::Draw()
 	ImNodes::BeginNode( m_id );
 
 	ImNodes::BeginNodeTitleBar();
-	ImGui::Text( ToString( m_currentMode ) );
+	ImGui::Text( "%s", ToString( m_currentMode ) );
 	ImNodes::EndNodeTitleBar();
 	{
 		if ( ImGui::BeginCombo( "##Mode", ToString( m_currentMode ) ) )
@@ -215,424 +216,251 @@ void CMathNode::Detach( const int endAttr )
 	}
 }
 
-void CMathNode::Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType )
+std::string CMathNode::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
 {
 	( void ) begin;
-	( void ) end;
-	( void ) output;
+	( void ) bindings;
 	( void ) attributeType;
-	if ( attributeType != EAttributeType::Float )
-		output << "vec3( ";
-	if ( m_clamp )
-		output << "clamp( ";
+    includes.insert("math.glsl");
+    std::string shader;
+
 	switch ( m_currentMode )
 	{
 		case EMode::Add:
-			output << "MathAdd(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathAdd({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+                    );
 			break;
 		case EMode::Subtract:
-			output << "MathSubtract(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathSubtract({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::Multiply:
-			output << "MathMultiply(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathMultiply({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::Divide:
-			output << "MathDivide(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			break;
+            shader = std::format("MathDivide({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
+            break;
 		case EMode::MultiplyAdd:
-			output << "MathMultiply Add(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			output << ", ";
-			if ( m_connectedC )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_c );
+            shader = std::format("MathMultiplyAdd({},{},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+                    ,m_connectedC? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_c)
+            );
 			break;
 		case EMode::Power:
-			output << "MathPower(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathPower({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::Logarithm:
-			output << "MathLogarithm(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			break;
+            shader = std::format("MathLogarithm({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
+            break;
 		case EMode::SquareRoot:
-			output << "MathSquare Root(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			break;
+            shader = std::format("MathSquareRoot({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );break;
 		case EMode::InverseSquareRoot:
-			output << "MathInverse Square Root(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathInverseSquareRoot({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Absolute:
-			output << "MathAbsolute(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathAbsolute({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Exponent:
-			output << "MathExponent(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathExponent({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Minimum:
-			output << "MathMinimum(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathMinimum({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::Maximum:
-			output << "MathMaximum(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			break;
+            shader = std::format("MathMaximum({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
+            break;
 		case EMode::LessThan:
-			output << "MathLess Than(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathLessThan({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::GreaterThan:
-			output << "MathGreater Than(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathGreaterThan({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::Sign:
-			output << "MathSign(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			break;
+            shader = std::format("MathSign({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
+            break;
 		case EMode::Compare:
-			output << "MathCompare(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			output << ", ";
-			if ( m_connectedC )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_c );
-			break;
+            shader = std::format("MathCompare({},{},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+                    ,m_connectedC? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_c)
+            );
+            break;
 		case EMode::SmoothMinimum:
-			output << "MathSmooth Minimum(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			output << ", ";
-			if ( m_connectedC )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_c );
-			break;
+            shader = std::format("MathSmoothMinimum({},{},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+                    ,m_connectedC? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_c)
+            );
+            break;
 		case EMode::SmoothMaximum:
-			output << "MathSmooth Max(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			output << ", ";
-			if ( m_connectedC )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_c );
+            shader = std::format("MathSmoothMax({},{},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+                    ,m_connectedC? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_c)
+            );
 			break;
 		case EMode::Round:
-			output << "MathRound(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathRound({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Floor:
-			output << "MathFloor(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathFloor({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Ceil:
-			output << "MathCeil(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathCeil({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Truncate:
-			output << "MathTruncate(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathTruncate({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Fraction:
-			output << "MathFraction(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathFraction({},{},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+                    ,m_connectedC? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_c)
+            );
+            shader = std::format("MathFraction({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Modulo:
-			output << "MathModulo(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathModulo({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::Wrap:
-			output << "MathWrap(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
-			output << ", ";
-			if ( m_connectedC )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_c );
+            shader = std::format("MathWrap({},{},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+                    ,m_connectedC? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_c)
+            );
 			break;
 		case EMode::Snap:
-			output << "MathSnap(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathSnap({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::PingPong:
-			output << "MathPing - Pong(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathPingPong({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::Sine:
-			output << "MathSin(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			break;
+            shader = std::format("MathSin({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
+            break;
 		case EMode::Cosine:
-			output << "MathCosine(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathCosine({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Tangent:
-			output << "MathTangent(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathTangent({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Arcsine:
-			output << "MathArcsine(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathArcsine({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Arccosine:
-			output << "MathArccosine(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathTangent({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Arctangent:
-			output << "MathArctangent(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathArctangent({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::Arctan2:
-			output << "MathArctangent2(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
-			output << ", ";
-			if ( m_connectedB )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_b );
+            shader = std::format("MathArctangent2({},{})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+                    ,m_connectedB? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_b)
+            );
 			break;
 		case EMode::HyperbolicSine:
-			output << "MathHyperbolic Sin(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathHyperbolicSin({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::HyperbolicCosine:
-			output << "MathHyperbolic Cosine(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathHyperbolicCosine({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::HyperbolicTangent:
-			output << "MathHyperbolic Tangent(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathHyperbolicTangent({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::ToRadians:
-			output << "MathTo Radians(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathToRadians({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		case EMode::ToDegrees:
-			output << "MathTo Degree(";
-			if ( m_connectedA )
-				( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-			else
-				output << std::to_string( m_a );
+            shader = std::format("MathToDegree({})"
+                    ,m_connectedA? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_a)
+            );
 			break;
 		default: ;
 	}
-	output << " )";
-	if ( m_clamp )
-		output << " )";
+    if ( m_clamp )
+        shader = std::format("clamp({})", shader);
 	if ( attributeType != EAttributeType::Float )
-		output << " )";
+        shader = std::format("vec3({})", shader);
+    return shader;
 }
 
 bool CMathNode::HasFreeAttachment( const int endAttr ) const

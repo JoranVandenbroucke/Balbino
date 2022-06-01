@@ -706,6 +706,7 @@ inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const BalVulkan
 	Write( file, value.size );
 	Write( file, value.constantId );
 	Write( file, value.qualifiers );
+	Write( file, value.resourceID );
 	Write( file, value.name );
 	return file;
 }
@@ -743,6 +744,7 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, BalVulkan::SShad
 	Read( file, value.size );
 	Read( file, value.constantId );
 	Read( file, value.qualifiers );
+	Read( file, value.resourceID );
 	Read( file, value.name );
 	if ( ( BalVulkan::EShaderType ) shaderStage == BalVulkan::EShaderType::Vertex )
 		value.stages = VK_SHADER_STAGE_VERTEX_BIT;

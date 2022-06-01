@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "InputHandler.h"
 
 Balbino::CInputHandler::CInputHandler()
@@ -140,7 +140,7 @@ void Balbino::CInputHandler::Update()
 
 void Balbino::CInputHandler::AddAxis( const char* pName, SDL_KeyCode code, float weight )
 {
-	m_inputsAxis.emplace( pName, DBG_NEW CInputAxis{
+	m_inputsAxis.emplace( pName, new CInputAxis{
 		                      .name = SDL_GetKeyName( code ), .code = static_cast<uint16_t>( code ), .weight = weight,
 	                      } );
 }

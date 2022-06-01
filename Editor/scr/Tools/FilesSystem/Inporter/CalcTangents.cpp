@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "CalcTangents.h"
 
 CCalcTangents::CCalcTangents()

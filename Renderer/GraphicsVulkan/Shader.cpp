@@ -1,9 +1,8 @@
-#include "pch.h"
 #include "Shader.h"
 
 #include <fstream>
-#include <spirv_cross.hpp>
 #include <spirv_reflect.hpp>
+#include <spirv_cross.hpp>
 #include <shaderc/shaderc.hpp>
 
 #include "Device.h"
@@ -19,7 +18,7 @@ BalVulkan::CShader::~CShader()
 
 BalVulkan::CShader::CShader( const CDevice* const device )
 	: CDeviceObject{ device }
-	, m_shaderHandle{ nullptr }
+	, m_shaderHandle{ VK_NULL_HANDLE }
 {
 }
 
@@ -66,9 +65,8 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const bool isPushConstant = reflection.get_storage_class( stageInput.id ) == spv::StorageClassPushConstant;
 		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
 			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( stageInput.base_type_id ) : spirv_cross::ID( stageInput.id );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( stageInput.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( stageInput.id );
 		shaderResource.name = !stageInput.name.empty() ? stageInput.name : reflection.get_fallback_name( fallbackId );
-		//
 
 		shaderResource.vecSize = bufferType.vecsize;
 		shaderResource.arraySize = !spirvType.array.empty() ? spirvType.array[0] : 1;
@@ -89,7 +87,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const bool isPushConstant = reflection.get_storage_class( inputAttachment.id ) == spv::StorageClassPushConstant;
 		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
 			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( inputAttachment.base_type_id ) : spirv_cross::ID( inputAttachment.id );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( inputAttachment.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( inputAttachment.id );
 		shaderResource.name = !inputAttachment.name.empty() ? inputAttachment.name : reflection.get_fallback_name( fallbackId );
 		//
 
@@ -97,7 +95,6 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		shaderResource.inputAttachmentIndex = reflection.get_decoration( inputAttachment.id, spv::DecorationInputAttachmentIndex );
 		shaderResource.set = reflection.get_decoration( inputAttachment.id, spv::DecorationDescriptorSet );
 		shaderResource.binding = reflection.get_decoration( inputAttachment.id, spv::DecorationBinding );
-
 		m_resources.push_back( shaderResource );
 	}
 	for ( const auto& output : resources.stage_outputs )
@@ -114,7 +111,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const bool isPushConstant = reflection.get_storage_class( output.id ) == spv::StorageClassPushConstant;
 		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
 			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( output.base_type_id ) : spirv_cross::ID( output.id );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( output.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( output.id );
 		shaderResource.name = !output.name.empty() ? output.name : reflection.get_fallback_name( fallbackId );
 		//
 
@@ -151,7 +148,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const bool isPushConstant = reflection.get_storage_class( imageSampler.id ) == spv::StorageClassPushConstant;
 		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
 			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( imageSampler.base_type_id ) : spirv_cross::ID( imageSampler.id );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( imageSampler.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( imageSampler.id );
 		shaderResource.name = !imageSampler.name.empty() ? imageSampler.name : reflection.get_fallback_name( fallbackId );
 		//
 
@@ -173,7 +170,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const bool isPushConstant = reflection.get_storage_class( imageStorage.id ) == spv::StorageClassPushConstant;
 		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
 			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( imageStorage.base_type_id ) : spirv_cross::ID( imageStorage.id );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( imageStorage.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( imageStorage.id );
 		shaderResource.name = !imageStorage.name.empty() ? imageStorage.name : reflection.get_fallback_name( fallbackId );
 		//
 
@@ -196,7 +193,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const bool isPushConstant = reflection.get_storage_class( sampler.id ) == spv::StorageClassPushConstant;
 		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
 			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( sampler.base_type_id ) : spirv_cross::ID( sampler.id );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( sampler.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( sampler.id );
 		shaderResource.name = !sampler.name.empty() ? sampler.name : reflection.get_fallback_name( fallbackId );
 		//
 
@@ -221,9 +218,8 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		//see spirv_reflect.cpp emit_resources(const char *tag, const SmallVector<Resource> &resources) at line 552
 		const auto& type = reflection.get_type( uniformBuffer.type_id );
 		const bool isPushConstant = reflection.get_storage_class( uniformBuffer.id ) == spv::StorageClassPushConstant;
-		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
-			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( uniformBuffer.base_type_id ) : spirv_cross::ID( uniformBuffer.id );
+		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) || reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( uniformBuffer.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( uniformBuffer.id );
 		shaderResource.name = !uniformBuffer.name.empty() ? uniformBuffer.name : reflection.get_fallback_name( fallbackId );
 		//
 
@@ -231,6 +227,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		shaderResource.arraySize = !spirvType.array.empty() ? spirvType.array[0] : 1;
 		shaderResource.set = set;
 		shaderResource.binding = binding;
+//        shaderResource.mode = (shaderResource.set == 0 && shaderResource.binding == 0)? EShaderResourceMode::Dynamic : EShaderResourceMode::Static;
 
 		m_resources.push_back( shaderResource );
 	}
@@ -250,7 +247,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const bool isPushConstant = reflection.get_storage_class( storageBuffer.id ) == spv::StorageClassPushConstant;
 		const bool isBlock = reflection.get_decoration_bitset( type.self ).get( spv::DecorationBlock ) ||
 			reflection.get_decoration_bitset( type.self ).get( spv::DecorationBufferBlock );
-		const spirv_cross::ID fallbackId = !isPushConstant && isBlock ? spirv_cross::ID( storageBuffer.base_type_id ) : spirv_cross::ID( storageBuffer.id );
+		const SPIRV_CROSS_NAMESPACE::ID fallbackId = !isPushConstant && isBlock ? SPIRV_CROSS_NAMESPACE::ID( storageBuffer.base_type_id ) : SPIRV_CROSS_NAMESPACE::ID( storageBuffer.id );
 		shaderResource.name = !storageBuffer.name.empty() ? storageBuffer.name : reflection.get_fallback_name( fallbackId );
 		//
 
@@ -325,7 +322,7 @@ void BalVulkan::CFileIncluder::ReleaseInclude( shaderc_include_result* include_r
 	delete include_result;
 }
 
-const std::unordered_set<std::string>& BalVulkan::CFileIncluder::FilePathTrace() const
+[[maybe_unused]] const std::unordered_set<std::string>& BalVulkan::CFileIncluder::FilePathTrace() const
 {
 	return m_includedFiles;
 }

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Instance.h"
 #include "Device.h"
 #include "Funtions.h"
@@ -34,9 +33,9 @@ BalVulkan::CInstanceHolder::~CInstanceHolder()
 
 BalVulkan::CInstance::CInstance()
 	: CInstanceHolder{}
-	, m_debugReport{ nullptr }
+	, m_debugReport{ VK_NULL_HANDLE }
 	, m_pCallbacks{ nullptr }
-	, m_surfaceKhr{ nullptr }
+	, m_surfaceKhr{ VK_NULL_HANDLE }
 {
 }
 
@@ -57,7 +56,7 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
 	if ( m_instanceHandle )
 		return false;
 
-	// Create Vulkan Instance
+	// CreateNew Vulkan Instance
 	{
 		VkApplicationInfo applicationInfo
 		{
@@ -117,9 +116,7 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
 #endif
 		if ( err != VK_SUCCESS )
 		{
-			if ( CheckVkResult( vkCreateInstance( &createInfo, m_pCallbacks, &m_instanceHandle ) ) )
-				return true;
-			return false;
+			CheckVkResult(vkCreateInstance(&createInfo, m_pCallbacks, &m_instanceHandle));
 		}
 	}
 	//get graphics stuff
@@ -157,7 +154,14 @@ uint8_t BalVulkan::CInstance::DeviceCount() const
 BalVulkan::CDevice* BalVulkan::CInstance::CreateDevice( uint32_t physicalDeviceIndex )
 {
 	const SPhysicalDeviceInfo& info{ m_physicalDevices[std::max( static_cast<uint32_t>( 0 ), std::min( physicalDeviceIndex, static_cast<uint32_t>( m_physicalDevices.size() ) ) )] };
-	return CDevice::Create( &info, m_pCallbacks, {}, { "VK_KHR_swapchain" } );
+	return CDevice::Create( &info
+                            , m_pCallbacks
+#ifdef _DEBUG
+                            , {"VK_LAYER_KHRONOS_validation"}
+#else
+                            , {}
+#endif
+                            , { VK_KHR_SWAPCHAIN_EXTENSION_NAME } );
 }
 
 uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf )

@@ -1,7 +1,7 @@
-#include "pch.h"
+
 #include "FileSystem.h"
 #include "FileParcer.h"
-#include "Inporter/ImageImporter.h"
+#include "Inporter/Importer.h"
 
 #include <fstream>
 

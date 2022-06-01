@@ -59,6 +59,7 @@ namespace BalVulkan
 		uint32_t size;
 		uint32_t constantId;
 		uint32_t qualifiers;
+		uint64_t resourceID;
 		std::string name;
 	};
 
@@ -104,7 +105,7 @@ namespace BalVulkan
 		void ReleaseInclude( shaderc_include_result* include_result ) override;
 
 		// Returns a reference to the member storing the set of included files.
-		const std::unordered_set<std::string>& FilePathTrace() const;
+        [[maybe_unused]] [[nodiscard]] const std::unordered_set<std::string>& FilePathTrace() const;
 
 	private:
 		// The full path and content of a source file.

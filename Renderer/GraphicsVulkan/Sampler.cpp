@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Sampler.h"
 
 #include "Device.h"

@@ -1,4 +1,5 @@
-#include "pch.h"
+
+//#include <vld.h>
 
 namespace Dear
 {
@@ -252,5 +253,10 @@ namespace Dear
 
 Balbino::Application* Balbino::CreateApplication()
 {
-	return new Dear::Editor{};
+    return new Dear::Editor{};
+}
+
+void Balbino::DestroyApplication(Balbino::Application* pApplication)
+{
+    delete pApplication;
 }

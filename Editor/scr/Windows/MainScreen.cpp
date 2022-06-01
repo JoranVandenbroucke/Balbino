@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "MainScreen.h"
 
 #include <IScene.h>

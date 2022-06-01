@@ -32,7 +32,10 @@ namespace Balbino
 		[[nodiscard]] uint64_t GetMaterialCount() const override;
 
 		[[nodiscard]] const std::vector<SMeshMetadata>& GetMetaData()const override;
-	private:
+
+        static CMesh* CreateNew(std::vector< BalVulkan::SVertex >& vertices, std::vector< uint32_t >& indices, std::vector< SMeshMetadata >& metaData, uint64_t uuid);
+
+    private:
 		std::vector<BalVulkan::SVertex> m_vertices;
 		std::vector<uint32_t> m_indices;
 		std::vector<SMeshMetadata> m_metadatas;
@@ -40,5 +43,5 @@ namespace Balbino
 		CIndexBuffer m_index;
 		CVertexBuffer m_vertex;
 		CUuid m_uuid;
-	};
+    };
 }

@@ -29,7 +29,7 @@ namespace Balbino
 		virtual void Cleanup() = 0;
 		virtual void Bind() const = 0;
 
-		[[nodiscard]] virtual [[nodiscard]] CUuid GetUuid() const = 0;
+		[[nodiscard]] virtual CUuid GetUuid() const = 0;
 		[[nodiscard]] virtual uint64_t GetMaterialCount() const = 0;
 		[[nodiscard]] virtual const std::vector<SMeshMetadata>& GetMetaData()const = 0;
 	};

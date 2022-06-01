@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "FrameBuffer.h"
 
 #include "Common.h"

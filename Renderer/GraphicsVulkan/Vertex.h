@@ -1,5 +1,7 @@
 #pragma once
-#include <glm.hpp>
+#pragma warning(push)
+#pragma warning(disable:4201)
+#include <glm/glm.hpp>
 #include <vulkan/vulkan.hpp>
 
 namespace BalVulkan
@@ -28,3 +30,4 @@ namespace BalVulkan
 		                  const glm::vec3& normal = glm::vec3{ 0, 1, 0 }, const glm::vec4& tangent = glm::vec4{ 1, 0, 0, 1 } );
 	};
 }
+#pragma warning(pop)

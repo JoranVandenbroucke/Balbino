@@ -1,4 +1,4 @@
-#include "pch.h"
+
 #include "IndexBuffer.h"
 
 #include <Buffer.h>
@@ -21,7 +21,7 @@ void Balbino::CIndexBuffer::Initialize( const std::vector<uint32_t>& indices, co
 	stagingBuffer.Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferSrcBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
 	stagingBuffer.UpdateData( indices.data(), size );
 
-	m_pIndexBuffer = DBG_NEW BalVulkan::CBuffer{ pDevice, pCommandPool, pQueue };
+	m_pIndexBuffer = new BalVulkan::CBuffer{ pDevice, pCommandPool, pQueue };
 	m_pIndexBuffer->Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::IndexBufferBit, BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
 
 	stagingBuffer.CopyBuffer( *m_pIndexBuffer, size );

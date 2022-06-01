@@ -28,7 +28,7 @@ namespace BalEditor
 		void SetMaterial( const SFile& currentMaterial );
 	private:
 		bool m_isVisible;
-		SFile m_currentMaterial;
+        SFile m_currentMaterial;
 
 		const ISystem* m_pSystem;
 		std::vector<BalVulkan::SShaderResource> m_shaderResources;

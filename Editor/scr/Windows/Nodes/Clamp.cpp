@@ -1,97 +1,85 @@
-#include "pch.h"
 #include "Clamp.h"
 
 #include <string>
+#include <format>
 
 #include "Attribute.h"
 #include "imgui.h"
 
-CClamp::CClamp( int id, int& firstAttributeId )
-	: INode{ id, firstAttributeId }
-	, m_connected{ false }
-	, m_value{ 0 }
+CClamp::CClamp(int id, int& firstAttributeId)
+        : INode{ id, firstAttributeId }
+          , m_connected{ false }
+          , m_value{ 0 }
 {
-	firstAttributeId += 4;
+    firstAttributeId += 4;
 }
 
 void CClamp::Draw()
 {
-	ImGui::PushItemWidth( 200 );
-	ImNodes::BeginNode( m_id );
+    ImGui::PushItemWidth( 200 );
+    ImNodes::BeginNode( m_id );
 
-	ImNodes::BeginNodeTitleBar();
-	ImGui::Text( "Clamp" );
-	ImNodes::EndNodeTitleBar();
+    ImNodes::BeginNodeTitleBar();
+    ImGui::Text( "Clamp" );
+    ImNodes::EndNodeTitleBar();
 
-	DrawInputFloatAttribute( m_value[0], m_attributeStartId, m_connected[0] );
-	DrawInputFloatAttribute( m_value[1], m_attributeStartId, m_connected[1], ":Min" );
-	DrawInputFloatAttribute( m_value[2], m_attributeStartId, m_connected[2], ":Max" );
+    DrawInputFloatAttribute( m_value[0], m_attributeStartId, m_connected[0] );
+    DrawInputFloatAttribute( m_value[1], m_attributeStartId, m_connected[1], ":Min" );
+    DrawInputFloatAttribute( m_value[2], m_attributeStartId, m_connected[2], ":Max" );
 
-	ImGui::Spacing();
-	DrawOutputFloatAttribute( m_attributeStartId + 3 );
+    ImGui::Spacing();
+    DrawOutputFloatAttribute( m_attributeStartId + 3 );
 
-	ImNodes::EndNode();
+    ImNodes::EndNode();
 }
 
-void CClamp::Attach( int endAttr )
+void CClamp::Attach(int endAttr)
 {
-	if ( m_attributeStartId <= endAttr && m_attributeStartId + 4 > endAttr )
-		m_connected[endAttr - m_attributeStartId] = true;
+    if( m_attributeStartId <= endAttr && m_attributeStartId + 4 > endAttr )
+    {
+        m_connected[endAttr - m_attributeStartId] = true;
+    }
 }
 
-void CClamp::Detach( int endAttr )
+void CClamp::Detach(int endAttr)
 {
-	if ( m_attributeStartId <= endAttr && m_attributeStartId + 4 > endAttr )
-		m_connected[endAttr - m_attributeStartId] = false;
+    if( m_attributeStartId <= endAttr && m_attributeStartId + 4 > endAttr )
+    {
+        m_connected[endAttr - m_attributeStartId] = false;
+    }
 }
 
-void CClamp::Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType )
+std::string CClamp::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
 {
-	( void ) begin;
-	( void ) end;
-	( void ) output;
-	( void ) attributeType;
-
-	if ( attributeType != EAttributeType::Float )
-		output << "vec3( ";
-	output << "clamp(";
-	if ( m_connected[0] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_value[0] );
-
-	output << ", ";
-
-	if ( m_connected[1] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_value[1] );
-
-	output << ", ";
-
-	if ( m_connected[2] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_value[2] );
-
-	output << ")";
-	if ( attributeType != EAttributeType::Float )
-		output << ")";
+    (void) begin;
+    (void) bindings;
+    (void) attributeType;
+    std::string shader;
+    shader = std::format("clamp({},{},{})"
+            ,m_connected[0]?( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Float ):std::to_string(m_value[0])
+            ,m_connected[0]?( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Float ):std::to_string(m_value[1])
+            ,m_connected[0]?( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Float ):std::to_string(m_value[2])
+            );
+    if (attributeType != EAttributeType::Float)
+        shader = std::format("vec3({})", shader);
+    return shader;
 }
 
-bool CClamp::HasFreeAttachment( int endAttr ) const
+bool CClamp::HasFreeAttachment(int endAttr) const
 {
-	if ( m_attributeStartId <= endAttr && m_attributeStartId + 4 > endAttr )
-		return m_connected[endAttr - m_attributeStartId];
-	return false;
+    if( m_attributeStartId <= endAttr && m_attributeStartId + 4 > endAttr )
+    {
+        return !m_connected[endAttr - m_attributeStartId];
+    }
+    return false;
 }
 
 int CClamp::GetId() const
 {
-	return m_id;
+    return m_id;
 }
 
-std::vector<int> CClamp::GetInputs() const
+std::vector< int > CClamp::GetInputs() const
 {
-	return { m_attributeStartId, m_attributeStartId + 1, m_attributeStartId + 2 };
+    return { m_attributeStartId, m_attributeStartId + 1, m_attributeStartId + 2 };
 }

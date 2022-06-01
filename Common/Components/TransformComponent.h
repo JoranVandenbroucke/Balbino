@@ -1,10 +1,13 @@
 #pragma once
 #include "../IEntity.h"
 
+#pragma warning(push)
+#pragma warning(disable:4201)
+#pragma warning(disable:4324)
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_RADIANS
-#include <glm.hpp>
-#include <gtx/quaternion.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 class CTransformComponent final
 {
@@ -114,3 +117,4 @@ private:
 	std::vector<CTransformComponent*> m_childeren;
 	IEntity* m_pEntity;
 };
+#pragma warning(pop)

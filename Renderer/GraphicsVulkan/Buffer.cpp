@@ -1,6 +1,5 @@
-#include "pch.h"
+//
 #include "Buffer.h"
-
 #include "CommandPool.h"
 #include "Device.h"
 #include "Funtions.h"
@@ -146,12 +145,12 @@ void BalVulkan::CBuffer::Rebuild( uint64_t size, EBufferUsageFlagBits bufferUsag
 	if ( m_buffer )
 	{
 		vkDestroyBuffer( GetDevice()->GetVkDevice(), m_buffer, nullptr );
-		m_buffer = nullptr;
+		m_buffer = VK_NULL_HANDLE;
 	}
 	if ( m_bufferMemory )
 	{
 		vkFreeMemory( GetDevice()->GetVkDevice(), m_bufferMemory, nullptr );
-		m_bufferMemory = nullptr;
+		m_bufferMemory = VK_NULL_HANDLE;
 	}
 	if ( m_commandBuffer )
 	{
@@ -168,13 +167,13 @@ void* BalVulkan::CBuffer::GetMapped() const
 
 void BalVulkan::CBuffer::Flush( const VkDeviceSize size, const VkDeviceSize offset )
 {
-	const VkMappedMemoryRange mappedRange{
-		.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-		.memory = m_bufferMemory,
-		.offset = offset,
-		.size = size,
-	};
-	vkFlushMappedMemoryRanges( GetDevice()->GetVkDevice(), 1, &mappedRange );
+    VkMappedMemoryRange mappedRange {
+        .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
+        .memory = m_bufferMemory,
+        .offset = offset,
+        .size = size,
+    };
+    vkFlushMappedMemoryRanges(GetDevice()->GetVkDevice(), 1, &mappedRange);
 }
 
 BalVulkan::CBuffer* BalVulkan::CBuffer::CreateNew( const CDevice* pDevice, const CCommandPool* commandPool, const CQueue* queue )

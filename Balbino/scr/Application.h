@@ -17,7 +17,7 @@ namespace Balbino
 	class CScene;
 	class CRenderer;
 
-#ifdef BL_EDITOR
+#ifdef BALBINO_EDITOR
 	class CInterface;
 #endif
 
@@ -49,4 +49,5 @@ namespace Balbino
 
 	//to be defined in client
 	Application* CreateApplication();
+	void DestroyApplication(Balbino::Application* pApplication);
 }

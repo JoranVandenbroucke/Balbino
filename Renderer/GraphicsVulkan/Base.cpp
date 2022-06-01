@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Base.h"
 
 BalVulkan::CRefCounted::CRefCounted()

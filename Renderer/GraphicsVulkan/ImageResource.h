@@ -36,7 +36,8 @@ namespace BalVulkan
 		void GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand );
 		VkImageLayout GetLayout() const;
 		static CImageResource* CreateNew( const CDevice* pDevice );
-		static CImageResource* LoadFromFile( const std::string& path );
+
+        [[maybe_unused]] static CImageResource* LoadFromFile( const std::string& path );
 	private:
 		bool m_ownedBySwapchain;
 		uint32_t m_mipLevels;

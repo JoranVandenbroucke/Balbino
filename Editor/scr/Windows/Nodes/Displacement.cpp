@@ -1,7 +1,7 @@
-#include "pch.h"
 #include "Displacement.h"
 
 #include <string>
+#include <format>
 
 #include "Attribute.h"
 #include "imgui.h"
@@ -63,53 +63,35 @@ void CDisplacement::Detach( int endAttr )
 		m_connections[3] = false;
 }
 
-void CDisplacement::Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType )
+std::string CDisplacement::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
 {
 	( void ) begin;
-	( void ) end;
-	( void ) output;
+	( void ) bindings;
 	( void ) attributeType;
 	//vec3 Displacement( float height, float midlevel, float scale, vec3 normal )
-	//todo add include
+	includes.insert("displacement.glsl");
+    std::string shader;
+    shader = std::format("Displacement({},{},{},{})"
+            , m_connections[0] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_height)
+            , m_connections[1] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_midLevel)
+            , m_connections[2] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ) : std::to_string(m_strength)
+            , m_connections[3] ? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : "normal"
+            );
 	if ( attributeType == EAttributeType::Float )
-		output << "( ";
-
-	output << "Displacement( ";
-	if ( m_connections[0] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_height );
-	output << ", ";
-	if ( m_connections[1] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_midLevel );
-	output << ", ";
-	if ( m_connections[2] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_strength );
-	output << ", ";
-	if ( m_connections[3] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-	else
-		output << "normal";
-	output << " )";
-
-	if ( attributeType == EAttributeType::Float )
-		output << " ).x";
+		shader += ".x";
+    return shader;
 }
 
 bool CDisplacement::HasFreeAttachment( int endAttr ) const
 {
 	if ( m_attributeStartId == endAttr )
-		return m_connections[0];
+		return !m_connections[0];
 	if ( m_attributeStartId + 1 == endAttr )
-		return m_connections[1];
+		return !m_connections[1];
 	if ( m_attributeStartId + 2 == endAttr )
-		return m_connections[2];
+		return !m_connections[2];
 	if ( m_attributeStartId + 3 == endAttr )
-		return m_connections[3];
+		return !m_connections[3];
 	return false;
 }
 

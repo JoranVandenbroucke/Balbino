@@ -1,7 +1,7 @@
-#include "pch.h"
 #include "Bump.h"
 
 #include <string>
+#include <format>
 
 #include "imgui.h"
 #include "imnodes.h"
@@ -72,60 +72,40 @@ void CBump::Detach( int endAttr )
 		m_connections[3] = false;
 }
 
-void CBump::Evaluate( std::vector<INode*>::iterator& begin, const std::vector<INode*>::iterator& end, std::ostream& output, EAttributeType attributeType )
+std::string CBump::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
 {
 	( void ) begin;
-	( void ) end;
-	( void ) output;
+	( void ) bindings;
 	( void ) attributeType;
-
-	//todo add include
+    includes.insert("bump.glsl");
 	//vec3 Bump( bool invert, float strength, float dist, float height, vec3 normal, vec3 position )
-	if ( attributeType == EAttributeType::Float )
-		output << "( ";
-	output << "Bump( " << std::to_string( m_invert ) << ", ";
-	if ( m_connections[0] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_strength );
-
-	output << ", ";
-	if ( m_connections[1] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_distance );
-
-	output << ", ";
-	if ( m_connections[2] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Float );
-	else
-		output << std::to_string( m_height );
-
-	output << ", ";
-	if ( m_connections[3] )
-		( *( begin++ ) )->Evaluate( begin, end, output, EAttributeType::Vector );
-	else
-		output << "normal";
-
-	output << ", fragWorldPosition.xyz )";
+    std::string shader;
+    shader = std::format( "Bump({},{},{},{},{},fragWorldPosition.xyz)"
+            , std::to_string( m_invert )
+            , m_connections[0]? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ):std::to_string( m_strength )
+            , m_connections[0]? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ):std::to_string( m_distance )
+            , m_connections[0]? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Float ):std::to_string( m_height )
+            , m_connections[0]? ( *( begin++ ) )->Evaluate( begin, bindings, includes, EAttributeType::Vector ):"vec3(" + std::to_string( m_normal[0] ) + ","+ std::to_string( m_normal[1] ) + ","+ std::to_string( m_normal[2] ) + ")"
+            );
 
 	if ( attributeType == EAttributeType::Float )
-		output << " ).x";
+        shader += ".x";
+    return shader;
 }
 
 bool CBump::HasFreeAttachment( int endAttr ) const
 {
 	if ( m_attributeStartId == endAttr )
-		return m_connections[0];
+		return !m_connections[0];
 
 	if ( m_attributeStartId + 1 == endAttr )
-		return m_connections[1];
+		return !m_connections[1];
 
 	if ( m_attributeStartId + 2 == endAttr )
-		return m_connections[2];
+		return !m_connections[2];
 
 	if ( m_attributeStartId + 3 == endAttr )
-		return m_connections[3];
+		return !m_connections[3];
 	return false;
 }
 

@@ -25,10 +25,11 @@ namespace Balbino
 	class CMaterial
 	{
 	public:
-		CMaterial( CUuid shaderUUID, BalVulkan::CCommandPool* pPool )
+		CMaterial( CUuid uuid, CUuid shaderUUID, BalVulkan::CCommandPool* pPool )
 			: m_descriptorSet{ nullptr }
 			, m_shaderPipeline{}
 			, m_command{ pPool }
+			, m_uuid{ uuid }
 			, m_shaderUUID{ shaderUUID }
 		{
 		}
@@ -38,7 +39,10 @@ namespace Balbino
 		CMaterial( CMaterial&& ) = default;
 		CMaterial& operator=( const CMaterial& ) = delete;
 		CMaterial& operator=( CMaterial&& ) = delete;
-
+        static CMaterial* CreateNew(CUuid uuid,CUuid shaderUUID, BalVulkan::CCommandPool* pPool)
+        {
+            return new CMaterial{uuid, shaderUUID, pPool};
+        }
 		void Initialize( BalVulkan::CShaderPipeline* pShaderPipeline, const std::vector<BalVulkan::SDescriptorSet>& descriptorSetsInfo, const BalVulkan::CDevice* pDevice )
 		{
 			m_shaderPipeline = pShaderPipeline;
@@ -75,11 +79,21 @@ namespace Balbino
 		{
 			return m_shaderPipeline->GetShaderResources();
 		}
+        CUuid GetShaderID()
+        {
+            return m_shaderUUID;
+        }
 
-	private:
+        uint64_t GetID()
+        {
+            return (uint64_t)m_uuid;
+        }
+
+    private:
 		BalVulkan::CDescriptorSet* m_descriptorSet;
 		BalVulkan::CShaderPipeline* m_shaderPipeline;
 		BalVulkan::CCommandPool* m_command;
+		CUuid m_uuid;
 		CUuid m_shaderUUID;
-	};
+    };
 }

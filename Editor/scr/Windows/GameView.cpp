@@ -1,13 +1,15 @@
-#include "pch.h"
+
 #include "GameView.h"
 
-#include <gtc/type_ptr.hpp>
+#pragma warning(push)
+#pragma warning(disable:4201)
+#include <glm/gtc/type_ptr.hpp>
 
 #include <IEntity.h>
 #include <Components/CameraComponent.h>
 #include <Components/TransformComponent.h>
 #include <Components/MeshRendererComponent.h>
-
+#include "Camera.h"
 #include "SceneHierarchy.h"
 
 #include <imgui.h>
@@ -22,46 +24,46 @@
 
 void BalEditor::CGameView::Draw()
 {
-	ImGui::Begin( "GameView" );
-	ImGui::BeginChild( "GameViewChild" );
-	if ( const IEntity* selected = m_pSceneHierarchy->GetSelectedEntity() )
-	{
-		ImGuizmo::SetOrthographic( false );
-		ImGuizmo::SetDrawlist();
-		ImGuizmo::SetRect( ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight() );
-
-		const auto camera = m_pContext->GetPrimaryCameraEntity();
-		const auto cameraComponent = camera->GetComponent<CCameraComponent>();
-		glm::mat4 view = inverse( camera->GetComponent<CTransformComponent>()->GetTransform() );
-		const glm::mat4& projection = cameraComponent->GetCamera().GetProjection();
-
-		const auto tc = selected->GetComponent<CTransformComponent>();
-		glm::mat4 transform = tc->GetTransform();
-
-		// Snapping
-		float snapValue = 0.1f; // Snap to 0.5m for translation/scale
-		// Snap to 45 degrees for rotation
-		if ( m_gizmoType == ImGuizmo::OPERATION::ROTATE )
-			snapValue = 5.0f;
-
-		const float snapValues[3] = { snapValue, snapValue, snapValue };
-
-		Manipulate( value_ptr( view ), value_ptr( projection ),
-		            static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::LOCAL, value_ptr( transform ),
-		            nullptr, m_snap ? snapValues : nullptr );
-
-		if ( ImGuizmo::IsUsing() )
-		{
-			glm::vec3 translation, rotation, scale;
-			Balbino::BalMath::DecomposeTransform( transform, translation, rotation, scale );
-
-			const glm::vec3 rotEuler = eulerAngles( tc->GetRotation() );
-			const glm::vec3 deltaRotation = rotation - rotEuler;
-			tc->SetTranslation( translation );
-			tc->SetRotation( glm::quat( rotEuler + deltaRotation ) );
-			tc->SetScale( scale );
-		}
-	}
+	ImGui::Begin( "GameView", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar );
+	ImGui::BeginChild( "GameViewChild", ImVec2{-1,-1}, false, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoTitleBar );
+//	if ( const IEntity* selected = m_pSceneHierarchy->GetSelectedEntity() )
+//	{
+//		ImGuizmo::SetOrthographic( false );
+//		ImGuizmo::SetDrawlist();
+//		ImGuizmo::SetRect( ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight() );
+//
+//		const auto camera = m_pContext->GetPrimaryCameraEntity();
+//		const auto& cameraComponent = camera->GetComponent<CCameraComponent>();
+//        const auto& view = inverse( cameraComponent->GetCamera().GetView() );
+//        const auto& projection = cameraComponent->GetCamera().GetProjection();
+//
+//		const auto tc = selected->GetComponent<CTransformComponent>();
+//		glm::mat4 transform = tc->GetTransform();
+//
+//		// Snapping
+//		float snapValue = 0.1f; // Snap to 0.1m for translation/scale
+//		// Snap to 45 degrees for rotation
+//		if ( m_gizmoType == ImGuizmo::OPERATION::ROTATE )
+//			snapValue = 5.0f;
+//
+//		const float snapValues[3] = { snapValue, snapValue, snapValue };
+//
+//		Manipulate( value_ptr( view ), value_ptr( projection ),
+//		            static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::WORLD, value_ptr( transform ),
+//		            nullptr, m_snap ? snapValues : nullptr );
+//
+//		if ( ImGuizmo::IsUsing() )
+//		{
+//			glm::vec3 translation, rotation, scale;
+//			Balbino::BalMath::DecomposeTransform( transform, translation, rotation, scale );
+//
+//			const glm::vec3 rotEuler = eulerAngles( tc->GetRotation() );
+//			const glm::vec3 deltaRotation = rotation - rotEuler;
+//			tc->SetTranslation( translation );
+//			tc->SetRotation( glm::quat( rotEuler + deltaRotation ) );
+//			tc->SetScale( scale );
+//		}
+//	}
 	ImGui::EndChild();
 	if ( ImGui::BeginDragDropTarget() )
 	{
@@ -101,3 +103,4 @@ int BalEditor::CGameView::GetGuizmoType() const
 {
 	return m_gizmoType;
 }
+#pragma warning(pop)

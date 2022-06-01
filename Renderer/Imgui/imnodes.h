@@ -223,13 +223,13 @@ namespace ImNodes
 	//
 	// Each attribute id must be unique.
 
-	// Create an input attribute block. The pin is rendered on left side.
+	// CreateNew an input attribute block. The pin is rendered on left side.
 	void BeginInputAttribute( int id, PinShape shape = PinShape_CircleFilled );
 	void EndInputAttribute();
-	// Create an output attribute block. The pin is rendered on the right side.
+	// CreateNew an output attribute block. The pin is rendered on the right side.
 	void BeginOutputAttribute( int id, PinShape shape = PinShape_CircleFilled );
 	void EndOutputAttribute();
-	// Create a static attribute block. A static attribute has no pin, and therefore can't be linked to
+	// CreateNew a static attribute block. A static attribute has no pin, and therefore can't be linked to
 	// anything. However, you can still use IsAttributeActive() and IsAnyAttributeActive() to check for
 	// attribute activity.
 	void BeginStaticAttribute( int id );
