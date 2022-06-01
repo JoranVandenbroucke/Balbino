@@ -32,4 +32,7 @@ CMakeFiles/
 *.sln
 *.filters
 CMakeCache.txt
-cmake_install.cmake
+!/3rdParty/**/x64/
+!/3rdParty/**/x86/
+!/3rdParty/**/Debug/
+!/3rdParty/**/Release/
