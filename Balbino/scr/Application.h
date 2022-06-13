@@ -1,4 +1,6 @@
 #pragma once
+
+#include <cstdint>
 #include "Core.h"
 #include "Managers/Manager.h"
 
@@ -37,7 +39,10 @@ namespace Balbino
 		void Run();
 
 	private:
-		SDL_Window* m_pWindow;
+        int32_t m_w;
+        int32_t m_h;
+        uint32_t m_windowFlags;
+        SDL_Window* m_pWindow;
 
 		CSystem m_manager;
 		CRenderer* m_pRenderer;

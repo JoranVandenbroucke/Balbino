@@ -11,4 +11,6 @@ struct BALBINO_API ISystem
 
 	[[nodiscard]] virtual IResourceManager* GetResourceManager() const = 0;
 	[[nodiscard]] virtual IScene* GetCurrentActiveScene() const = 0;
+    [[nodiscard]] virtual float GetWindowWidth()= 0;
+    [[nodiscard]] virtual float GetWindowHeight() = 0;
 };

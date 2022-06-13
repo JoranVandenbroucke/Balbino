@@ -4,10 +4,12 @@
 #include "ResourceManager.h"
 #include "../Input/InputHandler.h"
 
-Balbino::CSystem::CSystem()
+Balbino::CSystem::CSystem(float w, float h)
         : m_inputHandler{ nullptr }
-          , m_resourceManager{ nullptr }
-          , m_pCurrentScene{ nullptr }
+        , m_resourceManager{ nullptr }
+        , m_pCurrentScene{ nullptr }
+        ,m_windowWidth{w}
+        ,m_windowHeight{h}
 {
 }
 
@@ -63,4 +65,14 @@ Balbino::CInputHandler* Balbino::CSystem::GetInputHandler() const
 IScene* Balbino::CSystem::GetCurrentActiveScene() const
 {
     return m_pCurrentScene;
+}
+
+float Balbino::CSystem::GetWindowWidth()
+{
+    return m_windowWidth;
+}
+
+float Balbino::CSystem::GetWindowHeight()
+{
+    return m_windowHeight;
 }
