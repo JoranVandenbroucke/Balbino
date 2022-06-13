@@ -85,8 +85,8 @@ void BalEditor::CAssetBrowser::Draw()
             {
                 uint32_t nodeIdx{};
                 DrawTree( "..\\Data", nodeIdx );
-                ImGui::EndChild();
             }
+            ImGui::EndChild();
             std::ranges::sort( m_currentDirectory, [](const SFile& left, const SFile& right)
             {
                 return left.fileName < right.fileName;
@@ -176,8 +176,8 @@ void BalEditor::CAssetBrowser::Draw()
                     ImGui::NewLine();
                 }
                 ImGui::SliderFloat( "Icon Size", &m_size, 8.0f, 128.f, "%.0f", ImGuiSliderFlags_NoInput );
-                ImGui::EndChild();
             }
+            ImGui::EndChild();
         }
         ImGui::End();
     }
@@ -185,17 +185,6 @@ void BalEditor::CAssetBrowser::Draw()
 
 void BalEditor::CAssetBrowser::Cleanup()
 {
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetUnknownIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetFolderIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetBalbinoIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetImageIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetAudioIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetModelIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetPresetIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetCodeIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetFontIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetShaderIcon );
-    //todo: ImGui_ImplVulkan_DestroyTexture( m_pVkDescriptorSetMaterialIcon );
     m_currentDirectory.clear();
     for( const auto& [isFolder, type, uuid, size, pData, fileName, path, lastWrittenTime, depth] : m_files )
     {
@@ -327,7 +316,7 @@ void BalEditor::CAssetBrowser::DrawTree(const std::string& path, uint32_t& nodeI
     if( !fileIter->depth )
     {
         nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
-        ImGui::SetNextTreeNodeOpen( true );
+        ImGui::SetNextItemOpen( true );
     }
     if( ImGui::TreeNodeEx( fileIter->fileName.c_str(), nodeFlags ))
     {

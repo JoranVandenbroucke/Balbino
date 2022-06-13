@@ -218,4 +218,5 @@ target_link_libraries(Balbino
 add_custom_command(
         TARGET Balbino POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/Balbino.dll ${CMAKE_CURRENT_BINARY_DIR}/../Balbino.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../../3rdParty/Vulkan/Lib/shaderc_shared.dll ${CMAKE_CURRENT_BINARY_DIR}/../shaderc_shared.dll
 )

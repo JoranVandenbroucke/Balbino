@@ -11,6 +11,7 @@ add_subdirectory(../Renderer/Imgui ImGui)
 # get source files
 file(GLOB sourceE
         scr/*.cpp scr/*.h
+        scr/EditorGUI/*.cpp scr/EditorGUI/*.h
         scr/Tools/FilesSystem/*.cpp scr/Tools/FilesSystem/*.h
         scr/Tools/FilesSystem/Inporter/*.cpp scr/Tools/FilesSystem/Inporter/*.h scr/Tools/FilesSystem/Inporter/*.c
         scr/Windows/*.cpp scr/Windows/*.h
