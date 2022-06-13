@@ -3,22 +3,24 @@ import os
 import sys
 import subprocess
 from pathlib import Path
-
+import platform
 import Utils
-
+import shutil
 from io import BytesIO
 from urllib.request import urlopen
+import subprocess
+
 
 class VulkanConfiguration:
     requiredVulkanVersion = "1.3.211.0"
-    vulkanDirectory = "./Hazel/vendor/VulkanSDK"
+    vulkanDirectory = "./Balbino/3rdParty/VulkanSDK"
 
     @classmethod
     def Validate(cls):
         if (not cls.CheckVulkanSDK()):
             print("Vulkan SDK not installed correctly.")
             return
-            
+
         if (not cls.CheckVulkanSDKDebugLibs()):
             print("Vulkan SDK debug libs not found.")
 
@@ -36,7 +38,7 @@ class VulkanConfiguration:
             print(f"You don't have the correct Vulkan SDK version! (Engine requires {cls.requiredVulkanVersion})")
             cls.__InstallVulkanSDK()
             return False
-    
+
         print(f"Correct Vulkan SDK located at {vulkanSDK}")
         return True
 
@@ -44,7 +46,8 @@ class VulkanConfiguration:
     def __InstallVulkanSDK(cls):
         permissionGranted = False
         while not permissionGranted:
-            reply = str(input("Would you like to install VulkanSDK {0:s}? [Y/N]: ".format(cls.requiredVulkanVersion))).lower().strip()[:1]
+            reply = str(input("Would you like to install VulkanSDK {0:s}? [Y/N]: ".format(
+                cls.requiredVulkanVersion))).lower().strip()[:1]
             if reply == 'n':
                 return
             permissionGranted = (reply == 'y')
@@ -61,12 +64,12 @@ class VulkanConfiguration:
     @classmethod
     def CheckVulkanSDKDebugLibs(cls):
         shadercdLib = Path(f"{cls.vulkanDirectory}/Lib/shaderc_sharedd.lib")
-        
+
         VulkanSDKDebugLibsURLlist = [
             f"https://sdk.lunarg.com/sdk/download/{cls.requiredVulkanVersion}/windows/VulkanSDK-{cls.requiredVulkanVersion}-DebugLibs.zip",
             f"https://files.lunarg.com/SDK-{cls.requiredVulkanVersion}/VulkanSDK-{cls.requiredVulkanVersion}-DebugLibs.zip"
         ]
-        
+
         if not shadercdLib.exists():
             print(f"\nNo Vulkan SDK debug libs found. (Checked {shadercdLib})")
             vulkanPath = f"{cls.vulkanDirectory}/VulkanSDK-{cls.requiredVulkanVersion}-DebugLibs.zip"
@@ -78,11 +81,12 @@ class VulkanConfiguration:
             print(f"\nVulkan SDK debug libs located at {os.path.abspath(cls.vulkanDirectory)}")
         return True
 
+
 if __name__ == "__main__":
     VulkanConfiguration.Validate()
-
-from SetupVulkan import VulkanConfiguration as
-VulkanRequirements.Validate()
-      
-import subprocess
-subprocess.call([r'../3rdParty/assimp/BUILDBINARIES_EXAMPLE.bat'])
+    cwd = os.getcwd()
+    print(cwd + r'\..\3rdParty\assimp\BUILDBINARIES_EXAMPLE.bat')
+    os.chdir(cwd + r'\..\3rdParty\assimp')
+    subprocess.call([r'BUILDBINARIES_EXAMPLE.bat'])
+    os.chdir(cwd + r'\..\3rdParty\assimp')
+    shutil.copyfile(r'build/x64/include/assimp/config.h', r'include/assimp/config.h')
