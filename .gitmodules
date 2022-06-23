@@ -18,3 +18,12 @@
 	path = 3rdParty/mINI
 	url = ../../pulzed/mINI.git
     branch = master
+[submodule "PhysX"]
+	path = 3rdParty/PhysX
+	url = ../../NVIDIAGameWorks/PhysX
+[submodule "NvCloth"]
+	path = 3rdParty/NvCloth
+	url = ../../NVIDIAGameWorks/NvCloth
+[submodule "Flow"]
+	path = 3rdParty/Flow
+	url = ../../NVIDIAGameWorks/Flow
