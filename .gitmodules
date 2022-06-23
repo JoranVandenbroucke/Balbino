@@ -15,15 +15,18 @@
     url = ../../g-truc/glm.git
     branch = master
 [submodule "3rdParty/mINI"]
-	path = 3rdParty/mINI
-	url = ../../pulzed/mINI.git
+    path = 3rdParty/mINI
+    url = ../../pulzed/mINI.git
     branch = master
 [submodule "PhysX"]
-	path = 3rdParty/PhysX
-	url = ../../NVIDIAGameWorks/PhysX
+    path = 3rdParty/PhysX
+    url = ../../NVIDIAGameWorks/PhysX
+    branch = 4.1
 [submodule "NvCloth"]
-	path = 3rdParty/NvCloth
-	url = ../../NVIDIAGameWorks/NvCloth
+    path = 3rdParty/NvCloth
+    url = ../../NVIDIAGameWorks/NvCloth
+    branch = master
 [submodule "Flow"]
-	path = 3rdParty/Flow
-	url = ../../NVIDIAGameWorks/Flow
+    path = 3rdParty/Flow
+    url = ../../NVIDIAGameWorks/Flow
+    branch = master
