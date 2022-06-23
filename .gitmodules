@@ -20,13 +20,13 @@
     branch = master
 [submodule "PhysX"]
     path = 3rdParty/PhysX
-    url = ../../NVIDIAGameWorks/PhysX
+    url = ../../NVIDIAGameWorks/PhysX.git
     branch = 4.1
 [submodule "NvCloth"]
     path = 3rdParty/NvCloth
-    url = ../../NVIDIAGameWorks/NvCloth
+    url = ../../NVIDIAGameWorks/NvCloth.git
     branch = master
 [submodule "Flow"]
     path = 3rdParty/Flow
-    url = ../../NVIDIAGameWorks/Flow
+    url = ../../NVIDIAGameWorks/Flow.git
     branch = master
