@@ -1,10 +1,12 @@
 #version 450
 
-layout(set=0, binding=0) uniform UniformBufferObject {
+layout(set=0, binding=0) uniform ModelData {
     mat4 model;
     mat4 view;
     mat4 proj;
-} ubo;
+    vec4 viewPos;
+    int displayDebugTarget;
+} ;
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec4 inColor;
@@ -20,10 +22,10 @@ layout(location = 4) out vec4 fragWorldPos;
 
 void main()
 {
-    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0f);
+    gl_Position = modelBufferObject.proj * modelBufferObject.view * modelBufferObject.model * vec4(inPosition, 1.0f);
     fragColor = inColor;
     fragTexCoord = inTexCoord;
-    fragNormal = normalize( mat3(ubo.model) * inNormal);
-    fragTangent = normalize( mat3(ubo.model) * inTangent.xyz) * inTangent.w;
-    fragWorldPos = ubo.model * vec4(inPosition, 1.0f);
+    fragNormal = normalize( mat3(modelBufferObject.model) * inNormal);
+    fragTangent = normalize( mat3(modelBufferObject.model) * inTangent.xyz) * inTangent.w;
+    fragWorldPos = modelBufferObject.model * vec4(inPosition, 1.0f);
 }

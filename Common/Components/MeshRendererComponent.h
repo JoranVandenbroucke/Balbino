@@ -9,6 +9,7 @@ public:
 	    :m_pEntity{ pEntity }
         , m_meshId{ meshId }
     {}
+
     ~CMeshRenderComponent() = default;
     CMeshRenderComponent( const CMeshRenderComponent& ) = default;
     CMeshRenderComponent( CMeshRenderComponent&& ) = default;

@@ -134,19 +134,31 @@ void BalVulkan::CShaderPipeline::Initialize( const std::array<CShader*, static_c
 				// Adding 0 ensures the bindings that dont use any flags are mapped correctly.
 				bindingFlags.push_back( 0 );
 			}
-
-			// Convert ShaderResource to VkDescriptorSetLayoutBinding
-			VkDescriptorSetLayoutBinding layoutBinding{};
-
-			layoutBinding.binding = resource.binding;
-			layoutBinding.descriptorCount = resource.arraySize;
-			layoutBinding.descriptorType = descriptorType;
-			layoutBinding.stageFlags = static_cast<VkShaderStageFlags>( resource.stages );
-
-			setLayoutBindings.push_back( layoutBinding );
-
-			// Store mapping between binding and the binding point
-			bindingsLookup.emplace( resource.binding, layoutBinding );
+            
+            auto existing = std::ranges::find_if( setLayoutBindings, [&resource](const VkDescriptorSetLayoutBinding& binding){
+                return binding.binding == resource.binding;
+            });
+            if( existing != setLayoutBindings.end())
+            {
+                // Store mapping between binding and the binding point
+                bindingsLookup.emplace( resource.binding, *existing );
+                existing->stageFlags |= static_cast<VkShaderStageFlags>( resource.stages );
+            }
+            else
+            {
+                // Convert ShaderResource to VkDescriptorSetLayoutBinding
+                VkDescriptorSetLayoutBinding layoutBinding{};
+    
+                layoutBinding.binding = resource.binding;
+                layoutBinding.descriptorCount = resource.arraySize;
+                layoutBinding.descriptorType = descriptorType;
+                layoutBinding.stageFlags = static_cast<VkShaderStageFlags>( resource.stages );
+    
+                setLayoutBindings.push_back( layoutBinding );
+                
+                // Store mapping between binding and the binding point
+                bindingsLookup.emplace( resource.binding, layoutBinding );
+            }
 
 			bindingFlagsLookup.emplace( resource.binding, bindingFlags.back() );
 

@@ -77,6 +77,10 @@ BalVulkan::CDevice* BalVulkan::CDevice::Create( const SPhysicalDeviceInfo* pDevi
 			.pQueuePriorities = queuePriority,
 		}
 	};
+    
+    const VkPhysicalDeviceFeatures deviceFeatures{
+            .samplerAnisotropy = VK_TRUE,
+    };
     const VkDeviceCreateInfo createInfo{
     	.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
     	.queueCreateInfoCount = static_cast<uint32_t>( std::size( queueInfo ) ),
@@ -85,7 +89,7 @@ BalVulkan::CDevice* BalVulkan::CDevice::Create( const SPhysicalDeviceInfo* pDevi
     	.ppEnabledLayerNames = !layersToEnable.empty() ? layersToEnable.data() : nullptr,
     	.enabledExtensionCount = deviceExtensionCount,	//1
     	.ppEnabledExtensionNames = deviceExtensions,
-    	.pEnabledFeatures = nullptr,
+    	.pEnabledFeatures = &deviceFeatures,
     };
     VkDevice device;
 	CheckVkResult( vkCreateDevice( pDeviceInfo->device, &createInfo, pCallbacks, &device ), "Could not create a device" );

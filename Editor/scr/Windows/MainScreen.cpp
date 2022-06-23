@@ -1,7 +1,7 @@
-
 #include "MainScreen.h"
 
 #include <IScene.h>
+#include <IEntity.h>
 
 #include <imgui.h>
 
@@ -10,7 +10,7 @@
 #include "AssetBrowser.h"
 #include "SceneHierarchy.h"
 #include "ShaderGraph.h"
-
+#include "Components/LightComponent.h"
 
 void BalEditor::CMainScreen::Draw()
 {
@@ -54,17 +54,10 @@ void BalEditor::CMainScreen::Draw()
 
 				std::cout << "add empty object\n";
 			}
-			if ( ImGui::MenuItem( "Image" ) )
+			if ( ImGui::MenuItem( "Light" ) )
 			{
-				m_pContext->CreateEntity();
-				//todo: add Image object;
-				std::cout << "add image object\n";
-			}
-			if ( ImGui::MenuItem( "Text" ) )
-			{
-				m_pContext->CreateEntity();
-				//todo: add text object;
-				std::cout << "add Text object\n";
+				IEntity* entity = m_pContext->CreateEntity();
+                entity->AddComponent<CLightComponent>();
 			}
 			ImGui::EndMenu();
 		}

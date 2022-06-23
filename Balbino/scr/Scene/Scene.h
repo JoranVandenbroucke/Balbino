@@ -7,7 +7,7 @@
 #include "../Renderer/UBOStructs.h"
 
 struct ISystem;
-
+class CCameraComponent;
 namespace Balbino
 {
 	class CScene final : public IScene
@@ -25,8 +25,10 @@ namespace Balbino
 
 		void PhysicsUpdate( float deltaTime ) override;
 		void Update( float deltaTime ) override;
+
 		void PrepareDraw() override;
 		void Draw() override;
+
 		void OnViewportResize( uint32_t w, uint32_t h ) override;
 		void SetRenderSettings( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue)
 		{
@@ -47,27 +49,32 @@ namespace Balbino
 		{
 			return GetRegistry().view<Components...>();
 		}
-
-		const entt::registry& GetRegistry() const override;
+        
+        [[nodiscard]] const entt::registry& GetRegistry() const override;
 		entt::registry& GetRegistry() override;
 		template <typename T>
 		void OnComponentAdded( CEntity entity, T& component );
 
-		uint32_t GetViewportWidth() const;
-		uint32_t GetViewportHeight() const;
-		std::vector<IEntity*> GetAllEntities() override;
-		ISystem* GetSystem()const override;
-		BalVulkan::CBuffer* GetModelBuffer()const override;
-		BalVulkan::CBuffer* GetShadingBuffer()const override;
+		[[nodiscard]] uint32_t GetViewportWidth() const;
+        [[nodiscard]] uint32_t GetViewportHeight() const;
+        [[nodiscard]] std::vector<IEntity*> GetAllEntities() override;
+		[[nodiscard]] ISystem* GetSystem()const override;
+		[[nodiscard]] BalVulkan::CBuffer* GetModelBuffer()const override;
+		[[nodiscard]] BalVulkan::CBuffer* GetShadingBuffer()const override;
 		void RecreateBuffers( BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue );
 	private:
 		entt::registry m_registry;
 		uint32_t m_viewportWidth;
 		uint32_t m_viewportHeight;
-		SLightObject m_sLightObject;
-		std::unordered_map<uint32_t, CEntity> m_entityMap;
-
+        
+        CCameraComponent* m_pMainCamera;
         float m_timer;
+  
+		SLightObject m_lightObject;
+        SModelObject m_modelUbo;
+        
+        std::unordered_map<uint32_t, CEntity> m_entityMap;
+
 
 		Balbino::CVertexBuffer* m_instanceBuffer;
 		BalVulkan::CBuffer* m_pModelBuffer;

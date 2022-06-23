@@ -8,11 +8,11 @@
 #include "Scene/Scene.h"
 
 #ifdef BALBINO_EDITOR
-
 #include <scr/Interface.h>
-
 #endif
 
+#include <chrono>
+#include <thread>
 #include <ini.h>
 
 Balbino::Application::Application()
@@ -65,7 +65,7 @@ void Balbino::Application::Initialize()
         m_windowFlags = static_cast<uint32_t>( std::stoi( ini["WindowsClient"]["WindowedFlags"] ));
     }
 
-    m_pWindow = SDL_CreateWindow( "Balbino Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 360, 640, m_windowFlags | SDL_WINDOW_BORDERLESS );
+    m_pWindow = SDL_CreateWindow( "Balbino Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 360, 640, SDL_WINDOW_VULKAN | SDL_WINDOW_BORDERLESS );
     if( m_pWindow == nullptr )
     {
         throw std::runtime_error( std::string( "SDL_CreateWindow Error: " ) + SDL_GetError());
@@ -234,6 +234,7 @@ void Balbino::Application::Run()
         {
             continue;
         }
+        m_pScene->PrepareDraw();
         m_pScene->Draw();
         if( m_pRenderer->EndDraw())
         {

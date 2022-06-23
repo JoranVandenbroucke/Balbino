@@ -35,6 +35,5 @@ namespace BalVulkan
 		//std::vector<CImageView*> m_imageViews;
 
 		VkFormat GetDepthFormat() const;
-		VkFormat GetSupportedFormat( const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features ) const;
 	};
 }

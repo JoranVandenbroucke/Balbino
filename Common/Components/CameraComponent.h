@@ -19,11 +19,6 @@ public:
 	CCameraComponent& operator=( const CCameraComponent& ) = default;
 	CCameraComponent& operator=( CCameraComponent&& ) = default;
 
-	void SetCamera( const Balbino::CCamera& camera )
-	{
-		m_camera = camera;
-	}
-
 	void SetIsPrimary( const bool isPrimary )
 	{
 		m_primary = isPrimary;
@@ -48,6 +43,11 @@ public:
 	{
 		return m_pEntity;
 	}
+
+    [[nodiscard]] const glm::mat4& GetProjection() const
+    {
+        return m_camera.GetProjection();
+    }
 
 private:
 	bool m_primary;

@@ -14,8 +14,9 @@ namespace BalVulkan
 		VkPhysicalDeviceFeatures deviceFeatures;
 		std::vector<VkQueueFamilyProperties> queueFamilyProperties;
 		std::array<VkFormatProperties, VK_FORMAT_ASTC_12x12_SRGB_BLOCK - VK_FORMAT_UNDEFINED + 1> formatProperties;
-		VkFormat FindSupportedFormat( const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features ) const;
-	};
+		[[nodiscard]] VkFormat FindSupportedFormat( const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features ) const;
+        [[nodiscard]] VkSampleCountFlagBits GetMaxUsableSampleCount() const;
+    };
 
 	class CInstanceHolder
 	{

@@ -239,7 +239,7 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
 		const uint32_t binding{ reflection.get_decoration( storageBuffer.id, spv::DecorationBinding ) };
 
 		SShaderResource shaderResource{};
-		shaderResource.type = EShaderResourceType::Sampler;
+		shaderResource.type = EShaderResourceType::BufferStorage;
 		shaderResource.stages = stageBits;
 
 		//see spirv_reflect.cpp emit_resources(const char *tag, const SmallVector<Resource> &resources) at line 552

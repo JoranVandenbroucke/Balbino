@@ -69,8 +69,6 @@ struct SFile
 	bool isFolder;
 	EFileTypes type;
 	uint64_t uuid;
-	uint64_t size;
-	void* pData;
 	std::string fileName;
 	std::filesystem::path path;
 	std::filesystem::file_time_type lastWrittenTime;

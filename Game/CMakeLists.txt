@@ -19,7 +19,7 @@ project(${PROJECT_NAME})
 add_subdirectory(../Balbino Balbino)
 
 # project setting
-add_executable(${PROJECT_NAME} scr/main.cpp)
+add_executable(${PROJECT_NAME} scr/main.cpp resource.rc)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)

@@ -86,7 +86,7 @@ struct IEntity
 	virtual bool IsUpdateEnabled() = 0;
 
 	template <typename ComponentType, typename ... Args>
-	ComponentType* CreateComponent( Args&&... args );
+	ComponentType* AddComponent( Args&&... args );
 	template <typename ComponentType>
 	ComponentType* GetComponent() const;
 	template <typename ComponentType, typename ... Args>
@@ -116,7 +116,7 @@ private:
 
 
 template <typename ComponentType, typename ... Args>
-ComponentType* IEntity::CreateComponent( Args&&... args )
+ComponentType* IEntity::AddComponent( Args&&... args )
 {
 	if ( HasComponent<ComponentType>() )
 		return GetComponent<ComponentType>();

@@ -90,3 +90,5 @@ if __name__ == "__main__":
     subprocess.call([r'BUILDBINARIES_EXAMPLE.bat'])
     os.chdir(cwd + r'\..\3rdParty\assimp')
     shutil.copyfile(r'build/x64/include/assimp/config.h', r'include/assimp/config.h')
+    os.chdir(cwd + r'\..\3rdParty\PhysX\physx')
+    subprocess.call([r'generate_projects.bat'])

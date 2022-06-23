@@ -32,9 +32,9 @@ struct IScene
 	[[nodiscard]] virtual const entt::registry& GetRegistry() const = 0;
 	virtual entt::registry& GetRegistry() = 0;
 	[[nodiscard]] virtual std::vector<IEntity*> GetAllEntities() = 0;
-	virtual ISystem* GetSystem()const = 0;
-	virtual BalVulkan::CBuffer* GetModelBuffer()const = 0;
-	virtual BalVulkan::CBuffer* GetShadingBuffer()const = 0;
+	[[nodiscard]] virtual ISystem* GetSystem()const = 0;
+	[[nodiscard]] virtual BalVulkan::CBuffer* GetModelBuffer()const = 0;
+	[[nodiscard]] virtual BalVulkan::CBuffer* GetShadingBuffer()const = 0;
 
 	template <typename T>
 	static void OnComponentAdded( IEntity* entity, T& component );

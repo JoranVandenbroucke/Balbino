@@ -12,8 +12,7 @@ namespace Balbino
 	{
 	public:
 		CCamera()
-			: m_view{ 1 }
-			, m_projection{ 1 }
+			: m_projection{ 1 }
 			, m_index{}
 			, m_width{ 0 }
 			, m_height{ 0 }
@@ -49,8 +48,6 @@ namespace Balbino
 			m_farClip = farPlane;
 			m_projection = glm::perspective( fov, m_aspectRatio, nearPlane, farPlane );
 			m_projection[1][1] *= -1;
-
-			m_view = lookAt( glm::vec3{ 0, 0, 0 }, glm::vec3{ 0, 0, 1 }, glm::vec3{ 0, 1, 0 } );
 		}
 
 		void UpdateProjectionMatrix( float fov = glm::radians( 45.0f ), float nearPlane = 0.001f, float farPlane = 1000 )
@@ -65,11 +62,6 @@ namespace Balbino
 		void SetDrawIndex( int index )
 		{
 			m_index = index;
-		}
-
-		[[nodiscard]] const glm::mat4& GetView() const
-		{
-			return m_view;
 		}
 
 		[[nodiscard]] const glm::mat4& GetProjection() const
@@ -98,7 +90,6 @@ namespace Balbino
 		}
 
 	private:
-		glm::mat4 m_view;
 		glm::mat4 m_projection;
 
 		int m_index;

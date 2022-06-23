@@ -14,6 +14,7 @@
 
 #include <imgui.h>
 #include <ImGuizmo.h>
+#include <Components/LightComponent.h>
 
 #include "BalMath.h"
 #include "FileParcer.h"
@@ -34,7 +35,8 @@ void BalEditor::CGameView::Draw()
 
 		const auto camera = m_pContext->GetPrimaryCameraEntity();
 		const auto& cameraComponent = camera->GetComponent<CCameraComponent>();
-        const auto& view = inverse( cameraComponent->GetCamera().GetView() );
+		const auto& transformComponent = camera->GetComponent<CTransformComponent>();
+        const auto& view = glm::inverse( transformComponent->GetTransform() );
         const auto& projection = cameraComponent->GetCamera().GetProjection();
 
 		const auto tc = selected->GetComponent<CTransformComponent>();
@@ -75,7 +77,7 @@ void BalEditor::CGameView::Draw()
 			//todo: make model
 			const Balbino::IMesh* pModel = m_pSystem->GetResourceManager()->LoadModel(static_cast<SFile*>( payload->Data )->path.generic_string());
 			IEntity* pEnt = m_pContext->CreateEntity();
-			pEnt->CreateComponent<CMeshRenderComponent>( pModel->GetUuid() )->SetMaterialCount( pModel->GetMaterialCount() );
+            pEnt->AddComponent<CMeshRenderComponent>( pModel->GetUuid())->SetMaterialCount( pModel->GetMaterialCount() );
 		}
 		ImGui::EndDragDropTarget();
 	}

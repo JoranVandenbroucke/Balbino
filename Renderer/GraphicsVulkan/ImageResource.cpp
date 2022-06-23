@@ -43,7 +43,7 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
 	VkImageMemoryBarrier barrier{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		.oldLayout = m_imageLayout,
-		.newLayout = static_cast<VkImageLayout>( newLayout ), //todo:: make this "cusomizable"
+		.newLayout = static_cast<VkImageLayout>( newLayout ),
 		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
 		.image = m_image,

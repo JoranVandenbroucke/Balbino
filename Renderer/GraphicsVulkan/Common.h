@@ -160,13 +160,13 @@ namespace BalVulkan
 
 	enum class EImageViewType : uint8_t
 	{
-		Cube,
-		CubeArray,
-		View1D,
-		View1DArray,
-		View2D,
-		View2DArray,
-		View3D
+        View1D = 0,
+        View2D = 1,
+        View3D = 2,
+        Cube = 3,
+        View1DArray = 4,
+        View2DArray = 5,
+        CubeArray = 6,
 	};
 
 
@@ -529,7 +529,8 @@ namespace BalVulkan
 		{
 			Image,
 			Buffer,
-			DynamicBuffer
+			DynamicBuffer,
+            BufferStorage
 		} descriptorType;
 
 		union DescriptorInfo

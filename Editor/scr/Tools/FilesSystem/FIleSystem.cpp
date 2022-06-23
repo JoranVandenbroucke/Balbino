@@ -67,13 +67,8 @@ SFile BalEditor::GetData( const std::filesystem::path& path )
 			uint8_t value;
 			BinaryReadWrite::Read( fileStream, file.uuid );
 			BinaryReadWrite::Read( fileStream, value );
-			BinaryReadWrite::MoveCursorToEnd( fileStream );
-			BinaryReadWrite::GetCursorPosition( fileStream, file.size );
-			BinaryReadWrite::MoveCursorToStart( fileStream );
 
 			file.type = static_cast< EFileTypes >( value );
-			file.pData = malloc( file.size );
-			BinaryReadWrite::GetData( fileStream, (char*)file.pData, file.size );
 			
 			fileStream.close();
 		}

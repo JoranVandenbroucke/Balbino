@@ -46,7 +46,7 @@ BalEditor::CAssetBrowser::CAssetBrowser()
 
 BalEditor::CAssetBrowser::~CAssetBrowser() = default;
 
-void BalEditor::CAssetBrowser::Initialize(const ISystem* pSystem)
+void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
 {
     m_pSystem = pSystem;
     m_pUnknownIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/UnknownFile.basset" );
@@ -77,36 +77,36 @@ void BalEditor::CAssetBrowser::Draw()
 {
     FindAllFiles();
     //ImGui::SetNextWindowSizeConstraints( ImVec2( 100.0f, 100.0f ), ImVec2( -1.0f, -1.0f ) );
-    if( m_isVisible)
+    if ( m_isVisible )
     {
-        if(ImGui::Begin( "Asset Browser", &m_isVisible ))
+        if ( ImGui::Begin( "Asset Browser", &m_isVisible ))
         {
-            if( ImGui::BeginChild( "Asset Tree", ImVec2{ 128, -1 }, true, ImGuiWindowFlags_HorizontalScrollbar ))
+            if ( ImGui::BeginChild( "Asset Tree", ImVec2{ 128, -1 }, true, ImGuiWindowFlags_HorizontalScrollbar ))
             {
                 uint32_t nodeIdx{};
                 DrawTree( "..\\Data", nodeIdx );
             }
             ImGui::EndChild();
-            std::ranges::sort( m_currentDirectory, [](const SFile& left, const SFile& right)
+            std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
             {
                 return left.fileName < right.fileName;
             } );
-            std::ranges::sort( m_currentDirectory, [](const SFile& left, const SFile& right)
+            std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
             {
                 return left.isFolder > right.isFolder;
             } );
 
             ImGui::SameLine();
-            if( ImGui::BeginChild( "Asset File", ImVec2{ -1, -1 }, true, ImGuiWindowFlags_AlwaysAutoResize ))
+            if ( ImGui::BeginChild( "Asset File", ImVec2{ -1, -1 }, true, ImGuiWindowFlags_AlwaysAutoResize ))
             {
                 int id{};
                 bool isSelected{ false };
-                for( const auto& currentFile : m_currentDirectory )
+                for ( const auto& currentFile: m_currentDirectory )
                 {
                     isSelected = false;
                     ImGui::Selectable(( "##file" + std::to_string( id++ )).c_str(), &isSelected, ImGuiSelectableFlags_AllowDoubleClick, ImVec2{ 0, m_size * 1.05f } );
                     HandelSelected( currentFile, isSelected );
-                    if( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ))
+                    if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ))
                     {
                         ImGui::SetDragDropPayload( ToString( currentFile.type ), &currentFile, sizeof( SFile ));
                         ImGui::Text( "%s", currentFile.fileName.c_str());
@@ -186,10 +186,6 @@ void BalEditor::CAssetBrowser::Draw()
 void BalEditor::CAssetBrowser::Cleanup()
 {
     m_currentDirectory.clear();
-    for( const auto& [isFolder, type, uuid, size, pData, fileName, path, lastWrittenTime, depth] : m_files )
-    {
-        free( pData );
-    }
     m_files.clear();
 }
 
@@ -199,7 +195,7 @@ void BalEditor::CAssetBrowser::ShowWindow()
     ImGui::SetWindowFocus( "Asset Browser" );
 }
 
-void BalEditor::CAssetBrowser::SetShaderGraphReference(CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor)
+void BalEditor::CAssetBrowser::SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor )
 {
     m_pShaderGraph = pShaderGraph;
     m_pMaterialEditor = pMaterialEditor;
@@ -208,12 +204,11 @@ void BalEditor::CAssetBrowser::SetShaderGraphReference(CShaderGraph* pShaderGrap
 void BalEditor::CAssetBrowser::FindAllFiles()
 {
     auto it = m_files.begin();
-    while( it != m_files.end())
+    while ( it != m_files.end())
     {
-        if( !std::filesystem::exists( it->path ))
+        if ( !std::filesystem::exists( it->path ))
         {
             //Remove
-            free( it->pData );
             it = m_files.erase( it );
         }
         else
@@ -222,23 +217,24 @@ void BalEditor::CAssetBrowser::FindAllFiles()
         }
     }
 
-    if( m_files.empty())
+    if ( m_files.empty())
     {
         m_files.push_back( GetData( std::filesystem::relative( "..\\Data" )));
         m_files.back().lastWrittenTime = std::filesystem::last_write_time( "..\\Data" );
     }
 
-    for( auto file = std::filesystem::recursive_directory_iterator( "..\\Data" ); file != std::filesystem::recursive_directory_iterator(); ++file )
+    for ( auto file = std::filesystem::recursive_directory_iterator( "..\\Data" );
+          file != std::filesystem::recursive_directory_iterator(); ++file )
     {
 
         auto currentFileLastWriteTime = std::filesystem::last_write_time( *file );
 
         // File creation
-        auto filetIt = std::ranges::find_if( m_files, [&file](const SFile& filePair) -> bool
+        auto filetIt = std::ranges::find_if( m_files, [ &file ]( const SFile& filePair )->bool
         {
             return filePair.path == file->path();
         } );
-        if( filetIt == m_files.end())
+        if ( filetIt == m_files.end())
         {
             //CreateNew
             m_files.push_back( GetData( relative( file->path())));
@@ -247,7 +243,7 @@ void BalEditor::CAssetBrowser::FindAllFiles()
         }
         else
         {
-            if( filetIt->lastWrittenTime != currentFileLastWriteTime )
+            if ( filetIt->lastWrittenTime != currentFileLastWriteTime )
             {
                 //Modifi
                 ( *filetIt ) = GetData( relative( file->path()));
@@ -258,50 +254,52 @@ void BalEditor::CAssetBrowser::FindAllFiles()
     }
 }
 
-void BalEditor::CAssetBrowser::CreateMaterial(const SFile& file, std::string_view name) const
+void BalEditor::CAssetBrowser::CreateMaterial( const SFile& file, std::string_view name ) const
 {
     auto path = file.path;
     path.replace_filename( name );
     path.replace_extension( ".basset" );
     const BalVulkan::CShaderPipeline* pResources = m_pSystem->GetResourceManager()->LoadShader( file.path.string());
     std::ofstream materialFile( path, std::ios::out | std::ios::binary );
-    if( !materialFile.is_open() && pResources )
+    if ( !materialFile.is_open() && pResources )
     {
         return;
     }
 
-    const std::unordered_map< std::string, BalVulkan::SShaderResource >& resources = pResources->GetShaderResources();
-    std::vector< BalVulkan::SShaderResource > shaderResource;
+    const std::unordered_map<std::string, BalVulkan::SShaderResource>& resources = pResources->GetShaderResources();
+    std::vector<BalVulkan::SShaderResource> shaderResource;
     shaderResource.reserve( resources.size());
     /*** Copy all value fields from map to a vector using transform() & Lambda function ***/
-    std::ranges::transform( resources, std::back_inserter( shaderResource ), [](const std::pair< std::string, BalVulkan::SShaderResource >& pair)
+    std::ranges::transform( resources, std::back_inserter( shaderResource ), []( const std::pair<std::string, BalVulkan::SShaderResource>& pair )
     {
         return pair.second;
     } );
-    BinaryReadWrite::Write( materialFile, (uint64_t) CUuid());
-    BinaryReadWrite::Write( materialFile, (uint8_t) EFileTypes::Material );
+    BinaryReadWrite::Write( materialFile, ( uint64_t ) CUuid());
+    BinaryReadWrite::Write( materialFile, ( uint8_t ) EFileTypes::Material );
     BinaryReadWrite::Write( materialFile, file.uuid );
     BinaryReadWrite::Write( materialFile, shaderResource );
     materialFile.close();
 }
 
-void BalEditor::CAssetBrowser::DrawTree(const std::string& path, uint32_t& nodeIdx)
+void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& nodeIdx )
 {
-    const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [&path](const SFile& f) -> bool
+    const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [ &path ]( const SFile& f )->bool
     {
         return f.path.string() == path;
     } );
-    if( fileIter == m_files.cend())
+    if ( fileIter == m_files.cend())
     {
         return;
     }
 
-    std::vector< std::string > files;
-    constexpr ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+    std::vector<std::string> files;
+    constexpr ImGuiTreeNodeFlags baseFlags =
+            ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     ImGuiTreeNodeFlags nodeFlags = baseFlags;
-    for( auto& f : m_files )
+    for ( auto& f: m_files )
     {
-        if( f.path.string() != path && f.path.string().find( path ) != std::string::npos && f.isFolder && f.depth - fileIter->depth <= 1 && std::ranges::find_if( files, [&f](const std::string& string)
+        if ( f.path.string() != path && f.path.string().find( path ) != std::string::npos && f.isFolder &&
+             f.depth - fileIter->depth <= 1 && std::ranges::find_if( files, [ &f ]( const std::string& string )
         {
             return string.find( f.path.string()) != std::string::npos;
         } ) == files.cend())
@@ -309,22 +307,22 @@ void BalEditor::CAssetBrowser::DrawTree(const std::string& path, uint32_t& nodeI
             files.push_back( f.path.string());
         }
     }
-    if( files.empty())
+    if ( files.empty())
     {
         nodeFlags |= ImGuiTreeNodeFlags_Leaf /*| ImGuiTreeNodeFlags_NoTreePushOnOpen*/;
     }
-    if( !fileIter->depth )
+    if ( !fileIter->depth )
     {
         nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
         ImGui::SetNextItemOpen( true );
     }
-    if( ImGui::TreeNodeEx( fileIter->fileName.c_str(), nodeFlags ))
+    if ( ImGui::TreeNodeEx( fileIter->fileName.c_str(), nodeFlags ))
     {
-        if( ImGui::IsItemClicked( ImGuiMouseButton_Left ))
+        if ( ImGui::IsItemClicked( ImGuiMouseButton_Left ))
         {
             GetAllFilesInSelectedPath( relative( fileIter->path ).string(), m_currentDirectory );
         }
-        for( const auto& f : files )
+        for ( const auto& f: files )
         {
             DrawTree( f, nodeIdx );
         }
@@ -332,69 +330,70 @@ void BalEditor::CAssetBrowser::DrawTree(const std::string& path, uint32_t& nodeI
     }
     else
     {
-        if( ImGui::IsItemClicked( ImGuiMouseButton_Left ))
+        if ( ImGui::IsItemClicked( ImGuiMouseButton_Left ))
         {
             GetAllFilesInSelectedPath( relative( fileIter->path ).string(), m_currentDirectory );
         }
     }
 }
 
-void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath(std::string path, std::vector< SFile >& filesInDirectory)
+void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory )
 {
-    const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [&path](const SFile& f) -> bool
+    const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [ &path ]( const SFile& f )->bool
     {
         return f.path.string() == path;
     } );
-    if( fileIter == m_files.cend())
+    if ( fileIter == m_files.cend())
     {
         return;
     }
-    for( char& c : path )
+    for ( char& c: path )
     {
-        if( c == '/' )
+        if ( c == '/' )
         {
             c = '\\';
         }
     }
     filesInDirectory.clear();
-    for( auto& f : m_files )
+    for ( auto& f: m_files )
     {
-        if( f.path.string() != path && f.path.string().find( path ) != std::string::npos && f.depth - fileIter->depth == 1 && std::find_if( filesInDirectory.cbegin(), filesInDirectory.cend(), [&f](const SFile& string)
-        {
-            return string.path.string().find( f.path.string()) != std::string::npos;
-        } ) == filesInDirectory.cend())
+        if ( f.path.string() != path && f.path.string().find( path ) != std::string::npos &&
+             f.depth - fileIter->depth == 1 &&
+             std::find_if( filesInDirectory.cbegin(), filesInDirectory.cend(), [ &f ]( const SFile& string )
+             {
+                 return string.path.string().find( f.path.string()) != std::string::npos;
+             } ) == filesInDirectory.cend())
         {
             filesInDirectory.push_back( f );
         }
     }
 }
 
-void BalEditor::CAssetBrowser::HandelSelected(const SFile& currentFile, bool isSelected)
+void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool isSelected )
 {
-    switch( currentFile.type )
+    switch ( currentFile.type )
     {
-        case EFileTypes::Unknown:
-            break;
+        case EFileTypes::Unknown:break;
         case EFileTypes::Folder:
-            if( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+            if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
             {
                 GetAllFilesInSelectedPath( relative( currentFile.path ).string(), m_currentDirectory );
             }
             break;
         case EFileTypes::Shader:
-            if( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+            if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
             {
                 m_pShaderGraph->OpenShader( currentFile.path );
                 m_pShaderGraph->ShowWindow();
             }
-            else if( ImGui::BeginPopupContextItem(( "##ShaderOptions" + std::to_string( currentFile.uuid )).c_str()))
+            else if ( ImGui::BeginPopupContextItem(( "##ShaderOptions" + std::to_string( currentFile.uuid )).c_str()))
             {
-                if( ImGui::MenuItem( "Open Shader Editor" ))
+                if ( ImGui::MenuItem( "Open Shader Editor" ))
                 {
                     m_pShaderGraph->OpenShader( currentFile.path );
                     m_pShaderGraph->ShowWindow();
                 }
-                else if( ImGui::MenuItem( "Create New Material" ))
+                else if ( ImGui::MenuItem( "Create New Material" ))
                 {
                     m_newFile = true;
                     m_currentName = "";
@@ -402,19 +401,20 @@ void BalEditor::CAssetBrowser::HandelSelected(const SFile& currentFile, bool isS
                 }
                 ImGui::EndPopup();
             }
-            else if( m_newFile && m_currentName.empty() && m_newFileFronID == currentFile.uuid )
+            else if ( m_newFile && m_currentName.empty() && m_newFileFronID == currentFile.uuid )
             {
                 ImGui::OpenPopup( "Enter Name" );
 
                 // Always center this window when appearing
                 ImVec2 center = ImGui::GetMainViewport()->GetCenter();
                 ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ));
-                if( ImGui::BeginPopupModal( "Enter Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize ))
+                if ( ImGui::BeginPopupModal( "Enter Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize ))
                 {
                     char name[64]{};
-                    if( ImGui::InputText(( "##material name" + std::to_string( currentFile.uuid )).c_str(), name, 64, ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue ))
+                    if ( ImGui::InputText(( "##material name" + std::to_string( currentFile.uuid )).c_str(), name, 64,
+                            ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue ))
                     {
-                        m_currentName.append( name, std::find_if( name, name + 64, [](char c)
+                        m_currentName.append( name, std::find_if( name, name + 64, []( char c )
                         {
                             return c == '\0';
                         } ));
@@ -426,14 +426,14 @@ void BalEditor::CAssetBrowser::HandelSelected(const SFile& currentFile, bool isS
             }
             break;
         case EFileTypes::Material:
-            if( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+            if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
             {
                 m_pMaterialEditor->SetMaterial( currentFile );
                 m_pMaterialEditor->ShowWindow();
             }
-            else if( ImGui::BeginPopupContextItem(( "##MaterialOptions" + std::to_string( currentFile.uuid )).c_str()))
+            else if ( ImGui::BeginPopupContextItem(( "##MaterialOptions" + std::to_string( currentFile.uuid )).c_str()))
             {
-                if( ImGui::MenuItem( "Open Material Editor" ))
+                if ( ImGui::MenuItem( "Open Material Editor" ))
                 {
                     m_pMaterialEditor->SetMaterial( currentFile );
                     m_pMaterialEditor->ShowWindow();
@@ -447,8 +447,7 @@ void BalEditor::CAssetBrowser::HandelSelected(const SFile& currentFile, bool isS
         case EFileTypes::Font:
         case EFileTypes::Model:
         case EFileTypes::Code:
-        case EFileTypes::Preset:
-            break;
+        case EFileTypes::Preset:break;
     }
 }
 

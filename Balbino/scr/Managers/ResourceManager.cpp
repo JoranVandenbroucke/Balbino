@@ -213,7 +213,7 @@ Balbino::CMaterial* CResourceManager::LoadMaterial(std::string_view assetPath)
                 {
                     BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
                     pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, 0, 1 );
+                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::DynamicBuffer, pUBO, 0, 1 );
                 }
             }
             else if( resource.type == BalVulkan::EShaderResourceType::Image || resource.type == BalVulkan::EShaderResourceType::ImageSampler )
@@ -224,7 +224,14 @@ Balbino::CMaterial* CResourceManager::LoadMaterial(std::string_view assetPath)
                     descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Image, texture->GetImageViewObject(), texture->GetSamplerObject(), resource.set, resource.binding);
                 }
             }
+            else if(resource.type == BalVulkan::EShaderResourceType::BufferStorage)
+            {
+                BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
+                pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+                descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::BufferStorage, pUBO, 0, 1 );
+            }
         }
+        
         file.close();
         Balbino::CMaterial* pMaterial = Balbino::CMaterial::CreateNew( uuid, shaderId, g_pCommandPool );
         pMaterial->Initialize( GetShader( shaderId, true ), descriptorSets, g_pDevice );
@@ -433,7 +440,7 @@ void CResourceManager::ReloadAll(BalVulkan::CCommandPool* commandPool, BalVulkan
                 {
                     BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
                     pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, resource.set, resource.binding );
+                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::DynamicBuffer, pUBO, resource.set, resource.binding );
                 }
             }
             else
@@ -461,7 +468,6 @@ void CResourceManager::FindAllFiles()
         if( !std::filesystem::exists( it->path ))
         {
             //Remove
-            free( it->pData );
             it = m_files.erase( it );
         }
         else
@@ -503,7 +509,7 @@ void CResourceManager::FindAllFiles()
     }
 }
 
-SFile CResourceManager::GetData(const std::filesystem::path& path) const
+SFile CResourceManager::GetData(const std::filesystem::path& path)
 {
     SFile file{};
     std::ifstream fileStream( path, std::ios::in | std::ios::binary );
@@ -512,13 +518,8 @@ SFile CResourceManager::GetData(const std::filesystem::path& path) const
         uint8_t value;
         BinaryReadWrite::Read( fileStream, file.uuid );
         BinaryReadWrite::Read( fileStream, value );
-        BinaryReadWrite::MoveCursorToEnd( fileStream );
-        BinaryReadWrite::GetCursorPosition( fileStream, file.size );
-        BinaryReadWrite::MoveCursorToStart( fileStream );
 
         file.type = static_cast< EFileTypes >( value );
-        file.pData = malloc( file.size );
-        BinaryReadWrite::GetData( fileStream, (char*) file.pData, (int64_t) file.size );
         file.path = path;
         file.fileName = path.filename().string();
         fileStream.close();

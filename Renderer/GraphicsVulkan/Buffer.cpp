@@ -70,6 +70,8 @@ void BalVulkan::CBuffer::CopyBufferToImage( const CImageResource* pResource ) co
 
 void BalVulkan::CBuffer::UpdateData( const void* pData, const uint64_t size )
 {
+	if(size == 0)
+		return;
 	void* data;
 	vkMapMemory( GetDevice()->GetVkDevice(), m_bufferMemory, 0, size, 0, &data );
 	memcpy( data, pData, size );

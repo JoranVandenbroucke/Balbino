@@ -79,13 +79,13 @@ std::string CFragmentOutputNode::Evaluate(std::vector<INode*>::iterator& begin, 
 #version 450
 #include "default.glsl"
 
-#define LIGHT_COUNT 6
+#define LIGHT_COUNT 1024
 #define MEDIUM_MAX 65504.0
 #define SATUREATE_MADIUM(x) min(x, MEDIUM_MAX)
 
-layout(set=0, binding=2) uniform samplerCube gRadEnvironment;
-layout(set=0, binding=3) uniform samplerCube gIrradEnvironment;
-layout(set=0, binding=4) uniform sampler2D gBRDFLUP;
+layout(set=1, binding=4) uniform samplerCube gRadEnvironment;
+layout(set=1, binding=5) uniform samplerCube gIrradEnvironment;
+layout(set=1, binding=6) uniform sampler2D gBRDFLUP;
 
 layout(location = 0) in vec4 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
@@ -96,17 +96,27 @@ layout(location = 4) in vec4 fragWorldPos;
 layout (location = 0) out vec4 outFragcolor;
 
 struct Light {
-    vec4 position;
-    vec4 color;
-    float radius;
+    int type;               //type: Directional, Point, Spot, Area
+    float strength;         //strength
+    vec3 position;          //position
+    vec3 direction;         //direction
+    vec3 color;             //color
+    vec3 size;              //Point: size,0,0; Spot: size, front, back; area: width, height, 0
 };
+
+
+layout(set=0, binding=0) uniform ModelData {
+    mat4 model;
+    mat4 view;
+    mat4 proj;
+    vec4 viewPos;
+    int displayDebugTarget;
+} modelBufferObject;
 
 layout(set=0, binding=1) uniform LightData
 {
     Light lights[LIGHT_COUNT];
-    vec4 viewPos;
-    int displayDebugTarget;
-} ubo;
+};
 
 float sqr(float x) { return x * x; }
 
@@ -151,41 +161,45 @@ float Burley(float NdotV, float NdotL, float LdotH, float roughness) {
 
 void main()
 {
-    if (ubo.displayDebugTarget >= 1.0)
+    if (modelBufferObject.displayDebugTarget >= 1.0)
     {
         outFragcolor = vec4((fragNormal + vec3(1)) * vec3(0.5), 1);
         return;
     }
-    else if (ubo.displayDebugTarget >= 2.0)
+    else if (modelBufferObject.displayDebugTarget >= 2.0)
     {
-        vec3 view = normalize(ubo.viewPos.xyz - fragWorldPos.xyz);
+        vec3 view = normalize(modelBufferObject.viewPos.xyz - fragWorldPos.xyz);
         outFragcolor = vec4((view + vec3(1)) * vec3(0.5), 1);
         return;
     }
-    else if (ubo.displayDebugTarget >= 1.0)
+    else if (modelBufferObject.displayDebugTarget >= 1.0)
     {
-        Light light = ubo.lights[0];
-        vec3 l = normalize(ubo.viewPos.xyz - fragWorldPos.xyz);
+        Light light = lights[0];
+        vec3 l = normalize(modelBufferObject.viewPos.xyz - fragWorldPos.xyz);
         outFragcolor = vec4((l + vec3(1)) * vec3(0.5), 1);
         return;
     }
-
     float metallic = {1};
     float perceptualRoughness = {2};
     float ambientOcclusion = 1;
     vec3 baseColor = (1.0 - metallic) * fragColor.rgb * {0};
 
     vec3 n = {3};
-    vec3 v = normalize(ubo.viewPos.xyz - fragWorldPos.xyz);
+    vec3 v = normalize(modelBufferObject.viewPos.xyz - fragWorldPos.xyz);
     float NdotV = abs(dot(n, v)) + 1e-5;
 
+    //TODO: implement this when I have a dfg texture
+    //vec3 energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
     vec3 directColor = vec3(0.0);
     for (int i = 0; i < LIGHT_COUNT; ++i)
     {
+        Light light = lights[i];
+        if(light.strength < 0)
+            break;
+
         vec3 Fd = vec3(0, 0, 0);
         vec3 Fr = vec3(0.0);
 
-        Light light = ubo.lights[i];
         vec3 l = normalize(light.position.xyz - fragWorldPos.xyz);
         vec3 h = normalize(n + l);
 
@@ -213,9 +227,7 @@ void main()
 
         // diffuse BRDF
         Fd = baseColor * Burley(NdotV, NdotL, LdotH, roughness);
-        vec3 distToLight = light.position.xyz - fragWorldPos.xyz;
-        directColor+=(Fd + Fr) * (NdotL * ambientOcclusion) * light.color.rgb * light.color.a/(BALBINO_4PI * dot(distToLight,distToLight) );
-        //directColor+=(Fd + Fr) * (NdotL * ambientOcclusion) * light.color.rgb;
+        directColor+=(Fd + Fr) * (NdotL * ambientOcclusion) * light.color * light.strength;
     }
     //todo add clearcoat brdf
     //todo add Anisotropic brdf

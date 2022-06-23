@@ -98,8 +98,8 @@ void BalEditor::CInterface::Initialize(SDL_Window* pWindow, const int32_t w, con
     io.DisplayFramebufferScale = ImVec2( 1.0f, 1.0f );
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
+    // ImGui::StyleColorsDark();
+    // ImGui::StyleColorsClassic();
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
     SetImGuiStyle();
 
@@ -186,7 +186,9 @@ void BalEditor::CInterface::ProcessEvent(SDL_Event e) const
         case SDL_DROPFILE:
         {
             char* droppedFileDir = e.drop.file;
-            assert( ImportFile( droppedFileDir ));
+            bool successfullyImported{ ImportFile( droppedFileDir ) };
+            ( void ) successfullyImported;
+            assert( successfullyImported );
             // Shows directory of dropped file
             SDL_free( droppedFileDir ); // Free dropped_filedir memory
             break;

@@ -47,72 +47,59 @@ void BalEditor::CMaterialEditor::Draw()
             ImGui::Columns( 2 );
             for( auto& snd : m_shaderResources )
             {
-                ImGui::Text( "%s", snd.name.c_str());
-                ImGui::NextColumn();
-                switch( snd.type )
+                if(snd.type != BalVulkan::EShaderResourceType::Input ||snd.type != BalVulkan::EShaderResourceType::Output )
                 {
-                    case BalVulkan::EShaderResourceType::None:
-                        break;
-                    case BalVulkan::EShaderResourceType::Input:
-                        ImGui::Text( "Input" );
-                        break;
-                    case BalVulkan::EShaderResourceType::InputAttachment:
-                        ImGui::Text( "Input Attachment" );
-                        break;
-                    case BalVulkan::EShaderResourceType::Output:
-                        ImGui::Text( "Output" );
-                        break;
-                    case BalVulkan::EShaderResourceType::Image:
-                        ImGui::Text( "Image" );
-                        if( ImGui::BeginDragDropTarget())
-                        {
-                            if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Image )))
+                    ImGui::Text( "%s", snd.name.c_str());
+                    ImGui::NextColumn();
+                    switch ( snd.type )
+                    {
+                        case BalVulkan::EShaderResourceType::None:break;
+                        case BalVulkan::EShaderResourceType::InputAttachment:ImGui::Text( "Input Attachment" );
+                            break;
+                        case BalVulkan::EShaderResourceType::Image:ImGui::Text( "Image" );
+                            if ( ImGui::BeginDragDropTarget())
                             {
-                                std::cout << "Image bound: ";
-                                std::cout << payload->DataSize;
-                                std::cout << "\n";
-                                const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture( static_cast<SFile*>( payload->Data )->uuid, true );
-                                snd.resourceID = pModel->GetID();
+                                if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Image )))
+                                {
+                                    std::cout << "Image bound: ";
+                                    std::cout << payload->DataSize;
+                                    std::cout << "\n";
+                                    const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture( static_cast<SFile*>( payload->Data )->uuid, true );
+                                    snd.resourceID = pModel->GetID();
+                                }
+                                ImGui::EndDragDropTarget();
                             }
-                            ImGui::EndDragDropTarget();
-                        }
-                        break;
-                    case BalVulkan::EShaderResourceType::ImageSampler:
-                        ImGui::Text( "Image Sampler" );
-                        if( ImGui::BeginDragDropTarget())
-                        {
-                            if( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Image )))
+                            break;
+                        case BalVulkan::EShaderResourceType::ImageSampler:ImGui::Text( "Image Sampler" );
+                            if ( ImGui::BeginDragDropTarget())
                             {
-                                std::cout << "Image bound: ";
-                                std::cout << payload->DataSize;
-                                std::cout << "\n";
-                                const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture( static_cast<SFile*>( payload->Data )->uuid, true );
-                                snd.resourceID = pModel->GetID();
+                                if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Image )))
+                                {
+                                    std::cout << "Image bound: ";
+                                    std::cout << payload->DataSize;
+                                    std::cout << "\n";
+                                    const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture( static_cast<SFile*>( payload->Data )->uuid, true );
+                                    snd.resourceID = pModel->GetID();
+                                }
+                                ImGui::EndDragDropTarget();
                             }
-                            ImGui::EndDragDropTarget();
-                        }
-                        break;
-                    case BalVulkan::EShaderResourceType::ImageStorage:
-                        ImGui::Text( "Image Storage" );
-                        break;
-                    case BalVulkan::EShaderResourceType::Sampler:
-                        ImGui::Text( "Sampler" );
-                        break;
-                    case BalVulkan::EShaderResourceType::BufferUniform:
-                        ImGui::Text( "Uniform Buffer" );
-                        break;
-                    case BalVulkan::EShaderResourceType::BufferStorage:
-                        ImGui::Text( "Storage Buffer" );
-                        break;
-                    case BalVulkan::EShaderResourceType::PushConstant:
-                        ImGui::Text( "Push Constant" );
-                        break;
-                    case BalVulkan::EShaderResourceType::SpecializationConstant:
-                        ImGui::Text( "Specialization Constant" );
-                        break;
-                    default:;
+                            break;
+                        case BalVulkan::EShaderResourceType::ImageStorage:ImGui::Text( "Image Storage" );
+                            break;
+                        case BalVulkan::EShaderResourceType::Sampler:ImGui::Text( "Sampler" );
+                            break;
+                        case BalVulkan::EShaderResourceType::BufferUniform:ImGui::Text( "Uniform Buffer" );
+                            break;
+                        case BalVulkan::EShaderResourceType::BufferStorage:ImGui::Text( "Storage Buffer" );
+                            break;
+                        case BalVulkan::EShaderResourceType::PushConstant:ImGui::Text( "Push Constant" );
+                            break;
+                        case BalVulkan::EShaderResourceType::SpecializationConstant:ImGui::Text( "Specialization Constant" );
+                            break;
+                        default:;
+                    }
+                    ImGui::NextColumn();
                 }
-                ImGui::NextColumn();
             }
         }
         ImGui::End();

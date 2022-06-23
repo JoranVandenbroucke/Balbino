@@ -20,13 +20,6 @@ void BalVulkan::CSampler::Initialize( uint32_t mipLevels, EFilter filter, ESampl
 	if ( m_sampler )
 		return;
 
-	VkPhysicalDeviceProperties properties{};
-	vkGetPhysicalDeviceProperties( GetDevice()->GetPhysicalDeviceInfo()->device, &properties );
-
-	//VkPhysicalDeviceFeatures supportedFeatures;
-	//vkGetPhysicalDeviceFeatures( GetDevice()->GetPhysicalDeviceInfo()->device, &supportedFeatures );
-
-
 	const VkSamplerCreateInfo samplerInfo{
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
 		.pNext = VK_NULL_HANDLE,
@@ -38,10 +31,8 @@ void BalVulkan::CSampler::Initialize( uint32_t mipLevels, EFilter filter, ESampl
 		.addressModeV = static_cast<VkSamplerAddressMode>( samplerAddressMode ),
 		.addressModeW = static_cast<VkSamplerAddressMode>( samplerAddressMode ),
 		.mipLodBias = 0.0f,
-		//.anisotropyEnable = supportedFeatures.samplerAnisotropy,
-		//.maxAnisotropy = supportedFeatures.samplerAnisotropy == VK_TRUE? properties.limits.maxSamplerAnisotropy : 1,
-		.anisotropyEnable = false,
-		.maxAnisotropy = 1,
+		.anisotropyEnable = GetDevice()->GetPhysicalDeviceInfo()->deviceFeatures.samplerAnisotropy,
+		.maxAnisotropy = float ((GetDevice()->GetPhysicalDeviceInfo()->deviceFeatures.samplerAnisotropy == VK_TRUE)? GetDevice()->GetPhysicalDeviceInfo()->GetMaxUsableSampleCount() : 1),
 		.compareEnable = VK_FALSE,
 		.compareOp = VK_COMPARE_OP_ALWAYS,
 		.minLod = 0.0f,

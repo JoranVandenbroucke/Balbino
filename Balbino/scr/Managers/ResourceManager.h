@@ -67,5 +67,5 @@ private:
 	std::vector<SFile> m_files;
 	const ISystem* m_pSystem;
 	void FindAllFiles();
-	[[nodiscard]] SFile GetData(const std::filesystem::path& path) const;
+	[[nodiscard]] static SFile GetData(const std::filesystem::path& path) ;
 };
