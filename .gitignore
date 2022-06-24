@@ -22,8 +22,10 @@ DebugEditor/
 ReleaseEditor/
 3rdParty/Vulkan/
 cmake-build-*/
+Game/Data/
 CMakeFiles/
-
+Resources/
+!*/Resources/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 .idea/
