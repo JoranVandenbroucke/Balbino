@@ -49,6 +49,7 @@ namespace Balbino
 		void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount );
 		void Cleanup();
 		bool StartDraw();
+        bool NextSubPass();
 		bool EndDraw();
 		[[nodiscard]] float GetAspectRatio() const;
 		void GiveSceneRenderData( CScene* pScene);

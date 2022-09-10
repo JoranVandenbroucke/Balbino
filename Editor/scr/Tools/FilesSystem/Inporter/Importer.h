@@ -3,8 +3,7 @@
 
 namespace BalEditor
 {
-	bool ImportImage( const std::filesystem::path& path );
-	bool ImportFont( const std::filesystem::path& path );
-	bool ImportAudio( const std::filesystem::path& path );
-	bool ImportMesh( const std::filesystem::path& path );
+    bool ImportImage( const std::filesystem::path& path, const char* pDestinationDirection = "../Data" );
+    bool ImportFont( const std::filesystem::path& path, const char* pDestinationDirection = "../Data" );
+    bool ImportAudio( const std::filesystem::path& path, const char* pDestinationDirection = "../Data" );
 }

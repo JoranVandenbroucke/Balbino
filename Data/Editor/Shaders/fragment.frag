@@ -6,11 +6,6 @@
 
 #define LIGHT_COUNT 1024
 #define MEDIUM_MAX 65504.0
-#define SATUREATE_MADIUM(x) min(x, MEDIUM_MAX)
-
-layout(set=1, binding=4) uniform samplerCube gRadEnvironment;
-layout(set=1, binding=5) uniform samplerCube gIrradEnvironment;
-layout(set=1, binding=6) uniform sampler2D gBRDFLUP;
 
 layout(location = 0) in vec4 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
@@ -21,17 +16,16 @@ layout(location = 4) in vec4 fragWorldPos;
 layout (location = 0) out vec4 outFragcolor;
 
 struct Light {
-    int type;               //type: Directional, Point, Spot, Area
-    float strength;         //strength
-    vec3 position;          //position
-    vec3 direction;         //direction
-    vec3 color;             //color
-    vec3 size;              //Point: size,0,0; Spot: size, front, back; area: width, height, 0
+    int type;//type: Directional, Point, Spot, Area
+    float strength;//strength
+    vec3 position;//position
+    vec3 direction;//direction
+    vec3 color;//color
+    vec3 size;//Point: size,0,0; Spot: size, front, back; area: width, height, 0
 };
 
 
 layout(set=0, binding=0) uniform ModelData {
-    mat4 model;
     mat4 view;
     mat4 proj;
     vec4 viewPos;
@@ -51,7 +45,7 @@ float GGX(float NdotH, float roughness, const vec3 n, const vec3 h)
     float a = NdotH * roughness;
     float k = roughness / (dot(NxH, NxH) + a * a);
     float d = k * k * (1.0 / BALBINO_PI);
-    return SATUREATE_MADIUM(d);
+    return min(d, MEDIUM_MAX);
 }
 
 float SmithGGXCorrelated(float NdotV, float NdotL, float roughness)
@@ -104,34 +98,34 @@ void main()
         outFragcolor = vec4((l + vec3(1)) * vec3(0.5), 1);
         return;
     }
-    float metallic = 0;
-    float perceptualRoughness = 0.5;
+    float metallic = 0.000000;
+    float perceptualRoughness = 0.500000;
     float ambientOcclusion = 1;
     vec3 baseColor = (1.0 - metallic) * fragColor.rgb;
-
+    
     vec3 n = normalize(fragNormal);
     vec3 v = normalize(modelBufferObject.viewPos.xyz - fragWorldPos.xyz);
     float NdotV = abs(dot(n, v)) + 1e-5;
-
+    
     //TODO: implement this when I have a dfg texture
     //vec3 energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
     vec3 directColor = vec3(0.0);
     for (int i = 0; i < LIGHT_COUNT; ++i)
     {
         Light light = lights[i];
-        if(light.strength < 0)
-            break;
-
+        if (light.strength < 0)
+        break;
+        
         vec3 Fd = vec3(0, 0, 0);
         vec3 Fr = vec3(0.0);
-
+        
         vec3 l = normalize(light.position.xyz - fragWorldPos.xyz);
         vec3 h = normalize(n + l);
-
+        
         float NdotL = max(dot(n, l), 0.0);
         float NdotH = max(dot(n, h), 0.0);
         float LdotH = max(dot(l, h), 0.0);
-
+        
         // perceptually linear roughness to roughness (see parameterization)
         float roughness = perceptualRoughness * perceptualRoughness;
         if (NdotL > 0.0)
@@ -140,16 +134,16 @@ void main()
             float D = GGX(NdotH, roughness, n, h);
             vec3  F = FresnelSchlick(LdotH, f0);
             float V = SmithGGXCorrelated(NdotV, NdotL, roughness);
-
+            
             // specular BRDF
             Fr = (D * V) * F;
-
+            
             //TODO: implement this when I have a dfg texture
             //vec3 energyCompensation = 1.0 + f0 * (1.0 / dfg.y - 1.0);
             //// Scale the specular lobe to account for multiscattering
             //Fr *= pixel.energyCompensation;
         }
-
+        
         // diffuse BRDF
         Fd = baseColor * Burley(NdotV, NdotL, LdotH, roughness);
         directColor+=(Fd + Fr) * (NdotL * ambientOcclusion) * light.color * light.strength;

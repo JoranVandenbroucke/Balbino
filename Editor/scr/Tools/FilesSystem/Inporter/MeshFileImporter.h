@@ -13,22 +13,25 @@ namespace BalEditor
     {
     public:
         CMeshFileImporter();
-        virtual ~CMeshFileImporter();
+        ~CMeshFileImporter() = default;
 
-        bool DrawImportSettings(const std::filesystem::path& path);
+        void SetVisible(const std::filesystem::path& path, std::string pDestinationDirection = "../Data");
+        bool IsVisible()const;
+        bool DrawImportSettings();
         float GetImportPercentage();
 
     private:
-        bool LoadFromPath(const std::filesystem::path& path);
         float m_importPercentage;
-        bool m_isImporting;
+        bool m_isVisible;
         bool m_preset;
-
-        enum class PresetPropertieTypes{
-            Camera,
-            Light,
-            Mesh
-        };
+        bool m_meshes;
+        bool m_materials;
+        bool m_textures;
+        bool m_lights;
+        bool m_cameras;
+        std::filesystem::path m_path;
+        std::string m_destinationDirection;
+        bool LoadMesh() const;
     };
 }
 

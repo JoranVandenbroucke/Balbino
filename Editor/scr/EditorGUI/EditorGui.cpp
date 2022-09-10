@@ -11,7 +11,7 @@ void BalEditor::EditorGUI::DrawIntValue( const char* name, int value )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -25,12 +25,12 @@ void BalEditor::EditorGUI::DrawIntValue( const char* name, int value )
 void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value )
 {
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -42,7 +42,7 @@ void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##X", value[ 0 ] );
+    ImGui::Value( "##X", value[0] );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -51,7 +51,7 @@ void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Y", value[ 1 ] );
+    ImGui::Value( "##Y", value[1] );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -65,12 +65,12 @@ void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value )
 void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
 {
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -82,7 +82,7 @@ void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##X", value[ 0 ] );
+    ImGui::Value( "##X", value[0] );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -91,7 +91,7 @@ void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Y", value[ 1 ] );
+    ImGui::Value( "##Y", value[1] );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -100,7 +100,7 @@ void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Z", value[ 2 ] );
+    ImGui::Value( "##Z", value[2] );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -113,12 +113,12 @@ void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
 void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
 {
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -130,7 +130,7 @@ void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##X", value[ 0 ] );
+    ImGui::Value( "##X", value[0] );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -139,7 +139,7 @@ void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Y", value[ 1 ] );
+    ImGui::Value( "##Y", value[1] );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -148,7 +148,7 @@ void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Z", value[ 2 ] );
+    ImGui::Value( "##Z", value[2] );
     ImGui::PopItemWidth();
 
     ImGui::PushFont( boldFont );
@@ -156,7 +156,7 @@ void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##W", value[ 3 ] );
+    ImGui::Value( "##W", value[3] );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -171,7 +171,7 @@ void BalEditor::EditorGUI::DrawFloatValue( const char* name, float value )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -186,12 +186,12 @@ void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value
 {
 
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -203,7 +203,7 @@ void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##X", value[ 0 ], "%.2f" );
+    ImGui::Value( "##X", value[0], "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -212,7 +212,7 @@ void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Y", value[ 1 ], "%.2f" );
+    ImGui::Value( "##Y", value[1], "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -226,12 +226,12 @@ void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value
 void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value )
 {
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -243,7 +243,7 @@ void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##X", value[ 0 ], "%.2f" );
+    ImGui::Value( "##X", value[0], "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -252,7 +252,7 @@ void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Y", value[ 1 ], "%.2f" );
+    ImGui::Value( "##Y", value[1], "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -261,7 +261,7 @@ void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Z", value[ 2 ], "%.2f" );
+    ImGui::Value( "##Z", value[2], "%.2f" );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -274,12 +274,12 @@ void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value
 void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value )
 {
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -291,7 +291,7 @@ void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##X", value[ 0 ], "%.2f" );
+    ImGui::Value( "##X", value[0], "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -300,7 +300,7 @@ void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Y", value[ 1 ], "%.2f" );
+    ImGui::Value( "##Y", value[1], "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -309,7 +309,7 @@ void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##Z", value[ 2 ], "%.2f" );
+    ImGui::Value( "##Z", value[2], "%.2f" );
     ImGui::PopItemWidth();
 
     ImGui::PushFont( boldFont );
@@ -317,7 +317,7 @@ void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value
     ImGui::PopFont();
 
     ImGui::SameLine();
-    ImGui::Value( "##W", value[ 3 ], "%.2f" );
+    ImGui::Value( "##W", value[3], "%.2f" );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -333,7 +333,7 @@ bool BalEditor::EditorGUI::DrawIntSlider( const char* name, int& value, int min,
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -351,7 +351,7 @@ bool BalEditor::EditorGUI::DrawFloatSlider( const char* name, float& value, floa
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100 );
+    ImGui::SetColumnWidth( 0, 200 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -369,7 +369,7 @@ bool BalEditor::EditorGUI::DrawFloat( const char* name, float& value, float step
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -384,44 +384,44 @@ bool BalEditor::EditorGUI::DrawFloat2( const char* name, float* value, float ste
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
     ImGui::PushMultiItemsWidths( 2, ImGui::CalcItemWidth());
     ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-    const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    const float  lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
     const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "X", buttonSize ))
     {
-        value[ 0 ] = resetValue;
+        value[0] = resetValue;
         hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged |= ImGui::DragFloat( "##X", &value[ 0 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##X", &value[0], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Y", buttonSize ))
     {
-        value[ 1 ] = resetValue;
+        value[1] = resetValue;
         hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged |= ImGui::DragFloat( "##Y", &value[ 1 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##Y", &value[1], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -437,57 +437,57 @@ bool BalEditor::EditorGUI::DrawFloat3( const char* name, float* value, float ste
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
     ImGui::PushMultiItemsWidths( 3, ImGui::CalcItemWidth());
     ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-    const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    const float  lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
     const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "X", buttonSize ))
     {
-        value[ 0 ] = resetValue;
+        value[0] = resetValue;
         hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged |= ImGui::DragFloat( "##X", &value[ 0 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##X", &value[0], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Y", buttonSize ))
     {
-        value[ 1 ] = resetValue;
+        value[1] = resetValue;
         hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged |= ImGui::DragFloat( "##Y", &value[ 1 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##Y", &value[1], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Z", buttonSize ))
     {
-        value[ 2 ] = resetValue;
+        value[2] = resetValue;
         hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged |= ImGui::DragFloat( "##Z", &value[ 2 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##Z", &value[2], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -502,69 +502,69 @@ bool BalEditor::EditorGUI::DrawFloat4( const char* name, float* value, float ste
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
     ImGui::PushMultiItemsWidths( 3, ImGui::CalcItemWidth());
     ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-    const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    const float  lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
     const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "X", buttonSize ))
     {
-        value[ 0 ] = resetValue;
-        hasChanged=true;
+        value[0] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragFloat( "##X", &value[ 0 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##X", &value[0], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Y", buttonSize ))
     {
-        value[ 1 ] = resetValue;
-        hasChanged=true;
+        value[1] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragFloat( "##Y", &value[ 1 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##Y", &value[1], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Z", buttonSize ))
     {
-        value[ 2 ] = resetValue;
-        hasChanged=true;
+        value[2] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragFloat( "##Z", &value[ 2 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##Z", &value[2], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "W", buttonSize ))
     {
-        value[ 3 ] = resetValue;
-        hasChanged=true;
+        value[3] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragFloat( "##W", &value[ 3 ], steps, 0.0f, 0.0f, "%.2f" );
+    hasChanged |= ImGui::DragFloat( "##W", &value[3], steps, 0.0f, 0.0f, "%.2f" );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -581,7 +581,7 @@ bool BalEditor::EditorGUI::DrawInt( const char* name, int& value, float steps )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -597,44 +597,44 @@ bool BalEditor::EditorGUI::DrawInt2( const char* name, int* value, float steps, 
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
     ImGui::PushMultiItemsWidths( 3, ImGui::CalcItemWidth());
     ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-    const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    const float  lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
     const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "X", buttonSize ))
     {
-        value[ 0 ] = resetValue;
+        value[0] = resetValue;
         hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##X", &value[ 0 ], steps );
+    hasChanged |= ImGui::DragInt( "##X", &value[0], steps );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Y", buttonSize ))
     {
-        value[ 1 ] = resetValue;
+        value[1] = resetValue;
         hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged |= ImGui::DragInt( "##Y", &value[ 1 ], steps );
+    hasChanged |= ImGui::DragInt( "##Y", &value[1], steps );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
@@ -650,57 +650,57 @@ bool BalEditor::EditorGUI::DrawInt3( const char* name, int* value, float steps, 
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
     ImGui::PushMultiItemsWidths( 3, ImGui::CalcItemWidth());
     ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-    const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    const float  lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
     const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "X", buttonSize ))
     {
-        value[ 0 ] = resetValue;
-        hasChanged=true;
+        value[0] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##X", &value[ 0 ], steps );
+    hasChanged |= ImGui::DragInt( "##X", &value[0], steps );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Y", buttonSize ))
     {
-        value[ 1 ] = resetValue;
-        hasChanged=true;
+        value[1] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##Y", &value[ 1 ], steps );
+    hasChanged |= ImGui::DragInt( "##Y", &value[1], steps );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Z", buttonSize ))
     {
-        value[ 2 ] = resetValue;
-        hasChanged=true;
+        value[2] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##Z", &value[ 2 ], steps );
+    hasChanged |= ImGui::DragInt( "##Z", &value[2], steps );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -715,69 +715,69 @@ bool BalEditor::EditorGUI::DrawInt4( const char* name, int* value, float steps, 
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
-    const auto boldFont = io.Fonts->Fonts[ 0 ];
+    const auto boldFont = io.Fonts->Fonts[0];
 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
     ImGui::PushMultiItemsWidths( 3, ImGui::CalcItemWidth());
     ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2{ 0, 0 } );
 
-    const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
+    const float  lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
     const ImVec2 buttonSize = { lineHeight + 3.0f, lineHeight };
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "X", buttonSize ))
     {
-        value[ 0 ] = resetValue;
-        hasChanged=true;
+        value[0] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##X", &value[ 0 ], steps );
+    hasChanged |= ImGui::DragInt( "##X", &value[0], steps );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Y", buttonSize ))
     {
-        value[ 1 ] = resetValue;
-        hasChanged=true;
+        value[1] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##Y", &value[ 1 ], steps );
+    hasChanged |= ImGui::DragInt( "##Y", &value[1], steps );
     ImGui::PopItemWidth();
     ImGui::SameLine();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "Z", buttonSize ))
     {
-        value[ 2 ] = resetValue;
-        hasChanged=true;
+        value[2] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##Z", &value[ 2 ], steps );
+    hasChanged |= ImGui::DragInt( "##Z", &value[2], steps );
     ImGui::PopItemWidth();
 
     ImGui::PushFont( boldFont );
     if ( ImGui::Button( "W", buttonSize ))
     {
-        value[ 2 ] = resetValue;
-        hasChanged=true;
+        value[2] = resetValue;
+        hasChanged = true;
     }
     ImGui::PopFont();
 
     ImGui::SameLine();
-    hasChanged|=ImGui::DragInt( "##W", &value[ 3 ], steps );
+    hasChanged |= ImGui::DragInt( "##W", &value[3], steps );
     ImGui::PopItemWidth();
 
     ImGui::PopStyleVar();
@@ -794,7 +794,7 @@ bool BalEditor::EditorGUI::DrawToggle( const char* name, bool& value )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -812,7 +812,7 @@ bool BalEditor::EditorGUI::DrawButton( const char* name )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
+    ImGui::SetColumnWidth( 0, 200.0 );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -826,32 +826,35 @@ bool BalEditor::EditorGUI::DrawButton( const char* name )
 bool BalEditor::EditorGUI::DrawComboBox( const char* name, std::string& currentValue, const std::vector<std::string>& elements )
 {
     bool hasChanged{};
-    ImGui::PushID( name );
 
-    ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 100.0 );
-    ImGui::Text( "%s", name );
-    ImGui::NextColumn();
-
-    if ( ImGui::BeginCombo( "##combo", currentValue.c_str())) // The second parameter is the label previewed before opening the combo.
+    if ( ImGui::BeginCombo( name,
+                            currentValue.c_str())) // The second parameter is the label previewed before opening the combo.
     {
-        for ( const auto& element: elements )
+        for ( const auto& element : elements )
         {
             const bool isSelected = ( currentValue ==
                                       element ); // You can store your selection however you want, outside or inside your objects
             if ( ImGui::Selectable( element.c_str(), isSelected ))
             {
                 currentValue = element;
-                hasChanged = true;
+                hasChanged   = true;
             }
             if ( isSelected )
-                ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+            {
+                ImGui::SetItemDefaultFocus();
+            }   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
         }
         ImGui::EndCombo();
     }
-    ImGui::Columns( 1 );
-
-    ImGui::PopID();
     return hasChanged;
 }
 
+void BalEditor::EditorGUI::Spacing()
+{
+    ImGui::Spacing();
+}
+
+bool DrawInputText( const char* title, char* name, int maxLenth )
+{
+    return ImGui::InputText( title, name, maxLenth, ImGuiInputTextFlags_EnterReturnsTrue )
+}

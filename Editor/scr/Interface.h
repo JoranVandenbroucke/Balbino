@@ -30,6 +30,7 @@ namespace BalEditor
 	class CMainScreen;
 	class CMaterialEditor;
 	class CShaderGraph;
+	class CMeshFileImporter;
 
 	class CInterface final
 	{
@@ -54,6 +55,7 @@ namespace BalEditor
 		CSceneHierarchy* m_pSceneHierarchy;
 		CShaderGraph* m_pShaderGraph;
 		CMaterialEditor* m_pMaterialEditor;
+        CMeshFileImporter* m_pMeshImporter;
 
 		VkDescriptorPool m_descriptorPool;
 		SDL_Window* m_pWindow;

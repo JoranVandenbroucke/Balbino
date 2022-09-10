@@ -2,7 +2,6 @@
 
 #include "FileParcer.h"
 #include "Material.h"
-#include "Shader.h"
 #include "Texture.h"
 #include "../Renderer/Mesh.h"
 #include "../Renderer/Renderer.h"
@@ -12,28 +11,28 @@
 
 #include "IScene.h"
 
-void CResourceManager::Initialize(const ISystem* pRenderer)
+void CResourceManager::Initialize( const ISystem* pRenderer )
 {
     m_pSystem = pRenderer;
 }
 
 void CResourceManager::Cleanup()
 {
-    for( const auto& [fst, snd] : m_loadedMeshMap )
+    for ( const auto& [ fst, snd ] : m_loadedMeshMap )
     {
         snd->Cleanup();
         delete snd;
     }
-    for( const auto& [fst, snd] : m_loadedMaterialMap )
+    for ( const auto& [ fst, snd ] : m_loadedMaterialMap )
     {
         snd->Cleanup();
         delete snd;
     }
-    for( const auto& [fst, snd] : m_loadedShaderMap )
+    for ( const auto& [ fst, snd ] : m_loadedShaderMap )
     {
         snd->Release();
     }
-    for( const auto& [fst, snd] : m_loadedTextureMap )
+    for ( const auto& [ fst, snd ] : m_loadedTextureMap )
     {
         snd->Cleanup();
         delete snd;
@@ -45,59 +44,49 @@ void CResourceManager::Cleanup()
     m_loadedTextureMap.clear();
 }
 
-Balbino::CTexture* CResourceManager::LoadTexture(const std::string_view assetPath)
+Balbino::CTexture* CResourceManager::LoadTexture( const std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
-    if( !file.is_open())
+    if ( !file.is_open())
     {
         return nullptr;
     }
 
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
-    //BinaryReadWrite::Write( file, CUuid() );
-    if( m_loadedTextureMap.contains( uuid ))
+    if ( m_loadedTextureMap.contains( uuid ))
     {
         return m_loadedTextureMap.at( uuid );
     }
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    //BinaryReadWrite::Write( file, static_cast< uint8_t >( EFileTypes::Image ) );
-    if( static_cast< EFileTypes >( type ) == EFileTypes::Image )
+    if ( static_cast< EFileTypes >( type ) == EFileTypes::Image )
     {
         const auto pTextureComponent = new Balbino::CTexture{ g_pDevice, uuid };
-        uint32_t width{};
-        uint32_t height{};
-        uint32_t mip{};
-        uint32_t faces{};
-        uint32_t layers{};
-        uint32_t layout{};
-        uint32_t viewType{};
-        uint32_t format{};
-        uint64_t size{};
+        uint32_t   width{};
+        uint32_t   height{};
+        uint32_t   mip{};
+        uint32_t   faces{};
+        uint32_t   layers{};
+        uint32_t   layout{};
+        uint32_t   viewType{};
+        uint32_t   format{};
+        uint64_t   size{};
 
         BinaryReadWrite::Read( file, width );
-        //BinaryReadWrite::Write( file, pSurface->w );
         BinaryReadWrite::Read( file, height );
-        //BinaryReadWrite::Write( file, pSurface->h );
         BinaryReadWrite::Read( file, mip );
-        //BinaryReadWrite::Write( file, 1 );
         BinaryReadWrite::Read( file, faces );
-        //BinaryReadWrite::Write( file, 1 );
         BinaryReadWrite::Read( file, layers );
-        //BinaryReadWrite::Write( file, 1 );
         BinaryReadWrite::Read( file, layout );
-        //BinaryReadWrite::Write( file, static_cast< uint32_t >( BalVulkan::EImageLayout::Undefined ) );
         BinaryReadWrite::Read( file, viewType );
-        //BinaryReadWrite::Write( file, static_cast< uint32_t >( BalVulkan::EImageViewType::View2D ) );
         BinaryReadWrite::Read( file, format );
-        //BinaryReadWrite::Write( file, static_cast< uint32_t >( BalVulkan::EFormat::R8G8B8A8Srgb ) );
         BinaryReadWrite::Read( file, size );
-        //BinaryReadWrite::Write( file, static_cast< uint64_t >( pSurface->h ) * pSurface->pitch );
         void* pImageData = malloc( size );
         BinaryReadWrite::Read( file, pImageData, size );
-        //BinaryReadWrite::Write( file, static_cast< uint8_t* >( pSurface->pixels ), static_cast< uint64_t >( pSurface->h ) * pSurface->pitch );
-        pTextureComponent->Initialize( pImageData, width, height, mip, layers, faces, size, BalVulkan::EImageLayout( layout ), BalVulkan::EImageViewType( viewType ), BalVulkan::EFormat( format ), g_pCommandPool, g_pQueue );
+        pTextureComponent->Initialize( pImageData, width, height, mip, layers, faces, size,
+                                       BalVulkan::EImageLayout( layout ), BalVulkan::EImageViewType( viewType ),
+                                       BalVulkan::EFormat( format ), g_pCommandPool, g_pQueue );
         free( pImageData );
         m_loadedTextureMap[uuid] = pTextureComponent;
         file.close();
@@ -107,131 +96,240 @@ Balbino::CTexture* CResourceManager::LoadTexture(const std::string_view assetPat
     return nullptr;
 }
 
-BalVulkan::CShaderPipeline* CResourceManager::LoadShader(std::string_view assetPath)
+BalVulkan::CShaderPipeline* CResourceManager::LoadShader( std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
-    if( !file.is_open())
+    if ( !file.is_open())
     {
         return nullptr;
     }
 
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
-    if( m_loadedShaderMap.contains( uuid ))
+    if ( m_loadedShaderMap.contains( uuid ))
     {
         return m_loadedShaderMap.at( uuid );
     }
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    //BinaryReadWrite::Write( file, static_cast< uint8_t >( EFileTypes::Image ) );
-    if( static_cast< EFileTypes >( type ) == EFileTypes::Shader )
+    //TODO RTX
+    if ( static_cast< EFileTypes >( type ) == EFileTypes::Shader )
     {
-        uint64_t size1;
-        uint64_t size2;
-        BinaryReadWrite::Read( file, size1 );
-        BinaryReadWrite::Read( file, size2 );
+        uint16_t shaderComboType;
+        BinaryReadWrite::Read( file, shaderComboType );
+        std::vector<std::vector<uint32_t>> shaders;
+        switch ( shaderComboType )
+        {
+            case 0u:
+            {
+                uint64_t size;
+                BinaryReadWrite::Read( file, size );
 
-        void* pData = malloc( sizeof( uint32_t ) * size1 );
-        BinaryReadWrite::Read( file, pData, sizeof( uint32_t ) * size1 );
-        std::vector< uint32_t > vertexData( size1, 0 );
-        vertexData.assign((uint32_t*) pData, (uint32_t*) pData + size1 );
-        free( pData );
+                void* pData = malloc( sizeof( uint32_t ) * size );
+                BinaryReadWrite::Read( file, pData, size * sizeof( uint32_t ));
 
-        pData = malloc( sizeof( uint32_t ) * size2 );
-        std::vector< uint32_t > fragmentData( size2, 0 );
-        BinaryReadWrite::Read( file, pData, sizeof( uint32_t ) * size2 );
-        fragmentData.assign((uint32_t*) pData, (uint32_t*) pData + size2 );
-        free( pData );
+                std::vector<uint32_t> shaderData( size, 0 );
+                shaderData.assign((uint32_t*) pData, (uint32_t*) pData + size );
 
-        BalVulkan::CShader* pVertexShader = BalVulkan::CShader::CreateNew( g_pDevice );
-        BalVulkan::CShader* pFragmentShader = BalVulkan::CShader::CreateNew( g_pDevice );
+                free( pData );
+
+                shaders.push_back( shaderData );
+                break;
+            }
+            case 1u:
+            {
+                uint64_t size1;
+                uint64_t size2;
+                uint64_t size3;
+
+                BinaryReadWrite::Read( file, size1 );
+                BinaryReadWrite::Read( file, size2 );
+                BinaryReadWrite::Read( file, size3 );
+
+                void* pData1 = malloc( sizeof( uint32_t ) * size1 );
+                void* pData2 = malloc( sizeof( uint32_t ) * size2 );
+                void* pData3 = malloc( sizeof( uint32_t ) * size3 );
+
+                BinaryReadWrite::Read( file, pData1, size1 * sizeof( uint32_t ));
+                BinaryReadWrite::Read( file, pData2, size2 * sizeof( uint32_t ));
+                BinaryReadWrite::Read( file, pData3, size3 * sizeof( uint32_t ));
+
+                std::vector<uint32_t> shaderData1( size1, 0 );
+                std::vector<uint32_t> shaderData2( size2, 0 );
+                std::vector<uint32_t> shaderData3( size3, 0 );
+
+                shaderData1.assign((uint32_t*) pData1, (uint32_t*) pData1 + size1 );
+                shaderData2.assign((uint32_t*) pData2, (uint32_t*) pData2 + size2 );
+                shaderData3.assign((uint32_t*) pData3, (uint32_t*) pData3 + size3 );
+
+                free( pData1 );
+                free( pData2 );
+                free( pData3 );
+
+                shaders.push_back( shaderData1 );
+                shaders.push_back( shaderData2 );
+                shaders.push_back( shaderData3 );
+                break;
+            }
+            case 2u:
+            {
+                uint64_t size1;
+                uint64_t size2;
+
+                BinaryReadWrite::Read( file, size1 );
+                BinaryReadWrite::Read( file, size2 );
+
+                void* pData1 = malloc( sizeof( uint32_t ) * size1 );
+                void* pData2 = malloc( sizeof( uint32_t ) * size2 );
+
+                BinaryReadWrite::Read( file, pData1, size1 * sizeof( uint32_t ));
+                BinaryReadWrite::Read( file, pData2, size2 * sizeof( uint32_t ));
+
+                std::vector<uint32_t> shaderData1( size1, 0 );
+                std::vector<uint32_t> shaderData2( size2, 0 );
+
+                shaderData1.assign((uint32_t*) pData1, (uint32_t*) pData1 + size1 );
+                shaderData2.assign((uint32_t*) pData2, (uint32_t*) pData2 + size2 );
+
+                free( pData1 );
+                free( pData2 );
+
+                shaders.push_back( shaderData1 );
+                shaders.push_back( shaderData2 );
+                break;
+            }
+            case 3u:
+                break;
+            default:
+                break;
+        }
+
+        std::vector<BalVulkan::CShader*> shaderVector( shaders.size(), nullptr );
+        for ( int                        i{}; i < shaders.size(); ++i )
+        {
+            shaderVector[i] = BalVulkan::CShader::CreateNew( g_pDevice );
+            if ( shaderComboType == 0 )
+            {
+                shaderVector[i]->Initialize( shaders[i].data(), shaders[i].size(),
+                                             BalVulkan::EShaderStage::VertexShader );
+            }
+            else if ( shaderComboType == 1 )
+            {
+                if ( i == 0 )
+                {
+                    shaderVector[i]->Initialize( shaders[i].data(), shaders[i].size(),
+                                                 BalVulkan::EShaderStage::VertexShader );
+                }
+                else if ( i == 1 )
+                {
+                    shaderVector[i]->Initialize( shaders[i].data(), shaders[i].size(),
+                                                 BalVulkan::EShaderStage::GeometryShader );
+                }
+                else
+                {
+                    shaderVector[i]->Initialize( shaders[i].data(), shaders[i].size(),
+                                                 BalVulkan::EShaderStage::FragmentShader );
+                }
+            }
+
+            else if ( shaderComboType == 2 )
+            {
+                if ( i == 0 )
+                {
+                    shaderVector[i]->Initialize( shaders[i].data(), shaders[i].size(),
+                                                 BalVulkan::EShaderStage::VertexShader );
+                }
+                else
+                {
+                    shaderVector[i]->Initialize( shaders[i].data(), shaders[i].size(),
+                                                 BalVulkan::EShaderStage::FragmentShader );
+                }
+            }
+        }
+
         BalVulkan::CShaderPipeline* pPipeline = BalVulkan::CShaderPipeline::CreateNew( g_pDevice );
-        pVertexShader->Initialize( vertexData.data(), size1, BalVulkan::EShaderStage::VertexShader );
-        pFragmentShader->Initialize( fragmentData.data(), size2, BalVulkan::EShaderStage::FragmentShader );
-        pPipeline->Initialize( { pVertexShader, nullptr, pFragmentShader }, *g_pFrameBuffer, { BalVulkan::EVertexComponent::Position, BalVulkan::EVertexComponent::Color, BalVulkan::EVertexComponent::UV, BalVulkan::EVertexComponent::Normal, BalVulkan::EVertexComponent::Tangent }, 1, g_pSwapChain );
-        pVertexShader->Release();
-        pFragmentShader->Release();
 
-        file.close();
+        pPipeline->Initialize( shaderComboType, shaderVector, *g_pFrameBuffer, {
+                BalVulkan::EVertexComponent::Position,
+                BalVulkan::EVertexComponent::Color,
+                BalVulkan::EVertexComponent::UV,
+                BalVulkan::EVertexComponent::Normal,
+                BalVulkan::EVertexComponent::Tangent
+        }, 1, g_pSwapChain );
+        for ( int i{}; i < shaderVector.size(); ++i )
+        {
+            shaderVector[i]->Release();
+        }
         m_loadedShaderMap[uuid] = pPipeline;
+        file.close();
         return pPipeline;
     }
     file.close();
     return nullptr;
 }
 
-Balbino::CMaterial* CResourceManager::LoadMaterial(std::string_view assetPath)
+Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
-    if( !file.is_open())
+    if ( !file.is_open())
     {
         return nullptr;
     }
 
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
-    if( m_loadedMaterialMap.contains( uuid ))
+    if ( m_loadedMaterialMap.contains( uuid ))
     {
         return m_loadedMaterialMap.at( uuid );
     }
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    if( static_cast< EFileTypes >( type ) == EFileTypes::Material )
+    if ( static_cast< EFileTypes >( type ) == EFileTypes::Material )
     {
-        uint64_t shaderId;
-        bool hasOnlyShaderResources;
-        std::vector< BalVulkan::SShaderResource > shaderResources;
-        std::vector< BalVulkan::SDescriptorSet > descriptorSets;
+        uint64_t                                shaderId;
+        bool                                    hasOnlyShaderResources;
+        std::vector<BalVulkan::SShaderResource> shaderResources;
+        std::vector<BalVulkan::SDescriptorSet>  descriptorSets;
         BinaryReadWrite::Read( file, shaderId );
         BinaryReadWrite::Read( file, shaderResources );
         BinaryReadWrite::IsAtEnd( file, hasOnlyShaderResources );
-//        if( !hasOnlyShaderResources )
-//        {
-//            BinaryReadWrite::Read( file, descriptorSets );
-//        }
-//        else
-//        {
-//            BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-//            pUBO->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-//            descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO );
-//
-//            pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-//            pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit );
-//            descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO );
-//        }
-        for( const auto& resource : shaderResources )
+
+        for ( const auto& resource : shaderResources )
         {
-            if( resource.type == BalVulkan::EShaderResourceType::BufferUniform )
+            if ( resource.type == BalVulkan::EShaderResourceType::BufferUniform )
             {
-                if(resource.binding == 0 )
+                if ( resource.binding == 0 )
                 {
                     BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-                    pUBO->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
                     descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, 0, 0 );
                 }
-                else if(resource.binding == 1 )
+                else if ( resource.binding == 1 )
                 {
                     BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-                    pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
                     descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::DynamicBuffer, pUBO, 0, 1 );
                 }
             }
-            else if( resource.type == BalVulkan::EShaderResourceType::Image || resource.type == BalVulkan::EShaderResourceType::ImageSampler )
+            else if ( resource.type == BalVulkan::EShaderResourceType::Image || resource.type == BalVulkan::EShaderResourceType::ImageSampler )
             {
                 const auto& texture = GetTexture( resource.resourceID, true );
-                if( texture )
+                if ( texture )
                 {
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Image, texture->GetImageViewObject(), texture->GetSamplerObject(), resource.set, resource.binding);
+                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Image, texture->GetImageViewObject(),
+                                                 texture->GetSamplerObject(), resource.set, resource.binding );
                 }
             }
-            else if(resource.type == BalVulkan::EShaderResourceType::BufferStorage)
+            else if ( resource.type == BalVulkan::EShaderResourceType::BufferStorage )
             {
                 BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-                pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
                 descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::BufferStorage, pUBO, 0, 1 );
             }
+            //else if ( resource.type == BalVulkan::EShaderResourceType::Input && resource.location == 5 )
+            //{
+            //    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetInstanceBuffer();
+            //    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Input, pUBO, 0, 1 );
+            //}
         }
-        
+
         file.close();
         Balbino::CMaterial* pMaterial = Balbino::CMaterial::CreateNew( uuid, shaderId, g_pCommandPool );
         pMaterial->Initialize( GetShader( shaderId, true ), descriptorSets, g_pDevice );
@@ -242,33 +340,33 @@ Balbino::CMaterial* CResourceManager::LoadMaterial(std::string_view assetPath)
     return nullptr;
 }
 
-Balbino::IMesh* CResourceManager::LoadModel(std::string_view assetPath)
+Balbino::IMesh* CResourceManager::LoadModel( std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
-    if( !file.is_open())
+    if ( !file.is_open())
     {
         return nullptr;
     }
 
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
-    if( m_loadedMeshMap.contains( uuid ))
+    if ( m_loadedMeshMap.contains( uuid ))
     {
         return m_loadedMeshMap.at( uuid );
     }
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    if( static_cast< EFileTypes >( type ) == EFileTypes::Model )
+    if ( static_cast< EFileTypes >( type ) == EFileTypes::Model )
     {
-        uint64_t indicesSize;
-        uint64_t verticesSize;
-        uint64_t metadataSize;
-        std::vector< uint32_t > indices;
-        std::vector< BalVulkan::SVertex > vertices;
-        std::vector< Balbino::SMeshMetadata > metadatas;
+        uint64_t                        indicesSize;
+        uint64_t                        verticesSize;
+        std::vector<uint32_t>           indices;
+        std::vector<BalVulkan::SVertex> vertices;
+        Balbino::SMeshMetadata          root;
+        Balbino::SMeshMetadata* pMeshMetaData{ &root };
+
         BinaryReadWrite::Read( file, indicesSize );
         BinaryReadWrite::Read( file, verticesSize );
-        BinaryReadWrite::Read( file, metadataSize );
 
         void* pData = malloc( indicesSize * sizeof( uint32_t ));
         BinaryReadWrite::Read( file, pData, indicesSize * sizeof( uint32_t ));
@@ -280,11 +378,42 @@ Balbino::IMesh* CResourceManager::LoadModel(std::string_view assetPath)
         vertices.assign((BalVulkan::SVertex*) pData, (BalVulkan::SVertex*) pData + verticesSize );
         free( pData );
 
-        pData = malloc( metadataSize * sizeof( Balbino::SMeshMetadata ));
-        BinaryReadWrite::Read( file, pData, metadataSize * sizeof( Balbino::SMeshMetadata ));
-        metadatas.assign((Balbino::SMeshMetadata*) pData, (Balbino::SMeshMetadata*) pData + metadataSize );
-        free( pData );
-        Balbino::CMesh* pMesh = Balbino::CMesh::CreateNew( vertices, indices, metadatas, uuid );
+        bool isAtEnd;
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingBox.min.x );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingBox.min.y );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingBox.min.z );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingBox.max.x );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingBox.max.y );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingBox.max.z );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingSphere.center.x );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingSphere.center.y );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingSphere.center.z );
+        BinaryReadWrite::Read( file, pMeshMetaData->boundingSphere.radius );
+        BinaryReadWrite::Read( file, pMeshMetaData->firstIndex );
+        BinaryReadWrite::Read( file, pMeshMetaData->indexCount );
+        BinaryReadWrite::IsAtEnd( file, isAtEnd );
+        while ( !isAtEnd )
+        {
+            Balbino::SMeshMetadata* pNewMeshMetaData = new Balbino::SMeshMetadata{};
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingBox.min.x );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingBox.min.y );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingBox.min.z );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingBox.max.x );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingBox.max.y );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingBox.max.z );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingSphere.center.x );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingSphere.center.y );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingSphere.center.z );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->boundingSphere.radius );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->firstIndex );
+            BinaryReadWrite::Read( file, pNewMeshMetaData->indexCount );
+
+            pMeshMetaData->pNext        = pNewMeshMetaData;
+            pNewMeshMetaData->pPrevious = pMeshMetaData;
+            pMeshMetaData = pNewMeshMetaData;
+            BinaryReadWrite::IsAtEnd( file, isAtEnd );
+        }
+        Balbino::CMesh* pMesh = Balbino::CMesh::CreateNew( vertices, indices, root, uuid );
         pMesh->Initialize( g_pDevice, g_pCommandPool, g_pQueue );
         return m_loadedMeshMap[uuid] = pMesh;
     }
@@ -293,14 +422,14 @@ Balbino::IMesh* CResourceManager::LoadModel(std::string_view assetPath)
     return nullptr;
 }
 
-bool CResourceManager::BindMaterial(uint64_t id)
+bool CResourceManager::BindMaterial( uint64_t id )
 {
-    if( m_loadedMaterialMap.contains( id ))
+    if ( m_loadedMaterialMap.contains( id ))
     {
         m_loadedMaterialMap[id]->Bind();
         return true;
     }
-    if( !m_loadedMaterialMap.empty())
+    if ( !m_loadedMaterialMap.empty())
     {
         m_loadedMaterialMap.begin()->second->Bind();
         return true;
@@ -308,147 +437,145 @@ bool CResourceManager::BindMaterial(uint64_t id)
     return false;
 }
 
-Balbino::CTexture* CResourceManager::GetTexture(CUuid getMeshId, bool tryToCreateWhenNotFound)
+Balbino::CTexture* CResourceManager::GetTexture( CUuid getMeshId, bool tryToCreateWhenNotFound )
 {
-    if( m_loadedTextureMap.contains((uint64_t) getMeshId ))
+    if ( m_loadedTextureMap.contains((uint64_t) getMeshId ))
     {
         return m_loadedTextureMap[(uint64_t) getMeshId];
     }
-    if( tryToCreateWhenNotFound )
+    if ( tryToCreateWhenNotFound )
     {
         FindAllFiles();
         const auto texture{ std::find( m_files.begin(), m_files.end(), getMeshId ) };
-        if( texture != m_files.end())
+        if ( texture != m_files.end())
         {
-            return LoadTexture( texture->path.string());
+            return LoadTexture( texture->path );
         }
     }
     return nullptr;
 }
 
-BalVulkan::CShaderPipeline* CResourceManager::GetShader(CUuid getMeshId, bool tryToCreateWhenNotFound)
+BalVulkan::CShaderPipeline* CResourceManager::GetShader( CUuid getMeshId, bool tryToCreateWhenNotFound )
 {
-    if( m_loadedShaderMap.contains((uint64_t) getMeshId ))
+    if ( m_loadedShaderMap.contains((uint64_t) getMeshId ))
     {
         return m_loadedShaderMap[(uint64_t) getMeshId];
     }
-    if( tryToCreateWhenNotFound )
+    if ( tryToCreateWhenNotFound )
     {
         FindAllFiles();
         auto shader{ std::find( m_files.begin(), m_files.end(), getMeshId ) };
-        if( shader != m_files.end())
+        if ( shader != m_files.end())
         {
-            return LoadShader( shader->path.string());
+            return LoadShader( shader->path );
         }
     }
     return nullptr;
 }
 
-Balbino::CMaterial* CResourceManager::GetMaterial(CUuid getMeshId, bool tryToCreateWhenNotFound)
+Balbino::CMaterial* CResourceManager::GetMaterial( CUuid getMeshId, bool tryToCreateWhenNotFound )
 {
-    if( m_loadedMaterialMap.contains((uint64_t) getMeshId ))
+    if ( m_loadedMaterialMap.contains((uint64_t) getMeshId ))
     {
         return m_loadedMaterialMap[(uint64_t) getMeshId];
     }
-    if( tryToCreateWhenNotFound )
+    if ( tryToCreateWhenNotFound )
     {
         FindAllFiles();
         auto material{ std::find( m_files.begin(), m_files.end(), getMeshId ) };
-        if( material != m_files.end())
+        if ( material != m_files.end())
         {
-            return LoadMaterial( material->path.string());
+            return LoadMaterial( material->path );
         }
     }
     return nullptr;
 }
 
-Balbino::IMesh* CResourceManager::GetModel(CUuid getMeshId, bool tryToCreateWhenNotFound)
+Balbino::IMesh* CResourceManager::GetModel( CUuid getMeshId, bool tryToCreateWhenNotFound )
 {
-    if( m_loadedMeshMap.contains((uint64_t) getMeshId ))
+    if ( m_loadedMeshMap.contains((uint64_t) getMeshId ))
     {
         return m_loadedMeshMap[(uint64_t) getMeshId];
     }
-    if( tryToCreateWhenNotFound )
+    if ( tryToCreateWhenNotFound )
     {
         FindAllFiles();
         auto model{ std::find( m_files.begin(), m_files.end(), getMeshId ) };
-        if( model != m_files.end())
+        if ( model != m_files.end())
         {
-            return LoadModel( model->path.string());
+            return LoadModel( model->path );
         }
     }
     return nullptr;
 }
 
-const std::map< uint64_t, Balbino::CMaterial* >& CResourceManager::GetAllLoadedMaterials() const
+const std::map<uint64_t, Balbino::CMaterial*>& CResourceManager::GetAllLoadedMaterials() const
 {
     return m_loadedMaterialMap;
 }
 
-void CResourceManager::ReloadAll(BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue)
+void CResourceManager::ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue )
 {
     g_pCommandPool = commandPool;
-    g_pQueue = queue;
-    for( const auto& mesh : m_loadedMeshMap )
+    g_pQueue       = queue;
+    for ( const auto& mesh : m_loadedMeshMap )
     {
         mesh.second->Cleanup();
         mesh.second->Initialize( g_pDevice, commandPool, queue );
     }
-    for( const auto& shader : m_loadedShaderMap )
+    for ( const auto& shader : m_loadedShaderMap )
     {
         shader.second->Release();
     }
     m_loadedShaderMap.clear();
-    for( const auto& material : m_loadedMaterialMap )
+    for ( const auto& material : m_loadedMaterialMap )
     {
-        std::ifstream file( std::find( m_files.begin(), m_files.end(), material.first )->path.string(), std::ios::in | std::ios::binary );
-        if( !file.is_open())
+        std::ifstream file( std::find( m_files.begin(), m_files.end(), material.first )->path,
+                            std::ios::in | std::ios::binary );
+        if ( !file.is_open())
         {
             continue;
         }
-        uint64_t uuid;
-        uint8_t type;
-        uint64_t shaderId;
-        bool hasOnlyShaderResources;
-        std::vector< BalVulkan::SShaderResource > shaderResources;
-        std::vector< BalVulkan::SDescriptorSet > descriptorSets;
+        uint64_t                                uuid;
+        uint8_t                                 type;
+        uint64_t                                shaderId;
+        bool                                    hasOnlyShaderResources;
+        std::vector<BalVulkan::SShaderResource> shaderResources;
+        std::vector<BalVulkan::SDescriptorSet>  descriptorSets;
         BinaryReadWrite::Read( file, uuid );
         BinaryReadWrite::Read( file, type );
         BinaryReadWrite::Read( file, shaderId );
         BinaryReadWrite::Read( file, shaderResources );
         BinaryReadWrite::IsAtEnd( file, hasOnlyShaderResources );
-//        {
-//            BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-//            pUBO->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-//            descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO );
-//
-//            pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-//            pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-//            descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO );
-//        }
-        for( const auto& resource : shaderResources )
+
+        for ( const auto& resource : shaderResources )
         {
-            if( resource.type == BalVulkan::EShaderResourceType::BufferUniform )
+            if ( resource.type == BalVulkan::EShaderResourceType::BufferUniform )
             {
-                if( resource.set == 0 && resource.binding == 0 )
+                if ( resource.set == 0 && resource.binding == 0 )
                 {
                     BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-                    pUBO->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, resource.set, resource.binding );
+                    pUBO->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
+                                      BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, resource.set,
+                                                 resource.binding );
                 }
-                else if( resource.set == 0 && resource.binding == 1 )
+                else if ( resource.set == 0 && resource.binding == 1 )
                 {
-                    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-                    pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::DynamicBuffer, pUBO, resource.set, resource.binding );
+                    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
+                    pUBO->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
+                                      BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::DynamicBuffer, pUBO, resource.set,
+                                                 resource.binding );
                 }
             }
             else
             {
                 const auto& texture = GetTexture( resource.resourceID, true );
-                if( texture )
+                if ( texture )
                 {
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Image, texture->GetImageViewObject(), texture->GetSamplerObject(), resource.set, resource.binding);
+                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Image, texture->GetImageViewObject(),
+                                                 texture->GetSamplerObject(), resource.set, resource.binding );
                 }
             }
         }
@@ -463,9 +590,9 @@ void CResourceManager::ReloadAll(BalVulkan::CCommandPool* commandPool, BalVulkan
 void CResourceManager::FindAllFiles()
 {
     auto it = m_files.begin();
-    while( it != m_files.end())
+    while ( it != m_files.end())
     {
-        if( !std::filesystem::exists( it->path ))
+        if ( !std::filesystem::exists( it->path ))
         {
             //Remove
             it = m_files.erase( it );
@@ -476,60 +603,61 @@ void CResourceManager::FindAllFiles()
         }
     }
 
-    for( auto file = std::filesystem::recursive_directory_iterator( "..\\Data" ); file != std::filesystem::recursive_directory_iterator(); ++file )
+    for ( auto file = std::filesystem::recursive_directory_iterator(
+            "..\\Data" ); file != std::filesystem::recursive_directory_iterator(); ++file )
     {
-        if( file->path().extension() != ".basset" )
+        if ( file->path().extension() != ".basset" )
         {
             continue;
         }
         auto currentFileLastWriteTime = std::filesystem::last_write_time( *file );
 
         // File creation
-        auto filetIt = std::ranges::find_if( m_files, [&file](const SFile& filePair) -> bool
+        auto filetIt = std::ranges::find_if( m_files, [ &file ]( const SFile& filePair ) -> bool
         {
             return filePair.path == file->path();
         } );
-        if( filetIt == m_files.end())
+        if ( filetIt == m_files.end())
         {
             //CreateNew
             m_files.push_back( GetData( relative( file->path())));
             m_files.back().lastWrittenTime = currentFileLastWriteTime;
-            m_files.back().depth = file.depth() + 1;
+            m_files.back().depth           = file.depth() + 1;
         }
         else
         {
-            if( filetIt->lastWrittenTime != currentFileLastWriteTime )
+            if ( filetIt->lastWrittenTime != currentFileLastWriteTime )
             {
                 //Modify
                 ( *filetIt ) = GetData( relative( file->path()));
                 filetIt->lastWrittenTime = currentFileLastWriteTime;
-                filetIt->depth = file.depth() + 1;
+                filetIt->depth           = file.depth() + 1;
             }
         }
     }
 }
 
-SFile CResourceManager::GetData(const std::filesystem::path& path)
+SFile CResourceManager::GetData( const std::filesystem::path& path )
 {
-    SFile file{};
+    SFile         file{};
     std::ifstream fileStream( path, std::ios::in | std::ios::binary );
-    if( fileStream.is_open())
+    if ( fileStream.is_open())
     {
         uint8_t value;
         BinaryReadWrite::Read( fileStream, file.uuid );
         BinaryReadWrite::Read( fileStream, value );
 
-        file.type = static_cast< EFileTypes >( value );
-        file.path = path;
+        file.type     = static_cast< EFileTypes >( value );
+        file.path     = path.string();
         file.fileName = path.filename().string();
         fileStream.close();
     }
     return file;
 }
 
-void CResourceManager::UnloadMaterial(CUuid materialId)
+void CResourceManager::UnloadMaterial( CUuid materialId )
 {
-    if( m_loadedMaterialMap.contains((uint64_t) materialId ))
+    if ( m_loadedMaterialMap.contains((uint64_t) materialId ))
     {
         Balbino::CMaterial* mat = m_loadedMaterialMap.at((uint64_t) materialId );
         mat->Cleanup();

@@ -5,7 +5,7 @@ set(CMAKE_CONFIGURATION_TYPES Debug;DebugEditor;Release;ReleaseEditor;)
 project(Balbino)
 
 # subdirectories
-    add_subdirectory(../Editor BalEditor)
+add_subdirectory(../Editor BalEditor)
 
 # get source files
 file(GLOB sourceB
@@ -26,33 +26,33 @@ set_property(TARGET Balbino PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET Balbino PROPERTY C_STANDARD_REQUIRED ON)
 
 set_target_properties(Balbino PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_DEBUG          "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
-        LIBRARY_OUTPUT_DIRECTORY_DEBUGEDITOR    "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
-        LIBRARY_OUTPUT_DIRECTORY_RELEASE        "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
-        LIBRARY_OUTPUT_DIRECTORY_RELEASEEDITOR  "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
+        LIBRARY_OUTPUT_DIRECTORY_DEBUGEDITOR "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
+        LIBRARY_OUTPUT_DIRECTORY_RELEASEEDITOR "${CMAKE_SOURCE_DIR/BIN/${PROJECT_NAME}}/"
         )
 
 if (MSVC)
     target_compile_options(Balbino PRIVATE
             $<$<CONFIG:Debug>:
-                /Od;
-                /ZI;
-                /Ob0;
-                /RTC1;
-                /MDd;
+            /Od;
+            /ZI;
+            /Ob0;
+            /RTC1;
+            /MDd;
             >
             $<$<CONFIG:DebugEditor>:
-                /Od;
-                /ZI;
-                /Ob0;
-                /RTC1;
-                /MDd;
+            /Od;
+            /ZI;
+            /Ob0;
+            /RTC1;
+            /MDd;
             >
             $<$<CONFIG:Release>:
-                /Ox;
+            /Ox;
             >
             $<$<CONFIG:ReleaseEditor>:
-                /Ox;
+            /Ox;
             >
             /MP;
             /W4;
@@ -79,9 +79,9 @@ if (MSVC)
             /SUBSYSTEM:WINDOWS;
             >
             )
-else()
+else ()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
-endif()
+endif ()
 
 target_precompile_headers(Balbino
         PRIVATE [["algorithm"]]
@@ -134,7 +134,7 @@ target_compile_definitions(Balbino
         )
 
 #include
-target_include_directories( Balbino
+target_include_directories(Balbino
         PRIVATE
         ../3rdParty/SDL2/include
         ../3rdParty/SDL2_image/include
@@ -149,10 +149,10 @@ target_include_directories( Balbino
         ../Renderer/GraphicsVulkan
         ../Common
         $<$<CONFIG:DebugEditor>:
-            ../Editor
+        ../Editor
         >
         $<$<CONFIG:ReleaseEditor>:
-            ../Editor
+        ../Editor
         >
         )
 

@@ -9,23 +9,35 @@
 
 namespace BalEditor
 {
-    class CImageTexture final: public INode
+    class CImageTexture final : public INode
     {
     public:
-        CImageTexture(int id, int& attributeStartId );
+        CImageTexture( int id, int& attributeStartId );
+
         ~CImageTexture() override = default;
-        CImageTexture(const CImageTexture&) = delete;
-        CImageTexture(CImageTexture&&) = delete;
-        CImageTexture& operator=(CImageTexture&&) = delete;
-        CImageTexture& operator=(const CImageTexture&) = delete;
+
+        CImageTexture( const CImageTexture& ) = delete;
+
+        CImageTexture( CImageTexture&& ) = delete;
+
+        CImageTexture& operator =( CImageTexture&& ) = delete;
+
+        CImageTexture& operator =( const CImageTexture& ) = delete;
 
         void Draw() override;
-        void Attach(int endAttr) override;
-        void Detach(int endAttr) override;
-        std::string Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType) override;
-        bool HasFreeAttachment(int endAttr) const override;
+
+        void Attach( int endAttr ) override;
+
+        void Detach( int endAttr ) override;
+
+        std::string Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType ) override;
+
+        bool HasFreeAttachment( int endAttr ) const override;
+
         int GetId() const override;
-        std::vector< int > GetInputs() const override;
+
+        std::vector<int> GetInputs() const override;
+
     private:
         enum class ETextureType
         {
@@ -43,12 +55,12 @@ namespace BalEditor
             //todo Texture2DMS,
             //todo Texture2DMSArray,
             MaxIndex
-        } m_textureType;
+        }           m_textureType;
         std::string m_textureVariableName;
 
         //todo: allow for custom UVs and Lod/Grad sampling
 
-        const char* ToString(ETextureType mode);
+        static const char* ToString( ETextureType mode );
     };
 
 } // BalEditor

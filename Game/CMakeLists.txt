@@ -30,14 +30,14 @@ if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE
             $<$<CONFIG:Debug>:
             /Od;
-            /ZI;
+            /Zi;
             /Ob0;
             /RTC1;
             /MDd;
             >
             $<$<CONFIG:DebugEditor>:
             /Od;
-            /ZI;
+            /Zi;
             /Ob0;
             /RTC1;
             /MDd;
@@ -127,20 +127,20 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/Balbino/Balbino.dll ${CMAKE_CURRENT_BINARY_DIR}/Balbino.dll
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2/lib/x64/SDL2.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2.dll
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/SDL2_image.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2_image.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libjpeg-9.dll ${CMAKE_CURRENT_BINARY_DIR}/libjpeg-9.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libpng16-16.dll ${CMAKE_CURRENT_BINARY_DIR}/libpng16-16.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libtiff-5.dll ${CMAKE_CURRENT_BINARY_DIR}/libtiff-5.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libwebp-7.dll ${CMAKE_CURRENT_BINARY_DIR}/libwebp.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/zlib1.dll ${CMAKE_CURRENT_BINARY_DIR}/zlib1.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libjpeg-9.dll ${CMAKE_CURRENT_BINARY_DIR}/libjpeg-9.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libpng16-16.dll ${CMAKE_CURRENT_BINARY_DIR}/libpng16-16.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libtiff-5.dll ${CMAKE_CURRENT_BINARY_DIR}/libtiff-5.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/libwebp-7.dll ${CMAKE_CURRENT_BINARY_DIR}/libwebp.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/zlib1.dll ${CMAKE_CURRENT_BINARY_DIR}/zlib1.dll
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/SDL2_mixer.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libFLAC-8.dll ${CMAKE_CURRENT_BINARY_DIR}/libFLAC-8.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libmodplug-1.dll ${CMAKE_CURRENT_BINARY_DIR}/libmodplug-1.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libmpg123-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libmpg123-0.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libogg-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libogg-0.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libopus-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libopus-0.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libopusfile-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libopusfile-0.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libvorbis-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libvorbis-0.dll
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libvorbisfile-3.dll ${CMAKE_CURRENT_BINARY_DIR}/libvorbisfile-3.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libFLAC-8.dll ${CMAKE_CURRENT_BINARY_DIR}/libFLAC-8.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libmodplug-1.dll ${CMAKE_CURRENT_BINARY_DIR}/libmodplug-1.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libmpg123-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libmpg123-0.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libogg-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libogg-0.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libopus-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libopus-0.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libopusfile-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libopusfile-0.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libvorbis-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libvorbis-0.dll
+        #        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/libvorbisfile-3.dll ${CMAKE_CURRENT_BINARY_DIR}/libvorbisfile-3.dll
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_ttf/lib/x64/SDL2_ttf.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2_ttf.dll
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/VLD/bin/Win64/ ${CMAKE_CURRENT_BINARY_DIR}/
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/VLD/bin/Win64/ ${CMAKE_CURRENT_BINARY_DIR}/

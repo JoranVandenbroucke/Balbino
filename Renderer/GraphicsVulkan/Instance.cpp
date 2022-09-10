@@ -67,7 +67,7 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
                 .applicationVersion = VK_MAKE_VERSION(0,0,0),   //todo read from file
                 .pEngineName = "Balbino Engine",
                 .engineVersion = VK_MAKE_VERSION(0,1,1),
-                .apiVersion = VK_API_VERSION_1_2,
+                .apiVersion = VK_API_VERSION_1_3,
         };
         VkInstanceCreateInfo createInfo{
                 .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, .pNext = nullptr, .flags = 0, .pApplicationInfo = &applicationInfo,

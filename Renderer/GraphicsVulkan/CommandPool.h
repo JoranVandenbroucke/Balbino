@@ -23,6 +23,7 @@ namespace BalVulkan
 		void Initialize( uint32_t queueFamilyIndex, const CSwapchain* pSwapchain );
 		void UpdateFrameIndex();
 		void BeginRender( CFrameBuffer* pFrameBuffer, CSwapchain* pSwapchain ) const;
+		void NextSubpass();
 		void BindShader( CShaderPipeline* pPipeline, CDescriptorSet* pDescriptorSet ) const;
 		uint32_t GetCommandBufferCount() const;
 		uint32_t GetCurrentIndex() const;

@@ -36,7 +36,7 @@ private:
 	 *  12. float alpha 0 1 1
 	 *  13. vector normal 0 1 0
 	 */
-	static constexpr int m_connectionSize = 13;
+	static constexpr int m_connectionSize = 14;
 	bool m_connections[m_connectionSize];
 	std::array<float, 3> m_color{ 0.82f, 0.67f, 0.16f };
 	float m_metallic{ 0 };

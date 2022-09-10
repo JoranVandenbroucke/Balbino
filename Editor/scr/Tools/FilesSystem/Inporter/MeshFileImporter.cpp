@@ -12,21 +12,24 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <MeshMetadata.h>
-#include <Vertex.h>
-#include <FileParcer.h>
 #include "../../../EditorGUI/EditorGui.h"
+#include "../Exporter.h"
 
 BalEditor::CMeshFileImporter::CMeshFileImporter()
-{}
-
-BalEditor::CMeshFileImporter::~CMeshFileImporter()
+        : m_importPercentage{},
+          m_preset{},
+          m_meshes{ true },
+          m_materials{},
+          m_textures{},
+          m_lights{},
+          m_cameras{},
+          m_isVisible{}
 {
-
 }
 
-bool BalEditor::CMeshFileImporter::LoadFromPath( const std::filesystem::path& path )
+bool BalEditor::CMeshFileImporter::LoadMesh() const
 {
-    std::filesystem::path p{ std::string( "../Data/" ) + path.filename().string() };
+    std::filesystem::path p{ m_destinationDirection + m_path.filename().string() };
     p.replace_extension( ".basset" );
     std::ofstream file( p.string().c_str(), std::ios::out | std::ios::binary );
     if ( !file.is_open())
@@ -35,11 +38,8 @@ bool BalEditor::CMeshFileImporter::LoadFromPath( const std::filesystem::path& pa
     }
 
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile( path.string(), static_cast< unsigned >( aiProcess_Triangulate |
-                                                                                      aiProcess_RemoveRedundantMaterials |
-                                                                                      aiProcess_FlipUVs |
-                                                                                      aiProcess_GenBoundingBoxes |
-                                                                                      aiProcess_ValidateDataStructure ));
+    const aiScene* scene = importer.ReadFile( m_path.string(),
+                                              static_cast< unsigned >( aiProcess_Triangulate | aiProcess_RemoveRedundantMaterials | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes | aiProcess_ValidateDataStructure ));
 
     // If the import failed, report it
     if ( !scene )
@@ -48,178 +48,157 @@ bool BalEditor::CMeshFileImporter::LoadFromPath( const std::filesystem::path& pa
         file.close();
         return false;
     }
-    // Now we can access the file's contents.
-    if ( !scene->HasMeshes())
+    if ( !m_preset )
     {
-        throw std::runtime_error( "No mesh inside file" );
-    }
-    unsigned int total{ scene->mNumMeshes };
-    if ( m_preset )
-    {
-        total += scene->mNumCameras;
-        total += scene->mNumLights;
-        total += scene->mNumMeshes;
-    }
-    const uint32_t nrOfMeshes{ scene->mNumMeshes };
-    std::vector<BalVulkan::SVertex> vertices;
-    std::vector<Balbino::SMeshMetadata> metadata( nrOfMeshes );
-    std::vector<uint32_t> indices;
-    for ( uint32_t i{}; i < nrOfMeshes; ++i )
-    {
-        const aiMesh* pMesh{ scene->mMeshes[ i ] };
-        if ( !pMesh->HasTextureCoords( 0 ))
+        if ( m_meshes )
         {
-            importer.ApplyPostProcessing( aiProcess_GenUVCoords );
-        }
-        if ( !pMesh->HasNormals())
-        {
-            importer.ApplyPostProcessing( aiProcess_GenNormals | aiProcess_FixInfacingNormals );
-        }
-        if ( !pMesh->HasTangentsAndBitangents())
-        {
-            importer.ApplyPostProcessing( aiProcess_CalcTangentSpace );
-        }
-        importer.ApplyPostProcessing( aiProcess_JoinIdenticalVertices );
-
-        metadata[ i ].indexCount = pMesh->mNumFaces * 3;
-        metadata[ i ].indexStart = static_cast<uint32_t>( indices.size());
-        const uint32_t prevSize{ static_cast<uint32_t>( vertices.size()) };
-        vertices.resize( prevSize + pMesh->mNumVertices, BalVulkan::SVertex{} );
-        indices.resize( metadata[ i ].indexStart + metadata[ i ].indexCount, 0 );
-
-        const bool hasColor{ pMesh->HasVertexColors( 0 ) && pMesh->mColors[ 0 ] != nullptr };
-        const bool hasUV{ pMesh->HasTextureCoords( 0 ) && pMesh->mTextureCoords[ 0 ] != nullptr };
-        const bool hasNormals{ pMesh->HasNormals() };
-        const bool hasTangents{ pMesh->HasTangentsAndBitangents() };
-        for ( uint32_t j{}; j < pMesh->mNumVertices; ++j )
-        {
-            const uint32_t index{ prevSize + j };
-            vertices[ index ].position.x = pMesh->mVertices[ j ].x;
-            vertices[ index ].position.y = pMesh->mVertices[ j ].y;
-            vertices[ index ].position.z = pMesh->mVertices[ j ].z;
-
-            if ( hasColor )
+            if ( !scene->HasMeshes())
             {
-                vertices[ index ].color.r = pMesh->mColors[ 0 ][ j ].r;
-                vertices[ index ].color.g = pMesh->mColors[ 0 ][ j ].g;
-                vertices[ index ].color.b = pMesh->mColors[ 0 ][ j ].b;
-                vertices[ index ].color.a = pMesh->mColors[ 0 ][ j ].a;
+                std::cerr << "No meshes were found\n";
+                return false;
             }
-            if ( hasUV )
-            {
-                vertices[ index ].uv.x = pMesh->mTextureCoords[ 0 ][ j ].x;
-                vertices[ index ].uv.y = pMesh->mTextureCoords[ 0 ][ j ].y;
-            }
-            if ( hasNormals )
-            {
-                vertices[ index ].normal.x = pMesh->mNormals[ j ].x;
-                vertices[ index ].normal.y = pMesh->mNormals[ j ].y;
-                vertices[ index ].normal.z = pMesh->mNormals[ j ].z;
-            }
-            if ( hasTangents )
-            {
-                vertices[ index ].tangent.x = pMesh->mTangents[ j ].x;
-                vertices[ index ].tangent.y = pMesh->mTangents[ j ].y;
-                vertices[ index ].tangent.z = pMesh->mTangents[ j ].z;
-                vertices[ index ].tangent.w = 1;
-            }
-        }
-        for ( uint32_t j{}; j < pMesh->mNumFaces; ++j )
-        {
-            indices[ metadata[ i ].indexStart + j * 3 + 0 ] = ( prevSize + pMesh->mFaces[ j ].mIndices[ 0 ] );
-            indices[ metadata[ i ].indexStart + j * 3 + 1 ] = ( prevSize + pMesh->mFaces[ j ].mIndices[ 1 ] );
-            indices[ metadata[ i ].indexStart + j * 3 + 2 ] = ( prevSize + pMesh->mFaces[ j ].mIndices[ 2 ] );
-        }
-        //m_importPercentage = i / float( total );
-    }
-    CCalcTangents calcTangents{};
-    STempMesh tempMesh{ vertices, indices };
-    calcTangents.Calc( &tempMesh );
-    CUuid meshID{};
-    BinaryReadWrite::Write( file, ( uint64_t ) meshID );
-    BinaryReadWrite::Write( file, static_cast< uint8_t >( EFileTypes::Model ));
-    BinaryReadWrite::Write( file, indices.size());
-    BinaryReadWrite::Write( file, vertices.size());
-    BinaryReadWrite::Write( file, metadata.size());
-    BinaryReadWrite::Write( file, indices.data(), indices.size() * sizeof( uint32_t ));
-    BinaryReadWrite::Write( file, vertices.data(), vertices.size() * sizeof( BalVulkan::SVertex ));
-    BinaryReadWrite::Write( file, metadata.data(), metadata.size() * sizeof( Balbino::SMeshMetadata ));
-    file.close();
 
-
-    if ( m_preset )
-    {
-        std::filesystem::path presetPath{ std::string( "../Data/" ) + path.filename().string() };
-        presetPath.replace_filename( path.filename().string() + "_Preset" );
-        presetPath.replace_extension( ".basset" );
-        std::ofstream presetFile( presetPath, std::ios::out | std::ios::binary );
-
-        if ( !file.is_open())
-        {
-            return false;
-        }
-
-        BinaryReadWrite::Write( presetFile, CUuid());
-        BinaryReadWrite::Write( presetFile, static_cast< uint8_t >( EFileTypes::Preset ));
-        int loadCount{};
-        if ( scene->HasCameras())
-        {
-            uint32_t cameraCount{ scene->mNumCameras };
-            for ( uint32_t i{}; i < cameraCount; ++i )
+            uint32_t meshCount{ scene->mNumMeshes };
+            aiMesh** meshes{ scene->mMeshes };
+            std::vector<BalVulkan::SVertex> vertices;
+            std::vector<uint32_t>           indices;
+            Balbino::SMeshMetadata* pMeshData{ nullptr };
+            for ( uint32_t i{}; i < meshCount; ++i )
             {
-                auto camera{ scene->mCameras[ i ] };
-                BinaryReadWrite::Write( presetFile, static_cast< uint8_t >( PresetPropertieTypes::Camera ));
-                BinaryReadWrite::Write( presetFile, camera->mAspect );
-                BinaryReadWrite::Write( presetFile, camera->mClipPlaneFar );
-                BinaryReadWrite::Write( presetFile, camera->mClipPlaneNear );
-                BinaryReadWrite::Write( presetFile, camera->mLookAt.x );
-                BinaryReadWrite::Write( presetFile, camera->mLookAt.y );
-                BinaryReadWrite::Write( presetFile, camera->mLookAt.z );
-                BinaryReadWrite::Write( presetFile, camera->mHorizontalFOV );
-                BinaryReadWrite::Write( presetFile, camera->mOrthographicWidth );
-                BinaryReadWrite::Write( presetFile, camera->mPosition.x );
-                BinaryReadWrite::Write( presetFile, camera->mPosition.y );
-                BinaryReadWrite::Write( presetFile, camera->mPosition.z );
-                BinaryReadWrite::Write( presetFile, camera->mUp.x );
-                BinaryReadWrite::Write( presetFile, camera->mUp.y );
-                BinaryReadWrite::Write( presetFile, camera->mUp.z );
-                ++loadCount;
-            }
-        }
-        if ( scene->HasLights())
-        {
-            uint32_t lightCount{ scene->mNumLights };
-            for ( uint32_t i{}; i < lightCount; ++i )
-            {
-                auto light{ scene->mLights[ i ] };
-                BinaryReadWrite::Write( presetFile, static_cast< uint8_t >( PresetPropertieTypes::Light ));
-                BinaryReadWrite::Write( presetFile, static_cast< uint8_t >(light->mType));
-                ++loadCount;
-            }
-        }
-        if ( scene->HasMeshes())
-        {
+                aiMesh* pMesh{ meshes[i] };
 
+                if ( pMeshData )
+                {
+                    Balbino::SMeshMetadata* pNewMeshData = new Balbino::SMeshMetadata{};
+                    pMeshData->pNext        = pNewMeshData;
+                    pNewMeshData->pPrevious = pMeshData;
+                    pMeshData = pNewMeshData;
+
+                }
+                else
+                {
+                    pMeshData = new Balbino::SMeshMetadata{};
+                }
+
+                pMeshData->indexCount = pMesh->mNumFaces * 3;
+                pMeshData->firstIndex = static_cast<uint32_t>( indices.size());
+                const uint32_t prevSize{ static_cast<uint32_t>( vertices.size()) };
+                vertices.resize( prevSize + pMesh->mNumVertices );
+                indices.resize( pMeshData->firstIndex + pMeshData->indexCount );
+
+                const bool hasColor{ pMesh->HasVertexColors( 0 ) && pMesh->mColors[0] != nullptr };
+                const bool hasUV{ pMesh->HasTextureCoords( 0 ) && pMesh->mTextureCoords[0] != nullptr };
+                const bool hasNormals{ pMesh->HasNormals() };
+                const bool hasTangents{ pMesh->HasTangentsAndBitangents() };
+
+                for ( uint32_t j{}; j < pMesh->mNumVertices; ++j )
+                {
+                    const uint32_t index{ prevSize + j };
+                    vertices[index].position.x = pMesh->mVertices[j].x;
+                    vertices[index].position.y = pMesh->mVertices[j].y;
+                    vertices[index].position.z = pMesh->mVertices[j].z;
+
+                    if ( hasColor )
+                    {
+                        vertices[index].color.r = pMesh->mColors[0][j].r;
+                        vertices[index].color.g = pMesh->mColors[0][j].g;
+                        vertices[index].color.b = pMesh->mColors[0][j].b;
+                        vertices[index].color.a = pMesh->mColors[0][j].a;
+                    }
+                    if ( hasUV )
+                    {
+                        vertices[index].uv.x = pMesh->mTextureCoords[0][j].x;
+                        vertices[index].uv.y = pMesh->mTextureCoords[0][j].y;
+                    }
+                    if ( hasNormals )
+                    {
+                        vertices[index].normal.x = pMesh->mNormals[j].x;
+                        vertices[index].normal.y = pMesh->mNormals[j].y;
+                        vertices[index].normal.z = pMesh->mNormals[j].z;
+                    }
+                    if ( hasTangents )
+                    {
+                        vertices[index].tangent.x = pMesh->mTangents[j].x;
+                        vertices[index].tangent.y = pMesh->mTangents[j].y;
+                        vertices[index].tangent.z = pMesh->mTangents[j].z;
+                        vertices[index].tangent.w = 1;
+                    }
+                }
+                for ( uint32_t j{}; j < pMesh->mNumFaces; ++j )
+                {
+                    indices[pMeshData->firstIndex + j * 3 + 0] = ( prevSize + pMesh->mFaces[j].mIndices[0] );
+                    indices[pMeshData->firstIndex + j * 3 + 1] = ( prevSize + pMesh->mFaces[j].mIndices[1] );
+                    indices[pMeshData->firstIndex + j * 3 + 2] = ( prevSize + pMesh->mFaces[j].mIndices[2] );
+                }
+
+                pMeshData->boundingBox.min.x = pMesh->mAABB.mMin.x;
+                pMeshData->boundingBox.max.x = pMesh->mAABB.mMax.x;
+                pMeshData->boundingBox.min.y = pMesh->mAABB.mMin.y;
+                pMeshData->boundingBox.max.y = pMesh->mAABB.mMax.y;
+                pMeshData->boundingBox.min.z = pMesh->mAABB.mMin.z;
+                pMeshData->boundingBox.max.z = pMesh->mAABB.mMax.z;
+
+                pMeshData->boundingSphere.center = ( pMeshData->boundingBox.min + pMeshData->boundingBox.max ) * 0.5f;
+                pMeshData->boundingSphere.radius = glm::distance( pMeshData->boundingBox.min,
+                                                                  pMeshData->boundingBox.max ) * 0.5f;
+
+            }
+            BalEditor::Exporter::ExportMesh( m_path.filename().string(), m_destinationDirection + "\\", indices,
+                                             vertices,
+                                             pMeshData );
+            while ( pMeshData->pPrevious )
+            {
+                Balbino::SMeshMetadata* pTempMeshData{ pMeshData->pPrevious };
+
+                delete pMeshData;
+                pMeshData = pTempMeshData;
+            }
+            pMeshData->pNext = nullptr;
         }
     }
+    else
+    {
+        std::clog << "Warning cant save as preset yet!\n";  //todo think of and implement presets
+    }
+
     return true;
 }
 
-bool BalEditor::CMeshFileImporter::DrawImportSettings( const std::filesystem::path& path )
+bool BalEditor::CMeshFileImporter::DrawImportSettings()
 {
-    if ( ImGui::BeginPopupModal( "BrokenComboBoxes", nullptr, 0 ))
+    ImGui::OpenPopup( "Import Mesh" );
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ));
+    if ( ImGui::BeginPopupModal( "Import Mesh", nullptr, ImGuiWindowFlags_AlwaysAutoResize ))
     {
-        ImGui::Text( "%s", std::format( "Importing from {}", path.string()).c_str());
+        ImGui::Text( "%s", std::format( "Importing from {}", m_path.string()).c_str());
         BalEditor::EditorGUI::DrawToggle( "Import as preset", m_preset );
+        BalEditor::EditorGUI::DrawToggle( "Import Meshes", m_meshes );
+        if ( m_meshes )
+        {
+            BalEditor::EditorGUI::DrawToggle( "Try to create materials", m_materials );
+            BalEditor::EditorGUI::DrawToggle( "Try to import related textures", m_textures );
+        }
+        if ( m_preset )
+        {
+            BalEditor::EditorGUI::DrawToggle( "Import Lights", m_lights );
+            BalEditor::EditorGUI::DrawToggle( "Import Cameras", m_cameras );
+        }
         if ( BalEditor::EditorGUI::DrawButton( "Import" ))
         {
-            if ( !LoadFromPath( path ))
-                std::cerr << "Failed to import file: " << path.string() << std::endl;
+            m_isVisible = false;
+            if ( !LoadMesh())
+            { //TODO add task to thread pool
+                std::cerr << "Failed to import file: " << m_path.string() << std::endl;
+                ImGui::EndPopup();
+                return false;
+            }
+            ImGui::EndPopup();
             return true;
         }
-        ImGui::SameLine();
         if ( BalEditor::EditorGUI::DrawButton( "Cancel" ))
         {
+            ImGui::EndPopup();
             return true;
         }
         ImGui::EndPopup();
@@ -230,4 +209,16 @@ bool BalEditor::CMeshFileImporter::DrawImportSettings( const std::filesystem::pa
 float BalEditor::CMeshFileImporter::GetImportPercentage()
 {
     return m_importPercentage;
+}
+
+void BalEditor::CMeshFileImporter::SetVisible( const std::filesystem::path& path, std::string destinationDirection )
+{
+    m_isVisible            = true;
+    m_path                 = path;
+    m_destinationDirection = destinationDirection;
+}
+
+bool BalEditor::CMeshFileImporter::IsVisible() const
+{
+    return m_isVisible;
 }

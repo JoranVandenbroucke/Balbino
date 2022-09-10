@@ -10,9 +10,8 @@
 
 struct SModelObject
 {
-	alignas( 16 ) glm::mat4 model;
-	alignas( 16 ) glm::mat4 view;
-	alignas( 16 ) glm::mat4 proj;
+    alignas( 16 ) glm::mat4 view;
+    alignas( 16 ) glm::mat4 proj;
     alignas( 16 ) glm::vec4 viewPos;
     alignas( 4 ) int displayDebugTarget;
 };
@@ -29,6 +28,6 @@ struct SLight
 
 struct SLightObject
 {
-	SLight lights[LIGHT_COUNT];
+    SLight lights[LIGHT_COUNT];
 };
 #pragma warning(pop)

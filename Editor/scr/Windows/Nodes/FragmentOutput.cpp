@@ -8,9 +8,9 @@
 #include "imgui.h"
 #include "imnodes.h"
 
-CFragmentOutputNode::CFragmentOutputNode(int id, int& attributeStartId)
-        : INode{ id, attributeStartId }
-          , m_connections{}
+CFragmentOutputNode::CFragmentOutputNode( int id, int& attributeStartId )
+        : INode{ id, attributeStartId },
+          m_connections{}
 {
     attributeStartId += m_connectionSize;
 }
@@ -54,26 +54,28 @@ void CFragmentOutputNode::Draw()
     DrawInputFloatAttribute( m_alpha, m_attributeStartId + 11, m_connections[11], "Alpha", 0, 1 );
     DrawInputVectorAttribute( m_normal, m_attributeStartId + 12, true, "Normal" );
 
+    DrawOutputShaderAttribute( "Output:", m_attributeStartId + m_connectionSize - 1 );
     ImNodes::EndNode();
 }
 
-void CFragmentOutputNode::Attach(int endAttr)
+void CFragmentOutputNode::Attach( int endAttr )
 {
     m_connections[endAttr - m_attributeStartId] = true;
 }
 
-void CFragmentOutputNode::Detach(int endAttr)
+void CFragmentOutputNode::Detach( int endAttr )
 {
     m_connections[endAttr - m_attributeStartId] = false;
 }
 
-std::string CFragmentOutputNode::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+std::string CFragmentOutputNode::Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
 {
     (void) begin;
     (void) bindings;
     (void) includes;
     (void) attributeType;
-    std::string shader{ R"(//I created this shader by reading
+    std::string shader{
+            R"(//I created this shader by reading
 //https://google.github.io/filament/Filament.md.html
 
 #version 450
@@ -81,11 +83,6 @@ std::string CFragmentOutputNode::Evaluate(std::vector<INode*>::iterator& begin, 
 
 #define LIGHT_COUNT 1024
 #define MEDIUM_MAX 65504.0
-#define SATUREATE_MADIUM(x) min(x, MEDIUM_MAX)
-
-layout(set=1, binding=4) uniform samplerCube gRadEnvironment;
-layout(set=1, binding=5) uniform samplerCube gIrradEnvironment;
-layout(set=1, binding=6) uniform sampler2D gBRDFLUP;
 
 layout(location = 0) in vec4 fragColor;
 layout(location = 1) in vec2 fragTexCoord;
@@ -96,17 +93,16 @@ layout(location = 4) in vec4 fragWorldPos;
 layout (location = 0) out vec4 outFragcolor;
 
 struct Light {
-    int type;               //type: Directional, Point, Spot, Area
-    float strength;         //strength
-    vec3 position;          //position
-    vec3 direction;         //direction
-    vec3 color;             //color
-    vec3 size;              //Point: size,0,0; Spot: size, front, back; area: width, height, 0
+    int type;//type: Directional, Point, Spot, Area
+    float strength;//strength
+    vec3 position;//position
+    vec3 direction;//direction
+    vec3 color;//color
+    vec3 size;//Point: size,0,0; Spot: size, front, back; area: width, height, 0
 };
 
 
 layout(set=0, binding=0) uniform ModelData {
-    mat4 model;
     mat4 view;
     mat4 proj;
     vec4 viewPos;
@@ -126,7 +122,7 @@ float GGX(float NdotH, float roughness, const vec3 n, const vec3 h)
     float a = NdotH * roughness;
     float k = roughness / (dot(NxH, NxH) + a * a);
     float d = k * k * (1.0 / BALBINO_PI);
-    return SATUREATE_MADIUM(d);
+    return min(d, MEDIUM_MAX);
 }
 
 float SmithGGXCorrelated(float NdotV, float NdotL, float roughness)
@@ -232,7 +228,8 @@ void main()
     //todo add clearcoat brdf
     //todo add Anisotropic brdf
     outFragcolor = vec4(directColor, fragColor.a);
-})" };
+})"
+    };
     /*
     *  1.  color baseColor .82 .67 .16
     *  2.  float metallic 0 1 0
@@ -255,16 +252,29 @@ void main()
     //	, m_connections[4] ? (*(begin++))->Evaluate(begin, bindings, includes, EAttributeType::Float).c_str() : std::to_string(m_roughness).c_str()
     //	, m_connections[12] ? (*(begin++))->Evaluate(begin, bindings, includes, EAttributeType::Vector).c_str() : "normalize(fragNormal)");
     // So therefore I have the "find/replace mechanic
-    shader.replace( shader.find( "{0}" ), 3, m_connections[0] ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Color ) : ( "vec3(" + std::to_string( m_color[0] ) + "," + std::to_string( m_color[1] ) + "," + std::to_string( m_color[2] ) + ")" ));
-    shader.replace( shader.find( "{1}" ), 3, m_connections[1] ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Color ) : std::to_string( m_metallic ));
-    shader.replace( shader.find( "{2}" ), 3, m_connections[4] ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Color ) : std::to_string( m_roughness ));
-    shader.replace( shader.find( "{3}" ), 3, m_connections[12] ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Vector ).c_str() : "normalize(fragNormal)" );
+    shader.replace( shader.find( "{0}" ), 3, m_connections[0]
+                                             ? ( *( begin++ ))->Evaluate( begin, bindings, includes,
+                                                                          EAttributeType::Color )
+                                             : ( "vec3(" + std::to_string( m_color[0] ) + "," + std::to_string(
+                    m_color[1] ) + "," + std::to_string( m_color[2] ) + ")" ));
+    shader.replace( shader.find( "{1}" ), 3, m_connections[1]
+                                             ? ( *( begin++ ))->Evaluate( begin, bindings, includes,
+                                                                          EAttributeType::Color )
+                                             : std::to_string( m_metallic ));
+    shader.replace( shader.find( "{2}" ), 3, m_connections[4]
+                                             ? ( *( begin++ ))->Evaluate( begin, bindings, includes,
+                                                                          EAttributeType::Color )
+                                             : std::to_string( m_roughness ));
+    shader.replace( shader.find( "{3}" ), 3, m_connections[12]
+                                             ? ( *( begin++ ))->Evaluate( begin, bindings, includes,
+                                                                          EAttributeType::Vector ).c_str()
+                                             : "normalize(fragNormal)" );
     return shader;
 }
 
-bool CFragmentOutputNode::HasFreeAttachment(int endAttr) const
+bool CFragmentOutputNode::HasFreeAttachment( int endAttr ) const
 {
-    if( endAttr >= m_attributeStartId && endAttr < m_attributeStartId + m_connectionSize && !m_connections[endAttr - m_attributeStartId] )
+    if ( endAttr >= m_attributeStartId && endAttr < m_attributeStartId + m_connectionSize && !m_connections[endAttr - m_attributeStartId] )
     {
         return true;
     }
@@ -276,10 +286,10 @@ int CFragmentOutputNode::GetId() const
     return m_id;
 }
 
-std::vector< int > CFragmentOutputNode::GetInputs() const
+std::vector<int> CFragmentOutputNode::GetInputs() const
 {
-    std::vector< int > inputs( m_connectionSize, m_attributeStartId );
-    for( int i = 0; i < m_connectionSize; ++i )
+    std::vector<int> inputs( m_connectionSize, m_attributeStartId );
+    for ( int        i = 0; i < m_connectionSize; ++i )
     {
         inputs[i] += i;
     }

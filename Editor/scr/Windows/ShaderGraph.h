@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include <FileParcer.h>
 
 struct INode;
 
@@ -24,12 +25,14 @@ namespace BalEditor
 		CShaderGraph& operator=( CShaderGraph&& ) = delete;
 		void Draw();
 		void ShowWindow();
-		void OpenShader( const std::filesystem::path& path ) const;
+		void SetShader( const SFile& shaderFile );
 	private:
 		enum class EUiNodeType
 		{
 			//Shader
+            ShaderNode,
 			VertexOutput,
+			GeometryOutput,
 			FragmentOutput,
 
 			////////blender nodes////////
@@ -120,7 +123,7 @@ namespace BalEditor
 		int m_currentAttributeId = 0;
 		bool m_isVisible;
 		bool m_wantsToSave;
-		std::string m_currentName;
+        SFile m_currentShaderFile;
 
 		std::vector<SLink> GetNeighbors( int currentNode );
 		void Evaluate();

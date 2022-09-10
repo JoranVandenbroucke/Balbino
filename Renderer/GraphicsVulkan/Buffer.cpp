@@ -21,7 +21,6 @@ BalVulkan::CBuffer::CBuffer( const CDevice* pDevice, const CCommandPool* command
 
 BalVulkan::CBuffer::~CBuffer()
 {
-	//vkFreeCommandBuffers( GetDevice()->GetVkDevice(), m_commandPool->GetCommandPool(), 1, &m_commandBuffer );
 	vkDestroyBuffer( GetDevice()->GetVkDevice(), m_buffer, nullptr );
 	vkFreeMemory( GetDevice()->GetVkDevice(), m_bufferMemory, nullptr );
 	m_buffer = VK_NULL_HANDLE;
@@ -31,10 +30,17 @@ BalVulkan::CBuffer::~CBuffer()
 	m_queue = nullptr;
 }
 
-void BalVulkan::CBuffer::Bind( const bool isIndexBuffer ) const
+void BalVulkan::CBuffer::Bind( const bool isIndexBuffer, bool isInstanceBuffer ) const
 {
-	if ( isIndexBuffer )
-		vkCmdBindIndexBuffer( m_commandPool->GetCommandBuffer(), m_buffer, 0, VK_INDEX_TYPE_UINT32 );
+    if(isInstanceBuffer)
+    {
+        constexpr VkDeviceSize offsets[] = { 0 };
+        vkCmdBindVertexBuffers( m_commandPool->GetCommandBuffer(), 1, 1, &m_buffer, offsets );
+    }
+	else if ( isIndexBuffer )
+    {
+        vkCmdBindIndexBuffer( m_commandPool->GetCommandBuffer(), m_buffer, 0, VK_INDEX_TYPE_UINT32 );
+    }
 	else
 	{
 		constexpr VkDeviceSize offsets[] = { 0 };
@@ -80,48 +86,25 @@ void BalVulkan::CBuffer::UpdateData( const void* pData, const uint64_t size )
 
 void BalVulkan::CBuffer::Initialize( uint64_t size, EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty )
 {
-	m_currentSize = size;
-	//VkBufferUsageFlags usage{};
-	//VkMemoryPropertyFlags properties{};
-	//switch ( bufferType )
-	//{
-	//	case EBufferType::IndexBuffer:
-	//		usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-	//		properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-	//		break;
-	//	case EBufferType::VertexBuffer:
-	//		usage = VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-	//		properties = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-	//		break;
-	//	case EBufferType::StagingBuffer:
-	//		usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
-	//		properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-	//		break;
-	//	case EBufferType::UniformBuffer:
-	//		usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-	//		properties = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-	//		break;
-	//	default:;
-	//}
-	const VkBufferCreateInfo bufferInfo{
-		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.size = size,
-		.usage = static_cast<VkBufferUsageFlags>( bufferUsage ),
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-	};
-	CheckVkResult( vkCreateBuffer( GetDevice()->GetVkDevice(), &bufferInfo, nullptr, &m_buffer ), "failed to create buffer!" );
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements( GetDevice()->GetVkDevice(), m_buffer, &memRequirements );
-
-	const VkMemoryAllocateInfo allocInfo{
-		.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		.allocationSize = memRequirements.size,
-		.memoryTypeIndex = FindMemoryType( GetDevice()->GetPhysicalDeviceInfo()->device, memRequirements.memoryTypeBits, static_cast<VkMemoryPropertyFlagBits>( memoryProperty ) ),
-	};
-
-	CheckVkResult( vkAllocateMemory( GetDevice()->GetVkDevice(), &allocInfo, nullptr, &m_bufferMemory ), "failed to allocate buffer memory!" );
-	CheckVkResult( vkBindBufferMemory( GetDevice()->GetVkDevice(), m_buffer, m_bufferMemory, 0 ) );
+    if(size > 0)
+    {
+        m_currentSize = size;
+        
+        const VkBufferCreateInfo bufferInfo{
+                .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, .size = size, .usage = static_cast<VkBufferUsageFlags>( bufferUsage ), .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+        };
+        CheckVkResult( vkCreateBuffer( GetDevice()->GetVkDevice(), &bufferInfo, nullptr, &m_buffer ), "failed to create buffer!" );
+        
+        VkMemoryRequirements memRequirements;
+        vkGetBufferMemoryRequirements( GetDevice()->GetVkDevice(), m_buffer, &memRequirements );
+        
+        const VkMemoryAllocateInfo allocInfo{
+                .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO, .allocationSize = memRequirements.size, .memoryTypeIndex = FindMemoryType( GetDevice()->GetPhysicalDeviceInfo()->device, memRequirements.memoryTypeBits, static_cast<VkMemoryPropertyFlagBits>( memoryProperty )),
+        };
+        
+        CheckVkResult( vkAllocateMemory( GetDevice()->GetVkDevice(), &allocInfo, nullptr, &m_bufferMemory ), "failed to allocate buffer memory!" );
+        CheckVkResult( vkBindBufferMemory( GetDevice()->GetVkDevice(), m_buffer, m_bufferMemory, 0 ));
+    }
 
 	const VkCommandBufferAllocateInfo allocCommandBufferInfo{
 		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,

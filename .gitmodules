@@ -14,3 +14,7 @@
     path = 3rdParty/GLM
     url = ../../g-truc/glm.git
     branch = master
+[submodule ".\\3rdParty\\mINI"]
+    path = .\\3rdParty\\mINI
+    url = https://github.com/pulzed/mINI.git
+    branch = master

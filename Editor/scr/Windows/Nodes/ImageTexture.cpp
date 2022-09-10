@@ -6,90 +6,78 @@
 #include "ImageTexture.h"
 
 #include "Attribute.h"
-#include "imgui.h"
-#include "imnodes.h"
+#include "../../EditorGUI/EditorGui.h"
+
 
 namespace BalEditor
 {
-    CImageTexture::CImageTexture(int id, int& attributeStartId)
-            : INode( id, attributeStartId )
-            ,m_textureVariableName{"defaultTexture"}
-            ,m_textureType{ETextureType::Texture2D}
+    CImageTexture::CImageTexture( int id, int& attributeStartId )
+            : INode( id, attributeStartId ),
+              m_textureVariableName{ "defaultTexture" },
+              m_textureType{ ETextureType::Texture2D }
     {
         attributeStartId += 1;
     }
 
     void CImageTexture::Draw()
     {
-        ImGui::PushItemWidth( 200 );
-        ImNodes::BeginNode( m_id );
-
-        ImNodes::BeginNodeTitleBar();
-        ImGui::Text( "Texture" );
-        ImNodes::EndNodeTitleBar();
-        char name[64]{};
-        for(int i {}; i < m_textureVariableName.size(); ++i)
+        StartNode( "Texture", m_id );
+        char      name[64]{};
+        for ( int i{}; i < m_textureVariableName.size(); ++i )
         {
             name[i] = m_textureVariableName[i];
         }
-        if(ImGui::InputText("Texture Variable Name", name, 64, ImGuiInputTextFlags_EnterReturnsTrue))
+        if ( BalEditor::EditorGUI::DrawInputText( "Texture Variable Name", name, 64 ))
         {
             m_textureVariableName = "";
-            for(int i {}; i < 64; ++i)
+            for ( int i{}; i < 64; ++i )
             {
-                if(name[i] == '\0')
+                if ( name[i] == '\0' )
+                {
                     break;
+                }
                 m_textureVariableName += name[i];
             }
         }
         {
-            if ( ImGui::BeginCombo( "##Mode", ToString( m_textureType ) ) )
+            std::string currentValue{ ToString( m_textureType ) };
+            if ( BalEditor::EditorGUI::DrawComboBox( "##Mode", currentValue, { ToString( ETextureType::Texture2D ) } ))
             {
-                for ( int n = 0; n < static_cast<int>( ETextureType::MaxIndex ); n++ )
+                if ( currentValue == ToString( ETextureType::Texture2D ))
                 {
-                    const bool isSelected = ( static_cast<int>( m_textureType ) == n );
-                    if ( ImGui::Selectable( ToString( static_cast<ETextureType>( n ) ), isSelected ) )
-                        m_textureType = static_cast<ETextureType>( n );
-
-                    if ( n == 10 || n == 18 || n == 27 || n == 37 )
-                        ImGui::Separator();
-
-                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    if ( isSelected )
-                        ImGui::SetItemDefaultFocus();
+                    m_textureType = ETextureType::Texture2D;
                 }
-                ImGui::EndCombo();
             }
         }
-        ImGui::Spacing();
+        BalEditor::EditorGUI::Spacing();
         DrawOutputTextureAttribute( m_attributeStartId );
 
-        ImNodes::EndNode();
+        EndNode();
     }
 
-    void CImageTexture::Attach(int endAttr)
+    void CImageTexture::Attach( int endAttr )
     {
         (void) endAttr;
     }
 
-    void CImageTexture::Detach(int endAttr)
+    void CImageTexture::Detach( int endAttr )
     {
         (void) endAttr;
     }
 
-    std::string CImageTexture::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+    std::string CImageTexture::Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
     {
-        (void)begin;
-        (void)bindings;
-        (void)includes;
-        (void)attributeType;
+        (void) begin;
+        (void) bindings;
+        (void) includes;
+        (void) attributeType;
         std::string shader;
         //todo: allow for custom UVs and Lod/Grad sampling
-        switch( m_textureType )
+        switch ( m_textureType )
         {
             case ETextureType::Texture2D:
-                shader = std::format("GetTextureDiffused({},fragTexCoord).xyz", m_textureVariableName);
-                bindings.insert("sampler2D " + m_textureVariableName);
+                shader = std::format( "GetTextureDiffused({},fragTexCoord).xyz", m_textureVariableName );
+                bindings.insert( "sampler2D " + m_textureVariableName );
                 break;
             case ETextureType::MaxIndex:
                 break;
@@ -97,7 +85,7 @@ namespace BalEditor
         return shader;
     }
 
-    bool CImageTexture::HasFreeAttachment(int endAttr) const
+    bool CImageTexture::HasFreeAttachment( int endAttr ) const
     {
         (void) endAttr;
         return false;
@@ -110,12 +98,12 @@ namespace BalEditor
 
     std::vector<int> CImageTexture::GetInputs() const
     {
-        return {0};
+        return { 0 };
     }
 
-    const char* CImageTexture::ToString(ETextureType mode)
+    const char* CImageTexture::ToString( ETextureType mode )
     {
-        switch( mode)
+        switch ( mode )
         {
             case ETextureType::Texture2D:
                 return "Texture 2D";

@@ -6,9 +6,7 @@
 #include <imgui.h>
 #include <imnodes.h>
 #include <SDL.h>
-#include <Shader.h>
 #include <set>
-#include <shaderc/shaderc.hpp>
 
 #include "UUID.h"
 #include "Nodes/Bump.h"
@@ -23,18 +21,21 @@
 #include "Nodes/RGBtoBW.h"
 #include "Nodes/VectorMath.h"
 #include "Nodes/VertexOutput.h"
+#include "Nodes/ShaderNode.h"
+#include "../Tools/FilesSystem/Exporter.h"
 
 BalEditor::CShaderGraph::CShaderGraph()
-        : m_isVisible{ false }
-          , m_wantsToSave{ false }
+        : m_isVisible{ false },
+          m_wantsToSave{ false }
 {
+    AddNode( EUiNodeType::ShaderNode, glm::vec2{ 480, 128 } );
     AddNode( EUiNodeType::VertexOutput, glm::vec2{ 420, 128 } );
     AddNode( EUiNodeType::FragmentOutput, glm::vec2{ 420, 256 } );
 }
 
 BalEditor::CShaderGraph::~CShaderGraph()
 {
-    for( const auto& element : m_nodes )
+    for ( const auto& element : m_nodes )
     {
         delete element;
     }
@@ -44,13 +45,13 @@ BalEditor::CShaderGraph::~CShaderGraph()
 
 void BalEditor::CShaderGraph::Draw()
 {
-    if( m_isVisible )
+    if ( m_isVisible )
     {
-        if( ImGui::Begin( "Shader Graph", &m_isVisible, ImGuiWindowFlags_MenuBar ))
+        if ( ImGui::Begin( "Shader Graph", &m_isVisible, ImGuiWindowFlags_MenuBar ))
         {
-            if( ImGui::BeginMenuBar())
+            if ( ImGui::BeginMenuBar())
             {
-                if( ImGui::Button( "Save" ))
+                if ( ImGui::Button( "Save" ))
                 {
                     m_wantsToSave = true;
                 }
@@ -58,13 +59,13 @@ void BalEditor::CShaderGraph::Draw()
             }
 
             ImNodes::BeginNodeEditor();
-            if( ImGui::BeginPopupContextWindow( "Add Node", 1, false ))
+            if ( ImGui::BeginPopupContextWindow( "Add Node", 1, false ))
             {
                 ImGui::Text( "Add Node" );
                 ImGui::Separator();
-                for( int n = 2; n < static_cast<int>( EUiNodeType::MaxIndex ); n++ )
+                for ( int n = 2; n < static_cast<int>( EUiNodeType::MaxIndex ); n++ )
                 {
-                    if( ImGui::MenuItem( ToString( static_cast<EUiNodeType>( n ))))
+                    if ( ImGui::MenuItem( ToString( static_cast<EUiNodeType>( n ))))
                     {
                         const ImVec2 mousePos = ImGui::GetMousePos();
                         AddNode( static_cast<EUiNodeType>( n ), glm::vec2{ mousePos.x, mousePos.y } );
@@ -73,12 +74,12 @@ void BalEditor::CShaderGraph::Draw()
                 ImGui::EndPopup();
             }
 
-            for( INode* node : m_nodes )
+            for ( INode* node : m_nodes )
             {
                 node->Draw();
             }
 
-            for( const SLink& link : m_links )
+            for ( const SLink& link : m_links )
             {
                 ImNodes::Link( link.id, link.startAttr, link.endAttr );
             }
@@ -87,14 +88,14 @@ void BalEditor::CShaderGraph::Draw()
 
             {
                 SLink link{};
-                if( ImNodes::IsLinkCreated( &link.startNodeId, &link.startAttr, &link.endNodeId, &link.endAttr ))
+                if ( ImNodes::IsLinkCreated( &link.startNodeId, &link.startAttr, &link.endNodeId, &link.endAttr ))
                 {
-                    int nodeId{ link.endNodeId };
-                    const auto it = std::ranges::find_if( m_nodes, [&nodeId](const INode* node)
+                    int        nodeId{ link.endNodeId };
+                    const auto it = std::ranges::find_if( m_nodes, [ &nodeId ]( const INode* node )
                     {
                         return node->GetId() == nodeId;
                     } );
-                    if( it != m_nodes.end() && ( *it )->HasFreeAttachment( link.endAttr ))
+                    if ( it != m_nodes.end() && ( *it )->HasFreeAttachment( link.endAttr ))
                     {
                         ( *it )->Attach( link.endAttr );
                         link.id = m_currentId++;
@@ -105,15 +106,15 @@ void BalEditor::CShaderGraph::Draw()
 
             {
                 int linkId;
-                if( ImNodes::IsLinkDestroyed( &linkId ))
+                if ( ImNodes::IsLinkDestroyed( &linkId ))
                 {
-                    const auto iterator = std::ranges::find_if( m_links, [linkId](const SLink& link) -> bool
+                    const auto iterator = std::ranges::find_if( m_links, [ linkId ]( const SLink& link ) -> bool
                     {
                         return link.id == linkId;
                     } );
                     assert( iterator != m_links.end());
-                    int nodeId{ iterator->endNodeId };
-                    const auto it = std::ranges::find_if( m_nodes, [&nodeId](const INode* node)
+                    int        nodeId{ iterator->endNodeId };
+                    const auto it = std::ranges::find_if( m_nodes, [ &nodeId ]( const INode* node )
                     {
                         return node->GetId() == nodeId;
                     } );
@@ -121,7 +122,7 @@ void BalEditor::CShaderGraph::Draw()
                     m_links.erase( iterator );
                 }
             }
-            if( m_wantsToSave )
+            if ( m_wantsToSave )
             {
                 Evaluate();
             }
@@ -134,40 +135,33 @@ void BalEditor::CShaderGraph::ShowWindow()
 {
     m_isVisible = true;
     ImGui::SetWindowFocus( "Shader Graph" );
+    if ( m_links.empty())
+    {
+        m_links.emplace_back(
+                SLink{ .id = m_currentId++, .startNodeId = 1, .endNodeId = 0, .startAttr = 10, .endAttr = 0 } );
+        m_links.emplace_back(
+                SLink{ .id = m_currentId++, .startNodeId = 2, .endNodeId = 0, .startAttr = 24, .endAttr = 2 } );
+    }
 }
 
-void BalEditor::CShaderGraph::OpenShader(const std::filesystem::path& path) const
+void BalEditor::CShaderGraph::SetShader( const SFile& shaderFile )
 {
-    std::ifstream file( path.string().c_str(), std::ios::in | std::ios::binary );
-    if( !file.is_open())
+    std::ifstream file( shaderFile.path, std::ios::in | std::ios::binary );
+    if ( !file.is_open())
     {
         return;
     }
-    uint64_t uuid;
-    uint8_t type;
-    uint64_t graphSize;
-    uint64_t vertexSPRV;
-    uint64_t fragmentSPRV;
-    BinaryReadWrite::Read( file, uuid );
-    BinaryReadWrite::Read( file, type );
-    BinaryReadWrite::Read( file, vertexSPRV );
-    BinaryReadWrite::Read( file, fragmentSPRV );
-    BinaryReadWrite::MoveCursor(file, (int)(vertexSPRV* sizeof( uint32_t )));
-    BinaryReadWrite::MoveCursor(file, (int)(fragmentSPRV* sizeof( uint32_t )));
-    BinaryReadWrite::Read( file, graphSize );
-    auto pGraphData = static_cast<char*>( malloc( graphSize ));
-    BinaryReadWrite::Read( file, pGraphData, graphSize );
-    ImNodes::LoadCurrentEditorStateFromIniString( pGraphData, graphSize );
-    free( pGraphData );
+
+    //todo: Get Shader Graph Debug Infor
     file.close();
 }
 
-std::vector< BalEditor::CShaderGraph::SLink > BalEditor::CShaderGraph::GetNeighbors(const int currentNode)
+std::vector<BalEditor::CShaderGraph::SLink> BalEditor::CShaderGraph::GetNeighbors( const int currentNode )
 {
-    std::vector< SLink > links;
-    auto it = m_links.begin();
+    std::vector<SLink> links;
+    auto               it = m_links.begin();
 
-    while(( it = std::find_if( it, m_links.end(), [&currentNode](const SLink& link)
+    while (( it = std::find_if( it, m_links.end(), [ &currentNode ]( const SLink& link )
     {
         return link.endNodeId == currentNode;
     } )) != m_links.end())
@@ -181,47 +175,47 @@ std::vector< BalEditor::CShaderGraph::SLink > BalEditor::CShaderGraph::GetNeighb
 
 void BalEditor::CShaderGraph::Evaluate()
 {
-    if( m_currentName.empty())
+    if ( m_currentShaderFile.isFolder )
     {
         ImGui::OpenPopup( "Enter Name" );
 
         // Always center this window when appearing
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ));
-        if( ImGui::BeginPopupModal( "Enter Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize ))
+        if ( ImGui::BeginPopupModal( "Enter Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize ))
         {
             char name[64]{};
-            if( ImGui::InputText( "##shader name", name, 64, ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue ))
+            if ( ImGui::InputText( "##shader name", name, 64, ImGuiInputTextFlags_EnterReturnsTrue ))
             {
-                m_currentName.append( name, std::find_if( name, name + 64, [](char c)
+                m_currentShaderFile.fileName.append( name, std::find_if( name, name + 64, []( char c )
                 {
                     return c == '\0';
                 } ));
+                m_currentShaderFile.isFolder = false;
             }
             ImGui::EndPopup();
         }
     }
 
-    if( !m_currentName.empty())
+    if ( !m_currentShaderFile.isFolder )
     {
-        std::vector< INode* > postOrder;
-        std::vector< INode* > stack;
+        std::vector<INode*> postOrder;
+        std::vector<INode*> stack;
 
         stack.push_back( m_nodes[0] );
 
         //todo: save nodes that are used multiple times to separate variable
-        while( !stack.empty())
+        while ( !stack.empty())
         {
             INode* pCurrentNode = stack.back();
             stack.pop_back();
-
             postOrder.push_back( pCurrentNode );
 
             std::vector connected{ GetNeighbors( pCurrentNode->GetId()) };
-            for( const SLink& neighbor : connected )
+            for ( const SLink& neighbor : connected )
             {
-                int nodeId = neighbor.startNodeId;
-                auto nodeIterator = std::ranges::find_if( m_nodes, [nodeId](const INode* pNode)
+                int  nodeId       = neighbor.startNodeId;
+                auto nodeIterator = std::ranges::find_if( m_nodes, [ nodeId ]( const INode* pNode )
                 {
                     return pNode->GetId() == nodeId;
                 } );
@@ -229,150 +223,112 @@ void BalEditor::CShaderGraph::Evaluate()
             }
         }
 
-        std::vector< INode* >::iterator nextNode{};
-        if( postOrder.empty())
+        std::vector<INode*>::iterator nextNode{};
+        nextNode = postOrder.begin() + 1;
+        std::vector<std::vector<uint32_t>> compiledShaders;
+        std::string                        shader;
+        uint32_t                           bindingId{ 6 };
+        while ( nextNode != postOrder.cend())
         {
-            nextNode = postOrder.end();
-        }
-        else
-        {
-            nextNode = postOrder.begin() + 1;
-        }
-
-        std::set< std::string > includesVertex{};
-        std::set< std::string > bindingsVertex{};
-        std::string includes{};
-        std::string bindings{};
-        std::string vertexShader{};
-        int bindingId{ 6 };
-        vertexShader = m_nodes[0]->Evaluate( nextNode, bindingsVertex, includesVertex, EAttributeType::None );
-        for( const std::string& include : includesVertex )
-        {
-            includes += "#include \"" + include + "\"\n";
-        }
-        for( const std::string& binding : bindingsVertex )
-        {
-            bindings += std::format( "layout(set=0, binding={}) uniform {};\n", bindingId++, binding );
-        }
-        if( !bindings.empty())
-        {
-            vertexShader.insert( vertexShader.find( "#version 450\n" ) + 13, bindings );
-        }
-        if( !includes.empty())
-        {
-            vertexShader.insert( vertexShader.find( "#version 450\n" ) + 13, includes );
-        }
-
-        //add fragment shader
-        postOrder.clear();
-        stack.clear();
-
-        stack.push_back( m_nodes[1] );
-
-        //todo: save nodes that are used multiple times to separate variable
-        while( !stack.empty())
-        {
-            INode* pCurrentNode = stack.back();
-            stack.pop_back();
-            postOrder.push_back( pCurrentNode );
-
-            std::vector connected{ GetNeighbors( pCurrentNode->GetId()) };
-            for( const SLink& neighbor : connected )
+            std::set<std::string> bindings;
+            std::set<std::string> includes;
+            std::string           includeString{};
+            std::string           bindingString{};
+            shader = m_nodes[0]->Evaluate( nextNode, bindings, includes, EAttributeType::None );
+            for ( const std::string& include : includes )
             {
-                int nodeId = neighbor.startNodeId;
-                auto nodeIterator = std::ranges::find_if( m_nodes, [nodeId](const INode* pNode)
-                {
-                    return pNode->GetId() == nodeId;
-                } );
-                stack.push_back( *nodeIterator );
+                includeString += "#include \"" + include + "\"\n";
             }
-        }
+            for ( const std::string& binding : bindings )
+            {
+                bindingString += std::format( "layout(set=0, binding={}) uniform {};\n", bindingId++, binding );
+            }
+            if ( !bindingString.empty())
+            {
+                shader.insert( shader.find( "#version 450\n" ) + 13, bindingString );
+            }
+            if ( !includeString.empty())
+            {
+                shader.insert( shader.find( "#version 450\n" ) + 13, includeString );
+            }
 
-        if( postOrder.empty())
-        {
-            nextNode = postOrder.end();
-        }
-        else
-        {
-            nextNode = postOrder.begin() + 1;
-        }
+            const shaderc::Compiler compiler;
+            shaderc::CompileOptions options;
+            options.SetTargetEnvironment( shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3 );
+            options.SetOptimizationLevel( shaderc_optimization_level_performance );
+            options.SetWarningsAsErrors();
+            options.SetTargetSpirv( shaderc_spirv_version_1_5 );
+            options.SetIncluder( std::make_unique<BalVulkan::CFileIncluder>());
 
-        std::string fragmentShader{};
-        std::set< std::string > includesFragment{};
-        std::set< std::string > bindingsFragment{};
-        fragmentShader = m_nodes[1]->Evaluate( nextNode, bindingsFragment, includesFragment, EAttributeType::None );
-        includes = {};
-        bindings = {};
-        for( const std::string& include : includesFragment )
-        {
-            includes += "#include \"" + include + "\"\n";
+            shaderc_shader_kind shaderType{ shaderc_vertex_shader };
+            const char* extention{ ".vert" };
+            switch ( std::stoi( shader.substr( shader.size() - 4, 3 )))
+            {
+                case 1u:
+                    extention  = ".geom";
+                    shaderType = shaderc_geometry_shader;
+                    break;
+                case 2u:
+                    if ( uint32_t( shader[shader.size() - 1] ) == 51u )
+                    {
+                        extention  = ".frag";
+                        shaderType = shaderc_fragment_shader;
+                    }
+                    break;
+                case 3u:
+                    if ( uint32_t( shader[shader.size() - 1] ) == 49u )
+                    {
+                        extention  = ".rgen";
+                        shaderType = shaderc_raygen_shader;
+                    }
+                    else if ( uint32_t( shader[shader.size() - 1] ) == 50u )
+                    {
+                        extention  = ".rhit";
+                        shaderType = shaderc_anyhit_shader;
+                    }
+                    else if ( uint32_t( shader[shader.size() - 1] ) == 51u )
+                    {
+                        extention  = ".rhit";
+                        shaderType = shaderc_closesthit_shader;
+                    }
+                    else if ( uint32_t( shader[shader.size() - 1] ) == 52u )
+                    {
+                        extention  = ".miss";
+                        shaderType = shaderc_miss_shader;
+                    }
+                    else if ( uint32_t( shader[shader.size() - 1] ) == 53u )
+                    {
+                        extention  = ".inter";
+                        shaderType = shaderc_intersection_shader;
+                    }
+                    break;
+            }
+            shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv( shader.c_str(), shader.size() - 4,
+                                                                              shaderType,
+                                                                              ( "../Data/Editor/Shaders/" + m_currentShaderFile.fileName + extention ).c_str(),
+                                                                              options );
+            if ( result.GetCompilationStatus() != shaderc_compilation_status_success )
+            {
+                //handle errors
+                std::cout << shader << std::endl;
+                std::cout << result.GetErrorMessage();
+                assert( false );
+            }
+            const std::vector sprv( result.cbegin(), result.cend());
+            compiledShaders.push_back( sprv );
         }
-        for( const std::string& binding : bindingsFragment )
-        {
-            bindings += std::format( "layout(set=0, binding={}) uniform {};\n", bindingId++, binding );
-        }
-        if( !bindings.empty())
-        {
-            fragmentShader.insert( fragmentShader.find( "#version 450\n" ) + 13, bindings );
-        }
-        if( !includes.empty())
-        {
-            fragmentShader.insert( fragmentShader.find( "#version 450\n" ) + 13, includes );
-        }
-
-        //todo: save nodes graph
-        uint64_t graphSize{};
-        const char* pGraphData{ ImNodes::SaveCurrentEditorStateToIniString( &graphSize ) };
-
-        const shaderc::Compiler compiler;
-        shaderc::CompileOptions options;
-        options.SetTargetEnvironment( shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2 );
-        options.SetOptimizationLevel( shaderc_optimization_level_performance );
-        options.SetIncluder( std::make_unique< BalVulkan::CFileIncluder >());
-        shaderc::SpvCompilationResult result = compiler.CompileGlslToSpv( vertexShader.c_str(), vertexShader.size(), shaderc_vertex_shader, ( "../Data/Editor/Shaders/" + m_currentName + ".vert" ).c_str(), options );
-        if( result.GetCompilationStatus() != shaderc_compilation_status_success )
-        {
-            //handle errors
-            std::cout << result.GetErrorMessage();
-            assert( false );
-        }
-        const std::vector vertexSPRV( result.cbegin(), result.cend());
-        std::cout << "fragment shader\n" << fragmentShader;
-        result = compiler.CompileGlslToSpv( fragmentShader.c_str(), fragmentShader.size(), shaderc_fragment_shader, ( "../Data/Editor/Shaders/" + m_currentName + ".frag" ).c_str(), options );
-        if( result.GetCompilationStatus() != shaderc_compilation_status_success )
-        {
-            //handle errors
-            std::cout << result.GetErrorMessage();
-            assert( false );
-        }
-        const std::vector fragmentSPRV( result.cbegin(), result.cend());
-
-        std::filesystem::path p{ std::string( "../Data/" ) + m_currentName };
-        p.replace_extension( ".basset" );
-        std::ofstream file( p.string().c_str(), std::ios::out | std::ios::binary );
-        if( !file.is_open())
-        {
-            return;
-        }
-
-        BinaryReadWrite::Write( file, (uint64_t) CUuid());
-        BinaryReadWrite::Write( file, static_cast<uint8_t>( EFileTypes::Shader ));
-        BinaryReadWrite::Write( file, vertexSPRV.size());
-        BinaryReadWrite::Write( file, fragmentSPRV.size());
-        BinaryReadWrite::Write( file, vertexSPRV.data(), vertexSPRV.size() * sizeof( uint32_t ));
-        BinaryReadWrite::Write( file, fragmentSPRV.data(), fragmentSPRV.size() * sizeof( uint32_t ));
-        BinaryReadWrite::Write( file, graphSize );
-        BinaryReadWrite::Write( file, pGraphData, graphSize );
-        file.close();
+        BalEditor::Exporter::ExportShader( m_currentShaderFile.fileName, "../Data/",
+                                           (uint16_t) std::stoi( shader.substr( shader.size() - 4, 3 )),
+                                           compiledShaders );
         m_wantsToSave = false;
     }
 }
 
-void BalEditor::CShaderGraph::AddNode(const EUiNodeType type, const glm::vec2& position)
+void BalEditor::CShaderGraph::AddNode( const EUiNodeType type, const glm::vec2& position )
 {
     INode* pNode{ nullptr };
     const int id = m_currentId++;
-    switch( type )
+    switch ( type )
     {
         case EUiNodeType::VertexOutput:
             pNode = new CVertexOutputNode{ id, m_currentAttributeId };
@@ -422,15 +378,21 @@ void BalEditor::CShaderGraph::AddNode(const EUiNodeType type, const glm::vec2& p
         case EUiNodeType::ImageTexture:
             pNode = new CImageTexture{ id, m_currentAttributeId };
             break;
-        default:;
+        case EUiNodeType::ShaderNode:
+            pNode = new CShaderNode{ id, m_currentAttributeId };
+            break;
+        case EUiNodeType::GeometryOutput:
+        case EUiNodeType::MaxIndex:
+        default:
+            break;
     }
     ImNodes::SetNodeScreenSpacePos( id, { position.x, position.y } );
     m_nodes.push_back( pNode );
 }
 
-const char* BalEditor::CShaderGraph::ToString(const EUiNodeType type)
+const char* BalEditor::CShaderGraph::ToString( const EUiNodeType type )
 {
-    switch( type )
+    switch ( type )
     {
         case EUiNodeType::VertexOutput:
             return "Vertex Output";
@@ -462,10 +424,14 @@ const char* BalEditor::CShaderGraph::ToString(const EUiNodeType type)
             return "RGB To BW";
         case EUiNodeType::VectorMath:
             return "Vector Math";
-        case EUiNodeType::MaxIndex:
-            break;
         case EUiNodeType::ImageTexture:
             return "Image Texture";
+        case EUiNodeType::ShaderNode:
+            return "Shader Output";
+        case EUiNodeType::GeometryOutput:
+            return "Geometry Shader";
+        case EUiNodeType::MaxIndex:
+            break;
     }
     return "nullptr";
 }
