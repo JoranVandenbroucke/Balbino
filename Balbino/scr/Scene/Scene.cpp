@@ -104,7 +104,7 @@ void Balbino::CScene::Initialize( ISystem* pSystem, uint32_t width, uint32_t hei
                                   BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
     m_pInstanceBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ),
                                    BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit,
-                                   BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
+                                   BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
 
     // todo: PhysX bodies
 }
@@ -269,7 +269,7 @@ void Balbino::CScene::RecreateBuffers( BalVulkan::CCommandPool* commandPool, Bal
                                   BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
     m_pInstanceBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ),
                                    BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit,
-                                   BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
+                                   BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
 }
 
 void Balbino::CScene::PrepareDraw()

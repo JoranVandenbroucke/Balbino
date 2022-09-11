@@ -13,7 +13,7 @@ namespace BalEditor
 {
     CShaderNode::CShaderNode( int id, int& attributeStartId )
             : INode( id, attributeStartId ),
-              m_type{ ShaderCombos::Fragment },
+              m_type{ EShaderCombos::Fragment },
               m_connections{},
               m_currentlyEvaluating{ 1 }
     {
@@ -22,27 +22,41 @@ namespace BalEditor
 
     void CShaderNode::Draw()
     {
-        std::string currentValue{ ToString( m_type ) };
         StartNode( "Shader Output", m_id );
-        BalEditor::EditorGUI::DrawComboBox( "##Mode", currentValue, {
-                "Vertex", "Geometry", "Fragment", "Ray Tracing"
-        } );
+        if ( ImGui::BeginCombo( "##Mode", ToString( m_type )))
+        {
+            for ( int n = 0; n < static_cast<int>( EShaderCombos::MaxIndex ); n++ )
+            {
+                const bool isSelected = ( static_cast<int>( m_type ) == n );
+                if ( ImGui::Selectable( ToString( static_cast<EShaderCombos>( n )), isSelected ))
+                {
+                    m_type = static_cast<EShaderCombos>( n );
+                }
+
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if ( isSelected )
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
         BalEditor::EditorGUI::Spacing();
         switch ( m_type )
         {
-            case ShaderCombos::Vertex:
+            case EShaderCombos::Vertex:
                 DrawInputShaderAttribute( "Vertex Shader", m_attributeStartId );
                 break;
-            case ShaderCombos::Geometry:
+            case EShaderCombos::Geometry:
                 DrawInputShaderAttribute( "Vertex Shader", m_attributeStartId );
                 DrawInputShaderAttribute( "Geometry Shader", m_attributeStartId + 1 );
                 DrawInputShaderAttribute( "Fragment Shader", m_attributeStartId + 2 );
                 break;
-            case ShaderCombos::Fragment:
+            case EShaderCombos::Fragment:
                 DrawInputShaderAttribute( "Vertex Shader", m_attributeStartId );
                 DrawInputShaderAttribute( "Fragment Shader", m_attributeStartId + 2 );
                 break;
-            case ShaderCombos::RTX:
+            case EShaderCombos::RTX:
                 DrawInputShaderAttribute( "Task", m_attributeStartId );
                 DrawInputShaderAttribute( "Mesh", m_attributeStartId + 1 );
                 DrawInputShaderAttribute( "Raygen", m_attributeStartId + 2 );
@@ -52,38 +66,26 @@ namespace BalEditor
                 DrawInputShaderAttribute( "Intersection", m_attributeStartId + 6 );
                 DrawInputShaderAttribute( "Callable", m_attributeStartId + 7 );
                 break;
+            case EShaderCombos::MaxIndex:
+                break;
         }
         EndNode();
 
-        if ( currentValue != ToString( m_type ))
+        /*
+         * "Vertex";
+         * "Geometry"
+         * "Fragment"
+         * "Ray Tracing";
+         */
+        if ( m_type == EShaderCombos::RTX )
         {
-            /*
-             * "Vertex";
-             * "Geometry"
-             * "Fragment"
-             * "Ray Tracing";
-             */
-            if ( currentValue == "Vertex" )
-            {
-                m_type                = ShaderCombos::Vertex;
-                m_currentlyEvaluating = 1;
-            }
-            else if ( currentValue == "Geometry" )
-            {
-                m_type                = ShaderCombos::Geometry;
-                m_currentlyEvaluating = 1;
-            }
-            else if ( currentValue == "Fragment" )
-            {
-                m_type                = ShaderCombos::Fragment;
-                m_currentlyEvaluating = 1;
-            }
-            else if ( currentValue == "Ray Tracing" )
-            {
-                m_type                = ShaderCombos::RTX;
-                m_currentlyEvaluating = 4;
-            }
+            m_currentlyEvaluating = 4;
         }
+        else
+        {
+            m_currentlyEvaluating = 1;
+        }
+
     }
 
     void CShaderNode::Attach( int endAttr )
@@ -108,16 +110,16 @@ namespace BalEditor
         shader = ( *begin++ )->Evaluate( begin, bindings, includes, attributeType );
         switch ( m_type )
         {
-            case ShaderCombos::Vertex:
+            case EShaderCombos::Vertex:
                 m_currentlyEvaluating = 1;
                 break;
-            case ShaderCombos::Geometry:
+            case EShaderCombos::Geometry:
                 if ( m_currentlyEvaluating >= 4 )
                 {
                     m_currentlyEvaluating = 1;
                 }
                 break;
-            case ShaderCombos::Fragment:
+            case EShaderCombos::Fragment:
                 if ( m_currentlyEvaluating == 2 )
                 {
                     m_currentlyEvaluating = 3;
@@ -127,7 +129,7 @@ namespace BalEditor
                     m_currentlyEvaluating = 1;
                 }
                 break;
-            case ShaderCombos::RTX:
+            case EShaderCombos::RTX:
 
                 if ( m_currentlyEvaluating >= 9 )
                 {
@@ -163,17 +165,17 @@ namespace BalEditor
         return value;
     }
 
-    const char* CShaderNode::ToString( ShaderCombos type )
+    const char* CShaderNode::ToString( EShaderCombos type )
     {
         switch ( type )
         {
-            case ShaderCombos::Vertex:
+            case EShaderCombos::Vertex:
                 return "Vertex";
-            case ShaderCombos::Geometry:
+            case EShaderCombos::Geometry:
                 return "Geometry";
-            case ShaderCombos::Fragment:
+            case EShaderCombos::Fragment:
                 return "Fragment";
-            case ShaderCombos::RTX:
+            case EShaderCombos::RTX:
                 return "Ray Tracing";
         }
         return nullptr;

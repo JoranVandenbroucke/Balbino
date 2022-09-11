@@ -86,7 +86,7 @@ void BalVulkan::CFrameBuffer::Initialize( const CSwapchain* pSwapchain )
 
     m_pDepthImage = CImageResource::CreateNew( GetDevice());
     m_pDepthImage->Initialize( BalVulkan::EImageViewType::View2D, static_cast<EFormat>( attachmentDescs[1].format ),
-                               pSwapchain->GetExtend().width, pSwapchain->GetExtend().height, 1, 1, 1, 1,
+                               pSwapchain->GetExtend().width, pSwapchain->GetExtend().height, 1, 1, 1, 0,
                                EImageUsageFlagBits::DepthStencilAttachmentBit, BalVulkan::EImageLayout::Undefined );
     m_pDepthImageView = CImageView::CreateNew( *m_pDepthImage, EImageViewType::View2D, 0, 1, 0, 1 );
 
@@ -94,11 +94,18 @@ void BalVulkan::CFrameBuffer::Initialize( const CSwapchain* pSwapchain )
     for ( size_t i = 0; i < m_swapchainViews.size(); i++ )
     {
         std::vector attachments{
-                m_swapchainViews[i]->GetImageView(), m_pDepthImageView->GetImageView()
+                m_swapchainViews[i]->GetImageView(),
+                m_pDepthImageView->GetImageView()
         };
 
         const VkFramebufferCreateInfo bufCreateInfo = {
-                .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO, .pNext = VK_NULL_HANDLE, .renderPass = m_renderPass, .attachmentCount = static_cast<uint32_t>( attachments.size()), .pAttachments = attachments.data(), .width = pSwapchain->GetExtend().width, .height = pSwapchain->GetExtend().height, .layers = 1,
+                .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+                .pNext = VK_NULL_HANDLE, .renderPass = m_renderPass,
+                .attachmentCount = static_cast<uint32_t>( attachments.size()),
+                .pAttachments = attachments.data(),
+                .width = pSwapchain->GetExtend().width,
+                .height = pSwapchain->GetExtend().height,
+                .layers = 1,
         };
         CheckVkResult( vkCreateFramebuffer( GetDevice()->GetVkDevice(), &bufCreateInfo, nullptr, &m_frameBuffer[i] ),
                        "failed to create frame buffer!" );

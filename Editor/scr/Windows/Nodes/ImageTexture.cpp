@@ -21,13 +21,18 @@ namespace BalEditor
 
     void CImageTexture::Draw()
     {
-        StartNode( "Texture", m_id );
+        ImGui::PushItemWidth( 200 );
+        ImNodes::BeginNode( m_id );
+
+        ImNodes::BeginNodeTitleBar();
+        ImGui::Text( "Texture" );
+        ImNodes::EndNodeTitleBar();
         char      name[64]{};
         for ( int i{}; i < m_textureVariableName.size(); ++i )
         {
             name[i] = m_textureVariableName[i];
         }
-        if ( BalEditor::EditorGUI::DrawInputText( "Texture Variable Name", name, 64 ))
+        if ( ImGui::InputText( "Texture Variable Name", name, 64, ImGuiInputTextFlags_EnterReturnsTrue ))
         {
             m_textureVariableName = "";
             for ( int i{}; i < 64; ++i )
@@ -40,19 +45,29 @@ namespace BalEditor
             }
         }
         {
-            std::string currentValue{ ToString( m_textureType ) };
-            if ( BalEditor::EditorGUI::DrawComboBox( "##Mode", currentValue, { ToString( ETextureType::Texture2D ) } ))
+            if ( ImGui::BeginCombo( "##Mode", ToString( m_textureType )))
             {
-                if ( currentValue == ToString( ETextureType::Texture2D ))
+                for ( int n = 0; n < static_cast<int>( ETextureType::MaxIndex ); n++ )
                 {
-                    m_textureType = ETextureType::Texture2D;
+                    const bool isSelected = ( static_cast<int>( m_textureType ) == n );
+                    if ( ImGui::Selectable( ToString( static_cast<ETextureType>( n )), isSelected ))
+                    {
+                        m_textureType = static_cast<ETextureType>( n );
+                    }
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if ( isSelected )
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
                 }
+                ImGui::EndCombo();
             }
         }
-        BalEditor::EditorGUI::Spacing();
+        ImGui::Spacing();
         DrawOutputTextureAttribute( m_attributeStartId );
 
-        EndNode();
+        ImNodes::EndNode();
     }
 
     void CImageTexture::Attach( int endAttr )
