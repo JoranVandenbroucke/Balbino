@@ -63,30 +63,46 @@ Balbino::CTexture* CResourceManager::LoadTexture( const std::string_view assetPa
     if ( static_cast< EFileTypes >( type ) == EFileTypes::Image )
     {
         const auto pTextureComponent = new Balbino::CTexture{ g_pDevice, uuid };
+        uint8_t    imageType{};
+        uint32_t   imageFormat{};
+        uint8_t    mips{};
+        uint8_t    layers{};
+        int        anisotropy{};
+        int        sampleLevel{};
+        int        mipmapMode{};
+        int        filterMode{};
+        int        wrapModeU{};
+        int        wrapModeV{};
+        int        wrapModeW{};
         uint32_t   width{};
         uint32_t   height{};
-        uint32_t   mip{};
-        uint32_t   faces{};
-        uint32_t   layers{};
-        uint32_t   layout{};
-        uint32_t   viewType{};
-        uint32_t   format{};
-        uint64_t   size{};
+        uint32_t   depth{};
+        uint8_t    pitch{};
 
+        BinaryReadWrite::Read( file, imageType );
+        BinaryReadWrite::Read( file, imageFormat );
+        BinaryReadWrite::Read( file, mips );
+        BinaryReadWrite::Read( file, layers );
+        BinaryReadWrite::Read( file, anisotropy );
+        BinaryReadWrite::Read( file, sampleLevel );
+        BinaryReadWrite::Read( file, mipmapMode );
+        BinaryReadWrite::Read( file, filterMode );
+        BinaryReadWrite::Read( file, wrapModeU );
+        BinaryReadWrite::Read( file, wrapModeV );
+        BinaryReadWrite::Read( file, wrapModeW );
         BinaryReadWrite::Read( file, width );
         BinaryReadWrite::Read( file, height );
-        BinaryReadWrite::Read( file, mip );
-        BinaryReadWrite::Read( file, faces );
-        BinaryReadWrite::Read( file, layers );
-        BinaryReadWrite::Read( file, layout );
-        BinaryReadWrite::Read( file, viewType );
-        BinaryReadWrite::Read( file, format );
-        BinaryReadWrite::Read( file, size );
+        BinaryReadWrite::Read( file, depth );
+        BinaryReadWrite::Read( file, pitch );
+        uint32_t size{ width * height * depth * pitch };
         void* pImageData = malloc( size );
         BinaryReadWrite::Read( file, pImageData, size );
-        pTextureComponent->Initialize( pImageData, width, height, mip, layers, faces, size,
-                                       BalVulkan::EImageLayout( layout ), BalVulkan::EImageViewType( viewType ),
-                                       BalVulkan::EFormat( format ), g_pCommandPool, g_pQueue );
+        pTextureComponent->Initialize((BalVulkan::EImageViewType) imageType, (BalVulkan::EFormat) imageFormat, mips,
+                                      layers, anisotropy, sampleLevel, mipmapMode, filterMode,
+                                      (BalVulkan::ESamplerAddressMode) wrapModeU,
+                                      (BalVulkan::ESamplerAddressMode) wrapModeV,
+                                      (BalVulkan::ESamplerAddressMode) wrapModeW, width, height, depth, pitch,
+                                      pImageData, g_pCommandPool, g_pQueue );
         free( pImageData );
         m_loadedTextureMap[uuid] = pTextureComponent;
         file.close();

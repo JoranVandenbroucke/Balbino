@@ -133,17 +133,17 @@ inline void DrawOutputShaderAttribute( const char* title, int id )
     ImNodes::PopColorStyle();
 }
 
-inline void StartNode( const char* title, const int id, int startWidth = 200 )
+inline void EndNode()
 {
-    ImGui::PushItemWidth( 200 );
+    ImNodes::EndNode();
+}
+
+inline void StartNode( const char* title, const int id, float startWidth = 100 )
+{
+    ImGui::PushItemWidth( startWidth );
     ImNodes::BeginNode( id );
 
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted( title );
     ImNodes::EndNodeTitleBar();
-}
-
-inline void EndNode()
-{
-    ImNodes::EndNode();
 }

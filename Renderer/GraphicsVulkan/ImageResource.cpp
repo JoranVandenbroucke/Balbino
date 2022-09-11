@@ -292,37 +292,52 @@ VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, cons
 	return VK_SUCCESS;
 }
 
-VkResult BalVulkan::CImageResource::Initialize( const uint32_t width,
-                                                const uint32_t height,
-                                                const uint32_t mipLevels,
-                                                const uint32_t layers,
-                                                const EImageLayout layout,
-                                                const EFormat format,
-                                                const EImageUsageFlagBits usage )
+VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType type, BalVulkan::EFormat format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits usage, BalVulkan::EImageLayout layout)
 {
 	if ( m_image )
 		return VK_ERROR_UNKNOWN;
 
 	const auto imageLayout{ static_cast<VkImageLayout>( layout ) };
-	const auto usageflags{ static_cast<VkImageUsageFlagBits>( usage ) };
+	const auto usageFlags{ static_cast<VkImageUsageFlagBits>( usage ) };
 	const auto imageFormat{ static_cast<VkFormat>( format ) };
+
+    VkImageType imageType{VK_IMAGE_TYPE_2D
+    };
+    switch(type)
+    {
+        case EImageViewType::View1D:
+        case EImageViewType::View1DArray:
+            imageType= VK_IMAGE_TYPE_1D;
+            break;
+        case EImageViewType::View2D:
+        case EImageViewType::View2DArray:
+        case EImageViewType::Rect:
+        case EImageViewType::RectArray:
+        case EImageViewType::Cube:
+        case EImageViewType::CubeArray:
+            imageType= VK_IMAGE_TYPE_2D;
+            break;
+        case EImageViewType::View3D:
+            imageType= VK_IMAGE_TYPE_3D;
+            break;
+    }
 
 	m_imageLayout = imageLayout;
 	m_createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	m_createInfo.flags = 0;
-	m_createInfo.imageType = VK_IMAGE_TYPE_2D;
+	m_createInfo.imageType = imageType;
 	m_createInfo.format = imageFormat;
-	m_createInfo.extent = VkExtent3D{ width, height, 1 };
-	m_createInfo.mipLevels = mipLevels;
+	m_createInfo.extent = VkExtent3D{ width, height, depth };
+	m_createInfo.mipLevels = mips;
 	m_createInfo.arrayLayers = layers;
-	m_createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+	m_createInfo.samples = (sampleLevel == 8)? GetDevice()->GetPhysicalDeviceInfo()->GetMaxUsableSampleCount() : VK_SAMPLE_COUNT_1_BIT;
 	m_createInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	m_createInfo.usage = usageflags;
+	m_createInfo.usage = usageFlags;
 	m_createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	m_createInfo.initialLayout = imageLayout;
 
 	CheckVkResult( vkCreateImage( GetDevice()->GetVkDevice(), &m_createInfo, nullptr, &m_image ), "failed to create image!" );
-	m_mipLevels = mipLevels;
+	m_mipLevels = mips;
 	m_format = imageFormat;
 
 	VkMemoryRequirements memRequirements;

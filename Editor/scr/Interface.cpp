@@ -7,6 +7,7 @@
 #include "Windows/ShaderGraph.h"
 #include "Windows/MaterialEditor.h"
 #include "Tools/FilesSystem/Inporter/MeshFileImporter.h"
+#include "Tools/FilesSystem/Inporter/TextureFileImporter.h"
 
 #include <FrameBuffer.h>
 #include <Queue.h>
@@ -30,9 +31,7 @@ BalEditor::CInterface::CInterface()
           m_pMaterialEditor{ nullptr },
           m_descriptorPool{ nullptr },
           m_pWindow{ nullptr },
-          m_vertexCount{ 0 },
-          m_indexCount{ 0 },
-          m_pContext{ nullptr },
+          m_queueNextResource{ false },
           m_pDevice{ nullptr }
 {
 }
@@ -127,13 +126,14 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
         ImGui_ImplVulkan_DestroyFontUploadObjects();
     }
     //m_pDevice = pDevice;
-    m_pMain           = new CMainScreen{};
-    m_pGameView       = new CGameView{};
-    m_pAssetBrowser   = new CAssetBrowser{};
-    m_pSceneHierarchy = new CSceneHierarchy{};
-    m_pShaderGraph    = new CShaderGraph{};
-    m_pMaterialEditor = new CMaterialEditor{};
-    m_pMeshImporter   = new CMeshFileImporter{};
+    m_pMain            = new CMainScreen{};
+    m_pGameView        = new CGameView{};
+    m_pAssetBrowser    = new CAssetBrowser{};
+    m_pSceneHierarchy  = new CSceneHierarchy{};
+    m_pShaderGraph     = new CShaderGraph{};
+    m_pMaterialEditor  = new CMaterialEditor{};
+    m_pMeshImporter    = new CMeshFileImporter{};
+    m_pTextureImporter = new CTextureFileImporter{};
 
     m_pAssetBrowser->Initialize( pSystem );
     m_pMaterialEditor->Initialize( pSystem );
@@ -141,6 +141,14 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 
 void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 {
+    if ( m_queueNextResource && m_pendingResources.size())
+    {
+        ImportFile( m_pendingResources.back().c_str(), m_pAssetBrowser->GetCurrentDirectory(), m_pMeshImporter,
+                    m_pTextureImporter );
+        m_pendingResources.pop_back();
+        m_queueNextResource = false;
+    }
+
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -155,7 +163,11 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 
     if ( m_pMeshImporter->IsVisible())
     {
-        m_pMeshImporter->DrawImportSettings();
+        m_queueNextResource = m_pMeshImporter->DrawImportSettings();
+    }
+    if ( m_pTextureImporter->IsVisible())
+    {
+        m_queueNextResource = m_pTextureImporter->DrawImportSettings();
     }
 
     ImGui::Render();
@@ -179,23 +191,22 @@ void BalEditor::CInterface::Cleanup() const
     delete m_pShaderGraph;
     delete m_pMaterialEditor;
     delete m_pMeshImporter;
+    delete m_pTextureImporter;
 }
 
-void BalEditor::CInterface::ProcessEvent( SDL_Event e ) const
+void BalEditor::CInterface::ProcessEvent( SDL_Event e )
 {
     ImGui_ImplSDL2_ProcessEvent( &e );
     switch ( e.type )
     {
         case SDL_DROPFILE:
         {
-            char* droppedFileDir = e.drop.file;
-            bool successfullyImported{
-                    ImportFile( droppedFileDir, m_pAssetBrowser->GetCurrentDirectory(), m_pMeshImporter )
-            };
-            (void) successfullyImported;
-            assert( successfullyImported );
-            // Shows directory of dropped file
-            SDL_free( droppedFileDir ); // Free dropped_filedir memory
+            if ( m_pendingResources.empty())
+            {
+                m_queueNextResource = true;
+            }
+            m_pendingResources.push_back( std::string( e.drop.file ));
+            SDL_free( e.drop.file ); // Free dropped_filedir memory
             break;
         }
         case SDL_KEYDOWN:
@@ -328,17 +339,7 @@ void BalEditor::CInterface::SetContext( IScene* pScene )
     m_pSceneHierarchy->SetContext( pScene );
     m_pGameView->SetContext( pScene->GetSystem(), pScene, m_pSceneHierarchy );
     m_pAssetBrowser->SetShaderGraphReference( m_pShaderGraph, m_pMaterialEditor );
-    m_pContext = pScene;
 }
-
-//void BalEditor::CInterface::Resize( const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
-//{
-//m_pVertexBuffer->Release();
-//m_pIndexBuffer->Release();
-//m_pVertexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
-//m_pIndexBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, pCommandPool, pQueue );
-//ImGui_ImplVulkanH_CreateWindow( pCommandPool->GetCommandPool(), pQueue->GetQueue() );
-//}
 
 void BalEditor::CInterface::SetImGuiStyle()
 {

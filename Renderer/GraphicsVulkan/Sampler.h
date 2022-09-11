@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Base.h"
 #include "Common.h"
 
@@ -6,22 +7,26 @@
 
 namespace BalVulkan
 {
-	class CSampler final : public CDeviceObject
-	{
-	public:
-		explicit CSampler( const CDevice* pDevice );
+    class CSampler final : public CDeviceObject
+    {
+    public:
+        explicit CSampler( const CDevice* pDevice );
 
-		CSampler( CSampler&& ) = default;
-		CSampler& operator=( CSampler&& ) = default;
-		~CSampler() override;
+        CSampler( CSampler&& ) = default;
 
-		void Initialize( uint32_t mipLevels, EFilter filter = EFilter::Linear, ESamplerAddressMode samplerAddressMode = ESamplerAddressMode::Repeat );
+        CSampler& operator =( CSampler&& ) = default;
 
-		VkSampler GetSampler() const;
-		static CSampler* CreateNew( const CDevice* pDevice );
-	private:
-		void Destroy() override; // Uses CDevice::DeferDestruction
+        ~CSampler() override;
 
-		VkSampler m_sampler;
-	};
+        void Initialize( int filterMode, int mipmapMode, ESamplerAddressMode samplerAddressModeU, ESamplerAddressMode samplerAddressModeV, ESamplerAddressMode samplerAddressModeW, int anisotropy, uint32_t mipLevels );
+
+        VkSampler GetSampler() const;
+
+        static CSampler* CreateNew( const CDevice* pDevice );
+
+    private:
+        void Destroy() override; // Uses CDevice::DeferDestruction
+
+        VkSampler m_sampler;
+    };
 }

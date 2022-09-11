@@ -403,8 +403,6 @@ void Balbino::CScene::Draw()
 {
     if ( m_pMainCamera )
     {
-        // TODO Draw Meshed
-
         for ( uint32_t i{}; i < m_allDrawableObjects.size(); ++i )
         {
             m_pInstanceBuffer->UpdateData( m_instanceData[i].data(), ( m_instanceData[i].size() < MAX_INSTANCE_COUNT

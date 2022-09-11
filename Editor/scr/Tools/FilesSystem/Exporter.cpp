@@ -6,7 +6,6 @@
 #include <filesystem>
 #include <fstream>
 #include <UUID.h>
-#include <Vertex.h>
 #include <FileParcer.h>
 #include <MeshMetadata.h>
 
@@ -102,10 +101,11 @@ bool BalEditor::Exporter::ExportMaterial( const std::string& assetName, const st
     return true;
 }
 
-bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, void* pData, CUuid id )
+bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, void* pData, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, int wrapModeU, int wrapModeV, int wrapModeW, CUuid id )
 {
-    std::filesystem::path path{ assetPath + assetName + ".basset" };
-    std::ofstream         file{ path, std::ios::out | std::ios::binary };
+    std::filesystem::path path{ assetPath + assetName };
+    path.replace_extension( ".basset" );
+    std::ofstream file{ path, std::ios::out | std::ios::binary };
 
     if ( !file.is_open())
     {
@@ -113,11 +113,18 @@ bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::
     }
 
     BinaryReadWrite::Write( file, (uint64_t) id );
-    BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Material );
+    BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Image );
     BinaryReadWrite::Write( file, imageType );
     BinaryReadWrite::Write( file, imageFormat );
     BinaryReadWrite::Write( file, mips );
     BinaryReadWrite::Write( file, layers );
+    BinaryReadWrite::Write( file, anisotropy );
+    BinaryReadWrite::Write( file, sampleLevel );
+    BinaryReadWrite::Write( file, mipmapMode );
+    BinaryReadWrite::Write( file, filterMode );
+    BinaryReadWrite::Write( file, wrapModeU );
+    BinaryReadWrite::Write( file, wrapModeV );
+    BinaryReadWrite::Write( file, wrapModeW );
     BinaryReadWrite::Write( file, width );
     BinaryReadWrite::Write( file, height );
     BinaryReadWrite::Write( file, depth );

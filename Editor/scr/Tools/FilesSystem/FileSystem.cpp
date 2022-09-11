@@ -2,10 +2,11 @@
 #include "FileParcer.h"
 #include "Inporter/Importer.h"
 #include "Inporter/MeshFileImporter.h"
+#include "Inporter/TextureFileImporter.h"
 
 #include <fstream>
 
-bool BalEditor::ImportFile( const char* pPath, const char* pDestinationDirection, BalEditor::CMeshFileImporter* pMeshImporter )
+bool BalEditor::ImportFile( const char* pPath, const char* pDestinationDirection, BalEditor::CMeshFileImporter* pMeshImporter, BalEditor::CTextureFileImporter* pTextureImporter )
 {
     std::ifstream fileChecker{ pPath };
     if ( !fileChecker.is_open())
@@ -16,7 +17,7 @@ bool BalEditor::ImportFile( const char* pPath, const char* pDestinationDirection
 
     const std::filesystem::path dirPath{ pPath };
     std::string                 extension = dirPath.extension().string();
-    for ( char                  & character : extension )
+    for ( char& character : extension )
     {
         character = static_cast< char >( std::toupper( character ));
     }
@@ -27,7 +28,8 @@ bool BalEditor::ImportFile( const char* pPath, const char* pDestinationDirection
     }
     if ( std::ranges::find( supportedImageFormat, extension ) != supportedImageFormat.end())
     {
-        return ImportImage( dirPath, pDestinationDirection );
+        pTextureImporter->SetVisible( dirPath, pDestinationDirection );
+        return true;
     }
     if ( std::ranges::find( supportedAudioFormat, extension ) != supportedAudioFormat.end())
     {

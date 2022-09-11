@@ -6,7 +6,6 @@
 
 #include <fstream>
 #include <format>
-#include <imgui.h>
 #include <iostream>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -23,20 +22,14 @@ BalEditor::CMeshFileImporter::CMeshFileImporter()
           m_textures{},
           m_lights{},
           m_cameras{},
+          m_path{},
+          m_destinationDirection{},
           m_isVisible{}
 {
 }
 
 bool BalEditor::CMeshFileImporter::LoadMesh() const
 {
-    std::filesystem::path p{ m_destinationDirection + m_path.filename().string() };
-    p.replace_extension( ".basset" );
-    std::ofstream file( p.string().c_str(), std::ios::out | std::ios::binary );
-    if ( !file.is_open())
-    {
-        return false;
-    }
-
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile( m_path.string(),
                                               static_cast< unsigned >( aiProcess_Triangulate | aiProcess_RemoveRedundantMaterials | aiProcess_FlipUVs | aiProcess_GenBoundingBoxes | aiProcess_ValidateDataStructure ));
@@ -45,7 +38,6 @@ bool BalEditor::CMeshFileImporter::LoadMesh() const
     if ( !scene )
     {
         std::cerr << importer.GetErrorString();
-        file.close();
         return false;
     }
     if ( !m_preset )
@@ -166,23 +158,20 @@ bool BalEditor::CMeshFileImporter::LoadMesh() const
 
 bool BalEditor::CMeshFileImporter::DrawImportSettings()
 {
-    ImGui::OpenPopup( "Import Mesh" );
-    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-    ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ));
-    if ( ImGui::BeginPopupModal( "Import Mesh", nullptr, ImGuiWindowFlags_AlwaysAutoResize ))
+    if ( BalEditor::EditorGUI::StartPopup( "Import Mesh" ))
     {
-        ImGui::Text( "%s", std::format( "Importing from {}", m_path.string()).c_str());
-        BalEditor::EditorGUI::DrawToggle( "Import as preset", m_preset );
-        BalEditor::EditorGUI::DrawToggle( "Import Meshes", m_meshes );
+        BalEditor::EditorGUI::DrawText( std::format( "Importing from {}", m_path.string()).c_str());
+        BalEditor::EditorGUI::DrawToggle( "Import Meshes", m_meshes, 200 );
+        BalEditor::EditorGUI::DrawToggle( "Import as preset", m_preset, 200 );
         if ( m_meshes )
         {
-            BalEditor::EditorGUI::DrawToggle( "Try to create materials", m_materials );
-            BalEditor::EditorGUI::DrawToggle( "Try to import related textures", m_textures );
+            BalEditor::EditorGUI::DrawToggle( "Try to create materials", m_materials, 200 );
+            BalEditor::EditorGUI::DrawToggle( "Try to import related textures", m_textures, 200 );
         }
         if ( m_preset )
         {
-            BalEditor::EditorGUI::DrawToggle( "Import Lights", m_lights );
-            BalEditor::EditorGUI::DrawToggle( "Import Cameras", m_cameras );
+            BalEditor::EditorGUI::DrawToggle( "Import Lights", m_lights, 200 );
+            BalEditor::EditorGUI::DrawToggle( "Import Cameras", m_cameras, 200 );
         }
         if ( BalEditor::EditorGUI::DrawButton( "Import" ))
         {
@@ -190,18 +179,18 @@ bool BalEditor::CMeshFileImporter::DrawImportSettings()
             if ( !LoadMesh())
             { //TODO add task to thread pool
                 std::cerr << "Failed to import file: " << m_path.string() << std::endl;
-                ImGui::EndPopup();
+                BalEditor::EditorGUI::EndPopup();
                 return false;
             }
-            ImGui::EndPopup();
+            BalEditor::EditorGUI::EndPopup();
             return true;
         }
         if ( BalEditor::EditorGUI::DrawButton( "Cancel" ))
         {
-            ImGui::EndPopup();
+            BalEditor::EditorGUI::EndPopup();
             return true;
         }
-        ImGui::EndPopup();
+        BalEditor::EditorGUI::EndPopup();
     }
     return false;
 }

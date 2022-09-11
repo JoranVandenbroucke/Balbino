@@ -79,7 +79,6 @@ void BalEditor::CGameView::Draw()
             std::cout << "loading model: ";
             std::cout << payload->DataSize;
             std::cout << "\n";
-            //todo: make model
             const Balbino::IMesh* pModel = m_pSystem->GetResourceManager()->LoadModel(
                     static_cast<SFile*>( payload->Data )->path );
             IEntity             * pEnt   = m_pContext->CreateEntity();

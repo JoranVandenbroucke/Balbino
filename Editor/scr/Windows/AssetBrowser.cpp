@@ -414,8 +414,9 @@ void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool is
         case EFileTypes::Folder:
             if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
             {
-                GetAllFilesInSelectedPath( std::filesystem::relative( currentFile.path ).string(), m_currentDirectory );
-                m_currentDirectoryName = std::filesystem::relative( currentFile.path ).string();
+                const std::string currentPath{ currentFile.path };
+                m_updateCurrentDirectory = true;
+                m_currentDirectoryName   = std::filesystem::relative( currentPath ).string();
             }
             if ( ImGui::BeginDragDropTarget())
             {

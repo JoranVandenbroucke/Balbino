@@ -172,13 +172,15 @@ namespace BalVulkan
 
     enum class EImageViewType : uint8_t
     {
-        View1D      = 0,
-        View2D      = 1,
-        View3D      = 2,
-        Cube        = 3,
-        View1DArray = 4,
-        View2DArray = 5,
-        CubeArray   = 6,
+        View1D,
+        View1DArray,
+        View2D,
+        View2DArray,
+        View3D,
+        Rect,
+        RectArray,
+        Cube,
+        CubeArray,
     };
 
 

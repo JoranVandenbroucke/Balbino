@@ -6,12 +6,12 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-void BalEditor::EditorGUI::DrawIntValue( const char* name, int value )
+void BalEditor::EditorGUI::DrawIntValue( const char* name, int value, float width )
 {
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -22,7 +22,7 @@ void BalEditor::EditorGUI::DrawIntValue( const char* name, int value )
     ImGui::PopID();
 }
 
-void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value )
+void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value, float width )
 {
     const ImGuiIO& io = ImGui::GetIO();
     const auto boldFont = io.Fonts->Fonts[0];
@@ -30,7 +30,7 @@ void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -62,7 +62,7 @@ void BalEditor::EditorGUI::DrawInt2Value( const char* name, const int* value )
     ImGui::PopID();
 }
 
-void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
+void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value, float width )
 {
     const ImGuiIO& io = ImGui::GetIO();
     const auto boldFont = io.Fonts->Fonts[0];
@@ -70,7 +70,7 @@ void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -110,7 +110,7 @@ void BalEditor::EditorGUI::DrawInt3Value( const char* name, const int* value )
     ImGui::PopID();
 }
 
-void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
+void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value, float width )
 {
     const ImGuiIO& io = ImGui::GetIO();
     const auto boldFont = io.Fonts->Fonts[0];
@@ -118,7 +118,7 @@ void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -166,12 +166,12 @@ void BalEditor::EditorGUI::DrawInt4Value( const char* name, const int* value )
     ImGui::PopID();
 }
 
-void BalEditor::EditorGUI::DrawFloatValue( const char* name, float value )
+void BalEditor::EditorGUI::DrawFloatValue( const char* name, float value, float width )
 {
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -182,7 +182,7 @@ void BalEditor::EditorGUI::DrawFloatValue( const char* name, float value )
     ImGui::PopID();
 }
 
-void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value )
+void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value, float width )
 {
 
     const ImGuiIO& io = ImGui::GetIO();
@@ -191,7 +191,7 @@ void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -223,7 +223,7 @@ void BalEditor::EditorGUI::DrawFloat2Value( const char* name, const float* value
     ImGui::PopID();
 }
 
-void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value )
+void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value, float width )
 {
     const ImGuiIO& io = ImGui::GetIO();
     const auto boldFont = io.Fonts->Fonts[0];
@@ -231,7 +231,7 @@ void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -271,7 +271,7 @@ void BalEditor::EditorGUI::DrawFloat3Value( const char* name, const float* value
     ImGui::PopID();
 }
 
-void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value )
+void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value, float width )
 {
     const ImGuiIO& io = ImGui::GetIO();
     const auto boldFont = io.Fonts->Fonts[0];
@@ -279,7 +279,7 @@ void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -327,13 +327,13 @@ void BalEditor::EditorGUI::DrawFloat4Value( const char* name, const float* value
     ImGui::PopID();
 }
 
-bool BalEditor::EditorGUI::DrawIntSlider( const char* name, int& value, int min, int max )
+bool BalEditor::EditorGUI::DrawIntSlider( const char* name, int& value, int min, int max, float width )
 {
     bool hasChanged;
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -345,13 +345,13 @@ bool BalEditor::EditorGUI::DrawIntSlider( const char* name, int& value, int min,
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawFloatSlider( const char* name, float& value, float min, float max )
+bool BalEditor::EditorGUI::DrawFloatSlider( const char* name, float& value, float min, float max, float width )
 {
     bool hasChanged;
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -363,13 +363,13 @@ bool BalEditor::EditorGUI::DrawFloatSlider( const char* name, float& value, floa
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawFloat( const char* name, float& value, float steps )
+bool BalEditor::EditorGUI::DrawFloat( const char* name, float& value, float steps, float width )
 {
     bool hasChanged;
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -380,7 +380,7 @@ bool BalEditor::EditorGUI::DrawFloat( const char* name, float& value, float step
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawFloat2( const char* name, float* value, float steps, float resetValue )
+bool BalEditor::EditorGUI::DrawFloat2( const char* name, float* value, float steps, float resetValue, float width )
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
@@ -389,7 +389,7 @@ bool BalEditor::EditorGUI::DrawFloat2( const char* name, float* value, float ste
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -433,7 +433,7 @@ bool BalEditor::EditorGUI::DrawFloat2( const char* name, float* value, float ste
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawFloat3( const char* name, float* value, float steps, float resetValue )
+bool BalEditor::EditorGUI::DrawFloat3( const char* name, float* value, float steps, float resetValue, float width )
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
@@ -442,7 +442,7 @@ bool BalEditor::EditorGUI::DrawFloat3( const char* name, float* value, float ste
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -498,7 +498,7 @@ bool BalEditor::EditorGUI::DrawFloat3( const char* name, float* value, float ste
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawFloat4( const char* name, float* value, float steps, float resetValue )
+bool BalEditor::EditorGUI::DrawFloat4( const char* name, float* value, float steps, float resetValue, float width )
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
@@ -507,7 +507,7 @@ bool BalEditor::EditorGUI::DrawFloat4( const char* name, float* value, float ste
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -575,17 +575,17 @@ bool BalEditor::EditorGUI::DrawFloat4( const char* name, float* value, float ste
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawInt( const char* name, int& value, float steps )
+bool BalEditor::EditorGUI::DrawInt( const char* name, int& value, float steps, int min, int max, float width )
 {
     bool hasChanged;
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
-    hasChanged = ImGui::DragInt( "##V", &value, steps );
+    hasChanged = ImGui::DragInt( "##V", &value, steps, min, max );
 
     ImGui::Columns( 1 );
 
@@ -593,7 +593,7 @@ bool BalEditor::EditorGUI::DrawInt( const char* name, int& value, float steps )
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawInt2( const char* name, int* value, float steps, int resetValue )
+bool BalEditor::EditorGUI::DrawInt2( const char* name, int* value, float steps, int resetValue, float width )
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
@@ -602,7 +602,7 @@ bool BalEditor::EditorGUI::DrawInt2( const char* name, int* value, float steps, 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -646,7 +646,7 @@ bool BalEditor::EditorGUI::DrawInt2( const char* name, int* value, float steps, 
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawInt3( const char* name, int* value, float steps, int resetValue )
+bool BalEditor::EditorGUI::DrawInt3( const char* name, int* value, float steps, int resetValue, float width )
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
@@ -655,7 +655,7 @@ bool BalEditor::EditorGUI::DrawInt3( const char* name, int* value, float steps, 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -711,7 +711,7 @@ bool BalEditor::EditorGUI::DrawInt3( const char* name, int* value, float steps, 
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawInt4( const char* name, int* value, float steps, int resetValue )
+bool BalEditor::EditorGUI::DrawInt4( const char* name, int* value, float steps, int resetValue, float width )
 {
     bool hasChanged{};
     const ImGuiIO& io = ImGui::GetIO();
@@ -720,7 +720,7 @@ bool BalEditor::EditorGUI::DrawInt4( const char* name, int* value, float steps, 
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -788,13 +788,13 @@ bool BalEditor::EditorGUI::DrawInt4( const char* name, int* value, float steps, 
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawToggle( const char* name, bool& value )
+bool BalEditor::EditorGUI::DrawToggle( const char* name, bool& value, float width )
 {
     bool hasChanged;
     ImGui::PushID( name );
 
     ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
+    ImGui::SetColumnWidth( 0, width );
     ImGui::Text( "%s", name );
     ImGui::NextColumn();
 
@@ -806,34 +806,22 @@ bool BalEditor::EditorGUI::DrawToggle( const char* name, bool& value )
     return hasChanged;
 }
 
-bool BalEditor::EditorGUI::DrawButton( const char* name )
-{
-    bool hasChanged;
-    ImGui::PushID( name );
 
-    ImGui::Columns( 2 );
-    ImGui::SetColumnWidth( 0, 200.0 );
-    ImGui::Text( "%s", name );
-    ImGui::NextColumn();
-
-    hasChanged = ImGui::Button( name );
-    ImGui::Columns( 1 );
-
-    ImGui::PopID();
-    return hasChanged;
-}
-
-bool BalEditor::EditorGUI::DrawComboBox( const char* name, std::string& currentValue, const std::vector<std::string>& elements )
+bool BalEditor::EditorGUI::DrawComboBox( const char* name, std::string& currentValue, const std::vector<std::string>& elements, float width )
 {
     bool hasChanged{};
 
-    if ( ImGui::BeginCombo( name,
-                            currentValue.c_str())) // The second parameter is the label previewed before opening the combo.
+    ImGui::PushID( name );
+    ImGui::Columns( 2 );
+    ImGui::SetColumnWidth( 0, width );
+    ImGui::Text( "%s", name );
+    ImGui::NextColumn();
+
+    if ( ImGui::BeginCombo( "##combo", currentValue.c_str()))
     {
         for ( const auto& element : elements )
         {
-            const bool isSelected = ( currentValue ==
-                                      element ); // You can store your selection however you want, outside or inside your objects
+            const bool isSelected = ( currentValue == element );
             if ( ImGui::Selectable( element.c_str(), isSelected ))
             {
                 currentValue = element;
@@ -842,19 +830,71 @@ bool BalEditor::EditorGUI::DrawComboBox( const char* name, std::string& currentV
             if ( isSelected )
             {
                 ImGui::SetItemDefaultFocus();
-            }   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+            }
         }
         ImGui::EndCombo();
     }
+    ImGui::Columns( 1 );
+    ImGui::PopID();
     return hasChanged;
+}
+
+bool BalEditor::EditorGUI::DrawInputText( const char* name, char* inputText, int maxLenth, float width )
+{
+    bool hasChanged;
+    ImGui::PushID( name );
+    ImGui::Columns( 2 );
+    ImGui::SetColumnWidth( 0, width );
+    ImGui::Text( "%s", name );
+    ImGui::NextColumn();
+    hasChanged = ImGui::InputText( name, inputText, maxLenth, ImGuiInputTextFlags_EnterReturnsTrue );
+    ImGui::PopID();
+    return hasChanged;
+}
+
+bool BalEditor::EditorGUI::DrawColor( const char* name, float color[3], float width )
+{
+    bool hasChanged;
+    ImGui::PushID( name );
+    ImGui::Columns( 2 );
+    ImGui::SetColumnWidth( 0, width );
+    ImGui::Text( "%s", name );
+    ImGui::NextColumn();
+    hasChanged = ImGui::ColorEdit3( "##Col", color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel );
+    ImGui::PopID();
+    return hasChanged;
+}
+
+void BalEditor::EditorGUI::DrawText( const char* text )
+{
+    ImGui::Text( "%s", text );
+}
+
+bool BalEditor::EditorGUI::DrawButton( const char* name )
+{
+    bool hasChanged;
+
+    ImGui::PushID( name );
+    hasChanged = ImGui::Button( name );
+    ImGui::PopID();
+
+    return hasChanged;
+}
+
+bool BalEditor::EditorGUI::StartPopup( const char* name )
+{
+    ImGui::OpenPopup( name );
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ));
+    return ImGui::BeginPopupModal( name, nullptr, ImGuiWindowFlags_AlwaysAutoResize );
+}
+
+void BalEditor::EditorGUI::EndPopup()
+{
+    ImGui::EndPopup();
 }
 
 void BalEditor::EditorGUI::Spacing()
 {
     ImGui::Spacing();
-}
-
-bool DrawInputText( const char* title, char* name, int maxLenth )
-{
-    return ImGui::InputText( title, name, maxLenth, ImGuiInputTextFlags_EnterReturnsTrue )
 }
