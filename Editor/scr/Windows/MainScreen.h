@@ -1,8 +1,14 @@
 #pragma once
 #include <string>
 
+struct IScene;
+
 namespace BalEditor
 {
+	class CShaderGraph;
+	class CSceneHierarchy;
+	class CAssetBrowser;
+
 	class CMainScreen
 	{
 	public:
@@ -14,9 +20,14 @@ namespace BalEditor
 		CMainScreen& operator=( CMainScreen&& ) = delete;
 
 		void Draw();
+		void SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph );
 
 	private:
 		std::string m_savePosition;
 		bool m_saved = false;
+		CAssetBrowser* m_pAssetBrowser;
+		CSceneHierarchy* m_pSceneHierarchy;
+		CShaderGraph* m_pShaderGraph;
+		IScene* m_pContext;
 	};
 }

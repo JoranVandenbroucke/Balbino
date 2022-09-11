@@ -1,46 +1,48 @@
 #pragma once
-#include "../Core.h"
+
+#include "IManager.h"
+
+#include "Core.h"
+
+class CResourceManager;
 
 namespace Balbino
 {
-	class CMaterialManager;
-	class CTextureManager;
-	class CShaderManager;
-	class CMeshManager;
-	class CInputHandler;
-	class CCameraManager;
+    class CRenderer;
 
-	class BALBINO_API CManager
-	{
-	public:
-		CManager();
-		~CManager();
-		CManager(const CManager&) = delete;
-		CManager(CManager&&) = delete;
-		CManager& operator=(const CManager&) = delete;
-		CManager& operator=(CManager&&) = delete;
+    class CInputHandler;
 
-		void Cleanup();
+    class CAssetManager;
 
-		void SetInputHandler(CInputHandler* pInputHandler);
-		void SetCameraManager(CCameraManager* pCameraManager);
-		void SetMeshManager(CMeshManager* pMeshManager);
-		void SetShaderManager(CShaderManager* pShaderManager);
-		void SetTextureManager(CTextureManager* pTextureManager);
-		void SetMaterialManager(CMaterialManager* pMaterialManager);
+    class BALBINO_API CSystem final
+            : public ISystem
+    {
+    public:
+        CSystem(float w, float h);
+        ~CSystem() override = default;
+        CSystem( const CSystem& ) = delete;
+        CSystem( CSystem&& ) = delete;
+        CSystem& operator=( const CSystem& ) = delete;
+        CSystem& operator=( CSystem&& ) = delete;
 
-		static CInputHandler* GetInputHandler();
-		static CCameraManager* GetCameraManager();
-		static CMeshManager* GetMeshManager();
-		static CShaderManager* GetShaderManager();
-		static CTextureManager* GetTextureManager();
-		static CMaterialManager* GetMaterialManager();
-	private:
-		static CInputHandler* s_inputHandler;
-		static CCameraManager* s_cameraManager;
-		static CMeshManager* s_meshManager;
-		static CShaderManager* s_shaderManager;
-		static CTextureManager* s_textureManager;
-		static CMaterialManager* s_materialManager;
-	};
+        void Initialize();
+        void Cleanup();
+
+        void SetInputHandler( CInputHandler* pInputHandler );
+        void SetCurrentScene( IScene* pScene );
+
+        bool Update( bool isPause ) override;
+        [[nodiscard]] IResourceManager* GetResourceManager() const override;
+        [[nodiscard]] CInputHandler* GetInputHandler() const;
+        [[nodiscard]] IScene* GetCurrentActiveScene() const override;
+
+        [[nodiscard]] float GetWindowWidth() override;
+        [[nodiscard]] float GetWindowHeight() override;
+    private:
+        CInputHandler* m_inputHandler;
+        CResourceManager* m_resourceManager;
+        IScene* m_pCurrentScene;
+        float m_windowWidth;
+        float m_windowHeight;
+    };
 }

@@ -1,8 +1,10 @@
 #pragma once
+#include <vulkan/vulkan.hpp>
 #include "Base.h"
+
 namespace BalVulkan
 {
-	class CFence final: public CDeviceObject
+	class CFence final : public CDeviceObject
 	{
 	public:
 		explicit CFence( const CDevice* pDevice );
@@ -18,4 +20,3 @@ namespace BalVulkan
 		VkFence m_fence;
 	};
 }
-

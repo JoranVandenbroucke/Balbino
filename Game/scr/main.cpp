@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "scr/Managers/MaterialManager.h"
+
+//#include <vld.h>
 
 namespace Dear
 {
@@ -8,17 +8,17 @@ namespace Dear
 	public:
 		Editor() = default;
 		~Editor() override = default;
-		Editor(const Editor&) = delete;
-		Editor(Editor&&) = delete;
-		Editor& operator=(const Editor&) = delete;
-		Editor& operator=(Editor&&) = delete;
+		Editor( const Editor& ) = delete;
+		Editor( Editor&& ) = delete;
+		Editor& operator=( const Editor& ) = delete;
+		Editor& operator=( Editor&& ) = delete;
 
 		void LoadGame() override;
 	};
 
 	void Editor::LoadGame()
 	{
-		Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.ply");
+		//Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.ply");
 		//Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/cube.obj");
 		//Balbino::CManager::GetMeshManager()->AddMesh("../Resources/Models/sponza.obj");
 
@@ -253,5 +253,10 @@ namespace Dear
 
 Balbino::Application* Balbino::CreateApplication()
 {
-	return new Dear::Editor{};
+    return new Dear::Editor{};
+}
+
+void Balbino::DestroyApplication(Balbino::Application* pApplication)
+{
+    delete pApplication;
 }

@@ -1,105 +1,78 @@
-#include "pch.h"
 #include "Manager.h"
 
-#include "CameraManager.h"
-#include "MaterialManager.h"
-#include "MeshManager.h"
-#include "ShaderManager.h"
-#include "TextureManager.h"
+#include "IResourceManager.h"
+#include "ResourceManager.h"
 #include "../Input/InputHandler.h"
 
-Balbino::CInputHandler* Balbino::CManager::s_inputHandler{nullptr};
-Balbino::CCameraManager* Balbino::CManager::s_cameraManager{nullptr};
-Balbino::CMeshManager* Balbino::CManager::s_meshManager{nullptr};
-Balbino::CShaderManager* Balbino::CManager::s_shaderManager{nullptr};
-Balbino::CTextureManager* Balbino::CManager::s_textureManager{nullptr};
-Balbino::CMaterialManager* Balbino::CManager::s_materialManager{nullptr};
-Balbino::CManager::CManager()
-= default;
-
-Balbino::CManager::~CManager()
-= default;
-
-void Balbino::CManager::Cleanup()
+Balbino::CSystem::CSystem(float w, float h)
+        : m_inputHandler{ nullptr }
+        , m_resourceManager{ nullptr }
+        , m_pCurrentScene{ nullptr }
+        ,m_windowWidth{w}
+        ,m_windowHeight{h}
 {
-	s_inputHandler->Cleanup();
-	s_cameraManager->Cleanup();
-	s_meshManager->Cleanup();
-	s_shaderManager->Cleanup();
-	s_textureManager->Cleanup();
-	s_materialManager->Cleanup();
-
-	delete s_inputHandler;
-	delete s_cameraManager;
-	delete s_meshManager;
-	delete s_shaderManager;
-	delete s_textureManager;
-	delete s_materialManager;
-	
-	s_inputHandler= nullptr;
-	s_cameraManager= nullptr;
-	s_meshManager= nullptr;
-	s_shaderManager= nullptr;
-	s_textureManager= nullptr;
-	s_materialManager= nullptr;
 }
 
-void Balbino::CManager::SetInputHandler(CInputHandler* pInputHandler)
+void Balbino::CSystem::Initialize()
 {
-	s_inputHandler = pInputHandler;
+    m_resourceManager = new CResourceManager{};
+    m_resourceManager->Initialize( this );
 }
 
-void Balbino::CManager::SetCameraManager(CCameraManager* pCameraManager)
+void Balbino::CSystem::Cleanup()
 {
-	s_cameraManager = pCameraManager;
+    if( m_inputHandler )
+    {
+        m_inputHandler->Cleanup();
+        delete m_inputHandler;
+        m_inputHandler = nullptr;
+    }
+    if( m_resourceManager    )
+    {
+        m_resourceManager->Cleanup();
+        delete m_resourceManager;
+        m_resourceManager = nullptr;
+    }
+    m_pCurrentScene = nullptr;
 }
 
-void Balbino::CManager::SetMeshManager(CMeshManager* pMeshManager)
+void Balbino::CSystem::SetInputHandler(CInputHandler* pInputHandler)
 {
-	s_meshManager = pMeshManager;
+    m_inputHandler = pInputHandler;
 }
 
-void Balbino::CManager::SetShaderManager(CShaderManager* pShaderManager)
+void Balbino::CSystem::SetCurrentScene(IScene* pScene)
 {
-	s_shaderManager = pShaderManager;
+    m_pCurrentScene = pScene;
 }
 
-void Balbino::CManager::SetTextureManager(CTextureManager* pTextureManager)
+bool Balbino::CSystem::Update(bool isPause)
 {
-	s_textureManager = pTextureManager;
+    (void) isPause;
+    return false;
 }
 
-void Balbino::CManager::SetMaterialManager(CMaterialManager* pMaterialManager)
+IResourceManager* Balbino::CSystem::GetResourceManager() const
 {
-	s_materialManager = pMaterialManager;
+    return m_resourceManager;
 }
 
-Balbino::CMaterialManager* Balbino::CManager::GetMaterialManager()
+Balbino::CInputHandler* Balbino::CSystem::GetInputHandler() const
 {
-	return s_materialManager;
+    return m_inputHandler;
 }
 
-Balbino::CTextureManager* Balbino::CManager::GetTextureManager()
+IScene* Balbino::CSystem::GetCurrentActiveScene() const
 {
-	return s_textureManager;
+    return m_pCurrentScene;
 }
 
-Balbino::CShaderManager* Balbino::CManager::GetShaderManager()
+float Balbino::CSystem::GetWindowWidth()
 {
-	return s_shaderManager;
+    return m_windowWidth;
 }
 
-Balbino::CMeshManager* Balbino::CManager::GetMeshManager()
+float Balbino::CSystem::GetWindowHeight()
 {
-	return s_meshManager;
-}
-
-Balbino::CCameraManager* Balbino::CManager::GetCameraManager()
-{
-	return s_cameraManager;
-}
-
-Balbino::CInputHandler* Balbino::CManager::GetInputHandler()
-{
-	return s_inputHandler;
+    return m_windowHeight;
 }

@@ -1,19 +1,27 @@
 #pragma once
-#include <vulkan/vulkan.hpp>
+
+#include <atomic>
 
 namespace BalVulkan
 {
 	class CDevice;
+
 	class CRefCounted
 	{
 	public:
 		CRefCounted();
+
 		CRefCounted( CRefCounted&& ) noexcept
-		{ /* refcount not copied on purpose*/
+		{
+			/* refcount not copied on purpose*/
 		}
+
 		CRefCounted& operator=( CRefCounted&& ) noexcept
-		{ /* refcount not copied on purpose*/ return *this;
+		{
+			/* refcount not copied on purpose*/
+			return *this;
 		}
+
 		virtual ~CRefCounted() = default;
 
 		virtual uint32_t AddRef() final;

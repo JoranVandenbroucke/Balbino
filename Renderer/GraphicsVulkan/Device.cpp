@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Device.h"
 
 #include "Funtions.h"
@@ -66,33 +65,11 @@ BalVulkan::CDevice* BalVulkan::CDevice::Create( const SPhysicalDeviceInfo* pDevi
 	( void ) extensionsToEnable;
 	std::vector<VkDeviceQueueCreateInfo> wantedQueues;
 	const std::vector queuePriorities( pDeviceInfo->queueFamilyProperties.size(), 1.0f );
-	//VkDeviceQueueCreateInfo queueInfo{
-	//	.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-	//	.flags = 0,
-	//};
 
-	//for ( uint32_t i{ 0 }, n{ static_cast< uint32_t >( pDeviceInfo->queueFamilyProperties.size() ) }; i < n; ++i )
-	//{
-	//	queueInfo.queueFamilyIndex = i;
-	//	queueInfo.queueCount = pDeviceInfo->queueFamilyProperties[i].queueCount;
-	//	queueInfo.pQueuePriorities = queuePriorities.data();
-
-	//	wantedQueues.push_back( queueInfo );
-	//}
-	//const VkDeviceCreateInfo createInfo{
-	//	.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-	//	.queueCreateInfoCount = static_cast< uint32_t >(wantedQueues.size() ),	//1
-	//	.pQueueCreateInfos = wantedQueues.data(),
-	//	.enabledLayerCount = static_cast< uint32_t >( layersToEnable.size() ),
-	//	.ppEnabledLayerNames = !layersToEnable.empty() ? layersToEnable.data() : nullptr,
-	//	.enabledExtensionCount = static_cast< uint32_t >( extensionsToEnable.size() ),	//1
-	//	.ppEnabledExtensionNames = extensionsToEnable.data(),
-	//	.pEnabledFeatures = nullptr,
-	//};
 	constexpr int deviceExtensionCount{ 1 };
 	const char* deviceExtensions[]{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-	const float queuePriority[]{ 1.0f };
-	const VkDeviceQueueCreateInfo queueInfo[1]{
+    const float queuePriority[]{ 1.0f };
+    const VkDeviceQueueCreateInfo queueInfo[1]{
 		{
 			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 			.queueFamilyIndex = 0,
@@ -100,22 +77,29 @@ BalVulkan::CDevice* BalVulkan::CDevice::Create( const SPhysicalDeviceInfo* pDevi
 			.pQueuePriorities = queuePriority,
 		}
 	};
-	const VkDeviceCreateInfo createInfo{
-		.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		.queueCreateInfoCount = static_cast< uint32_t >( std::size( queueInfo ) ),
-		.pQueueCreateInfos = queueInfo,
-		.enabledExtensionCount = deviceExtensionCount,
-		.ppEnabledExtensionNames = deviceExtensions,
-	};
-	VkDevice device;
+    
+    const VkPhysicalDeviceFeatures deviceFeatures{
+            .samplerAnisotropy = VK_TRUE,
+    };
+    const VkDeviceCreateInfo createInfo{
+    	.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+    	.queueCreateInfoCount = static_cast<uint32_t>( std::size( queueInfo ) ),
+    	.pQueueCreateInfos = queueInfo,
+    	.enabledLayerCount = static_cast< uint32_t >( layersToEnable.size() ),
+    	.ppEnabledLayerNames = !layersToEnable.empty() ? layersToEnable.data() : nullptr,
+    	.enabledExtensionCount = deviceExtensionCount,	//1
+    	.ppEnabledExtensionNames = deviceExtensions,
+    	.pEnabledFeatures = &deviceFeatures,
+    };
+    VkDevice device;
 	CheckVkResult( vkCreateDevice( pDeviceInfo->device, &createInfo, pCallbacks, &device ), "Could not create a device" );
-	CDevice* pDevice{ new CDevice{ pDeviceInfo, pCallbacks, device } };
+	auto pDevice{ new CDevice{ pDeviceInfo, pCallbacks, device } };
 	return pDevice;
 }
 
 BalVulkan::CDevice::SRenderPass::SRenderPass( SRenderPass&& ) noexcept = default;
 
-BalVulkan::CDevice::SRenderPass::SRenderPass( const VkDevice & s, const VkRenderPass & r, const VkFramebuffer & f )
+BalVulkan::CDevice::SRenderPass::SRenderPass( const VkDevice& s, const VkRenderPass& r, const VkFramebuffer& f )
 	: self( s )
 	, renderPass( r )
 	, frameBuffer( f )
@@ -130,7 +114,7 @@ BalVulkan::CDevice::SRenderPass::~SRenderPass()
 
 BalVulkan::CDevice::SPipeline::SPipeline( SPipeline&& ) noexcept = default;
 
-BalVulkan::CDevice::SPipeline::SPipeline( const VkDevice & s, const VkPipeline & p )
+BalVulkan::CDevice::SPipeline::SPipeline( const VkDevice& s, const VkPipeline& p )
 	: self( s )
 	, pipeline( p )
 {

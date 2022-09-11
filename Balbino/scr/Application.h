@@ -1,4 +1,6 @@
 #pragma once
+
+#include <cstdint>
 #include "Core.h"
 #include "Managers/Manager.h"
 
@@ -14,9 +16,10 @@ struct SDL_Window;
 
 namespace Balbino
 {
+	class CScene;
 	class CRenderer;
 
-#ifdef BL_EDITOR
+#ifdef BALBINO_EDITOR
 	class CInterface;
 #endif
 
@@ -25,10 +28,10 @@ namespace Balbino
 	public:
 		Application();
 		virtual ~Application();
-		Application(const Application&) = delete;
-		Application(Application&&) = delete;
-		Application& operator=(const Application&) = delete;
-		Application& operator=(Application&&) = delete;
+		Application( const Application& ) = delete;
+		Application( Application&& ) = delete;
+		Application& operator=( const Application& ) = delete;
+		Application& operator=( Application&& ) = delete;
 
 		void Initialize();
 		virtual void LoadGame();
@@ -36,15 +39,20 @@ namespace Balbino
 		void Run();
 
 	private:
-		SDL_Window* m_pWindow;
+        int32_t m_w;
+        int32_t m_h;
+        uint32_t m_windowFlags;
+        SDL_Window* m_pWindow;
 
-		CManager m_manager;
+		CSystem m_manager;
 		CRenderer* m_pRenderer;
 #ifdef BALBINO_EDITOR
 		BalEditor::CInterface* m_pInterface;
 #endif
+		CScene* m_pScene;
 	};
 
 	//to be defined in client
 	Application* CreateApplication();
+	void DestroyApplication(Balbino::Application* pApplication);
 }

@@ -6,6 +6,8 @@
 #include "Base.h"
 #include "Common.h"
 
+#include <vulkan/vulkan.hpp>
+
 namespace BalVulkan
 {
 	enum class EShaderResourceType
@@ -23,7 +25,8 @@ namespace BalVulkan
 		PushConstant,
 		SpecializationConstant,
 	};
-	struct SHaderResourceQualifiers
+
+	struct SShaderResourceQualifiers
 	{
 		enum : uint32_t
 		{
@@ -32,12 +35,14 @@ namespace BalVulkan
 			NonWritable = 2,
 		};
 	};
+
 	enum class EShaderResourceMode
 	{
 		Static,
 		Dynamic,
 		UpdateAfterBind
 	};
+
 	struct SShaderResource
 	{
 		VkShaderStageFlags stages;
@@ -54,6 +59,7 @@ namespace BalVulkan
 		uint32_t size;
 		uint32_t constantId;
 		uint32_t qualifiers;
+		uint64_t resourceID;
 		std::string name;
 	};
 
@@ -68,15 +74,15 @@ namespace BalVulkan
 	class CShader final : public CDeviceObject
 	{
 	public:
-		explicit CShader( const CDevice* const device );
+		explicit CShader( const CDevice* device );
 		CShader( const CShader& other );
 		CShader( CShader&& ) = default;
 		CShader& operator=( CShader&& ) = default;
 		~CShader() override;
 
-		void Initialize( const void* pShaderCode, size_t shaderCodeSize, BalVulkan::EShaderStage stage, const char* path );
-		const std::vector<SShaderResource>& GetShaderResources()const;
-		const VkShaderModule& GetShaderModule()const;
+		void Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage stage );
+		const std::vector<SShaderResource>& GetShaderResources() const;
+		const VkShaderModule& GetShaderModule() const;
 		static CShader* CreateNew( const CDevice* pDevice );
 	private:
 		VkShaderModule m_shaderHandle;
@@ -88,27 +94,18 @@ namespace BalVulkan
 	class CFileIncluder final : public shaderc::CompileOptions::IncluderInterface
 	{
 	public:
-		explicit CFileIncluder()
-		{
-		}
-
-		~CFileIncluder() override;
+		CFileIncluder() = default;
+		~CFileIncluder() override = default;
 
 		// Resolves a requested source file of a given type from a requesting
 		// source into a shaderc_include_result whose contents will remain valid
 		// until it's released.
-		shaderc_include_result* GetInclude( const char* requestedSource,
-											shaderc_include_type type,
-											const char* requestingSource,
-											size_t includeDepth ) override;
+		shaderc_include_result* GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth ) override;
 		// Releases an include result.
 		void ReleaseInclude( shaderc_include_result* include_result ) override;
 
 		// Returns a reference to the member storing the set of included files.
-		const std::unordered_set<std::string>& FilePathTrace() const
-		{
-			return m_includedFiles;
-		}
+        [[maybe_unused]] [[nodiscard]] const std::unordered_set<std::string>& FilePathTrace() const;
 
 	private:
 		// The full path and content of a source file.

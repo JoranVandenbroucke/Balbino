@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Queue.h"
 
 #include "CommandPool.h"
@@ -9,7 +8,7 @@
 #include "Semaphore.h"
 #include "Swapchain.h"
 
-BalVulkan::CQueue::CQueue( const CDevice* device)
+BalVulkan::CQueue::CQueue( const CDevice* device )
 	: CDeviceObject{ device }
 	, m_queueFamily{ 0 }
 	, m_queue{ VK_NULL_HANDLE }
@@ -23,28 +22,28 @@ BalVulkan::CQueue::~CQueue()
 
 void BalVulkan::CQueue::Initialize()
 {
-	if (!m_queue)
+	if ( !m_queue )
 	{
 		uint32_t count;
-		vkGetPhysicalDeviceQueueFamilyProperties(GetDevice()->GetPhysicalDeviceInfo()->device, &count, nullptr);
-		const auto queues{ static_cast<VkQueueFamilyProperties*>(malloc(sizeof(VkQueueFamilyProperties) * count)) };
-		vkGetPhysicalDeviceQueueFamilyProperties(GetDevice()->GetPhysicalDeviceInfo()->device, &count, queues);
-		for (uint32_t i = 0; i < count; i++)
+		vkGetPhysicalDeviceQueueFamilyProperties( GetDevice()->GetPhysicalDeviceInfo()->device, &count, nullptr );
+		const auto queues{ static_cast<VkQueueFamilyProperties*>( malloc( sizeof( VkQueueFamilyProperties ) * count ) ) };
+		vkGetPhysicalDeviceQueueFamilyProperties( GetDevice()->GetPhysicalDeviceInfo()->device, &count, queues );
+		for ( uint32_t i = 0; i < count; i++ )
 		{
-			if ( queues && queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
+			if ( queues && queues[i].queueFlags & VK_QUEUE_GRAPHICS_BIT )
 			{
 				m_queueFamily = i;
 				break;
 			}
 		}
-		free(queues);
-		vkGetDeviceQueue(GetDevice()->GetVkDevice(), m_queueFamily, 0, &m_queue);
+		free( queues );
+		vkGetDeviceQueue( GetDevice()->GetVkDevice(), m_queueFamily, 0, &m_queue );
 	}
 }
 
 void BalVulkan::CQueue::SubmitPass( const CSemaphore* signalSemaphore, const CSemaphore* waitableSemaphores, const CCommandPool* cmdList, const CFence* pFence ) const
 {
-	constexpr VkPipelineStageFlags pipelineStageFlags {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+	constexpr VkPipelineStageFlags pipelineStageFlags{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	const VkSubmitInfo submitInfo
 	{
 		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
@@ -58,7 +57,8 @@ void BalVulkan::CQueue::SubmitPass( const CSemaphore* signalSemaphore, const CSe
 	};
 	CheckVkResult( vkQueueSubmit( m_queue, 1, &submitInfo, pFence->Get() ) );
 }
-void BalVulkan::CQueue::PresentToScreen( const CSwapchain* pSwapchain, const CSemaphore* signalSemaphore, uint32_t imageIndex ) const
+
+bool BalVulkan::CQueue::PresentToScreen( const CSwapchain* pSwapchain, const CSemaphore* signalSemaphore, uint32_t imageIndex ) const
 {
 	const VkPresentInfoKHR presentInfo
 	{
@@ -69,8 +69,10 @@ void BalVulkan::CQueue::PresentToScreen( const CSwapchain* pSwapchain, const CSe
 		.pSwapchains = &pSwapchain->GetVkSwapchain(),
 		.pImageIndices = &imageIndex,
 	};
+	const VkResult result{ vkQueuePresentKHR( m_queue, &presentInfo ) };
 
-	CheckVkResult( vkQueuePresentKHR( m_queue, &presentInfo ) );
+	CheckVkResult( result, "", static_cast<VkResult>(VK_SUCCESS | VK_ERROR_OUT_OF_DATE_KHR | VK_SUBOPTIMAL_KHR));
+	return ( result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR );
 }
 
 const VkQueue& BalVulkan::CQueue::GetQueue() const
@@ -90,5 +92,5 @@ void BalVulkan::CQueue::WaitIdle() const
 
 BalVulkan::CQueue* BalVulkan::CQueue::CreateNew( const CDevice* pDevice )
 {
-	return new CQueue{pDevice};
+	return new CQueue{ pDevice };
 }

@@ -8,10 +8,10 @@ namespace Balbino
 		static T& GetInstance();
 		CSingleton() = default;
 		virtual ~CSingleton() = default;
-		CSingleton(const CSingleton&) = delete;
-		CSingleton(CSingleton&&) = delete;
-		CSingleton& operator=(const CSingleton&) = delete;
-		CSingleton& operator=(CSingleton&&) = delete;
+		CSingleton( const CSingleton& ) = delete;
+		CSingleton( CSingleton&& ) = delete;
+		CSingleton& operator=( const CSingleton& ) = delete;
+		CSingleton& operator=( CSingleton&& ) = delete;
 	};
 
 	template <class T>

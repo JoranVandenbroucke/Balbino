@@ -2,6 +2,8 @@
 #include "Base.h"
 #include "Common.h"
 
+#include <vulkan/vulkan.hpp>
+
 namespace BalVulkan
 {
 	class CImageResource;
@@ -10,9 +12,9 @@ namespace BalVulkan
 	{
 	public:
 		explicit CImageView( const CImageResource& pImage,
-							 BalVulkan::EImageViewType type,
-							 uint32_t firstMip = 0, uint32_t numMips = VK_REMAINING_MIP_LEVELS,
-							 uint32_t firstLayer = 0, uint32_t numLayers = VK_REMAINING_ARRAY_LAYERS );
+		                     EImageViewType type,
+		                     uint32_t firstMip = 0, uint32_t numMips = VK_REMAINING_MIP_LEVELS,
+		                     uint32_t firstLayer = 0, uint32_t numLayers = VK_REMAINING_ARRAY_LAYERS );
 
 		CImageView( CImageView&& ) = default;
 		CImageView& operator=( CImageView&& ) = default;
@@ -26,5 +28,4 @@ namespace BalVulkan
 		VkImageView m_imageView;
 		bool m_ownedBySwapchain;
 	};
-
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vulkan/vulkan.hpp>
+
 namespace BalVulkan
 {
 	class CDevice;
@@ -12,20 +14,21 @@ namespace BalVulkan
 		VkPhysicalDeviceFeatures deviceFeatures;
 		std::vector<VkQueueFamilyProperties> queueFamilyProperties;
 		std::array<VkFormatProperties, VK_FORMAT_ASTC_12x12_SRGB_BLOCK - VK_FORMAT_UNDEFINED + 1> formatProperties;
-		VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features) const;
-	};
+		[[nodiscard]] VkFormat FindSupportedFormat( const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features ) const;
+        [[nodiscard]] VkSampleCountFlagBits GetMaxUsableSampleCount() const;
+    };
 
 	class CInstanceHolder
 	{
 	public:
 		CInstanceHolder();
-		CInstanceHolder(const CInstanceHolder&) = delete;
-		CInstanceHolder(CInstanceHolder&&) = delete;
-		CInstanceHolder& operator=(const CInstanceHolder&) = delete;
-		CInstanceHolder& operator=(CInstanceHolder&&) = delete;
+		CInstanceHolder( const CInstanceHolder& ) = delete;
+		CInstanceHolder( CInstanceHolder&& ) = delete;
+		CInstanceHolder& operator=( const CInstanceHolder& ) = delete;
+		CInstanceHolder& operator=( CInstanceHolder&& ) = delete;
 		~CInstanceHolder();
 
-		const VkInstance& GetHandle()const;
+		const VkInstance& GetHandle() const;
 	protected:
 		VkInstance m_instanceHandle;
 	};
@@ -34,19 +37,19 @@ namespace BalVulkan
 	{
 	public:
 		CInstance();
-		CInstance(const CInstance&) = delete;
-		CInstance(CInstance&&) = delete;
-		CInstance& operator=(const CInstance&) = delete;
-		CInstance& operator=(CInstance&&) = delete;
+		CInstance( const CInstance& ) = delete;
+		CInstance( CInstance&& ) = delete;
+		CInstance& operator=( const CInstance& ) = delete;
+		CInstance& operator=( CInstance&& ) = delete;
 		~CInstance();
 
-		bool Initialize(const char** extensions, const uint32_t extensionsCount);
+		bool Initialize( const char** extensions, uint32_t extensionsCount );
 		void SetSurface( const VkSurfaceKHR& newSurface );
 		uint8_t DeviceCount() const;
-		CDevice* CreateDevice(uint32_t physicalDeviceIndex);
+		CDevice* CreateDevice( uint32_t physicalDeviceIndex );
 		uint32_t FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf );
-		VkDebugReportCallbackEXT GetReportCallbackExt()const;
-		VkSurfaceKHR GetSurface()const;
+		VkDebugReportCallbackEXT GetReportCallbackExt() const;
+		VkSurfaceKHR GetSurface() const;
 		static CInstance* CreateNew();
 
 	private:

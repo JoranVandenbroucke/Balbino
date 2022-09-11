@@ -2,6 +2,7 @@
 
 #ifdef BALBINO_EDITOR
 #include <scr/Interface.h>
+
 namespace BalEditor
 {
 	class CInterface;
@@ -27,6 +28,7 @@ struct SDL_Window;
 
 namespace Balbino
 {
+	class CScene;
 	class CInterface;
 
 	class CRenderer
@@ -41,13 +43,16 @@ namespace Balbino
 		CRenderer& operator=( CRenderer&& ) = delete;
 
 #ifdef BALBINO_EDITOR
-		void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface );
+		void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface, ISystem* pSystem );
 #endif // BALBINO_EDITOR
 
 		void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount );
 		void Cleanup();
-		void Draw();
+		bool StartDraw();
+        bool NextSubPass();
+		bool EndDraw();
 		[[nodiscard]] float GetAspectRatio() const;
+		void GiveSceneRenderData( CScene* pScene);
 
 	private:
 		BalVulkan::CInstance* m_pInstance;
@@ -61,8 +66,6 @@ namespace Balbino
 		BalVulkan::CSemaphore* m_pWaitingSemaphore;
 		std::vector<BalVulkan::CFence*> m_pFences;
 		std::vector<BalVulkan::CFence*> m_pInFlightFences;
-		BalVulkan::CBuffer* m_pModelBuffer;
-		BalVulkan::CBuffer* m_pShadingBuffer;
 
 #ifdef BALBINO_EDITOR
 		BalEditor::CInterface* m_pInterface;
@@ -70,6 +73,11 @@ namespace Balbino
 
 		int32_t m_width;
 		int32_t m_height;
+		uint32_t m_imageIndex;
 		float m_aspectRation;
+
+		SDL_Window* m_pWindow;
+		CScene* m_pScene;
+		void RecreateSwapChain();
 	};
 }
