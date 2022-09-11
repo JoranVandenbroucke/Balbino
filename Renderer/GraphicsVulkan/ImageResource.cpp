@@ -330,7 +330,7 @@ VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType type, 
 	m_createInfo.extent = VkExtent3D{ width, height, depth };
 	m_createInfo.mipLevels = mips;
 	m_createInfo.arrayLayers = layers;
-	m_createInfo.samples = (sampleLevel == 8)? GetDevice()->GetPhysicalDeviceInfo()->GetMaxUsableSampleCount() : VK_SAMPLE_COUNT_1_BIT;
+	m_createInfo.samples = VkSampleCountFlagBits((sampleLevel == 7)? GetDevice()->GetPhysicalDeviceInfo()->GetMaxUsableSampleCount() : 1<<sampleLevel);
 	m_createInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 	m_createInfo.usage = usageFlags;
 	m_createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
