@@ -38,7 +38,8 @@ BalEditor::CAssetBrowser::CAssetBrowser()
           m_isVisible{ true },
           m_newFile{ false },
           m_size{ 32.f },
-          m_newFileFronID{ 0 }
+          m_newFileFronID{ 0 },
+          m_updateCurrentDirectory{ true }
 {
 }
 
@@ -46,28 +47,18 @@ BalEditor::CAssetBrowser::~CAssetBrowser() = default;
 
 void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
 {
-    m_pSystem                      = pSystem;
-    m_pUnknownIcon                 = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/UnknownFile.basset" );
-    m_pFolderIcon                  = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/Folder.basset" );
-    m_pBalbinoIcon                 = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/Balbino.basset" );
-    m_pImageIcon                   = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/ImageFile.basset" );
-    m_pAudioIcon                   = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/AudioFile.basset" );
-    m_pModelIcon                   = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/ModelFile.basset" );
-    m_pPresetIcon                  = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/PresetFile.basset" );
-    m_pCodeIcon                    = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/CodeFile.basset" );
-    m_pFontIcon                    = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/FontFile.basset" );
-    m_pMaterialIcon                = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/MaterialFile.basset" );
-    m_pShaderIcon                  = pSystem->GetResourceManager()->LoadTexture(
-            "../Data/Editor/Icons/ShaderFile.basset" );
+    m_pUnknownIcon  = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/UnknownFile.basset" );
+    m_pFolderIcon   = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/Folder.basset" );
+    m_pBalbinoIcon  = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/BalbinoFile.basset" );
+    m_pImageIcon    = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/ImageFile.basset" );
+    m_pAudioIcon    = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/AudioFile.basset" );
+    m_pModelIcon    = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/ModelFile.basset" );
+    m_pPresetIcon   = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/PresetFile.basset" );
+    m_pCodeIcon     = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/CodeFile.basset" );
+    m_pFontIcon     = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/FontFile.basset" );
+    m_pMaterialIcon = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/MaterialFile.basset" );
+    m_pShaderIcon   = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/ShaderFile.basset" );
+    
     m_pVkDescriptorSetUnknownIcon  = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
             m_pUnknownIcon->GetSampler(), m_pUnknownIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
     m_pVkDescriptorSetFolderIcon   = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
@@ -83,21 +74,16 @@ void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
     m_pVkDescriptorSetPresetIcon   = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
             m_pPresetIcon->GetSampler(), m_pPresetIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
     m_pVkDescriptorSetCodeIcon     = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pCodeIcon->GetSampler(),
-            m_pCodeIcon->GetImageView(),
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pCodeIcon->GetSampler(), m_pCodeIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
     m_pVkDescriptorSetFontIcon     = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pFontIcon->GetSampler(),
-            m_pFontIcon->GetImageView(),
-            VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pFontIcon->GetSampler(), m_pFontIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
     m_pVkDescriptorSetMaterialIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
             m_pMaterialIcon->GetSampler(), m_pMaterialIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
     m_pVkDescriptorSetShaderIcon   = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
             m_pShaderIcon->GetSampler(), m_pShaderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
-    FindAllFiles();
-    GetAllFilesInSelectedPath( "../Data", m_currentDirectory );
+    
+    m_pSystem              = pSystem;
     m_currentDirectoryName = "../Data";
-
 }
 
 void BalEditor::CAssetBrowser::Draw()
@@ -126,7 +112,7 @@ void BalEditor::CAssetBrowser::Draw()
             {
                 return left.isFolder > right.isFolder;
             } );
-
+            
             ImGui::SameLine();
             if ( ImGui::BeginChild( "Asset File", ImVec2{ -1, -1 }, true, ImGuiWindowFlags_AlwaysAutoResize ))
             {
@@ -249,19 +235,19 @@ void BalEditor::CAssetBrowser::FindAllFiles()
             ++it;
         }
     }
-
+    
     if ( m_files.empty())
     {
         m_files.push_back( GetData( std::filesystem::relative( "..\\Data" )));
         m_files.back().lastWrittenTime = std::filesystem::last_write_time( "..\\Data" );
     }
-
+    
     for ( auto file = std::filesystem::recursive_directory_iterator( "..\\Data" );
           file != std::filesystem::recursive_directory_iterator(); ++file )
     {
-
+        
         auto currentFileLastWriteTime = std::filesystem::last_write_time( *file );
-
+        
         // File creation
         auto filetIt = std::ranges::find_if( m_files, [ &file ]( const SFile& filePair ) -> bool
         {
@@ -277,12 +263,12 @@ void BalEditor::CAssetBrowser::FindAllFiles()
         }
         else if ( filetIt->lastWrittenTime != currentFileLastWriteTime )
         {
-            //Modifi
+            //Changed
             ( *filetIt ) = GetData( relative( file->path()));
             filetIt->lastWrittenTime = currentFileLastWriteTime;
             filetIt->depth           = file.depth() + 1;
             m_updateCurrentDirectory = true;
-
+            
         }
     }
 }
@@ -298,7 +284,7 @@ void BalEditor::CAssetBrowser::CreateMaterial( const SFile& file, std::string_vi
     {
         return;
     }
-
+    
     const std::unordered_map<std::string, BalVulkan::SShaderResource>& resources = pResources->GetShaderResources();
     std::vector<BalVulkan::SShaderResource> shaderResource;
     shaderResource.reserve( resources.size());
@@ -325,7 +311,7 @@ void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& node
     {
         return;
     }
-
+    
     std::vector<std::string>     files;
     constexpr ImGuiTreeNodeFlags baseFlags =
                                          ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -452,7 +438,7 @@ void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool is
             else if ( m_newFile && m_currentName.empty() && m_newFileFronID == currentFile.uuid )
             {
                 ImGui::OpenPopup( "Enter Name" );
-
+                
                 // Always center this window when appearing
                 ImVec2 center = ImGui::GetMainViewport()->GetCenter();
                 ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ));

@@ -40,19 +40,19 @@ namespace BalEditor
               m_destinationDirection{}
     {
     }
-
+    
     void CTextureFileImporter::SetVisible( const std::filesystem::path& path, const std::string& destinationDirection )
     {
         m_isVisible            = true;
         m_path                 = path;
         m_destinationDirection = destinationDirection;
     }
-
+    
     bool CTextureFileImporter::IsVisible() const
     {
         return m_isVisible;
     }
-
+    
     bool CTextureFileImporter::DrawImportSettings()
     {
         if ( BalEditor::EditorGUI::StartPopup( "Import Texture" ))
@@ -63,7 +63,7 @@ namespace BalEditor
             std::string wrapV{ ToString( m_wrapModeV ) };
             std::string wrapW{ ToString( m_wrapModeW ) };
             std::string sampleLevel{ ToString( m_sampleLevel ) };
-
+            
             const std::vector<std::string> wrapModes{
                     ToString( BalVulkan::ESamplerAddressMode::Repeat ),
                     ToString( BalVulkan::ESamplerAddressMode::MirroredRepeat ),
@@ -85,21 +85,21 @@ namespace BalEditor
                     ToString( ESampleLevel::SixtyFour ),
                     ToString( ESampleLevel::Auto )
             };
-
+            
             BalEditor::EditorGUI::DrawText( std::format( "Importing from {}", m_path.string()).c_str());
             BalEditor::EditorGUI::DrawToggle( "Use Mips", m_useMips, 200 );
             BalEditor::EditorGUI::DrawToggle( "Generate Mips", m_generateMips, 200 );
             BalEditor::EditorGUI::DrawComboBox( "Mipmap Mode", mipmapMode, sampleModes, 200 );
             BalEditor::EditorGUI::DrawComboBox( "Filter Mode", filterMode, sampleModes, 200 );
-
+            
             BalEditor::EditorGUI::DrawToggle( "Use Anisotropy", m_useAnisotropy, 200 );
             BalEditor::EditorGUI::DrawInt( "Anisotropy Level", m_anisotropyLevel, 1, 1, 16, 200 );
-
+            
             BalEditor::EditorGUI::DrawComboBox( "Sample Level", sampleLevel, sampleLevels, 200 );
             BalEditor::EditorGUI::DrawComboBox( "Wrap Mode U", wrapU, wrapModes, 200 );
             BalEditor::EditorGUI::DrawComboBox( "Wrap Mode V", wrapV, wrapModes, 200 );
             BalEditor::EditorGUI::DrawComboBox( "Wrap Mode W", wrapW, wrapModes, 200 );
-
+            
             if ( BalEditor::EditorGUI::DrawButton( "Import" ))
             {
                 LoadTexture(); //TODO create a task
@@ -111,7 +111,7 @@ namespace BalEditor
             {
                 m_isVisible = false;
             }
-
+            
             if ( mipmapMode == ToString( BalVulkan::EFilter::Nearest ))
             {
                 m_mipmapMode = BalVulkan::EFilter::Nearest;
@@ -120,7 +120,7 @@ namespace BalEditor
             {
                 m_mipmapMode = BalVulkan::EFilter::Linear;
             }
-
+            
             if ( filterMode == ToString( BalVulkan::EFilter::Nearest ))
             {
                 m_filterMode = BalVulkan::EFilter::Nearest;
@@ -129,7 +129,7 @@ namespace BalEditor
             {
                 m_filterMode = BalVulkan::EFilter::Linear;
             }
-
+            
             if ( sampleLevel == ToString( ESampleLevel::One ))
             {
                 m_sampleLevel = ESampleLevel::One;
@@ -162,7 +162,7 @@ namespace BalEditor
             {
                 m_sampleLevel = ESampleLevel::Auto;
             }
-
+            
             if ( wrapU == ToString( BalVulkan::ESamplerAddressMode::Repeat ))
             {
                 m_wrapModeU = BalVulkan::ESamplerAddressMode::Repeat;
@@ -183,7 +183,7 @@ namespace BalEditor
             {
                 m_wrapModeU = BalVulkan::ESamplerAddressMode::MirrorClampToEdge;
             }
-
+            
             if ( wrapV == ToString( BalVulkan::ESamplerAddressMode::Repeat ))
             {
                 m_wrapModeV = BalVulkan::ESamplerAddressMode::Repeat;
@@ -204,7 +204,7 @@ namespace BalEditor
             {
                 m_wrapModeV = BalVulkan::ESamplerAddressMode::MirrorClampToEdge;
             }
-
+            
             if ( wrapW == ToString( BalVulkan::ESamplerAddressMode::Repeat ))
             {
                 m_wrapModeW = BalVulkan::ESamplerAddressMode::Repeat;
@@ -225,17 +225,17 @@ namespace BalEditor
             {
                 m_wrapModeW = BalVulkan::ESamplerAddressMode::MirrorClampToEdge;
             }
-
+            
             BalEditor::EditorGUI::EndPopup();
         }
         return false;
     }
-
+    
     float CTextureFileImporter::GetImportPercentage()
     {
         return m_importPercentage;
     }
-
+    
     bool CTextureFileImporter::LoadTexture()
     {
         std::string extension = m_path.extension().string();
@@ -243,7 +243,7 @@ namespace BalEditor
         {
             c = static_cast< char >( toupper( c ));
         } );
-
+        
         int anisotropy{ m_useAnisotropy ? m_anisotropyLevel : 1 };
         int sampleLevel{ (int) m_sampleLevel };
         int mipmapMode{ (int) m_mipmapMode };
@@ -251,7 +251,7 @@ namespace BalEditor
         int wrapModeU{ (int) m_wrapModeU };
         int wrapModeV{ (int) m_wrapModeV };
         int wrapModeW{ (int) m_wrapModeW };
-
+        
         if ( extension == ".KTX" || extension == ".DDS" )
         {
             gli::texture_cube texture{ gli::load( m_path.string().c_str()) };
@@ -259,7 +259,7 @@ namespace BalEditor
             {
                 return false;
             }
-
+            
             Exporter::ExportImage( m_path.filename().string(),
                                    m_destinationDirection + "\\",
                                    (uint8_t) texture.target(),
@@ -272,7 +272,7 @@ namespace BalEditor
                                    (uint8_t) (( texture.extent().x * texture.extent().y * texture.max_layer()) / texture.size()),
                                    texture.data(), anisotropy, sampleLevel, mipmapMode, filterMode, wrapModeU,
                                    wrapModeV, wrapModeW );
-
+            
             texture.clear();
         }
         else if ( extension == ".hdr" )
@@ -282,7 +282,7 @@ namespace BalEditor
             {
                 return false;
             }
-
+            
             Exporter::ExportImage( m_path.filename().string(), m_destinationDirection + "\\",
                                    (uint8_t) BalVulkan::EImageViewType::Cube,
                                    static_cast< uint32_t >( BalVulkan::EFormat::R16G16B16Sfloat),
@@ -301,7 +301,7 @@ namespace BalEditor
             uint32_t imageFormat{};
             switch ( SDL_PixelFormatEnum( pSurface->format->format ))
             {
-
+                
                 case SDL_PIXELFORMAT_UNKNOWN:
                 case SDL_PIXELFORMAT_INDEX1LSB:
                 case SDL_PIXELFORMAT_INDEX1MSB:
@@ -358,10 +358,12 @@ namespace BalEditor
                     imageFormat = (uint32_t) VK_FORMAT_B5G6R5_UNORM_PACK16;
                     break;
                 case SDL_PIXELFORMAT_RGB24:
-                    imageFormat = (uint32_t) VK_FORMAT_R8G8B8_SRGB;
+                    pSurface    = SDL_ConvertSurfaceFormat( pSurface, SDL_PIXELFORMAT_RGBA8888, 0 );
+                    imageFormat = (uint32_t) VK_FORMAT_R8G8B8A8_SRGB;
                     break;
                 case SDL_PIXELFORMAT_BGR24:
-                    imageFormat = (uint32_t) VK_FORMAT_B8G8R8_SRGB;
+                    pSurface    = SDL_ConvertSurfaceFormat( pSurface, SDL_PIXELFORMAT_ABGR8888, 0 );
+                    imageFormat = (uint32_t) VK_FORMAT_A8B8G8R8_SRGB_PACK32;
                     break;
                 case SDL_PIXELFORMAT_XRGB8888:
                     imageFormat = (uint32_t) VK_FORMAT_A8B8G8R8_SRGB_PACK32;   //TODO SWAR BGR TO RGB
@@ -415,7 +417,7 @@ namespace BalEditor
                     imageFormat = (uint32_t) VK_FORMAT_UNDEFINED;
                     break;
             }
-
+            
             Exporter::ExportImage( m_path.filename().string(),
                                    m_destinationDirection + "\\",
                                    2u,
@@ -438,7 +440,7 @@ namespace BalEditor
         }
         return true;
     }
-
+    
     const char* CTextureFileImporter::ToString( BalVulkan::ESamplerAddressMode mode )
     {
         switch ( mode )
@@ -456,12 +458,12 @@ namespace BalEditor
         }
         return nullptr;
     }
-
+    
     const char* CTextureFileImporter::ToString( BalVulkan::EFilter mode )
     {
         switch ( mode )
         {
-
+            
             case BalVulkan::EFilter::Nearest:
                 return "Nearest";
             case BalVulkan::EFilter::Linear:
@@ -469,7 +471,7 @@ namespace BalEditor
         }
         return nullptr;
     }
-
+    
     const char* CTextureFileImporter::ToString( CTextureFileImporter::ESampleLevel mode )
     {
         switch ( mode )
