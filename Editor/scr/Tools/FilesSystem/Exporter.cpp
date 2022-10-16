@@ -13,12 +13,12 @@ bool BalEditor::Exporter::ExportShader( const std::string& assetName, const std:
 {
     std::filesystem::path path{ assetPath + assetName + ".basset" };
     std::ofstream         file{ path, std::ios::out | std::ios::binary };
-
+    
     if ( !file.is_open())
     {
         return false;
     }
-
+    
     BinaryReadWrite::Write( file, (uint64_t) id );
     BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Shader );
     BinaryReadWrite::Write( file, type );
@@ -35,40 +35,29 @@ bool BalEditor::Exporter::ExportShader( const std::string& assetName, const std:
     return true;
 }
 
-bool BalEditor::Exporter::ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<BalVulkan::SVertex>& vertices, const Balbino::SMeshMetadata* pMetadata, CUuid id )
+bool BalEditor::Exporter::ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<BalVulkan::SVertex>& vertices, const std::vector<Balbino::SMeshMetadata>& pMetadata, CUuid id )
 {
     std::filesystem::path path{ assetPath + assetName };
     path.replace_extension( ".basset" );
     std::ofstream file{ path, std::ios::out | std::ios::binary };
-
+    
     if ( !file.is_open())
     {
         return false;
     }
-
+    
     BinaryReadWrite::Write( file, (uint64_t) id );
     BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Model );
     BinaryReadWrite::Write( file, (uint64_t) indices.size());
     BinaryReadWrite::Write( file, (uint64_t) vertices.size());
+    BinaryReadWrite::Write( file, (uint64_t) pMetadata.size());
     BinaryReadWrite::Write( file, indices.data(), sizeof( uint32_t ) * indices.size());
     BinaryReadWrite::Write( file, vertices.data(), sizeof( BalVulkan::SVertex ) * vertices.size());
-
-    for ( const Balbino::SMeshMetadata* pData{ pMetadata }; pData != nullptr; pData = pData->pNext )
+    for ( const auto& metadata : pMetadata )
     {
-        BinaryReadWrite::Write( file, pData->boundingBox.min.x );
-        BinaryReadWrite::Write( file, pData->boundingBox.min.y );
-        BinaryReadWrite::Write( file, pData->boundingBox.min.z );
-        BinaryReadWrite::Write( file, pData->boundingBox.max.x );
-        BinaryReadWrite::Write( file, pData->boundingBox.max.y );
-        BinaryReadWrite::Write( file, pData->boundingBox.max.z );
-        BinaryReadWrite::Write( file, pData->boundingSphere.center.x );
-        BinaryReadWrite::Write( file, pData->boundingSphere.center.y );
-        BinaryReadWrite::Write( file, pData->boundingSphere.center.z );
-        BinaryReadWrite::Write( file, pData->boundingSphere.radius );
-        BinaryReadWrite::Write( file, pData->firstIndex );
-        BinaryReadWrite::Write( file, pData->indexCount );
+        BinaryReadWrite::Write( file, metadata );
     }
-
+    
     file.close();
     return true;
 }
@@ -83,20 +72,20 @@ bool BalEditor::Exporter::ExportMaterial( const std::string& assetName, const st
                             {
                                 return pair.second;
                             } );
-
+    
     std::filesystem::path path{ assetPath + assetName + ".basset" };
     std::ofstream         file{ path, std::ios::out | std::ios::binary };
-
+    
     if ( !file.is_open())
     {
         return false;
     }
-
+    
     BinaryReadWrite::Write( file, (uint64_t) id );
     BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Material );
     BinaryReadWrite::Write( file, (uint64_t) shaderID );
     BinaryReadWrite::Write( file, shaderResource );
-
+    
     file.close();
     return true;
 }
@@ -106,12 +95,12 @@ bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::
     std::filesystem::path path{ assetPath + assetName };
     path.replace_extension( ".basset" );
     std::ofstream file{ path, std::ios::out | std::ios::binary };
-
+    
     if ( !file.is_open())
     {
         return false;
     }
-
+    
     BinaryReadWrite::Write( file, (uint64_t) id );
     BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Image );
     BinaryReadWrite::Write( file, imageType );
@@ -130,7 +119,7 @@ bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::
     BinaryReadWrite::Write( file, depth );
     BinaryReadWrite::Write( file, pitch );
     BinaryReadWrite::Write( file, pData, width * height * depth * pitch );
-
+    
     file.close();
     return true;
 }

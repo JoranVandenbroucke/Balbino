@@ -13,8 +13,8 @@ namespace Balbino
     class CMesh final : public IMesh
     {
     public:
-        CMesh( std::vector<BalVulkan::SVertex> vertices, std::vector<uint32_t> indices, SMeshMetadata metadatas, const CUuid& uuid );
-        ~CMesh();
+        CMesh( std::vector<BalVulkan::SVertex> vertices, std::vector<uint32_t> indices, std::vector<Balbino::SMeshMetadata> metadatas, const CUuid& uuid );
+        ~CMesh() override;
         CMesh( const CMesh& ) = delete;
         CMesh( CMesh&& ) = delete;
         CMesh& operator=( const CMesh& ) = delete;
@@ -27,18 +27,18 @@ namespace Balbino
         void Bind() const override;
         
         [[nodiscard]] CUuid GetUuid() const override;
-        [[nodiscard]] const Balbino::SMeshMetadata* GetMetaData() const override;
+        [[nodiscard]] const std::vector<Balbino::SMeshMetadata>& GetMetaData() const override;
         [[nodiscard]] const uint32_t GetMaterialCount() const override;
-        static CMesh* CreateNew( std::vector<BalVulkan::SVertex>& vertices, std::vector<uint32_t>& indices, SMeshMetadata metaData, uint64_t uuid );
+        static CMesh* CreateNew( std::vector<BalVulkan::SVertex>& vertices, std::vector<uint32_t>& indices, const std::vector<Balbino::SMeshMetadata>& metaData, uint64_t uuid );
     
     private:
-        std::vector<BalVulkan::SVertex> m_vertices;
-        std::vector<uint32_t> m_indices;
-        SMeshMetadata m_metadatas;
+        std::vector<BalVulkan::SVertex>     m_vertices;
+        std::vector<uint32_t>               m_indices;
+        std::vector<Balbino::SMeshMetadata> m_metadatas;
         
-        CIndexBuffer m_index;
+        CIndexBuffer  m_index;
         CVertexBuffer m_vertex;
-        CUuid m_uuid;
-        int m_materialCount;
+        CUuid         m_uuid;
+        int           m_materialCount;
     };
 }

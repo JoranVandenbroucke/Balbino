@@ -60,7 +60,7 @@ BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType 
     assert(( viewType != VK_IMAGE_VIEW_TYPE_3D || actualNumLayers == 1 ) &&
            "Cannot create array view on volume textures" );
 #endif
-
+    
     VkImageViewCreateInfo info{
             .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
             .pNext = nullptr,
@@ -75,14 +75,14 @@ BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType 
                     .layerCount = actualNumLayers,
             },
     };
-
+    
     // Find aspect mask
     bool bHasDepth{};
     bool bHasStencil{};
     switch ( pImage.GetFormat())
     {
         case VK_FORMAT_S8_UINT:
-            bHasDepth = !bHasDepth;
+            bHasDepth = true;
         case VK_FORMAT_D32_SFLOAT_S8_UINT:
         case VK_FORMAT_D16_UNORM_S8_UINT:
         case VK_FORMAT_D24_UNORM_S8_UINT:
@@ -102,14 +102,16 @@ BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType 
         default:
             info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
     }
-
+    
     CheckVkResult( vkCreateImageView( GetDevice()->GetVkDevice(), &info, nullptr, &m_imageView ));
 }
 
 BalVulkan::CImageView::~CImageView()
 {
     if ( !m_ownedBySwapchain )
+    {
         vkDestroyImageView( GetDevice()->GetVkDevice(), m_imageView, nullptr );
+    }
 }
 
 VkImageView BalVulkan::CImageView::GetImageView() const

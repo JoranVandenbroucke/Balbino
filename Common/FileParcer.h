@@ -19,6 +19,7 @@
 
 #include "Shader.h"
 #include "UUID.h"
+#include "MeshMetadata.h"
 
 enum class EFileTypes : uint8_t
 {
@@ -76,7 +77,7 @@ struct SFile
         path     = "";
         depth    = 0;
     }
-
+    
     bool                            isFolder;
     EFileTypes                      type;
     uint64_t                        uuid;
@@ -84,28 +85,28 @@ struct SFile
     std::string                     path;
     std::filesystem::file_time_type lastWrittenTime;
     int                             depth;
-
-    bool operator ==( const uint64_t& id ) const
+    
+    bool operator==( const uint64_t& id ) const
     {
         return id == uuid;
     }
-
-    bool operator ==( const CUuid& id ) const
+    
+    bool operator==( const CUuid& id ) const
     {
         return (uint64_t) id == uuid;
     }
-
-    bool operator ==( const std::string& otherName ) const
+    
+    bool operator==( const std::string& otherName ) const
     {
         return otherName == fileName;
     }
-
-    bool operator ==( const std::filesystem::path& otherPath ) const
+    
+    bool operator==( const std::filesystem::path& otherPath ) const
     {
         return otherPath == path;
     }
-
-    bool operator ==( const SFile& other ) const
+    
+    bool operator==( const SFile& other ) const
     {
         return this->uuid == other.uuid;
     }
@@ -116,144 +117,148 @@ namespace BinaryReadWrite
     //write
     template<typename T>
     std::ostream& Write( std::ostream& file, const T& value );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const T* pValue, uint64_t size );
-
+    
     template<typename T, uint64_t SIZE>
     std::ostream& Write( std::ostream& file, const std::array<T, SIZE>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::vector<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::deque<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::forward_list<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::list<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::stack<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::queue<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::priority_queue<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::set<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::multiset<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::unordered_set<T>& values );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::unordered_multiset<T>& values );
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::map<K, V>& values );
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::multimap<K, V>& values );
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::unordered_map<K, V>& values );
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::unordered_multimap<K, V>& values );
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::pair<K, V>& values );
-
+    
     std::ostream& Write( std::ostream& file, const std::string& value );
-
+    
     std::ostream& Write( std::ostream& file, const BalVulkan::SShaderResource& value );
-
+    
+    std::ostream& Write( std::ostream& file, const Balbino::SMeshMetadata& value );
+    
     //read
     template<typename T>
     std::istream& Read( std::istream& file, T& value );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, T*& pValue, uint64_t size );
-
+    
     template<typename T, uint64_t SIZE>
     std::istream& Read( std::istream& file, std::array<T, SIZE>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::vector<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::deque<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::forward_list<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::list<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::stack<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::queue<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::priority_queue<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::set<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::multiset<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::unordered_set<T>& values );
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::unordered_multiset<T>& values );
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::map<K, V>& values );
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::multimap<K, V>& values );
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::unordered_map<K, V>& values );
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::unordered_multimap<K, V>& values );
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::pair<K, V>& values );
-
+    
     std::istream& Read( std::istream& file, std::string& value );
-
+    
     std::istream& Read( std::istream& file, BalVulkan::SShaderResource& value );
-
+    
+    std::istream& Read( std::istream& file, Balbino::SMeshMetadata& value );
+    
     /////////////////////////////////////////////////////////////////////////////////////////////
     std::istream& IsAtStart( std::istream& file, bool& isAtStart );
-
+    
     std::istream& IsAtEnd( std::istream& file, bool& isAtEnd );
-
+    
     std::istream& MoveCursor( std::istream& file, int value );
-
+    
     std::istream& MoveCursorTo( std::istream& file, int value );
-
+    
     std::istream& MoveCursorToStart( std::istream& file );
-
+    
     std::istream& MoveCursorToEnd( std::istream& file );
-
+    
     std::istream& GetCursorPosition( std::istream& file, uint64_t& size );
-
+    
     std::istream& GetData( std::istream& file, char* pData, int64_t size );
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const T& value )
     {
@@ -268,13 +273,13 @@ namespace BinaryReadWrite
         }
         return file.write( reinterpret_cast< const char* >( &value ), sizeof( T ));
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const T* pValue, uint64_t size )
     {
         return file.write( reinterpret_cast< const char* >( pValue ), size );
     }
-
+    
     template<typename T, uint64_t SIZE>
     std::ostream& Write( std::ostream& file, const std::array<T, SIZE>& values )
     {
@@ -286,7 +291,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::vector<T>& values )
     {
@@ -298,7 +303,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::deque<T>& values )
     {
@@ -310,7 +315,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::forward_list<T>& values )
     {
@@ -321,7 +326,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::list<T>& values )
     {
@@ -333,7 +338,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::stack<T>& values )
     {
@@ -345,7 +350,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::queue<T>& values )
     {
@@ -359,7 +364,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::priority_queue<T>& values )
     {
@@ -371,10 +376,10 @@ namespace BinaryReadWrite
             Write( file, copy.top());
             copy.pop();
         }
-
+        
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::set<T>& values )
     {
@@ -386,7 +391,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::multiset<T>& values )
     {
@@ -398,7 +403,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::unordered_set<T>& values )
     {
@@ -410,7 +415,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::ostream& Write( std::ostream& file, const std::unordered_multiset<T>& values )
     {
@@ -422,7 +427,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::map<K, V>& values )
     {
@@ -434,7 +439,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::multimap<K, V>& values )
     {
@@ -446,7 +451,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::unordered_map<K, V>& values )
     {
@@ -458,7 +463,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::unordered_multimap<K, V>& values )
     {
@@ -470,7 +475,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::ostream& Write( std::ostream& file, const std::pair<K, V>& values )
     {
@@ -478,7 +483,7 @@ namespace BinaryReadWrite
         Write( file, values.second );
         return file;
     }
-
+    
     //read
     template<typename T>
     std::istream& Read( std::istream& file, T& value )
@@ -494,13 +499,13 @@ namespace BinaryReadWrite
         }
         return file.read( reinterpret_cast< char* >( &value ), sizeof( T ));
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, T*& pValue, uint64_t size )
     {
         return file.read( reinterpret_cast< char* >( pValue ), size );
     }
-
+    
     template<typename T, uint64_t SIZE>
     std::istream& Read( std::istream& file, std::array<T, SIZE>& values )
     {
@@ -512,7 +517,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::vector<T>& values )
     {
@@ -525,7 +530,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::deque<T>& values )
     {
@@ -538,7 +543,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::forward_list<T>& values )
     {
@@ -557,7 +562,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::list<T>& values )
     {
@@ -569,7 +574,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::stack<T>& values )
     {
@@ -581,7 +586,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::queue<T>& values )
     {
@@ -595,7 +600,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::priority_queue<T>& values )
     {
@@ -609,7 +614,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::set<T>& values )
     {
@@ -623,7 +628,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::multiset<T>& values )
     {
@@ -637,7 +642,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::unordered_set<T>& values )
     {
@@ -651,7 +656,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename T>
     std::istream& Read( std::istream& file, std::unordered_multiset<T>& values )
     {
@@ -665,7 +670,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::map<K, V>& values )
     {
@@ -679,7 +684,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::multimap<K, V>& values )
     {
@@ -693,7 +698,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::unordered_map<K, V>& values )
     {
@@ -707,7 +712,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::unordered_multimap<K, V>& values )
     {
@@ -721,7 +726,7 @@ namespace BinaryReadWrite
         }
         return file;
     }
-
+    
     template<typename K, typename V>
     std::istream& Read( std::istream& file, std::pair<K, V>& values )
     {
@@ -729,7 +734,7 @@ namespace BinaryReadWrite
         Read( file, values.second );
         return file;
     }
-
+    
 }
 
 
@@ -737,7 +742,7 @@ inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const std::stri
 {
     const char* pText = value.c_str();
     const int size = static_cast< int >( value.size());
-
+    
     Write( file, size );
     return file.write( pText, size );
 }
@@ -756,7 +761,7 @@ inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const BalVulkan
     {
         Write( file, (uint8_t) 2 );
     }
-
+    
     Write( file, (uint8_t) value.type );
     Write( file, (uint8_t) value.mode );
     Write( file, value.set );
@@ -824,7 +829,7 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, BalVulkan::SShad
     {
         value.stages = VK_SHADER_STAGE_FRAGMENT_BIT;
     }
-
+    
     value.type = (BalVulkan::EShaderResourceType) resourceType;
     value.mode = (BalVulkan::EShaderResourceMode) resourceMode;
     return file;
@@ -832,13 +837,18 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, BalVulkan::SShad
 
 inline std::istream& BinaryReadWrite::IsAtStart( std::istream& file, bool& isAtStart )
 {
-    isAtStart = (uint32_t) file.tellg() <= (uint32_t) file.beg;
+    isAtStart = (uint32_t) file.tellg() <= (uint32_t) std::istream::beg;
     return file;
 }
 
 inline std::istream& BinaryReadWrite::IsAtEnd( std::istream& file, bool& isAtEnd )
 {
-    isAtEnd = (uint32_t) file.tellg() >= (uint32_t) file.end - 1;
+    auto current = (int) file.tellg();
+    MoveCursorToEnd( file );
+    auto end = (int) file.tellg() - 1;
+    MoveCursorTo( file, current );
+    isAtEnd = current >= end;
+//    isAtEnd = file.eof();
     return file;
 }
 
@@ -875,5 +885,37 @@ inline std::istream& BinaryReadWrite::GetCursorPosition( std::istream& file, uin
 inline std::istream& BinaryReadWrite::GetData( std::istream& file, char* pData, const int64_t size )
 {
     file.read( pData, size );
+    return file;
+}
+inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const Balbino::SMeshMetadata& value )
+{
+    BinaryReadWrite::Write( file, value.boundingBox.min.x );
+    BinaryReadWrite::Write( file, value.boundingBox.min.y );
+    BinaryReadWrite::Write( file, value.boundingBox.min.z );
+    BinaryReadWrite::Write( file, value.boundingBox.max.x );
+    BinaryReadWrite::Write( file, value.boundingBox.max.y );
+    BinaryReadWrite::Write( file, value.boundingBox.max.z );
+    BinaryReadWrite::Write( file, value.boundingSphere.center.x );
+    BinaryReadWrite::Write( file, value.boundingSphere.center.y );
+    BinaryReadWrite::Write( file, value.boundingSphere.center.z );
+    BinaryReadWrite::Write( file, value.boundingSphere.radius );
+    BinaryReadWrite::Write( file, value.firstIndex );
+    BinaryReadWrite::Write( file, value.indexCount );
+    return file;
+}
+inline std::istream& BinaryReadWrite::Read( std::istream& file, Balbino::SMeshMetadata& value )
+{
+    BinaryReadWrite::Read( file, value.boundingBox.min.x );
+    BinaryReadWrite::Read( file, value.boundingBox.min.y );
+    BinaryReadWrite::Read( file, value.boundingBox.min.z );
+    BinaryReadWrite::Read( file, value.boundingBox.max.x );
+    BinaryReadWrite::Read( file, value.boundingBox.max.y );
+    BinaryReadWrite::Read( file, value.boundingBox.max.z );
+    BinaryReadWrite::Read( file, value.boundingSphere.center.x );
+    BinaryReadWrite::Read( file, value.boundingSphere.center.y );
+    BinaryReadWrite::Read( file, value.boundingSphere.center.z );
+    BinaryReadWrite::Read( file, value.boundingSphere.radius );
+    BinaryReadWrite::Read( file, value.firstIndex );
+    BinaryReadWrite::Read( file, value.indexCount );
     return file;
 }

@@ -498,7 +498,7 @@ void BalEditor::CAssetBrowser::MoveFile( SFile* pFile, const std::filesystem::pa
     pFile->path = destination.string() + "\\" + pFile->fileName;
 }
 
-void BalEditor::CAssetBrowser::Rename( std::filesystem::path oldName, std::filesystem::path newName )
+void BalEditor::CAssetBrowser::Rename( const std::filesystem::path& oldName, std::filesystem::path newName )
 {
     std::filesystem::rename( oldName, newName );
 }

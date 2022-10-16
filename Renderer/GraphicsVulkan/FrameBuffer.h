@@ -5,11 +5,9 @@
 
 namespace BalVulkan
 {
-    class CSampler;
-    class CSwapchain;
-    class CImageResource;
     class CImageView;
-    class CBuffer;
+    
+    class CRenderPass;
     
     class CFrameBuffer final : public CDeviceObject
     {
@@ -19,19 +17,13 @@ namespace BalVulkan
         CFrameBuffer& operator=( CFrameBuffer&& ) = default;
         ~CFrameBuffer() override;
         
-        void Initialize( const CSwapchain* pSwapchain );
-        VkRenderPass GetRenderPass() const;
+        //the framebuffer assumes that rendering is forward
+        void Initialize( BalVulkan::CRenderPass* pRenderPass, uint32_t width, uint32_t height, const std::vector<CImageView*>& renderTargets, CImageView* pDepth );
+        
         VkFramebuffer GetFrameBuffer( uint32_t idx ) const;
         static CFrameBuffer* CreateNew( const CDevice* pDevice );
     private:
-        VkRenderPass m_renderPass;
         std::vector<VkFramebuffer> m_frameBuffer;
         
-        std::vector<CImageResource*> m_swapchainResources;
-        std::vector<CImageView*> m_swapchainViews;
-        CImageResource* m_pDepthImage;
-        CImageView* m_pDepthImageView;
-        
-        VkFormat GetDepthFormat() const;
     };
 }

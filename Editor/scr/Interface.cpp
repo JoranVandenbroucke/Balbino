@@ -9,7 +9,7 @@
 #include "Tools/FilesSystem/Inporter/MeshFileImporter.h"
 #include "Tools/FilesSystem/Inporter/TextureFileImporter.h"
 
-#include <FrameBuffer.h>
+#include <RenderPass.h>
 #include <Queue.h>
 
 #include <imgui.h>
@@ -36,14 +36,14 @@ BalEditor::CInterface::CInterface()
 {
 }
 
-void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CFrameBuffer* pFrameBuffer, const BalVulkan::CSwapchain* pSwapchain, ISystem* pSystem )
+void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CRenderPass* pRenderPass, const BalVulkan::CSwapchain* pSwapchain, ISystem* pSystem )
 {
     (void) pSystem;
     m_pWindow = pWindow;
     m_pDevice = pDevice;
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-
+    
     ImGui_ImplSDL2_InitForVulkan( pWindow );
     // CreateNew Descriptor Pool
     {
@@ -66,7 +66,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
         pool_info.pPoolSizes    = poolSizes;
         vkCreateDescriptorPool( pDevice->GetVkDevice(), &pool_info, nullptr, &m_descriptorPool );
     }
-
+    
     ImGui_ImplVulkan_InitInfo info{};
     info.Instance        = nullptr; //todo: maybe?
     info.PhysicalDevice  = pDevice->GetPhysicalDeviceInfo()->device;
@@ -80,11 +80,11 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     info.MinImageCount   = pSwapchain->GetMinImage();
     info.ImageCount      = pSwapchain->GetImageCount();
     info.Subpass         = 0;
-
-    ImGui_ImplVulkan_Init( &info, pFrameBuffer->GetRenderPass());
+    
+    ImGui_ImplVulkan_Init( &info, pRenderPass->GetRenderPass());
     ImNodes::CreateContext();
     ImNodes::StyleColorsDark();
-
+    
     ImGuiIO& io                = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -94,34 +94,34 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     //io.ConfigViewportsNoTaskBarIcon = true;
     io.DisplaySize             = ImVec2( static_cast<float>( w ), static_cast<float>( h ));
     io.DisplayFramebufferScale = ImVec2( 1.0f, 1.0f );
-
+    
     // Setup Dear ImGui style
     SetImGuiStyle();
-
+    
     ImNodes::GetIO().link_detach_with_modifier_click.modifier = &ImGui::GetIO().KeyCtrl;
     //ImNodes::PushAttributeFlag( ImNodes::AttributeFlags_EnableLinkDetachWithDragClick );
-
+    
     // Upload Fonts
     {
         // Use any command queue
         const VkCommandPool   commandPool   = pCommandPool->GetCommandPool();
         const VkCommandBuffer commandBuffer = pCommandPool->GetCommandBuffer();
-
+        
         vkResetCommandPool( pDevice->GetVkDevice(), commandPool, 0 );
         VkCommandBufferBeginInfo beginInfo = {};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
         vkBeginCommandBuffer( commandBuffer, &beginInfo );
-
+        
         ImGui_ImplVulkan_CreateFontsTexture( commandBuffer );
-
+        
         VkSubmitInfo endInfo = {};
         endInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         endInfo.commandBufferCount = 1;
         endInfo.pCommandBuffers    = &commandBuffer;
         vkEndCommandBuffer( commandBuffer );
         vkQueueSubmit( pQueue->GetQueue(), 1, &endInfo, VK_NULL_HANDLE );
-
+        
         pDevice->WaitIdle();
         ImGui_ImplVulkan_DestroyFontUploadObjects();
     }
@@ -134,7 +134,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     m_pMaterialEditor  = new CMaterialEditor{};
     m_pMeshImporter    = new CMeshFileImporter{};
     m_pTextureImporter = new CTextureFileImporter{};
-
+    
     m_pAssetBrowser->Initialize( pSystem );
     m_pMaterialEditor->Initialize( pSystem );
 }
@@ -148,19 +148,19 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
         m_pendingResources.pop_back();
         m_queueNextResource = false;
     }
-
+    
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
-
+    
     m_pMain->Draw();
     m_pGameView->Draw();
     m_pAssetBrowser->Draw();
     m_pSceneHierarchy->Draw();
     m_pShaderGraph->Draw();
     m_pMaterialEditor->Draw();
-
+    
     if ( m_pMeshImporter->IsVisible())
     {
         m_queueNextResource = m_pMeshImporter->DrawImportSettings();
@@ -169,7 +169,7 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
     {
         m_queueNextResource = m_pTextureImporter->DrawImportSettings();
     }
-
+    
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData( ImGui::GetDrawData(), pCommandPool->GetCommandBuffer());
 }
@@ -183,7 +183,7 @@ void BalEditor::CInterface::Cleanup() const
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
-
+    
     delete m_pMain;
     delete m_pGameView;
     delete m_pAssetBrowser;
@@ -240,7 +240,7 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
                     {
                         key = ImGuizmo::OPERATION::TRANSLATE;
                     }
-
+                    
                     else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_Y || key & ImGuizmo::OPERATION::ROTATE_Z )
                     {
                         key = ImGuizmo::OPERATION::ROTATE_X;
@@ -249,7 +249,7 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
                     {
                         key = ImGuizmo::OPERATION::ROTATE;
                     }
-
+                    
                     else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_Y || key & ImGuizmo::OPERATION::SCALE_Z )
                     {
                         key = ImGuizmo::OPERATION::SCALE_X;
@@ -268,7 +268,7 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
                     {
                         key = ImGuizmo::OPERATION::TRANSLATE;
                     }
-
+                    
                     else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Z )
                     {
                         key = ImGuizmo::OPERATION::ROTATE_Y;
@@ -277,7 +277,7 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
                     {
                         key = ImGuizmo::OPERATION::ROTATE;
                     }
-
+                    
                     else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Z )
                     {
                         key = ImGuizmo::OPERATION::SCALE_Y;
@@ -296,7 +296,7 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
                     {
                         key = ImGuizmo::OPERATION::TRANSLATE;
                     }
-
+                    
                     else if ( key & ImGuizmo::OPERATION::ROTATE || key & ImGuizmo::OPERATION::ROTATE_X || key & ImGuizmo::OPERATION::ROTATE_Y )
                     {
                         key = ImGuizmo::OPERATION::ROTATE_Z;
@@ -305,7 +305,7 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
                     {
                         key = ImGuizmo::OPERATION::ROTATE;
                     }
-
+                    
                     else if ( key & ImGuizmo::OPERATION::SCALE || key & ImGuizmo::OPERATION::SCALE_X || key & ImGuizmo::OPERATION::SCALE_Y )
                     {
                         key = ImGuizmo::OPERATION::SCALE_Z;
@@ -345,7 +345,7 @@ void BalEditor::CInterface::SetImGuiStyle()
 {
     ImGuiStyle* style  = &ImGui::GetStyle();
     ImVec4    * colors = style->Colors;
-
+    
     colors[ImGuiCol_Text]                  = ImVec4( 1.000f, 1.000f, 1.000f, 1.000f );
     colors[ImGuiCol_TextDisabled]          = ImVec4( 0.500f, 0.500f, 0.500f, 1.000f );
     colors[ImGuiCol_WindowBg]              = ImVec4( 0.180f, 0.180f, 0.180f, 1.000f );
@@ -396,7 +396,7 @@ void BalEditor::CInterface::SetImGuiStyle()
     colors[ImGuiCol_NavWindowingHighlight] = ImVec4( 0.038f, 0.420f, 0.000f, 1.000f );
     colors[ImGuiCol_NavWindowingDimBg]     = ImVec4( 0.000f, 0.000f, 0.000f, 0.586f );
     colors[ImGuiCol_ModalWindowDimBg]      = ImVec4( 0.000f, 0.000f, 0.000f, 0.586f );
-
+    
     style->WindowPadding     = ImVec2( 2.0f, 2.0f );
     style->FramePadding      = ImVec2( 2.0f, 2.0f );
     style->CellPadding       = ImVec2( 2.0f, 2.0f );
@@ -406,13 +406,13 @@ void BalEditor::CInterface::SetImGuiStyle()
     style->IndentSpacing     = 22.0f;
     style->ScrollbarSize     = 12.0f;
     style->GrabMinSize       = 12.0f;
-
+    
     style->WindowBorderSize = 0.0f;
     style->ChildBorderSize  = 1.0f;
     style->PopupBorderSize  = 1.0f;
     style->FrameBorderSize  = 1.0f;
     style->TabBorderSize    = 1.0f;
-
+    
     style->WindowRounding    = 0.0f;
     style->ChildRounding     = 4.0f;
     style->FrameRounding     = 4.0f;

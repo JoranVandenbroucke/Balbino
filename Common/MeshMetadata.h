@@ -7,7 +7,7 @@ namespace Balbino
 {
     struct SSphere
     {
-        float radius{ 1.0f };
+        float     radius{ 1.0f };
         glm::vec3 center{};
     };
     struct SBox
@@ -15,20 +15,12 @@ namespace Balbino
         glm::vec3 min{};
         glm::vec3 max{};
     };
-	struct SMeshMetadata
-	{
+    
+    struct SMeshMetadata
+    {
         uint32_t firstIndex{};
         uint32_t indexCount{};
-        SSphere boundingSphere{};
-        SBox boundingBox{};
-        SMeshMetadata* pNext{ nullptr};
-        SMeshMetadata* pPrevious{ nullptr};
-        
-        SMeshMetadata operator[](int index)
-        {
-            if(index == 0) return *this;
-            if(!pNext) return {};
-            return pNext[index-1];
-        }
-	};
+        SSphere  boundingSphere{};
+        SBox     boundingBox{};
+    };
 }

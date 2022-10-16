@@ -3,9 +3,10 @@
 #include "Device.h"
 #include "Funtions.h"
 #include "Shader.h"
+#include "Instance.h"
 #include "Swapchain.h"
 
-auto operator <=>( uint32_t lhs, BalVulkan::EShaderType rhs )
+auto operator<=>( uint32_t lhs, BalVulkan::EShaderType rhs )
 {
     return lhs <=> static_cast<uint32_t>( rhs );
 }
@@ -17,17 +18,17 @@ BalVulkan::CShaderPipeline::~CShaderPipeline()
     vkDestroyDescriptorSetLayout( GetDevice()->GetVkDevice(), m_descriptorSetLayout, nullptr );
 }
 
-void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CShader*>& shaders, const CFrameBuffer& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode cullModeFlag )
+void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CShader*>& shaders, const CRenderPass& renderPass, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode cullModeFlag )
 {
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages{};
     std::vector<VkDescriptorSetLayoutBinding>    setLayoutBindings{};
     std::vector<VkWriteDescriptorSet>            writeDescriptor{};
     std::vector<VkDescriptorBindingFlagsEXT>     bindingFlags;
-
+    
     std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindingsLookup;
     std::unordered_map<uint32_t, VkDescriptorBindingFlagsEXT>  bindingFlagsLookup;
     std::unordered_map<std::string, uint32_t>                  resourcesLookup;
-
+    
     VkCullModeFlags cullmode{ VK_CULL_MODE_FLAG_BITS_MAX_ENUM };
     switch ( cullModeFlag )
     {
@@ -71,15 +72,15 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
         for ( const auto& shaderResource : resources )
         {
             std::string key = shaderResource.name;
-
+            
             // Since 'Input' and 'Output' resources can have the same name, we modify the key string
             if ( shaderResource.type == EShaderResourceType::Input || shaderResource.type == EShaderResourceType::Output )
             {
                 key = std::to_string( shaderResource.stages ) + "_" + key;
             }
-
+            
             const auto it{ m_shaderResources.find( key ) };
-
+            
             if ( it != m_shaderResources.end())
             {
                 // Append stage flags if resource already exists
@@ -97,10 +98,10 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
     for ( const auto& it : m_shaderResources )
     {
         const auto& shaderResource = it.second;
-
+        
         // Find binding by set index in the map.
         auto it2 = m_shaderSets.find( shaderResource.set );
-
+        
         if ( it2 != m_shaderSets.end())
         {
             // Add resource to the found set index
@@ -112,7 +113,7 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             m_shaderSets.emplace( shaderResource.set, std::vector<SShaderResource>{ shaderResource } );
         }
     }
-
+    
     for ( const auto& shaderSet : m_shaderSets )
     {
         for ( auto& resource : shaderSet.second )
@@ -125,11 +126,11 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             {
                 continue;
             }
-
+            
             // Convert from EShaderResourceType to VkDescriptorType.
             const auto descriptorType = FindDescriptorType( resource.type,
                                                             resource.mode == EShaderResourceMode::Dynamic );
-
+            
             if ( resource.mode == EShaderResourceMode::UpdateAfterBind )
             {
                 bindingFlags.push_back( VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT );
@@ -141,7 +142,7 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
                 // Adding 0 ensures the bindings that don`t use any flags are mapped correctly.
                 bindingFlags.push_back( 0 );
             }
-
+            
             auto existing = std::ranges::find_if( setLayoutBindings,
                                                   [ &resource ]( const VkDescriptorSetLayoutBinding& binding )
                                                   {
@@ -157,24 +158,24 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             {
                 // Convert ShaderResource to VkDescriptorSetLayoutBinding
                 VkDescriptorSetLayoutBinding layoutBinding{};
-
+                
                 layoutBinding.binding         = resource.binding;
                 layoutBinding.descriptorCount = resource.arraySize;
                 layoutBinding.descriptorType  = descriptorType;
                 layoutBinding.stageFlags      = static_cast<VkShaderStageFlags>( resource.stages );
-
+                
                 setLayoutBindings.push_back( layoutBinding );
-
+                
                 // Store mapping between binding and the binding point
                 bindingsLookup.emplace( resource.binding, layoutBinding );
             }
-
+            
             bindingFlagsLookup.emplace( resource.binding, bindingFlags.back());
-
+            
             resourcesLookup.emplace( resource.name, resource.binding );
         }
     }
-
+    
     const VkDescriptorSetLayoutCreateInfo descriptorLayout{
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
             .bindingCount = static_cast<uint32_t>( setLayoutBindings.size()),
@@ -182,7 +183,7 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
     };
     CheckVkResult( vkCreateDescriptorSetLayout( GetDevice()->GetVkDevice(), &descriptorLayout, nullptr,
                                                 &m_descriptorSetLayout ));
-
+    
     // Shared pipeline layout used by all pipelines
     VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo{
             .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
@@ -191,8 +192,8 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
     };
     CheckVkResult( vkCreatePipelineLayout( GetDevice()->GetVkDevice(), &pPipelineLayoutCreateInfo, nullptr,
                                            &m_pipelineLayout ), "failed to create pipeline layout!" );
-
-
+    
+    
     constexpr VkPipelineInputAssemblyStateCreateInfo inputAssemblyState{
             .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
             .pNext = VK_NULL_HANDLE,
@@ -214,7 +215,7 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             .depthBiasSlopeFactor = 0,
             .lineWidth = 1.0f,
     };
-
+    
     const std::vector                           blendAttachmentStates( blendAttachmentSize,
                                                                        VkPipelineColorBlendAttachmentState{ .blendEnable = VK_FALSE, .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, } );
     const VkPipelineColorBlendStateCreateInfo   colorBlendState{
@@ -253,7 +254,7 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             .scissorCount = 1,
             .pScissors = &scissor,
     };
-
+    
     const VkPipelineMultisampleStateCreateInfo         multisampleState{
             .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
             .flags = 0,
@@ -294,12 +295,12 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             .pDepthStencilState = &depthStencilState,
             .pColorBlendState = &colorBlendState,
             .layout = m_pipelineLayout,
-            .renderPass = frameBuffer.GetRenderPass(),
+            .renderPass = renderPass.GetRenderPass(),
             .subpass = 0,
             .basePipelineHandle = VK_NULL_HANDLE,
             .basePipelineIndex = 0,
     };
-
+    
     CheckVkResult( vkCreateGraphicsPipelines( GetDevice()->GetVkDevice(), m_pipelineCache, 1, &pipelineCI, nullptr,
                                               &m_pipeline ), "failed to create graphics pipeline!" );
 }
