@@ -7,7 +7,9 @@
 namespace BalVulkan
 {
     class CQueue;
+    
     class CCommandPool;
+    
     class CDevice;
 }
 
@@ -30,7 +32,7 @@ namespace Balbino
         virtual void Bind() const = 0;
         
         [[nodiscard]] virtual CUuid GetUuid() const = 0;
-        [[nodiscard]] virtual const Balbino::SMeshMetadata* GetMetaData() const = 0;
+        [[nodiscard]] virtual const std::vector<Balbino::SMeshMetadata>& GetMetaData() const = 0;
         [[nodiscard]] virtual const uint32_t GetMaterialCount() const = 0;
     };
 }

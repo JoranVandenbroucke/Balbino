@@ -6,12 +6,12 @@
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData )
 {
-    ( void ) flags;
-    ( void ) object;
-    ( void ) location;
-    ( void ) messageCode;
-    ( void ) pUserData;
-    ( void ) pLayerPrefix; // Unused arguments
+    (void) flags;
+    (void) object;
+    (void) location;
+    (void) messageCode;
+    (void) pUserData;
+    (void) pLayerPrefix; // Unused arguments
     fprintf(stderr, "[vulkan] Debug report from ObjectType: %i\r\nMessage: %s\r\n\r\n", objectType, pMessage );
     return VK_FALSE;
 }
@@ -32,10 +32,10 @@ BalVulkan::CInstanceHolder::~CInstanceHolder()
 }
 
 BalVulkan::CInstance::CInstance()
-        : CInstanceHolder{}
-          , m_debugReport{ VK_NULL_HANDLE }
-          , m_pCallbacks{ nullptr }
-          , m_surfaceKhr{ VK_NULL_HANDLE }
+        : CInstanceHolder{},
+          m_debugReport{ VK_NULL_HANDLE },
+          m_pCallbacks{ nullptr },
+          m_surfaceKhr{ VK_NULL_HANDLE }
 {
 }
 
@@ -60,13 +60,13 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
     
     // CreateNew Vulkan Instance
     {
-        VkApplicationInfo applicationInfo{
+        VkApplicationInfo    applicationInfo{
                 .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
                 .pNext = nullptr,
                 .pApplicationName = "Balbino",  //todo read form file
-                .applicationVersion = VK_MAKE_VERSION(0,0,0),   //todo read from file
+                .applicationVersion = VK_MAKE_VERSION( 0, 0, 0 ),   //todo read from file
                 .pEngineName = "Balbino Engine",
-                .engineVersion = VK_MAKE_VERSION(0,1,1),
+                .engineVersion = VK_MAKE_VERSION( 0, 1, 1 ),
                 .apiVersion = VK_API_VERSION_1_3,
         };
         VkInstanceCreateInfo createInfo{
@@ -75,12 +75,12 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
                 //.ppEnabledLayerNames = (!m_enabledInstanceLayers.empty()) ? m_enabledInstanceLayers.data() : NULL,
                 .enabledExtensionCount = extensionsCount, .ppEnabledExtensionNames = extensions,
         };
-        VkResult err = VK_ERROR_INITIALIZATION_FAILED;
+        VkResult             err = VK_ERROR_INITIALIZATION_FAILED;
 #if defined(_DEBUG)
         
         // Enabling validation layers
         const char* layers[]{ "VK_LAYER_KHRONOS_validation" };
-        createInfo.enabledLayerCount = 1;
+        createInfo.enabledLayerCount   = 1;
         createInfo.ppEnabledLayerNames = layers;
         
         // Enable debug report extension (we need additional storage, so we duplicate the user array to add our new extension to it)
@@ -88,8 +88,8 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
                 static_cast<const char**>( malloc( sizeof( const char* ) * ( extensionsCount + 1 )))
         };
         memcpy( extensionsExt, extensions, extensionsCount * sizeof( const char* ));
-        extensionsExt[ extensionsCount ] = "VK_EXT_debug_report";
-        createInfo.enabledExtensionCount = extensionsCount + 1;
+        extensionsExt[extensionsCount] = "VK_EXT_debug_report";
+        createInfo.enabledExtensionCount   = extensionsCount + 1;
         createInfo.ppEnabledExtensionNames = extensionsExt;
         
         err = vkCreateInstance( &createInfo, m_pCallbacks, &m_instanceHandle );
@@ -97,16 +97,18 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
         free( extensionsExt );
         if ( err == VK_SUCCESS )
         {
-            vkpfn_CreateDebugReportCallbackEXT = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>( vkGetInstanceProcAddr( m_instanceHandle, "vkCreateDebugReportCallbackEXT" ));
-            vkpfn_DestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>( vkGetInstanceProcAddr( m_instanceHandle, "vkDestroyDebugReportCallbackEXT" ));
+            vkpfn_CreateDebugReportCallbackEXT  = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>( vkGetInstanceProcAddr(
+                    m_instanceHandle, "vkCreateDebugReportCallbackEXT" ));
+            vkpfn_DestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>( vkGetInstanceProcAddr(
+                    m_instanceHandle, "vkDestroyDebugReportCallbackEXT" ));
             if ( vkpfn_CreateDebugReportCallbackEXT && vkpfn_DestroyDebugReportCallbackEXT )
             {
                 VkDebugReportCallbackCreateInfoEXT debugReportCi{};
-                debugReportCi.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-                debugReportCi.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT |
-                                      VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
+                debugReportCi.sType       = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+                debugReportCi.flags       = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT |
+                                            VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
                 debugReportCi.pfnCallback = DebugReport;
-                debugReportCi.pUserData = nullptr;
+                debugReportCi.pUserData   = nullptr;
                 vkpfn_CreateDebugReportCallbackEXT( m_instanceHandle, &debugReportCi, m_pCallbacks, &m_debugReport );
                 CheckVkResult( err );
             }
@@ -121,9 +123,10 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
     {
         uint32_t gpuCount{};
         CheckVkResult( vkEnumeratePhysicalDevices( m_instanceHandle, &gpuCount, nullptr ));
-    
-        if (gpuCount == 0) {
-            throw std::runtime_error("failed to find GPUs with Vulkan support!");
+        
+        if ( gpuCount == 0 )
+        {
+            throw std::runtime_error( "failed to find GPUs with Vulkan support!" );
         }
         
         std::vector<VkPhysicalDevice> gpus( gpuCount, nullptr );
@@ -132,10 +135,10 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
         for ( uint32_t i = 0; i < gpuCount; ++i )
         {
             uint32_t count;
-            SPhysicalDeviceInfo& info{ m_physicalDevices[ i ] };
-            info.device = gpus[ i ];
-            vkGetPhysicalDeviceProperties( gpus[ i ], &info.deviceProperties );
-            vkGetPhysicalDeviceMemoryProperties( gpus[ i ], &info.deviceMemoryProperties );
+            SPhysicalDeviceInfo& info{ m_physicalDevices[i] };
+            info.device = gpus[i];
+            vkGetPhysicalDeviceProperties( gpus[i], &info.deviceProperties );
+            vkGetPhysicalDeviceMemoryProperties( gpus[i], &info.deviceMemoryProperties );
             vkGetPhysicalDeviceQueueFamilyProperties( info.device, &count, nullptr );
             info.queueFamilyProperties.resize( count );
             vkGetPhysicalDeviceQueueFamilyProperties( info.device, &count, info.queueFamilyProperties.data());
@@ -156,7 +159,10 @@ uint8_t BalVulkan::CInstance::DeviceCount() const
 
 BalVulkan::CDevice* BalVulkan::CInstance::CreateDevice( uint32_t physicalDeviceIndex )
 {
-    const SPhysicalDeviceInfo& info{ m_physicalDevices[ std::max( static_cast<uint32_t>( 0 ), std::min( physicalDeviceIndex, static_cast<uint32_t>( m_physicalDevices.size()))) ] };
+    const SPhysicalDeviceInfo& info{ m_physicalDevices[std::max( static_cast<uint32_t>( 0 ),
+                                                                 std::min( physicalDeviceIndex,
+                                                                           static_cast<uint32_t>( m_physicalDevices.size())))]
+    };
     return CDevice::Create( &info, m_pCallbacks
 #ifdef _DEBUG
             , { "VK_LAYER_KHRONOS_validation" }
@@ -170,11 +176,11 @@ uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& 
 {
     for ( uint32_t i = 0; i < static_cast<uint32_t>( m_physicalDevices.size()); ++i )
     {
-        for ( uint32_t j = 0; j < static_cast<uint32_t>( m_physicalDevices[ i ].queueFamilyProperties.size()); ++j )
+        for ( uint32_t j = 0; j < static_cast<uint32_t>( m_physicalDevices[i].queueFamilyProperties.size()); ++j )
         {
             VkBool32 supportsPresent{ VK_FALSE };
-            vkGetPhysicalDeviceSurfaceSupportKHR( m_physicalDevices[ i ].device, j, surf, &supportsPresent );
-            if ( supportsPresent && ( m_physicalDevices[ i ].queueFamilyProperties[ j ].queueFlags & VK_QUEUE_GRAPHICS_BIT ) && m_physicalDevices[i].deviceFeatures.samplerAnisotropy)
+            vkGetPhysicalDeviceSurfaceSupportKHR( m_physicalDevices[i].device, j, surf, &supportsPresent );
+            if ( supportsPresent && ( m_physicalDevices[i].queueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT ) && m_physicalDevices[i].deviceFeatures.samplerAnisotropy )
             {
                 return j;
             }
@@ -205,7 +211,7 @@ const VkInstance& BalVulkan::CInstanceHolder::GetHandle() const
 
 VkFormat BalVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features ) const
 {
-    for ( const VkFormat format: candidates )
+    for ( const VkFormat format : candidates )
     {
         VkFormatProperties props;
         vkGetPhysicalDeviceFormatProperties( device, format, &props );
@@ -221,6 +227,17 @@ VkFormat BalVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<
     }
     
     throw std::runtime_error( "failed to find supported format!" );
+}
+
+VkFormat BalVulkan::SPhysicalDeviceInfo::GetDepthFormat() const
+{
+    return FindSupportedFormat( std::vector{
+            VK_FORMAT_D32_SFLOAT_S8_UINT,
+            VK_FORMAT_D32_SFLOAT,
+            VK_FORMAT_D24_UNORM_S8_UINT,
+            VK_FORMAT_D16_UNORM_S8_UINT,
+            VK_FORMAT_D16_UNORM
+    }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
 }
 
 VkSampleCountFlagBits BalVulkan::SPhysicalDeviceInfo::GetMaxUsableSampleCount() const

@@ -286,6 +286,7 @@ VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, cons
 	m_createInfo.extent.depth = 1;
 	m_createInfo.arrayLayers = 1;
 	m_createInfo.mipLevels = 1;
+	m_createInfo.imageType = VK_IMAGE_TYPE_2D;
 	m_ownedBySwapchain = true;
 	m_imageLayout = layout;
 
@@ -294,6 +295,7 @@ VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, cons
 
 VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType type, BalVulkan::EFormat format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits usage, BalVulkan::EImageLayout layout)
 {
+    (void) sampleLevel;
 	if ( m_image )
 		return VK_ERROR_UNKNOWN;
 
@@ -303,18 +305,20 @@ VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType type, 
 
     VkImageType imageType{VK_IMAGE_TYPE_2D
     };
+    uint32_t flags{};
     switch(type)
     {
         case EImageViewType::View1D:
         case EImageViewType::View1DArray:
             imageType= VK_IMAGE_TYPE_1D;
             break;
+        case EImageViewType::Cube:
+        case EImageViewType::CubeArray:
+            flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
         case EImageViewType::View2D:
         case EImageViewType::View2DArray:
         case EImageViewType::Rect:
         case EImageViewType::RectArray:
-        case EImageViewType::Cube:
-        case EImageViewType::CubeArray:
             imageType= VK_IMAGE_TYPE_2D;
             break;
         case EImageViewType::View3D:
@@ -324,13 +328,14 @@ VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType type, 
 
 	m_imageLayout = imageLayout;
 	m_createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	m_createInfo.flags = 0;
+	m_createInfo.flags = flags;
 	m_createInfo.imageType = imageType;
 	m_createInfo.format = imageFormat;
 	m_createInfo.extent = VkExtent3D{ width, height, depth };
 	m_createInfo.mipLevels = mips;
 	m_createInfo.arrayLayers = layers;
-	m_createInfo.samples = VkSampleCountFlagBits((sampleLevel == 7)? GetDevice()->GetPhysicalDeviceInfo()->GetMaxUsableSampleCount() : 1<<sampleLevel);
+//	m_createInfo.samples = VkSampleCountFlagBits((sampleLevel == 7)? GetDevice()->GetPhysicalDeviceInfo()->GetMaxUsableSampleCount() : 1<<sampleLevel);
+	m_createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	m_createInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
 	m_createInfo.usage = usageFlags;
 	m_createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;

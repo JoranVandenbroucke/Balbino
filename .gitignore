@@ -38,3 +38,4 @@ CMakeCache.txt
 !/3rdParty/**/x86/
 !/3rdParty/**/Debug/
 !/3rdParty/**/Release/
+Scripts/__pycache__/Utils.cpython-39.pyc

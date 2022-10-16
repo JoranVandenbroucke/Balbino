@@ -46,7 +46,7 @@ static void CopyComponent( entt::registry& dst, entt::registry& src, const std::
         CUuid uuid = src.get<CIDComponent>( e ).GetUUID();
         assert( enttMap.find( uuid ) != enttMap.end());
         entt::entity dstEnttID = enttMap.at( uuid );
-
+        
         auto& component = src.get<Component>( e );
         dst.emplace_or_replace<Component>( dstEnttID, component );
     }
@@ -97,7 +97,7 @@ void Balbino::CScene::Initialize( ISystem* pSystem, uint32_t width, uint32_t hei
     m_pModelBuffer    = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     m_pShadingBuffer  = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-
+    
     m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
                                 BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
     m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
@@ -105,14 +105,14 @@ void Balbino::CScene::Initialize( ISystem* pSystem, uint32_t width, uint32_t hei
     m_pInstanceBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ),
                                    BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit,
                                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
-
+    
     // todo: PhysX bodies
 }
 
 void Balbino::CScene::Cleanup()
 {
     // todo: Destroy/Stop PhysX
-
+    
     m_pShadingBuffer->Release();
     m_pModelBuffer->Release();
     m_pInstanceBuffer->Release();
@@ -133,7 +133,7 @@ void Balbino::CScene::OnViewportResize( uint32_t w, uint32_t h )
 {
     m_viewportWidth  = w;
     m_viewportHeight = h;
-
+    
     // Resize our non-FixedAspectRatio cameras
     const auto       view = m_registry.view<CCameraComponent>();
     for ( const auto entity : view )
@@ -168,7 +168,7 @@ void Balbino::CScene::DestroyEntity( IEntity* entity )
 void Balbino::CScene::DuplicateEntity( IEntity* entity )
 {
     IEntity* newEntity = CreateEntity();
-
+    
     CopyComponentIfExists<CTransformComponent>( newEntity, entity );
     CopyComponentIfExists<CCameraComponent>( newEntity, entity );
 }
@@ -257,11 +257,11 @@ void Balbino::CScene::RecreateBuffers( BalVulkan::CCommandPool* commandPool, Bal
     m_pShadingBuffer->Release();
     m_pModelBuffer->Release();
     m_pInstanceBuffer->Release();
-
+    
     m_pModelBuffer    = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     m_pShadingBuffer  = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-
+    
     m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
                                 BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
     m_pShadingBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( SLightObject ),
@@ -281,7 +281,7 @@ void Balbino::CScene::PrepareDraw()
         for ( const auto entity : view )
         {
             const auto& [ transform, camera ] = view.get( entity );
-
+            
             if ( camera.IsPrimary())
             {
                 m_pMainCamera   = &camera;
@@ -298,7 +298,7 @@ void Balbino::CScene::PrepareDraw()
         m_modelUbo.viewPos            = cameraTransform[0];
         m_modelUbo.displayDebugTarget = 0;
         m_pModelBuffer->UpdateData( &m_modelUbo, sizeof( SModelObject ));
-
+        
         const auto& lightGroup = m_registry.group<CTransformComponent>( entt::get<CLightComponent> );
         uint32_t id{};
         for ( const auto& entity : lightGroup )
@@ -322,7 +322,7 @@ void Balbino::CScene::PrepareDraw()
                     Balbino::ELightType::Directional, -1, { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 }};
         }
         m_pShadingBuffer->UpdateData( &m_lightObject, sizeof( SLightObject ));
-
+        
         // TODO CPU voxel Frustum culling
         // TODO GPU Frustum/Occlusion culling
 //        if ( m_meshChangeDirty )
@@ -357,16 +357,16 @@ void Balbino::CScene::PrepareDraw()
                     const CUuid currentMaterial = materials[i];
                     auto        it              = std::find_if( m_allDrawableObjects.cbegin(),
                                                                 m_allDrawableObjects.cend(),
-                                                                [ meshID, currentMaterial, mat ]( const IndirectBatch& obj )
+                                                                [ meshID, currentMaterial, mat, i ]( const IndirectBatch& obj )
                                                                 {
-                                                                    return meshID == obj.mesh || currentMaterial == obj.material || mat->firstIndex == obj.material;
+                                                                    return meshID == obj.mesh && currentMaterial == obj.material && mat[i].firstIndex == obj.firstIndex;
                                                                 } );
-
+                    
                     if ( it != m_allDrawableObjects.cend())
                     {
                         //all matches, add count
-                        m_allDrawableObjects.back().instanceCount++;
                         const uint32_t index{ static_cast<uint32_t>(it - m_allDrawableObjects.cbegin()) };
+                        m_allDrawableObjects[index].instanceCount++;
                         m_instanceData[index].emplace_back( transform.GetTransform());
                     }
                     else
@@ -375,10 +375,10 @@ void Balbino::CScene::PrepareDraw()
                         IndirectBatch newDraw{
                                 .mesh = meshID,
                                 .material = currentMaterial,
-                                .firstInstance = count,
+                                .firstInstance = 0,
                                 .instanceCount = 1,
-                                .firstIndex = mat->firstIndex,
-                                .indexCount = mat->indexCount
+                                .firstIndex = mat[i].firstIndex,
+                                .indexCount = mat[i].indexCount
                         };
                         m_allDrawableObjects.push_back( newDraw );
                         m_instanceData.push_back( {{ transform.GetTransform() }} );

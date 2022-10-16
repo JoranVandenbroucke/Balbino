@@ -36,7 +36,7 @@ namespace BalEditor
         * Editor Data (not yet implemented)
         */
         bool ExportShader( const std::string& assetName, const std::string& assetPath, uint16_t type, const std::vector<std::vector<uint32_t>>& compiledShaders, CUuid id = CUuid{} );
-
+        
         /*
         * Layout
         *
@@ -50,8 +50,8 @@ namespace BalEditor
         *
         * Editor Data (not yet implemented)
         */
-        bool ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<BalVulkan::SVertex>& vertices, const Balbino::SMeshMetadata* metadata, CUuid id = CUuid{} );
-
+        bool ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<BalVulkan::SVertex>& vertices, const std::vector<Balbino::SMeshMetadata>& metadata, CUuid id = CUuid{} );
+        
         /*
         * Layout
         *
@@ -64,7 +64,7 @@ namespace BalEditor
         * Editor Data (not yet implemented)
         */
         bool ExportMaterial( const std::string& assetName, const std::string& assetPath, CUuid shaderID, const std::unordered_map<std::string, BalVulkan::SShaderResource>& resources, CUuid id = CUuid{} );
-
+        
         /*
         * Layout
         *
