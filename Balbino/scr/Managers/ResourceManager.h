@@ -49,8 +49,8 @@ public:
     CResourceManager& operator=( const CResourceManager& ) = delete;
     CResourceManager& operator=( CResourceManager&& ) = delete;
     
-    void Initialize( const ISystem* pRenderer );
-    void Cleanup();
+    void Initialize( const ISystem* pRenderer ) override;
+    void Cleanup() override;
     
     Balbino::CTexture* LoadTexture( std::string_view assetPath ) override;
     BalVulkan::CShaderPipeline* LoadShader( std::string_view assetPath ) override;
@@ -63,7 +63,7 @@ public:
     Balbino::CMaterial* GetMaterial( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
     Balbino::IMesh* GetModel( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
     
-    const std::map<uint64_t, Balbino::CMaterial*>& GetAllLoadedMaterials() const override;
+    [[nodiscard]]const std::map<uint64_t, Balbino::CMaterial*>& GetAllLoadedMaterials() const override;
     void ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue ) override;
     void UnloadMaterial( CUuid materialId ) override;
 private:
@@ -73,7 +73,8 @@ private:
     std::map<uint64_t, Balbino::IMesh*>             m_loadedMeshMap;
     
     std::vector<SFile> m_files;
-    const ISystem* m_pSystem;
+    const ISystem* m_pSystem{};
+    
     void FindAllFiles();
     [[nodiscard]] static SFile GetData( const std::filesystem::path& path );
 };

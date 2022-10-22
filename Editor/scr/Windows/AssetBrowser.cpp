@@ -1,6 +1,6 @@
 #include "AssetBrowser.h"
 
-#include "IManager.h"
+#include "ISystem.h"
 #include "IResourceManager.h"
 #include "MaterialEditor.h"
 #include "ShaderGraph.h"
@@ -242,8 +242,8 @@ void BalEditor::CAssetBrowser::FindAllFiles()
         m_files.back().lastWrittenTime = std::filesystem::last_write_time( "..\\Data" );
     }
     
-    for ( auto file = std::filesystem::recursive_directory_iterator( "..\\Data" );
-          file != std::filesystem::recursive_directory_iterator(); ++file )
+    for ( auto file = std::filesystem::recursive_directory_iterator(
+            "..\\Data" ); file != std::filesystem::recursive_directory_iterator(); ++file )
     {
         
         auto currentFileLastWriteTime = std::filesystem::last_write_time( *file );
@@ -313,16 +313,16 @@ void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& node
     }
     
     std::vector<std::string>     files;
-    constexpr ImGuiTreeNodeFlags baseFlags =
-                                         ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+    constexpr ImGuiTreeNodeFlags baseFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
     ImGuiTreeNodeFlags           nodeFlags = baseFlags;
     for ( auto& f : m_files )
     {
-        if ( f.path != path && f.path.find( path ) != std::string::npos && f.isFolder &&
-             f.depth - fileIter->depth <= 1 && std::ranges::find_if( files, [ &f ]( const std::string& string )
-        {
-            return string.find( f.path ) != std::string::npos;
-        } ) == files.cend())
+        if ( f.path != path && f.path.find(
+                path ) != std::string::npos && f.isFolder && f.depth - fileIter->depth <= 1 && std::ranges::find_if(
+                files, [ &f ]( const std::string& string )
+                {
+                    return string.find( f.path ) != std::string::npos;
+                } ) == files.cend())
         {
             files.push_back( f.path );
         }
@@ -379,12 +379,12 @@ void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std:
     filesInDirectory.clear();
     for ( auto& f : m_files )
     {
-        if ( f.path != path && f.path.find( path ) != std::string::npos &&
-             f.depth - fileIter->depth == 1 &&
-             std::find_if( filesInDirectory.cbegin(), filesInDirectory.cend(), [ &f ]( const SFile& string )
-             {
-                 return string.path.find( f.path ) != std::string::npos;
-             } ) == filesInDirectory.cend())
+        if ( f.path != path && f.path.find(
+                path ) != std::string::npos && f.depth - fileIter->depth == 1 && std::find_if(
+                filesInDirectory.cbegin(), filesInDirectory.cend(), [ &f ]( const SFile& string )
+                {
+                    return string.path.find( f.path ) != std::string::npos;
+                } ) == filesInDirectory.cend())
         {
             filesInDirectory.push_back( f );
         }

@@ -4,10 +4,11 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "IManager.h"
+#include "ISystem.h"
 #include "Swapchain.h"
 
 struct IScene;
+struct ISystem;
 
 namespace BalVulkan
 {
@@ -71,7 +72,7 @@ namespace BalEditor
         
         void ProcessEvent( SDL_Event e );
         
-        void SetContext( IScene* pScene );
+        void SetContext( IScene* pScene, ISystem* pSystem );
         
         void Resize( VkInstance instance, VkQueue queue );
     

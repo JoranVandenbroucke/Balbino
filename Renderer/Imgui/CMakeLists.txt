@@ -83,20 +83,12 @@ if (MSVC)
             >
 
             )
-else()
+else ()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
-endif()
+endif ()
 
 target_include_directories(ImGui
         PUBLIC ../../3rdParty/Vulkan/Include
         PUBLIC ../../3rdParty/SDL2/include
-        )
-target_link_directories(ImGui
-        PRIVATE "../../3rdParty/SDL2/lib/x64/"
-        PRIVATE "../../3rdParty/Vulkan/lib/"
-        )
-target_link_libraries(ImGui
-        PRIVATE
-        SDL2
-        vulkan-1
+        PUBLIC ../../3rdParty/GLM/
         )

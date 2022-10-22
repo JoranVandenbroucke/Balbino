@@ -372,11 +372,14 @@ namespace BalEditor
                 }
                 case SDL_PIXELFORMAT_BGR24:
                 {
-                    SDL_PixelFormat* format = SDL_AllocFormat( VK_FORMAT_B8G8R8A8_SRGB );
+                    SDL_PixelFormat* format = SDL_AllocFormat( SDL_PIXELFORMAT_RGBA32 );
                     pSurface                = SDL_ConvertSurface( pSurface, format, 0 );
                     SDL_FreeFormat( format );
-                    pSurface    = SDL_ConvertSurfaceFormat( pSurface, VK_FORMAT_B8G8R8A8_SRGB, 0 );
-                    imageFormat = (uint32_t) VK_FORMAT_A8B8G8R8_SRGB_PACK32; //TODO SWAR RGD TO BGR
+                    if ( !pSurface )
+                    {
+                        std::cout << "Something went wrong while converting formats: " << SDL_GetError() << std::endl;
+                    }
+                    imageFormat = (uint32_t) VK_FORMAT_R8G8B8A8_SRGB; //TODO SWAR RGD TO BGR
                     break;
                 }
                 case SDL_PIXELFORMAT_XRGB8888:

@@ -1,6 +1,6 @@
 #include "MaterialEditor.h"
 
-#include "IManager.h"
+#include "ISystem.h"
 #include "imgui.h"
 #include "IResourceManager.h"
 #include "Material.h"

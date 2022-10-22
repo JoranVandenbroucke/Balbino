@@ -30,6 +30,10 @@ namespace BalVulkan
     class CSwapchain;
     
     class CInstance;
+
+    class CRenderPass;
+    class CImageResource;
+    class CImageView;
     
     class CCommandPool;
 }

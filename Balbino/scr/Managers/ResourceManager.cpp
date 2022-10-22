@@ -321,7 +321,7 @@ Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
                 else if ( resource.binding == 1 )
                 {
                     BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::DynamicBuffer, pUBO, 0, 1 );
+                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, 0, 1 );
                 }
             }
             else if ( resource.type == BalVulkan::EShaderResourceType::Image || resource.type == BalVulkan::EShaderResourceType::ImageSampler )
@@ -333,16 +333,6 @@ Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
                                                  texture->GetSamplerObject(), resource.set, resource.binding );
                 }
             }
-            else if ( resource.type == BalVulkan::EShaderResourceType::BufferStorage )
-            {
-                BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-                descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::BufferStorage, pUBO, 0, 1 );
-            }
-            //else if ( resource.type == BalVulkan::EShaderResourceType::Input && resource.location == 5 )
-            //{
-            //    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetInstanceBuffer();
-            //    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Input, pUBO, 0, 1 );
-            //}
         }
         
         file.close();

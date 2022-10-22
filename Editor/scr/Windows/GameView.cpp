@@ -1,4 +1,3 @@
-
 #include "GameView.h"
 
 #pragma warning(push)
@@ -10,16 +9,14 @@
 #include <Components/CameraComponent.h>
 #include <Components/TransformComponent.h>
 #include <Components/MeshRendererComponent.h>
-#include "Camera.h"
 #include "SceneHierarchy.h"
 
 #include <imgui.h>
 #include <ImGuizmo.h>
-#include <Components/LightComponent.h>
 
 #include "BalMath.h"
 #include "FileParcer.h"
-#include "IManager.h"
+#include "ISystem.h"
 #include "IResourceManager.h"
 #include "IMesh.h"
 
@@ -35,40 +32,46 @@ void BalEditor::CGameView::Draw()
         ImGuizmo::SetOrthographic( false );
         ImGuizmo::SetDrawlist();
         ImGuizmo::SetRect( 0, 0, m_pSystem->GetWindowWidth(), m_pSystem->GetWindowHeight());
-
-        const auto camera = m_pContext->GetPrimaryCameraEntity();
-        const auto& cameraComponent    = camera->GetComponent<CCameraComponent>();
-        const auto& transformComponent = camera->GetComponent<CTransformComponent>();
-        const auto& view               = glm::inverse( transformComponent->GetTransform());
-        const auto& projection         = cameraComponent->GetCamera().GetProjection();
-
-        const auto tc        = selected->GetComponent<CTransformComponent>();
-        glm::mat4  transform = tc->GetTransform();
-
-        // Snapping
-        float snapValue = 0.1f; // Snap to 0.1m for translation/scale
-        // Snap to 45 degrees for rotation
-        if ( m_gizmoType == ImGuizmo::OPERATION::ROTATE )
+        
+        const auto cameraObject = m_pContext->GetPrimaryCameraEntity();
+        if ( cameraObject )
         {
-            snapValue = 5.0f;
-        }
-
-        const float snapValues[3] = { snapValue, snapValue, snapValue };
-
-        Manipulate( value_ptr( view ), value_ptr( projection ),
-                    static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::LOCAL, value_ptr( transform ),
-                    nullptr, m_snap ? snapValues : nullptr );
-
-        if ( ImGuizmo::IsUsing())
-        {
-            glm::vec3 translation, rotation, scale;
-            Balbino::BalMath::DecomposeTransform( transform, translation, rotation, scale );
-
-            const glm::vec3 rotEuler      = eulerAngles( tc->GetRotation());
-            const glm::vec3 deltaRotation = rotation - rotEuler;
-            tc->SetTranslation( translation );
-            tc->SetRotation( glm::quat( rotEuler + deltaRotation ));
-            tc->SetScale( scale );
+            const auto& cameraCameraComponent    = cameraObject->GetComponent<CCameraComponent>();
+            const auto& cameraTransformComponent = cameraObject->GetComponent<CTransformComponent>();
+            
+            const auto& cameraView       = glm::inverse( cameraTransformComponent->GetTransform());
+            const auto& cameraProjection = glm::perspective( cameraCameraComponent->GetFov(),
+                                                             m_pSystem->GetWindowWidth() / m_pSystem->GetWindowHeight(),
+                                                             cameraCameraComponent->GetNearClip(),
+                                                             cameraCameraComponent->GetFarClip());
+            
+            const auto transformComponentSelected = selected->GetComponent<CTransformComponent>();
+            glm::mat4  transformSelected          = transformComponentSelected->GetTransform();
+            
+            // Snapping
+            float snapValue = 0.1f;
+            if ( m_gizmoType == ImGuizmo::OPERATION::ROTATE )
+            {
+                snapValue = 5.0f;
+            }
+            
+            const float snapValues[3] = { snapValue, snapValue, snapValue };
+            
+            Manipulate( value_ptr( cameraView ), value_ptr( cameraProjection ),
+                        static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::LOCAL,
+                        value_ptr( transformSelected ), nullptr, m_snap ? snapValues : nullptr );
+            
+            if ( ImGuizmo::IsUsing())
+            {
+                glm::vec3 translation, rotation, scale;
+                Balbino::BalMath::DecomposeTransform( transformSelected, translation, rotation, scale );
+                
+                const glm::vec3 rotEuler      = eulerAngles( transformComponentSelected->GetRotation());
+                const glm::vec3 deltaRotation = rotation - rotEuler;
+                transformComponentSelected->SetTranslation( translation );
+                transformComponentSelected->SetRotation( glm::quat( rotEuler + deltaRotation ));
+                transformComponentSelected->SetScale( scale );
+            }
         }
     }
     ImGui::EndChild();

@@ -8,11 +8,12 @@
 #include <ImageResource.h>
 #include <Queue.h>
 #include <RenderPass.h>
+#include <Swapchain.h>
 #include <Fence.h>
 
 #include "../Managers/ResourceManager.h"
 #include "../Scene/Scene.h"
-#include "IManager.h"
+#include "ISystem.h"
 
 Balbino::CRenderer::CRenderer()
         : m_pInstance{ nullptr },
@@ -106,9 +107,8 @@ void Balbino::CRenderer::RecreateSwapChain()
     m_pRenderPass->Initialize( formats, 0u, (uint32_t) m_swapchainViews.size());
     
     m_pDepthImage = BalVulkan::CImageResource::CreateNew( m_pDevice );
-    m_pDepthImage->Initialize( BalVulkan::EImageViewType::View2D,
-                               formats.back(),
-                               m_pSwapchain->GetExtend().width, m_pSwapchain->GetExtend().height, 1, 1, 1, 0,
+    m_pDepthImage->Initialize( BalVulkan::EImageViewType::View2D, formats.back(), m_pSwapchain->GetExtend().width,
+                               m_pSwapchain->GetExtend().height, 1, 1, 1, 0,
                                BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
                                BalVulkan::EImageLayout::Undefined );
     m_pDepthImageView = BalVulkan::CImageView::CreateNew( *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0,
@@ -168,9 +168,8 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
     m_pRenderPass->Initialize( formats, 0, (uint32_t) m_swapchainViews.size());
     
     m_pDepthImage = BalVulkan::CImageResource::CreateNew( m_pDevice );
-    m_pDepthImage->Initialize( BalVulkan::EImageViewType::View2D,
-                               formats.back(),
-                               m_pSwapchain->GetExtend().width, m_pSwapchain->GetExtend().height, 1, 1, 1, 0,
+    m_pDepthImage->Initialize( BalVulkan::EImageViewType::View2D, formats.back(), m_pSwapchain->GetExtend().width,
+                               m_pSwapchain->GetExtend().height, 1, 1, 1, 0,
                                BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
                                BalVulkan::EImageLayout::Undefined );
     m_pDepthImageView = BalVulkan::CImageView::CreateNew( *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0,

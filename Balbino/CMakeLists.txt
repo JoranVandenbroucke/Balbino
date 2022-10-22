@@ -12,14 +12,14 @@ file(GLOB sourceB
         *.cpp *.h
         scr/*.cpp scr/*.h
         scr/Audio/*.cpp scr/Audio/*.h
-        scr/Input/*.cpp scr/Input/*.h
+        scr/Managers/Input/*.cpp scr/Managers/Input/*.h
         scr/Managers/*.cpp scr/Managers/*.h
         scr/Scene/*.cpp scr/Scene/*.h
         scr/Renderer/*.cpp scr/Renderer/*.h
         )
 
 # project setting
-add_library(Balbino SHARED ${sourceB})
+add_library(Balbino ${sourceB})
 set_property(TARGET Balbino PROPERTY CXX_STANDARD 20)
 set_property(TARGET Balbino PROPERTY C_STANDARD 17)
 set_property(TARGET Balbino PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -113,7 +113,7 @@ install(
 target_compile_definitions(Balbino
         PRIVATE
         "BL_PLATFORM_WINDOWS;"
-        "BL_BUILD_DLL;"
+        "BL_BUILD_LIB;"
         "_WINDLL;"
         "_UNICODE;"
         "UNICODE;"
@@ -156,18 +156,6 @@ target_include_directories(Balbino
         >
         )
 
-target_link_directories(Balbino PRIVATE
-        ../3rdParty/SDL2/lib/x64/
-        ../3rdParty/SDL2_image/lib/x64/
-        ../3rdParty/SDL2_mixer/lib/x64/
-        ../3rdParty/SDL2_ttf/lib/x64/
-        ../3rdParty/SPIRV-Cross/lib/Release
-        ../3rdParty/SPIRV-Cross/lib/Debug
-        ../3rdParty/Vulkan/lib/
-        ../3rdParty/VLD/lib/Win64
-        ../3rdParty/ASSIMP/build/x64/lib/Debug
-        ../3rdParty/ASSIMP/build/x64/lib/Release
-        )
 
 set(libs
         "SDL2;"

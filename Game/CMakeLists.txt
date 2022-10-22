@@ -86,6 +86,7 @@ target_precompile_headers(${PROJECT_NAME}
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         "BL_PLATFORM_WINDOWS;"
+        "BL_BUILD_LIB;"
         "$<$<CONFIG:Debug>:"
         "_DEBUG;"
         ">"
@@ -115,7 +116,16 @@ target_include_directories(${PROJECT_NAME}
 
 # libaries
 target_link_directories(${PROJECT_NAME} PRIVATE
+        ../3rdParty/SDL2/lib/x64/
+        ../3rdParty/SDL2_image/lib/x64/
+        ../3rdParty/SDL2_mixer/lib/x64/
+        ../3rdParty/SDL2_ttf/lib/x64/
+        ../3rdParty/SPIRV-Cross/lib/Release
+        ../3rdParty/SPIRV-Cross/lib/Debug
+        ../3rdParty/Vulkan/lib/
         ../3rdParty/VLD/lib/Win64
+        ../3rdParty/ASSIMP/build/x64/lib/Debug
+        ../3rdParty/ASSIMP/build/x64/lib/Release
         )
 target_link_libraries(${PROJECT_NAME} PRIVATE
         "Balbino"

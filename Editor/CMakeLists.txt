@@ -90,9 +90,20 @@ if (MSVC)
             /SUBSYSTEM:WINDOWS;
             >
             )
-else()
+else ()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
-endif()
+endif ()
+target_precompile_headers(BalVulkan
+        PRIVATE [["algorithm"]]
+        PRIVATE [["array"]]
+        PRIVATE [["cmath"]]
+        PRIVATE [["cstdint"]]
+        PRIVATE [["format"]]
+        PRIVATE [["iostream"]]
+        PRIVATE [["string"]]
+        PRIVATE [["unordered_map"]]
+        PRIVATE [["vector"]]
+        )
 
 target_include_directories(BalEditor
         PRIVATE
