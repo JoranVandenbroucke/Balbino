@@ -78,11 +78,13 @@ namespace BalEditor
         
         const ISystem* m_pSystem;
         
-        uint64_t m_newFileFronID;
-        float    m_size;
-        bool     m_isVisible;
-        bool     m_newFile;
-        bool     m_updateCurrentDirectory;
+        float m_size;
+        bool  m_isVisible;
+        bool  m_updateCurrentDirectory;
+        bool  m_isContextMenuOpen;
+        bool  m_wasContextMenuOpen;
+        bool  m_isItemSelected;
+        SFile m_lastSelectedFile;
         
         std::vector<SFile> m_currentDirectory;
         std::vector<SFile> m_files;
@@ -90,17 +92,10 @@ namespace BalEditor
         std::string        m_currentName;
         
         void FindAllFiles();
-        
-        void CreateMaterial( const SFile& file, std::string_view name ) const;
-        
         void DrawTree( const std::string& path, uint32_t& nodeIdx );
-        
         void GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory );
-        
         void HandelSelected( const SFile& currentFile, bool isSelected );
-        
         void MoveFile( SFile* pFile, const std::filesystem::path& destination );
-        
-        void Rename( const std::filesystem::path& oldName, std::filesystem::path newName );
+        void Rename( const std::filesystem::path& oldName, const std::filesystem::path& newName );
     };
 }

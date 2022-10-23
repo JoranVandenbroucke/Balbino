@@ -341,15 +341,17 @@ namespace BalEditor::EditorGUI
         ImGui::PopID();
         return hasChanged;
     }
-    bool DrawFloatSlider( const char* name, float& value, float min, float max, float width )
+    bool DrawFloatSlider( const char* name, float& value, float min, float max, float width, bool showName )
     {
         bool hasChanged;
         ImGui::PushID( name );
-        
-        ImGui::Columns( 2 );
-        ImGui::SetColumnWidth( 0, width );
-        ImGui::Text( "%s", name );
-        ImGui::NextColumn();
+        if ( showName )
+        {
+            ImGui::Columns( 2 );
+            ImGui::SetColumnWidth( 0, width );
+            ImGui::Text( "%s", name );
+            ImGui::NextColumn();
+        }
         
         hasChanged = ImGui::SliderFloat( "##V", &value, min, max, "%.2f" );
         
@@ -889,7 +891,7 @@ namespace BalEditor::EditorGUI
     
     int DrawPopupContextWindow( const std::string_view name, const std::vector<std::string>& options )
     {
-        if ( ImGui::BeginPopupContextWindow( name.data(), 1, false ))
+        if ( ImGui::BeginPopupContextWindow( name.data()))
         {
             DrawText( name.data());
             Separator();
@@ -926,9 +928,9 @@ namespace BalEditor::EditorGUI
     {
         return ImGui::BeginPopup( name );
     }
-    bool BeginPopupContextItem()
+    bool BeginPopupContextItem( uint64_t id )
     {
-        return ImGui::BeginPopupContextItem();
+        return ImGui::BeginPopupContextItem(( "##ContextMenu" + std::to_string( id )).c_str());
     }
     void CloseCurrentPopup()
     {
@@ -947,22 +949,48 @@ namespace BalEditor::EditorGUI
         }
         return false;
     }
+    bool BeginChild( std::string_view title, const glm::vec2& position, bool border, int flags )
+    {
+        return ImGui::BeginChild( title.data(), { position.x, position.y }, border, flags );
+    }
     void End()
     {
         ImGui::End();
+    }
+    void EndChild()
+    {
+        ImGui::EndChild();
     }
     
     bool BeginMenuBar()
     {
         return ImGui::BeginMenuBar();
     }
+    bool BeginMenu( std::string_view text )
+    {
+        return ImGui::BeginMenu( text.data());
+    }
     void EndMenuBar()
     {
         ImGui::EndMenuBar();
     }
-    bool MenuItem( const std::string_view name )
+    void EndMenu()
     {
-        return ImGui::MenuItem( name.data());
+        ImGui::EndMenu();
+    }
+    bool MenuItem( const std::string_view name, bool isSelected )
+    {
+        bool hasChanged;
+        if ( !isSelected )
+        {
+            ImGui::BeginDisabled( true );
+        }
+        hasChanged = ImGui::MenuItem( name.data());
+        if ( !isSelected )
+        {
+            ImGui::EndDisabled();
+        }
+        return hasChanged;
     }
     
     void Spacing()
@@ -1038,5 +1066,56 @@ namespace BalEditor::EditorGUI
     bool IsItemClicked()
     {
         return ImGui::IsItemClicked();
+    }
+    void Columns( int nrOfColumns )
+    {
+        ImGui::Columns( nrOfColumns );
+    }
+    void NextColumn()
+    {
+        ImGui::NextColumn();
+    }
+    void MaxNextWindow()
+    {
+        ImGuiIO io = ImGui::GetIO();
+        ImGui::SetNextWindowSize( io.DisplaySize );
+        ImGui::SetWindowPos( { 0, 0 } );
+    }
+    void DrawResourceItem( const SFile& file, VkDescriptorSet_T* descriptorSet, float imageSize, int id, bool& isSelected )
+    {
+        ImGui::PushID( id );
+        ImGui::Selectable( "##file", &isSelected, 1 << 2, { 0, imageSize * 1.05f } );
+        isSelected |= ImGui::IsItemHovered();
+        ImGui::SameLine();
+        if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ))
+        {
+            ImGui::SetDragDropPayload( ToString( file.type ), &file, sizeof( SFile ));
+            ImGui::Text( "%s", file.fileName.c_str());
+            ImGui::EndDragDropSource();
+        }
+        ImGui::Image( descriptorSet, { imageSize, imageSize } );
+        ImGui::SameLine();
+        ImGui::Text( "%s", file.fileName.c_str());
+        ImGui::PopID();
+    }
+    void PushId( const char* id )
+    {
+        ImGui::PushID( id );
+    }
+    void PopID()
+    {
+        ImGui::PopID();
+    }
+    bool IsMouseDoubleClicked( int button )
+    {
+        return ImGui::IsMouseDoubleClicked( button );
+    }
+    void SetNextItemOpen( bool open )
+    {
+        ImGui::SetNextItemOpen( open );
+    }
+    bool BeginPopupContextWindow( uint64_t uuid )
+    {
+        return ImGui::BeginPopupContextWindow(( "##ContextMenu" + std::to_string( uuid )).c_str());
     }
 }

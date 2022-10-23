@@ -98,7 +98,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     // Setup Dear ImGui style
     SetImGuiStyle();
     
-    ImNodes::GetIO().link_detach_with_modifier_click.modifier = &ImGui::GetIO().KeyCtrl;
+    ImNodes::GetIO().LinkDetachWithModifierClick.Modifier = &ImGui::GetIO().KeyCtrl;
     //ImNodes::PushAttributeFlag( ImNodes::AttributeFlags_EnableLinkDetachWithDragClick );
     
     // Upload Fonts

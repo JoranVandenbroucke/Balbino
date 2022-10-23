@@ -2,8 +2,9 @@
 
 #pragma warning(push)
 #pragma warning(disable:4201)
-
 #include <glm/gtc/type_ptr.hpp>
+
+#pragma warning(pop)
 
 #include <IEntity.h>
 #include <Components/CameraComponent.h>
@@ -11,7 +12,6 @@
 #include <Components/MeshRendererComponent.h>
 #include "SceneHierarchy.h"
 
-#include <imgui.h>
 #include <ImGuizmo.h>
 
 #include "BalMath.h"
@@ -19,14 +19,15 @@
 #include "ISystem.h"
 #include "IResourceManager.h"
 #include "IMesh.h"
+#include "../EditorGUI/EditorGui.h"
 
 
 void BalEditor::CGameView::Draw()
 {
-    ImGui::Begin( "GameView", nullptr,
-                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar );
-    ImGui::BeginChild( "GameViewChild", ImVec2{ -1, -1 }, false,
-                       ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoTitleBar );
+    int  flags = 1 << 0 | 1 << 1 | 1 << 3 | 1 << 5 | 1 << 7;
+    bool open{ true };
+    BalEditor::EditorGUI::Begin( "GameView", open, flags );
+    BalEditor::EditorGUI::BeginChild( "GameViewChild", { -1, -1 }, false, flags );
     if ( const IEntity* selected = m_pSceneHierarchy->GetSelectedEntity())
     {
         ImGuizmo::SetOrthographic( false );
@@ -74,22 +75,14 @@ void BalEditor::CGameView::Draw()
             }
         }
     }
-    ImGui::EndChild();
-    if ( ImGui::BeginDragDropTarget())
+    BalEditor::EditorGUI::EndChild();
+    if ( void* pData = BalEditor::EditorGUI::ReceiveDragDrop( ToString( EFileTypes::Model )))
     {
-        if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Model )))
-        {
-            std::cout << "loading model: ";
-            std::cout << payload->DataSize;
-            std::cout << "\n";
-            const Balbino::IMesh* pModel = m_pSystem->GetResourceManager()->LoadModel(
-                    static_cast<SFile*>( payload->Data )->path );
-            IEntity             * pEnt   = m_pContext->CreateEntity();
-            pEnt->AddComponent<CMeshRenderComponent>( pModel->GetUuid())->SetMaterialCount( pModel->GetMaterialCount());
-        }
-        ImGui::EndDragDropTarget();
+        const Balbino::IMesh* pModel = m_pSystem->GetResourceManager()->LoadModel( static_cast<SFile*>( pData )->path );
+        IEntity             * pEnt   = m_pContext->CreateEntity();
+        pEnt->AddComponent<CMeshRenderComponent>( pModel->GetUuid())->SetMaterialCount( pModel->GetMaterialCount());
     }
-    ImGui::End();
+    BalEditor::EditorGUI::End();
 }
 
 void BalEditor::CGameView::SetContext( ISystem* pSystem, IScene* pContext, CSceneHierarchy* pSceneHierarchy )
@@ -113,5 +106,3 @@ int BalEditor::CGameView::GetGuizmoType() const
 {
     return m_gizmoType;
 }
-
-#pragma warning(pop)

@@ -6,7 +6,7 @@
 #include "ShaderGraph.h"
 #include "ShaderPipeline.h"
 
-#include "imgui.h"
+#include "../EditorGUI/EditorGui.h"
 #include "backends/imgui_impl_vulkan.h"
 
 BalEditor::CAssetBrowser::CAssetBrowser()
@@ -36,9 +36,11 @@ BalEditor::CAssetBrowser::CAssetBrowser()
           m_pMaterialEditor{ nullptr },
           m_pSystem{ nullptr },
           m_isVisible{ true },
-          m_newFile{ false },
           m_size{ 32.f },
-          m_newFileFronID{ 0 },
+          m_isItemSelected{},
+          m_isContextMenuOpen{},
+          m_wasContextMenuOpen{},
+          m_lastSelectedFile{},
           m_updateCurrentDirectory{ true }
 {
 }
@@ -88,117 +90,127 @@ void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
 
 void BalEditor::CAssetBrowser::Draw()
 {
-    FindAllFiles();
     if ( m_updateCurrentDirectory )
     {
+        FindAllFiles();
         GetAllFilesInSelectedPath( m_currentDirectoryName, m_currentDirectory );
         m_updateCurrentDirectory = false;
-    }
-    if ( m_isVisible )
-    {
-        if ( ImGui::Begin( "Asset Browser", &m_isVisible ))
+        std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
         {
-            if ( ImGui::BeginChild( "Asset Tree", ImVec2{ 128, -1 }, true, ImGuiWindowFlags_HorizontalScrollbar ))
-            {
-                uint32_t nodeIdx{};
-                DrawTree( "..\\Data", nodeIdx );
-            }
-            ImGui::EndChild();
-            std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
-            {
-                return left.fileName < right.fileName;
-            } );
-            std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
-            {
-                return left.isFolder > right.isFolder;
-            } );
-            
-            ImGui::SameLine();
-            if ( ImGui::BeginChild( "Asset File", ImVec2{ -1, -1 }, true, ImGuiWindowFlags_AlwaysAutoResize ))
+            return left.fileName < right.fileName;
+        } );
+        std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
+        {
+            return left.isFolder > right.isFolder;
+        } );
+    }
+    if ( BalEditor::EditorGUI::Begin( "Asset Browser", m_isVisible, 0 ))
+    {
+        if ( BalEditor::EditorGUI::BeginChild( "Asset Tree", { 128, 0 }, true, 1 << 11 ))
+        {
+            uint32_t nodeIdx{};
+            DrawTree( "..\\Data", nodeIdx );
+        }
+        BalEditor::EditorGUI::EndChild();
+        BalEditor::EditorGUI::SameLine();
+        if ( BalEditor::EditorGUI::BeginChild( "Asset File", { 0, 0 }, true, 1 << 6 ))
+        {
+            if ( BalEditor::EditorGUI::BeginChild( "Icon Size Slider",
+                                                   { 0, BalEditor::EditorGUI::GetContentRegionAvail().y - 32 }, true,
+                                                   1 << 6 ))
             {
                 int  id{};
-                bool isSelected{ false };
+                bool wasOneSelected{};
                 for ( const auto& currentFile : m_currentDirectory )
                 {
-                    isSelected = false;
-                    ImGui::Selectable(( "##file" + std::to_string( id++ )).c_str(), &isSelected,
-                                      ImGuiSelectableFlags_AllowDoubleClick, ImVec2{ 0, m_size * 1.05f } );
-                    HandelSelected( currentFile, isSelected );
-                    if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ))
-                    {
-                        ImGui::SetDragDropPayload( ToString( currentFile.type ), &currentFile, sizeof( SFile ));
-                        ImGui::Text( "%s", currentFile.fileName.c_str());
-                        ImGui::EndDragDropSource();
-                    }
-                    ImGui::SameLine();
+                    bool isSelected{};
                     switch ( currentFile.type )
                     {
                         case EFileTypes::Folder:
                         {
-                            ImGui::Image( m_pVkDescriptorSetFolderIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetFolderIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Scene:
                         {
-                            ImGui::Image( m_pVkDescriptorSetBalbinoIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetBalbinoIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Image:
                         {
                             //todo:: get image data
-                            ImGui::Image( m_pVkDescriptorSetImageIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetImageIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Audio:
                         {
-                            ImGui::Image( m_pVkDescriptorSetAudioIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetAudioIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Code:
                         {
-                            ImGui::Image( m_pVkDescriptorSetCodeIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetCodeIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Unknown:
                         {
-                            ImGui::Image( m_pVkDescriptorSetUnknownIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetUnknownIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Font: //todo add font icon
                         {
-                            ImGui::Image( m_pVkDescriptorSetFontIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetFontIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Model:
                         {
-                            ImGui::Image( m_pVkDescriptorSetModelIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetModelIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Preset:
                         {
-                            ImGui::Image( m_pVkDescriptorSetPresetIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetPresetIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Shader:
                         {
-                            ImGui::Image( m_pVkDescriptorSetShaderIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetShaderIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         }
                         case EFileTypes::Material:
-                            ImGui::Image( m_pVkDescriptorSetMaterialIcon, { m_size, m_size } );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetMaterialIcon, m_size,
+                                                                    id++, isSelected );
                             break;
                         default:;
                     }
-                    ImGui::SameLine();
-                    ImGui::Text( "%s", currentFile.fileName.c_str());
-                    ImGui::NewLine();
+                    wasOneSelected |= isSelected;
+                    if ( isSelected )
+                    {
+                        HandelSelected( currentFile, true );
+                        m_lastSelectedFile = currentFile;
+                    }
                 }
-                ImGui::SliderFloat( "Icon Size", &m_size, 8.0f, 128.f, "%.0f", ImGuiSliderFlags_NoInput );
+                if ( !wasOneSelected )
+                {
+                    HandelSelected( m_lastSelectedFile, false );
+                }
             }
-            ImGui::EndChild();
+            BalEditor::EditorGUI::EndChild();
+            BalEditor::EditorGUI::DrawFloatSlider( "Icon Size", m_size, 32.0f, 128.f, false );
         }
-        ImGui::End();
+        BalEditor::EditorGUI::EndChild();
     }
+    BalEditor::EditorGUI::End();
 }
 
 void BalEditor::CAssetBrowser::Cleanup()
@@ -210,7 +222,7 @@ void BalEditor::CAssetBrowser::Cleanup()
 void BalEditor::CAssetBrowser::ShowWindow()
 {
     m_isVisible = true;
-    ImGui::SetWindowFocus( "Asset Browser" );
+    BalEditor::EditorGUI::SetWindowFocus( "Asset Browser" );
 }
 
 void BalEditor::CAssetBrowser::SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor )
@@ -273,34 +285,6 @@ void BalEditor::CAssetBrowser::FindAllFiles()
     }
 }
 
-void BalEditor::CAssetBrowser::CreateMaterial( const SFile& file, std::string_view name ) const
-{
-    std::filesystem::path path = file.path;
-    path.replace_filename( name );
-    path.replace_extension( ".basset" );
-    const BalVulkan::CShaderPipeline* pResources = m_pSystem->GetResourceManager()->LoadShader( file.path );
-    std::ofstream materialFile( path, std::ios::out | std::ios::binary );
-    if ( !materialFile.is_open() && pResources )
-    {
-        return;
-    }
-    
-    const std::unordered_map<std::string, BalVulkan::SShaderResource>& resources = pResources->GetShaderResources();
-    std::vector<BalVulkan::SShaderResource> shaderResource;
-    shaderResource.reserve( resources.size());
-    /*** Copy all value fields from map to a vector using transform() & Lambda function ***/
-    std::ranges::transform( resources, std::back_inserter( shaderResource ),
-                            []( const std::pair<std::string, BalVulkan::SShaderResource>& pair )
-                            {
-                                return pair.second;
-                            } );
-    BinaryReadWrite::Write( materialFile, (uint64_t) CUuid());
-    BinaryReadWrite::Write( materialFile, (uint8_t) EFileTypes::Material );
-    BinaryReadWrite::Write( materialFile, file.uuid );
-    BinaryReadWrite::Write( materialFile, shaderResource );
-    materialFile.close();
-}
-
 void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& nodeIdx )
 {
     const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [ &path ]( const SFile& f ) -> bool
@@ -329,32 +313,32 @@ void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& node
     }
     if ( files.empty())
     {
-        nodeFlags |= ImGuiTreeNodeFlags_Leaf /*| ImGuiTreeNodeFlags_NoTreePushOnOpen*/;
+        nodeFlags |= 1 << 8;
     }
     if ( !fileIter->depth )
     {
-        nodeFlags |= ImGuiTreeNodeFlags_DefaultOpen;
-        ImGui::SetNextItemOpen( true );
+        nodeFlags |= 1 << 5;
+        BalEditor::EditorGUI::SetNextItemOpen( true );
     }
-    if ( ImGui::TreeNodeEx( fileIter->fileName.c_str(), nodeFlags ))
+    if ( BalEditor::EditorGUI::TreeNodeEx((uint64_t) fileIter->fileName.c_str(), nodeFlags, fileIter->fileName.c_str()))
     {
-        if ( ImGui::IsItemClicked( ImGuiMouseButton_Left ))
+        if ( BalEditor::EditorGUI::IsItemClicked())
         {
-            GetAllFilesInSelectedPath( std::filesystem::relative( fileIter->path ).string(), m_currentDirectory );
-            m_currentDirectoryName = std::filesystem::relative( fileIter->path ).string();
+            m_updateCurrentDirectory = true;
+            m_currentDirectoryName   = std::filesystem::relative( fileIter->path ).string();
         }
         for ( const auto& f : files )
         {
             DrawTree( f, nodeIdx );
         }
-        ImGui::TreePop();
+        BalEditor::EditorGUI::TreePop();
     }
     else
     {
-        if ( ImGui::IsItemClicked( ImGuiMouseButton_Left ))
+        if ( BalEditor::EditorGUI::IsItemClicked())
         {
-            GetAllFilesInSelectedPath( std::filesystem::relative( fileIter->path ).string(), m_currentDirectory );
-            m_currentDirectoryName = std::filesystem::relative( fileIter->path ).string();
+            m_updateCurrentDirectory = true;
+            m_currentDirectoryName   = std::filesystem::relative( fileIter->path ).string();
         }
     }
 }
@@ -393,87 +377,83 @@ void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std:
 
 void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool isSelected )
 {
+    bool create;
+    bool showInExplorer;
+    bool open{};
+    bool rename;
+    bool shouldDelete;
+    bool copyPath;
+    bool import;
+    bool reimport;
+    bool reimportAll;
+    bool properties;
+    m_isContextMenuOpen = false;
+    if ( BalEditor::EditorGUI::BeginPopupContextWindow( 1 ))
+    {
+        m_isContextMenuOpen = true;
+        if ( !m_wasContextMenuOpen )
+        {
+            m_isItemSelected = isSelected;
+        }
+        create              = BalEditor::EditorGUI::MenuItem( "Create" );
+        showInExplorer      = BalEditor::EditorGUI::MenuItem( "Show in Explorer" );
+        open                = BalEditor::EditorGUI::MenuItem( "Open", m_isItemSelected );
+        rename              = BalEditor::EditorGUI::MenuItem( "Rename", m_isItemSelected );
+        shouldDelete        = BalEditor::EditorGUI::MenuItem( "Delete", m_isItemSelected );
+        copyPath            = BalEditor::EditorGUI::MenuItem( "Copy Path" );
+        BalEditor::EditorGUI::Separator();
+        import                   = BalEditor::EditorGUI::MenuItem( "Import new asset" );
+        m_updateCurrentDirectory = BalEditor::EditorGUI::MenuItem( "Refresh" );
+        reimport                 = BalEditor::EditorGUI::MenuItem( "Reimport" );
+        reimportAll              = BalEditor::EditorGUI::MenuItem( "Reimport All" );
+        BalEditor::EditorGUI::Separator();
+        properties = BalEditor::EditorGUI::MenuItem( "Properties..." );
+        BalEditor::EditorGUI::EndPopup();
+        
+        (void) create;
+        (void) showInExplorer;
+        (void) rename;
+        (void) shouldDelete;
+        (void) copyPath;
+        (void) import;
+        (void) reimport;
+        (void) reimportAll;
+        (void) properties;
+    }
+    m_wasContextMenuOpen = m_isContextMenuOpen;
     switch ( currentFile.type )
     {
         case EFileTypes::Unknown:
             break;
         case EFileTypes::Folder:
-            if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( 0 ) && isSelected ) || open )
             {
                 const std::string currentPath{ currentFile.path };
                 m_updateCurrentDirectory = true;
                 m_currentDirectoryName   = std::filesystem::relative( currentPath ).string();
+                return;
             }
-            if ( ImGui::BeginDragDropTarget())
+            for ( int i = 0; i < (int) EFileTypes::MaxFileTypes; ++i )
             {
-                if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Shader )))
+                if ( void* pData = BalEditor::EditorGUI::ReceiveDragDrop( ToString( EFileTypes( i ))))
                 {
-                    SFile* pFile{ static_cast<SFile*>(payload->Data) };
+                    SFile* pFile{ static_cast<SFile*>(pData) };
                     MoveFile( pFile, currentFile.path );
+                    return;
                 }
-                ImGui::EndDragDropTarget();
             }
-            break;
         case EFileTypes::Shader:
-            if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( 0 ) && isSelected ) || open )
             {
                 m_pShaderGraph->SetShader( currentFile );
                 m_pShaderGraph->ShowWindow();
             }
-            else if ( ImGui::BeginPopupContextItem(( "##ShaderOptions" + std::to_string( currentFile.uuid )).c_str()))
-            {
-                if ( ImGui::MenuItem( "Open Shader Editor" ))
-                {
-                    m_pShaderGraph->SetShader( currentFile );
-                    m_pShaderGraph->ShowWindow();
-                }
-                else if ( ImGui::MenuItem( "Create New Material" ))
-                {
-                    m_newFile       = true;
-                    m_currentName   = "";
-                    m_newFileFronID = currentFile.uuid;
-                }
-                ImGui::EndPopup();
-            }
-            else if ( m_newFile && m_currentName.empty() && m_newFileFronID == currentFile.uuid )
-            {
-                ImGui::OpenPopup( "Enter Name" );
-                
-                // Always center this window when appearing
-                ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-                ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ));
-                if ( ImGui::BeginPopupModal( "Enter Name", nullptr, ImGuiWindowFlags_AlwaysAutoResize ))
-                {
-                    char name[64]{};
-                    if ( ImGui::InputText(( "##material name" + std::to_string( currentFile.uuid )).c_str(), name, 64,
-                                          ImGuiInputTextFlags_AlwaysInsertMode | ImGuiInputTextFlags_EnterReturnsTrue ))
-                    {
-                        m_currentName.append( name, std::find_if( name, name + 64, []( char c )
-                        {
-                            return c == '\0';
-                        } ));
-                        //TODO CHANGE
-                        CreateMaterial( currentFile, m_currentName );
-                        m_newFile = false;
-                    }
-                }
-                ImGui::EndPopup();
-            }
             break;
         case EFileTypes::Material:
-            if ( ImGui::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected )
+            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected ) || open )
             {
                 m_pMaterialEditor->SetMaterial( currentFile );
                 m_pMaterialEditor->ShowWindow();
-            }
-            else if ( ImGui::BeginPopupContextItem(( "##MaterialOptions" + std::to_string( currentFile.uuid )).c_str()))
-            {
-                if ( ImGui::MenuItem( "Open Material Editor" ))
-                {
-                    m_pMaterialEditor->SetMaterial( currentFile );
-                    m_pMaterialEditor->ShowWindow();
-                }
-                ImGui::EndPopup();
             }
             break;
         case EFileTypes::Scene:
@@ -483,6 +463,7 @@ void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool is
         case EFileTypes::Model:
         case EFileTypes::Code:
         case EFileTypes::Preset:
+        case EFileTypes::MaxFileTypes:
             break;
     }
 }
@@ -498,7 +479,7 @@ void BalEditor::CAssetBrowser::MoveFile( SFile* pFile, const std::filesystem::pa
     pFile->path = destination.string() + "\\" + pFile->fileName;
 }
 
-void BalEditor::CAssetBrowser::Rename( const std::filesystem::path& oldName, std::filesystem::path newName )
+void BalEditor::CAssetBrowser::Rename( const std::filesystem::path& oldName, const std::filesystem::path& newName )
 {
     std::filesystem::rename( oldName, newName );
 }

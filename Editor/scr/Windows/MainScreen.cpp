@@ -3,94 +3,84 @@
 #include <IScene.h>
 #include <IEntity.h>
 
-#include <imgui.h>
-
 #include <iostream>
 
 #include "AssetBrowser.h"
 #include "SceneHierarchy.h"
 #include "ShaderGraph.h"
 #include "Components/LightComponent.h"
+#include "../EditorGUI/EditorGui.h"
 
 void BalEditor::CMainScreen::Draw()
 {
-	const ImGuiIO& io = ImGui::GetIO();
-	( void ) io;
-	const ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_NoBringToFrontOnFocus /*| ImGuiWindowFlags_NoDocking*/;
-	ImGui::SetNextWindowSize( io.DisplaySize );
-	ImGui::SetNextWindowPos( { 0, 0 } );
-	static ImGuiID dockspaceID = 0;
-	ImGui::Begin( "MainWindow", nullptr, flags );
-	if ( ImGui::BeginMenuBar() )
-	{
-		if ( ImGui::BeginMenu( "File" ) )
-		{
-			if ( ImGui::MenuItem( "New" ) )
-			{
-				m_saved = false;
-			}
-			if ( ImGui::MenuItem( "Open" ) )
-			{
-				//todo: load level
-			}
-			if ( ImGui::MenuItem( "Save Scene" ) )
-			{
-				//todo: save scene
-			}
-			if ( ImGui::MenuItem( "Save Scene As" ) )
-			{
-				//todo: save scene
-			}
-			ImGui::EndMenu();
-		}
-		if ( ImGui::BeginMenu( "GameObject" ) )
-		{
-			ImGui::Text( "Add GameObject" );
-			if ( ImGui::MenuItem( "Empty" ) )
-			{
-				m_pContext->CreateEntity();
-
-				std::cout << "add empty object\n";
-			}
-			if ( ImGui::MenuItem( "Light" ) )
-			{
-				IEntity* entity = m_pContext->CreateEntity();
+    const int flags = 1 << 0 | 1 << 1 | 1 << 2 | 1 << 5 | 1 << 7 | 1 << 10 | 1 << 13;
+    bool      open{ true };
+    BalEditor::EditorGUI::MaxNextWindow();
+    BalEditor::EditorGUI::Begin( "MainWindow", open, flags );
+    if ( BalEditor::EditorGUI::BeginMenuBar())
+    {
+        if ( BalEditor::EditorGUI::BeginMenu( "File" ))
+        {
+            if ( BalEditor::EditorGUI::MenuItem( "New" ))
+            {
+                m_saved = false;
+                //todo: load new level
+            }
+            if ( BalEditor::EditorGUI::MenuItem( "Open" ))
+            {
+                //todo: load level
+            }
+            if ( BalEditor::EditorGUI::MenuItem( "Save Scene" ))
+            {
+                //todo: save scene
+            }
+            if ( BalEditor::EditorGUI::MenuItem( "Save Scene As" ))
+            {
+                //todo: save scene
+            }
+            BalEditor::EditorGUI::EndMenu();
+        }
+        if ( BalEditor::EditorGUI::BeginMenu( "GameObject" ))
+        {
+            BalEditor::EditorGUI::DrawText( "Add GameObject" );
+            if ( BalEditor::EditorGUI::MenuItem( "Empty" ))
+            {
+                m_pContext->CreateEntity();
+                
+                std::cout << "add empty object\n";
+            }
+            if ( BalEditor::EditorGUI::MenuItem( "Light" ))
+            {
+                IEntity* entity = m_pContext->CreateEntity();
                 entity->AddComponent<CLightComponent>();
-			}
-			ImGui::EndMenu();
-		}
-		if ( ImGui::BeginMenu( "View" ) )
-		{
-			if ( ImGui::MenuItem( "Hierarchy" ) )
-			{
-				m_pSceneHierarchy->ShowWindow();
-			}
-			if ( ImGui::MenuItem( "Asset Browser" ) )
-			{
-				m_pAssetBrowser->ShowWindow();
-			}
-			if ( ImGui::MenuItem( "Shader Graph" ) )
-			{
-				m_pShaderGraph->ShowWindow();
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
-		static constexpr ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_AutoHideTabBar;
-		dockspaceID = ImGui::GetID( "MainWindowDockspace" );
-		ImGui::DockSpace( dockspaceID, ImVec2( 0.0f, 0.0f ), dockspaceFlags );
-	}
-	ImGui::End();
-
-	ImGui::SetNextWindowDockID( dockspaceID, ImGuiCond_FirstUseEver );
+            }
+            BalEditor::EditorGUI::EndMenu();
+        }
+        if ( BalEditor::EditorGUI::BeginMenu( "View" ))
+        {
+            if ( BalEditor::EditorGUI::MenuItem( "Hierarchy" ))
+            {
+                m_pSceneHierarchy->ShowWindow();
+            }
+            if ( BalEditor::EditorGUI::MenuItem( "Asset Browser" ))
+            {
+                m_pAssetBrowser->ShowWindow();
+            }
+            if ( BalEditor::EditorGUI::MenuItem( "Shader Graph" ))
+            {
+                m_pShaderGraph->ShowWindow();
+            }
+            BalEditor::EditorGUI::EndMenu();
+        }
+        BalEditor::EditorGUI::EndMenuBar();
+    }
+    BalEditor::EditorGUI::End();
 }
 
 void BalEditor::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph )
 {
-	m_pContext = pScene;
-	m_pAssetBrowser = pAssetBrowser;
-	m_pSceneHierarchy = pHierarchy;
-	m_pShaderGraph = pGraph;
+    m_pContext        = pScene;
+    m_pAssetBrowser   = pAssetBrowser;
+    m_pSceneHierarchy = pHierarchy;
+    m_pShaderGraph    = pGraph;
 }

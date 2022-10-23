@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <glm/vec2.hpp>
+#include <FileParcer.h>
 
 namespace BalEditor::EditorGUI
 {
@@ -22,7 +23,7 @@ namespace BalEditor::EditorGUI
     void DrawFloat4Value( const char* name, const float value[4], float width = 100 );
     
     bool DrawIntSlider( const char* name, int& value, int min = 0, int max = 10, float width = 100 );
-    bool DrawFloatSlider( const char* name, float& value, float min = 0.f, float max = 10.f, float width = 100 );
+    bool DrawFloatSlider( const char* name, float& value, float min = 0.f, float max = 10.f, float width = 100, bool showName = true );
     
     bool DrawFloat( const char* name, float& value, float steps, float width = 100 );
     bool DrawFloat2( const char* name, float value[2], float steps, float resetValue = 0.0f, float width = 100 );
@@ -46,16 +47,20 @@ namespace BalEditor::EditorGUI
     
     bool StartPopup( const char* name, bool centered = true, glm::vec2 size = { 0, 0 } );
     bool BeginPopup( const char* name );
-    bool BeginPopupContextItem();
+    bool BeginPopupContextItem( uint64_t id = 0 );
     void CloseCurrentPopup();
     void EndPopup();
     
     bool Begin( std::string_view title, bool& isVisible, int flags );
+    bool BeginChild( std::string_view title, const glm::vec2& position, bool border, int flags );
     void End();
+    void EndChild();
     
     bool BeginMenuBar();
+    bool BeginMenu( std::string_view text );
     void EndMenuBar();
-    bool MenuItem( std::string_view name );
+    void EndMenu();
+    bool MenuItem( std::string_view name, bool isSelected = true );
     
     void Separator();
     void Spacing();
@@ -76,5 +81,14 @@ namespace BalEditor::EditorGUI
     bool IsWindowHovered();
     bool IsMouseDown( int i );
     bool IsItemClicked();
+    void Columns( int nrOfColumns );
+    void NextColumn();
+    void MaxNextWindow();
+    void DrawResourceItem( const SFile& file, VkDescriptorSet_T* descriptorSet, float imageSize, int id, bool& isSelected );
+    void PushId( const char* id );
+    void PopID();
+    bool IsMouseDoubleClicked( int button );
+    void SetNextItemOpen( bool open );
+    bool BeginPopupContextWindow( uint64_t uuid );
 }
 #endif //GAME_EDITORGUI_H

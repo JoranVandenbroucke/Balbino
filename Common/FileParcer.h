@@ -23,17 +23,7 @@
 
 enum class EFileTypes : uint8_t
 {
-    Unknown,
-    Folder,
-    Scene,
-    Image,
-    Audio,
-    Font,
-    Model,
-    Shader,
-    Material,
-    Code,
-    Preset
+    Unknown, Folder, Scene, Image, Audio, Font, Model, Shader, Material, Code, Preset, MaxFileTypes
 };
 
 inline const char* ToString( EFileTypes type )

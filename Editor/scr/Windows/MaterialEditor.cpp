@@ -1,10 +1,11 @@
 #include "MaterialEditor.h"
 
 #include "ISystem.h"
-#include "imgui.h"
 #include "IResourceManager.h"
 #include "Material.h"
 #include "Texture.h"
+
+#include "../EditorGUI/EditorGui.h"
 
 BalEditor::CMaterialEditor::CMaterialEditor()
         : m_isVisible{},
@@ -22,11 +23,11 @@ void BalEditor::CMaterialEditor::Draw()
 {
     if ( m_isVisible )
     {
-        if ( ImGui::Begin( "Material Editor", &m_isVisible, ImGuiWindowFlags_MenuBar ))
+        if ( BalEditor::EditorGUI::Begin( "Material Editor", m_isVisible, 1 << 10 ))
         {
-            if ( ImGui::BeginMenuBar())
+            if ( BalEditor::EditorGUI::BeginMenuBar())
             {
-                if ( ImGui::Button( "Reload" ))
+                if ( BalEditor::EditorGUI::DrawButton( "Reload" ))
                 {
                     uint64_t shaderID{
                             (uint64_t) m_pSystem->GetResourceManager()->GetMaterial(
@@ -46,81 +47,38 @@ void BalEditor::CMaterialEditor::Draw()
                     materialFile.close();
                     m_pSystem->GetResourceManager()->LoadMaterial( m_currentMaterial.path );
                 }
-                ImGui::EndMenuBar();
+                BalEditor::EditorGUI::EndMenuBar();
             }
-            ImGui::Columns( 2 );
+            BalEditor::EditorGUI::Columns( 2 );
             for ( auto& snd : m_shaderResources )
             {
                 if ( snd.type != BalVulkan::EShaderResourceType::Input || snd.type != BalVulkan::EShaderResourceType::Output )
                 {
-                    ImGui::Text( "%s", snd.name.c_str());
-                    ImGui::NextColumn();
                     switch ( snd.type )
                     {
-                        case BalVulkan::EShaderResourceType::None:
-                            break;
-                        case BalVulkan::EShaderResourceType::InputAttachment:
-                            ImGui::Text( "Input Attachment" );
-                            break;
                         case BalVulkan::EShaderResourceType::Image:
-                            ImGui::Text( "Image" );
-                            if ( ImGui::BeginDragDropTarget())
-                            {
-                                if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(
-                                        ToString( EFileTypes::Image )))
-                                {
-                                    std::cout << "Image bound: ";
-                                    std::cout << payload->DataSize;
-                                    std::cout << "\n";
-                                    const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture(
-                                            static_cast<SFile*>( payload->Data )->uuid, true );
-                                    snd.resourceID = pModel->GetID();
-                                }
-                                ImGui::EndDragDropTarget();
-                            }
-                            break;
                         case BalVulkan::EShaderResourceType::ImageSampler:
-                            ImGui::Text( "Image Sampler" );
-                            if ( ImGui::BeginDragDropTarget())
+                        case BalVulkan::EShaderResourceType::ImageStorage:
+                        case BalVulkan::EShaderResourceType::Sampler:
+                            BalEditor::EditorGUI::DrawText( snd.name.c_str());
+                            BalEditor::EditorGUI::NextColumn();
+                            BalEditor::EditorGUI::DrawText( "Image / Image Sampler" );
+                            if ( void* pData = BalEditor::EditorGUI::ReceiveDragDrop( ToString( EFileTypes::Image )))
                             {
-                                if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(
-                                        ToString( EFileTypes::Image )))
-                                {
-                                    std::cout << "Image bound: ";
-                                    std::cout << payload->DataSize;
-                                    std::cout << "\n";
-                                    const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture(
-                                            static_cast<SFile*>( payload->Data )->uuid, true );
-                                    snd.resourceID = pModel->GetID();
-                                }
-                                ImGui::EndDragDropTarget();
+                                const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture(
+                                        static_cast<SFile*>( pData )->uuid, true );
+                                snd.resourceID = pModel->GetID();
                             }
                             break;
-                        case BalVulkan::EShaderResourceType::ImageStorage:
-                            ImGui::Text( "Image Storage" );
+                        default:
                             break;
-                        case BalVulkan::EShaderResourceType::Sampler:
-                            ImGui::Text( "Sampler" );
-                            break;
-                        case BalVulkan::EShaderResourceType::BufferUniform:
-                            ImGui::Text( "Uniform Buffer" );
-                            break;
-                        case BalVulkan::EShaderResourceType::BufferStorage:
-                            ImGui::Text( "Storage Buffer" );
-                            break;
-                        case BalVulkan::EShaderResourceType::PushConstant:
-                            ImGui::Text( "Push Constant" );
-                            break;
-                        case BalVulkan::EShaderResourceType::SpecializationConstant:
-                            ImGui::Text( "Specialization Constant" );
-                            break;
-                        default:;
                     }
-                    ImGui::NextColumn();
+                    BalEditor::EditorGUI::NextColumn();
                 }
             }
+            BalEditor::EditorGUI::Columns( 1 );
         }
-        ImGui::End();
+        BalEditor::EditorGUI::End();
     }
 }
 
@@ -130,8 +88,8 @@ void BalEditor::CMaterialEditor::Cleanup()
 
 void BalEditor::CMaterialEditor::ShowWindow()
 {
+    BalEditor::EditorGUI::SetWindowFocus( "Material Editor" );
     m_isVisible = true;
-    ImGui::SetWindowFocus( "Material Editor" );
 }
 
 void BalEditor::CMaterialEditor::SetMaterial( const SFile& currentMaterial )
