@@ -6,6 +6,8 @@
 #include "ShaderGraph.h"
 #include "ShaderPipeline.h"
 
+#include "PropertyPanel.h"
+
 #include "../EditorGUI/EditorGui.h"
 #include "backends/imgui_impl_vulkan.h"
 
@@ -34,13 +36,14 @@ BalEditor::CAssetBrowser::CAssetBrowser()
           m_pVkDescriptorSetShaderIcon{ VK_NULL_HANDLE },
           m_pShaderGraph{ nullptr },
           m_pMaterialEditor{ nullptr },
+          m_pPropertyPanel{ nullptr },
           m_pSystem{ nullptr },
           m_isVisible{ true },
           m_size{ 32.f },
           m_isItemSelected{},
           m_isContextMenuOpen{},
           m_wasContextMenuOpen{},
-          m_lastSelectedFile{},
+          m_openItem{},
           m_updateCurrentDirectory{ true }
 {
 }
@@ -85,14 +88,14 @@ void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
             m_pShaderIcon->GetSampler(), m_pShaderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
     
     m_pSystem              = pSystem;
-    m_currentDirectoryName = "../Data";
+    m_currentDirectoryName = "..\\Data";
 }
 
 void BalEditor::CAssetBrowser::Draw()
 {
+    FindAllFiles();
     if ( m_updateCurrentDirectory )
     {
-        FindAllFiles();
         GetAllFilesInSelectedPath( m_currentDirectoryName, m_currentDirectory );
         m_updateCurrentDirectory = false;
         std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
@@ -116,7 +119,7 @@ void BalEditor::CAssetBrowser::Draw()
         if ( BalEditor::EditorGUI::BeginChild( "Asset File", { 0, 0 }, true, 1 << 6 ))
         {
             if ( BalEditor::EditorGUI::BeginChild( "Icon Size Slider",
-                                                   { 0, BalEditor::EditorGUI::GetContentRegionAvail().y - 32 }, true,
+                                                   { 0, BalEditor::EditorGUI::GetContentRegionAvail().y - 32 }, false,
                                                    1 << 6 ))
             {
                 int  id{};
@@ -124,86 +127,72 @@ void BalEditor::CAssetBrowser::Draw()
                 for ( const auto& currentFile : m_currentDirectory )
                 {
                     bool isSelected{};
+                    BalEditor::EditorGUI::DrawSelectable( id++, isSelected, m_size * 1.5f );
+                    HandelSelected( currentFile, isSelected );
                     switch ( currentFile.type )
                     {
                         case EFileTypes::Folder:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetFolderIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetFolderIcon, m_size );
                             break;
                         }
                         case EFileTypes::Scene:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetBalbinoIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetBalbinoIcon,
+                                                                    m_size );
                             break;
                         }
                         case EFileTypes::Image:
                         {
                             //todo:: get image data
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetImageIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetImageIcon, m_size );
                             break;
                         }
                         case EFileTypes::Audio:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetAudioIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetAudioIcon, m_size );
                             break;
                         }
                         case EFileTypes::Code:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetCodeIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetCodeIcon, m_size );
                             break;
                         }
                         case EFileTypes::Unknown:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetUnknownIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetUnknownIcon,
+                                                                    m_size );
                             break;
                         }
                         case EFileTypes::Font: //todo add font icon
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetFontIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetFontIcon, m_size );
                             break;
                         }
                         case EFileTypes::Model:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetModelIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetModelIcon, m_size );
                             break;
                         }
                         case EFileTypes::Preset:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetPresetIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetPresetIcon, m_size );
                             break;
                         }
                         case EFileTypes::Shader:
                         {
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetShaderIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetShaderIcon, m_size );
                             break;
                         }
                         case EFileTypes::Material:
-                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetMaterialIcon, m_size,
-                                                                    id++, isSelected );
+                            BalEditor::EditorGUI::DrawResourceItem( currentFile, m_pVkDescriptorSetMaterialIcon,
+                                                                    m_size );
                             break;
                         default:;
                     }
                     wasOneSelected |= isSelected;
-                    if ( isSelected )
-                    {
-                        HandelSelected( currentFile, true );
-                        m_lastSelectedFile = currentFile;
-                    }
                 }
-                if ( !wasOneSelected )
-                {
-                    HandelSelected( m_lastSelectedFile, false );
-                }
+                DrawContextMenu( wasOneSelected );
             }
             BalEditor::EditorGUI::EndChild();
             BalEditor::EditorGUI::DrawFloatSlider( "Icon Size", m_size, 32.0f, 128.f, false );
@@ -225,10 +214,11 @@ void BalEditor::CAssetBrowser::ShowWindow()
     BalEditor::EditorGUI::SetWindowFocus( "Asset Browser" );
 }
 
-void BalEditor::CAssetBrowser::SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor )
+void BalEditor::CAssetBrowser::SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor, CPropertyPanel* pPropertyPanel )
 {
     m_pShaderGraph    = pShaderGraph;
     m_pMaterialEditor = pMaterialEditor;
+    m_pPropertyPanel  = pPropertyPanel;
 }
 
 void BalEditor::CAssetBrowser::FindAllFiles()
@@ -363,12 +353,7 @@ void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std:
     filesInDirectory.clear();
     for ( auto& f : m_files )
     {
-        if ( f.path != path && f.path.find(
-                path ) != std::string::npos && f.depth - fileIter->depth == 1 && std::find_if(
-                filesInDirectory.cbegin(), filesInDirectory.cend(), [ &f ]( const SFile& string )
-                {
-                    return string.path.find( f.path ) != std::string::npos;
-                } ) == filesInDirectory.cend())
+        if ( f.path != path && f.path.find( path ) != std::string::npos && f.depth - fileIter->depth == 1 )
         {
             filesInDirectory.push_back( f );
         }
@@ -377,56 +362,12 @@ void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std:
 
 void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool isSelected )
 {
-    bool create;
-    bool showInExplorer;
-    bool open{};
-    bool rename;
-    bool shouldDelete;
-    bool copyPath;
-    bool import;
-    bool reimport;
-    bool reimportAll;
-    bool properties;
-    m_isContextMenuOpen = false;
-    if ( BalEditor::EditorGUI::BeginPopupContextWindow( 1 ))
-    {
-        m_isContextMenuOpen = true;
-        if ( !m_wasContextMenuOpen )
-        {
-            m_isItemSelected = isSelected;
-        }
-        create              = BalEditor::EditorGUI::MenuItem( "Create" );
-        showInExplorer      = BalEditor::EditorGUI::MenuItem( "Show in Explorer" );
-        open                = BalEditor::EditorGUI::MenuItem( "Open", m_isItemSelected );
-        rename              = BalEditor::EditorGUI::MenuItem( "Rename", m_isItemSelected );
-        shouldDelete        = BalEditor::EditorGUI::MenuItem( "Delete", m_isItemSelected );
-        copyPath            = BalEditor::EditorGUI::MenuItem( "Copy Path" );
-        BalEditor::EditorGUI::Separator();
-        import                   = BalEditor::EditorGUI::MenuItem( "Import new asset" );
-        m_updateCurrentDirectory = BalEditor::EditorGUI::MenuItem( "Refresh" );
-        reimport                 = BalEditor::EditorGUI::MenuItem( "Reimport" );
-        reimportAll              = BalEditor::EditorGUI::MenuItem( "Reimport All" );
-        BalEditor::EditorGUI::Separator();
-        properties = BalEditor::EditorGUI::MenuItem( "Properties..." );
-        BalEditor::EditorGUI::EndPopup();
-        
-        (void) create;
-        (void) showInExplorer;
-        (void) rename;
-        (void) shouldDelete;
-        (void) copyPath;
-        (void) import;
-        (void) reimport;
-        (void) reimportAll;
-        (void) properties;
-    }
-    m_wasContextMenuOpen = m_isContextMenuOpen;
     switch ( currentFile.type )
     {
         case EFileTypes::Unknown:
             break;
         case EFileTypes::Folder:
-            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( 0 ) && isSelected ) || open )
+            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( 0 ) && isSelected ) || m_openItem )
             {
                 const std::string currentPath{ currentFile.path };
                 m_updateCurrentDirectory = true;
@@ -435,22 +376,22 @@ void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool is
             }
             for ( int i = 0; i < (int) EFileTypes::MaxFileTypes; ++i )
             {
-                if ( void* pData = BalEditor::EditorGUI::ReceiveDragDrop( ToString( EFileTypes( i ))))
+                if ( void* pData = BalEditor::EditorGUI::ReceiveDragDrop( ToString( EFileTypes(i) )))
                 {
                     SFile* pFile{ static_cast<SFile*>(pData) };
-                    MoveFile( pFile, currentFile.path );
+                    MoveFile( pFile, currentFile.path + "/" );
                     return;
                 }
             }
         case EFileTypes::Shader:
-            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( 0 ) && isSelected ) || open )
+            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( 0 ) && isSelected ) || m_openItem )
             {
                 m_pShaderGraph->SetShader( currentFile );
                 m_pShaderGraph->ShowWindow();
             }
             break;
         case EFileTypes::Material:
-            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected ) || open )
+            if (( BalEditor::EditorGUI::IsMouseDoubleClicked( ImGuiMouseButton_Left ) && isSelected ) || m_openItem )
             {
                 m_pMaterialEditor->SetMaterial( currentFile );
                 m_pMaterialEditor->ShowWindow();
@@ -476,11 +417,61 @@ const char* BalEditor::CAssetBrowser::GetCurrentDirectory()
 void BalEditor::CAssetBrowser::MoveFile( SFile* pFile, const std::filesystem::path& destination )
 {
     Rename( pFile->path, destination.string() + "\\" + pFile->fileName );
-    pFile->path = destination.string() + "\\" + pFile->fileName;
 }
 
 void BalEditor::CAssetBrowser::Rename( const std::filesystem::path& oldName, const std::filesystem::path& newName )
 {
     std::filesystem::rename( oldName, newName );
+}
+void BalEditor::CAssetBrowser::DrawContextMenu( bool isSelected )
+{
+    bool create;
+    bool showInExplorer;
+    m_openItem = false;
+    bool rename;
+    bool shouldDelete;
+    bool copyPath;
+    bool import;
+    bool reimport;
+    bool reimportAll;
+    bool properties;
+    m_isContextMenuOpen = false;
+    if ( BalEditor::EditorGUI::BeginPopupContextWindow( 1 ))
+    {
+        m_isContextMenuOpen = true;
+        if ( !m_wasContextMenuOpen )
+        {
+            m_isItemSelected = isSelected;
+        }
+        create              = BalEditor::EditorGUI::MenuItem( "Create" );
+        showInExplorer      = BalEditor::EditorGUI::MenuItem( "Show in Explorer" );
+        m_openItem          = BalEditor::EditorGUI::MenuItem( "Open", m_isItemSelected );
+        rename              = BalEditor::EditorGUI::MenuItem( "Rename", m_isItemSelected );
+        shouldDelete        = BalEditor::EditorGUI::MenuItem( "Delete", m_isItemSelected );
+        copyPath            = BalEditor::EditorGUI::MenuItem( "Copy Path" );
+        BalEditor::EditorGUI::Separator();
+        import                   = BalEditor::EditorGUI::MenuItem( "Import new asset" );
+        m_updateCurrentDirectory = BalEditor::EditorGUI::MenuItem( "Refresh" );
+        reimport                 = BalEditor::EditorGUI::MenuItem( "Reimport" );
+        reimportAll              = BalEditor::EditorGUI::MenuItem( "Reimport All" );
+        BalEditor::EditorGUI::Separator();
+        properties = BalEditor::EditorGUI::MenuItem( "Properties..." );
+        BalEditor::EditorGUI::EndPopup();
+        
+        (void) create;
+        (void) showInExplorer;
+        (void) rename;
+        (void) shouldDelete;
+        (void) copyPath;
+        (void) import;
+        (void) reimport;
+        (void) reimportAll;
+        if ( properties )
+        {
+            m_pPropertyPanel->ShowWindow();
+        }
+    }
+    m_wasContextMenuOpen = m_isContextMenuOpen;
+    
 }
 

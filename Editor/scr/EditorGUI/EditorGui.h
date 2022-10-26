@@ -12,6 +12,7 @@
 
 namespace BalEditor::EditorGUI
 {
+    void DrawIntValue( const char* name, uint64_t value, float width = 100 );
     void DrawIntValue( const char* name, int value, float width = 100 );
     void DrawInt2Value( const char* name, const int value[2], float width = 100 );
     void DrawInt3Value( const char* name, const int value[3], float width = 100 );
@@ -84,11 +85,16 @@ namespace BalEditor::EditorGUI
     void Columns( int nrOfColumns );
     void NextColumn();
     void MaxNextWindow();
-    void DrawResourceItem( const SFile& file, VkDescriptorSet_T* descriptorSet, float imageSize, int id, bool& isSelected );
+    void DrawResourceItem( const SFile& file, VkDescriptorSet_T* descriptorSet, float imageSize );
     void PushId( const char* id );
+    void PushId( int id );
     void PopID();
     bool IsMouseDoubleClicked( int button );
     void SetNextItemOpen( bool open );
     bool BeginPopupContextWindow( uint64_t uuid );
+    unsigned int GetID( const char* name );
+    unsigned int DockSpace( unsigned int id, const glm::vec2& size, int flags );
+    void SetNextWindowDockID( unsigned int id, int flags );
+    void DrawSelectable( int id, bool& isSelected, float height);
 }
 #endif //GAME_EDITORGUI_H

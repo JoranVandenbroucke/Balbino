@@ -21,6 +21,8 @@ namespace BalEditor
     
     class CMaterialEditor;
     
+    class CPropertyPanel;
+    
     class CAssetBrowser
     {
     public:
@@ -44,7 +46,7 @@ namespace BalEditor
         
         void ShowWindow();
         
-        void SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor );
+        void SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor, CPropertyPanel* pPropertyPanel );
         
         const char* GetCurrentDirectory();
     
@@ -75,16 +77,18 @@ namespace BalEditor
         
         CShaderGraph   * m_pShaderGraph;
         CMaterialEditor* m_pMaterialEditor;
+        CPropertyPanel * m_pPropertyPanel;
         
         const ISystem* m_pSystem;
         
         float m_size;
         bool  m_isVisible;
         bool  m_updateCurrentDirectory;
-        bool  m_isContextMenuOpen;
-        bool  m_wasContextMenuOpen;
-        bool  m_isItemSelected;
-        SFile m_lastSelectedFile;
+        
+        bool m_isContextMenuOpen;
+        bool m_wasContextMenuOpen;
+        bool m_isItemSelected;
+        bool m_openItem;
         
         std::vector<SFile> m_currentDirectory;
         std::vector<SFile> m_files;
@@ -93,6 +97,7 @@ namespace BalEditor
         
         void FindAllFiles();
         void DrawTree( const std::string& path, uint32_t& nodeIdx );
+        void DrawContextMenu(bool isSelected);
         void GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory );
         void HandelSelected( const SFile& currentFile, bool isSelected );
         void MoveFile( SFile* pFile, const std::filesystem::path& destination );

@@ -985,7 +985,7 @@ namespace IMNODES_NAMESPACE
                     GImNodes->CanvasDrawList->AddBezierCubic(
 #endif
                             cubic_bezier.P0, cubic_bezier.P1, cubic_bezier.P2, cubic_bezier.P3,
-                            GImNodes->Style.Colors[ImNodesCol_Link], GImNodes->Style.LinkThickness,
+                            start_pin.ColorStyle.Hovered, GImNodes->Style.LinkThickness,
                             cubic_bezier.NumSegments );
                     
                     const bool link_creation_on_snap = GImNodes->HoveredPinIdx.HasValue() && ( editor.Pins.Pool[GImNodes->HoveredPinIdx.Value()].Flags & ImNodesAttributeFlags_EnableLinkCreationOnSnap );
@@ -2502,11 +2502,13 @@ namespace IMNODES_NAMESPACE
         ImNodesEditorContext& editor = EditorContextGet();
         ImLinkData          & link   = ObjectPoolFindOrCreateObject( editor.Links, id );
         link.Id                  = id;
+        const int pin_idx = ObjectPoolFindOrCreateIndex( editor.Pins, start_attr_id );
+        ImPinData& pin = editor.Pins.Pool[pin_idx];
         link.StartPinIdx         = ObjectPoolFindOrCreateIndex( editor.Pins, start_attr_id );
         link.EndPinIdx           = ObjectPoolFindOrCreateIndex( editor.Pins, end_attr_id );
-        link.ColorStyle.Base     = GImNodes->Style.Colors[ImNodesCol_Link];
-        link.ColorStyle.Hovered  = GImNodes->Style.Colors[ImNodesCol_LinkHovered];
-        link.ColorStyle.Selected = GImNodes->Style.Colors[ImNodesCol_LinkSelected];
+        link.ColorStyle.Base     = pin.ColorStyle.Background;
+        link.ColorStyle.Hovered  = pin.ColorStyle.Hovered;
+        link.ColorStyle.Selected = pin.ColorStyle.Hovered;
         
         // Check if this link was created by the current link event
         if (( editor.ClickInteraction.Type == ImNodesClickInteractionType_LinkCreation && editor.Pins.Pool[link.EndPinIdx].Flags & ImNodesAttributeFlags_EnableLinkCreationOnSnap && editor.ClickInteraction.LinkCreation.StartPinIdx == link.StartPinIdx && editor.ClickInteraction.LinkCreation.EndPinIdx == link.EndPinIdx ) || ( editor.ClickInteraction.LinkCreation.StartPinIdx == link.EndPinIdx && editor.ClickInteraction.LinkCreation.EndPinIdx == link.StartPinIdx ))

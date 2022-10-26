@@ -58,16 +58,6 @@ inline const char* ToString( EFileTypes type )
 
 struct SFile
 {
-    ~SFile()
-    {
-        isFolder = false;
-        type     = EFileTypes::Unknown;
-        uuid     = 0u;
-        fileName = "";
-        path     = "";
-        depth    = 0;
-    }
-    
     bool                            isFolder;
     EFileTypes                      type;
     uint64_t                        uuid;

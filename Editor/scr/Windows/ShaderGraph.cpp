@@ -53,10 +53,7 @@ void BalEditor::CShaderGraph::Draw()
     {
         if ( BalEditor::EditorGUI::BeginMenuBar())
         {
-            if ( BalEditor::EditorGUI::DrawButton( "Save" ))
-            {
-                m_wantsToSave = true;
-            }
+            m_wantsToSave = BalEditor::EditorGUI::DrawButton( "Save" );
             BalEditor::EditorGUI::EndMenuBar();
         }
         

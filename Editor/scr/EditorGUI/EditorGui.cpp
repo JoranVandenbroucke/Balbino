@@ -9,6 +9,19 @@
 namespace BalEditor::EditorGUI
 {
     
+    void DrawIntValue( const char* name, uint64_t value, float width )
+    {
+        ImGui::PushID( name );
+        
+        ImGui::BeginColumns( nullptr, 2 , ImGuiOldColumnFlags_NoResize);
+        ImGui::SetColumnWidth( 0, width );
+        ImGui::Text( "%s", name );
+        ImGui::NextColumn();
+        ImGui::Text("%llu", value);
+        ImGui::EndColumns();
+        
+        ImGui::PopID();
+    }
     void DrawIntValue( const char* name, int value, float width )
     {
         ImGui::PushID( name );
@@ -1047,6 +1060,7 @@ namespace BalEditor::EditorGUI
                 ImGui::EndDragDropTarget();
                 return payload->Data;
             }
+            ImGui::EndDragDropTarget();
         }
         return nullptr;
     }
@@ -1079,26 +1093,26 @@ namespace BalEditor::EditorGUI
     {
         ImGuiIO io = ImGui::GetIO();
         ImGui::SetNextWindowSize( io.DisplaySize );
-        ImGui::SetWindowPos( { 0, 0 } );
+        ImGui::SetNextWindowPos( { 0, 0 } );
     }
-    void DrawResourceItem( const SFile& file, VkDescriptorSet_T* descriptorSet, float imageSize, int id, bool& isSelected )
+    void DrawResourceItem( const SFile& file, VkDescriptorSet_T* descriptorSet, float imageSize )
     {
-        ImGui::PushID( id );
-        ImGui::Selectable( "##file", &isSelected, 1 << 2, { 0, imageSize * 1.05f } );
-        isSelected |= ImGui::IsItemHovered();
-        ImGui::SameLine();
         if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ))
         {
             ImGui::SetDragDropPayload( ToString( file.type ), &file, sizeof( SFile ));
             ImGui::Text( "%s", file.fileName.c_str());
             ImGui::EndDragDropSource();
         }
+        BalEditor::EditorGUI::SameLine();
         ImGui::Image( descriptorSet, { imageSize, imageSize } );
-        ImGui::SameLine();
+        BalEditor::EditorGUI::SameLine();
         ImGui::Text( "%s", file.fileName.c_str());
-        ImGui::PopID();
     }
     void PushId( const char* id )
+    {
+        ImGui::PushID( id );
+    }
+    void PushId( int id )
     {
         ImGui::PushID( id );
     }
@@ -1117,5 +1131,22 @@ namespace BalEditor::EditorGUI
     bool BeginPopupContextWindow( uint64_t uuid )
     {
         return ImGui::BeginPopupContextWindow(( "##ContextMenu" + std::to_string( uuid )).c_str());
+    }
+    unsigned int GetID( const char* name )
+    {
+        return ImGui::GetID( name );
+    }
+    unsigned int DockSpace( unsigned int id, const glm::vec2& size, int flags )
+    {
+        return ImGui::DockSpace( id, { size.x, size.y }, flags );
+    }
+    void SetNextWindowDockID( unsigned int id, int flags )
+    {
+        ImGui::SetNextWindowDockID( id, flags );
+    }
+    void DrawSelectable( int id, bool& isSelected, float height )
+    {
+        ImGui::Selectable( ("##file" + std::to_string(id)).c_str(), &isSelected, 1 << 2, { 0, height } );
+        isSelected |= ImGui::IsItemHovered();
     }
 }

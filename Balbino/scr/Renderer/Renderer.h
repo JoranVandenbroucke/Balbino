@@ -30,9 +30,11 @@ namespace BalVulkan
     class CSwapchain;
     
     class CInstance;
-
+    
     class CRenderPass;
+    
     class CImageResource;
+    
     class CImageView;
     
     class CCommandPool;
@@ -89,6 +91,7 @@ namespace Balbino
 
 #ifdef BALBINO_EDITOR
         BalEditor::CInterface* m_pInterface;
+        bool m_firstFramePassed;
 #endif
         
         int32_t  m_width;

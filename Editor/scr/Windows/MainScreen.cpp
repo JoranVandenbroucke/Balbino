@@ -8,13 +8,15 @@
 #include "AssetBrowser.h"
 #include "SceneHierarchy.h"
 #include "ShaderGraph.h"
+#include "PropertyPanel.h"
 #include "Components/LightComponent.h"
 #include "../EditorGUI/EditorGui.h"
 
 void BalEditor::CMainScreen::Draw()
 {
-    const int flags = 1 << 0 | 1 << 1 | 1 << 2 | 1 << 5 | 1 << 7 | 1 << 10 | 1 << 13;
-    bool      open{ true };
+    const int           flags       = 1 << 0 | 1 << 1 | 1 << 2 | 1 << 5 | 1 << 7 | 1 << 10 | 1 << 13;
+    bool                open{ true };
+    static unsigned int dockspaceID = 0;
     BalEditor::EditorGUI::MaxNextWindow();
     BalEditor::EditorGUI::Begin( "MainWindow", open, flags );
     if ( BalEditor::EditorGUI::BeginMenuBar())
@@ -70,17 +72,26 @@ void BalEditor::CMainScreen::Draw()
             {
                 m_pShaderGraph->ShowWindow();
             }
+            if ( BalEditor::EditorGUI::MenuItem( "Properties..." ))
+            {
+                m_pPropertyPanel->ShowWindow();
+            }
             BalEditor::EditorGUI::EndMenu();
         }
         BalEditor::EditorGUI::EndMenuBar();
+        static constexpr int dockspaceFlags = 1 << 6;
+        dockspaceID = BalEditor::EditorGUI::GetID( "MainWindowDockspace" );
+        BalEditor::EditorGUI::DockSpace( dockspaceID, { 0.0f, 0.0f }, dockspaceFlags );
     }
     BalEditor::EditorGUI::End();
+    BalEditor::EditorGUI::SetNextWindowDockID( dockspaceID, 1 << 2 );
 }
 
-void BalEditor::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph )
+void BalEditor::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph, CPropertyPanel* pPropertyPanel )
 {
     m_pContext        = pScene;
     m_pAssetBrowser   = pAssetBrowser;
     m_pSceneHierarchy = pHierarchy;
     m_pShaderGraph    = pGraph;
+    m_pPropertyPanel  = pPropertyPanel;
 }

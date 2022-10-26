@@ -20,10 +20,10 @@ file(GLOB sourceE
 
 # project setting
 add_library(BalEditor ${sourceE})
-set_property(TARGET BalEditor PROPERTY CXX_STANDARD 23)
-#set_property(TARGET BalEditor PROPERTY C_STANDARD 17)
+set_property(TARGET BalEditor PROPERTY CXX_STANDARD 20)
+set_property(TARGET BalEditor PROPERTY C_STANDARD 17)
 set_property(TARGET BalEditor PROPERTY CXX_STANDARD_REQUIRED ON)
-#set_property(TARGET BalEditor PROPERTY C_STANDARD_REQUIRED ON)
+set_property(TARGET BalEditor PROPERTY C_STANDARD_REQUIRED ON)
 
 if (MSVC)
     target_compile_options(BalEditor PRIVATE
@@ -42,19 +42,19 @@ if (MSVC)
             /MDd;
             >
             $<$<CONFIG:Release>:
-            /Ox
+            /Ox;
             >
             $<$<CONFIG:ReleaseEditor>:
-            /Ox
+            /Ox;
             >
             /MP;
             /W4;
             /WX;
-            /std:c++latest;
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
+            ${DEFAULT_CXX_EXCEPTION_HANDLING}
             )
-    target_compile_definitions(BalEditor
-            PRIVATE
+
+    target_compile_definitions(BalEditor PRIVATE
             "_UNICODE;"
             "UNICODE;"
             "$<$<CONFIG:Debug>:"
@@ -72,38 +72,28 @@ if (MSVC)
             "BL_PLATFORM_WINDOWS"
             )
     target_link_options(BalEditor PRIVATE
-            /INCREMENTAL;
             $<$<CONFIG:Debug>:
-            /DEBUG:FULL;
-            /SUBSYSTEM:CONSOLE;
+            /DEBUG:FULL
+            /SUBSYSTEM:CONSOLE
+            /INCREMENTAL;
             >
             $<$<CONFIG:DebugEditor>:
-            /DEBUG:FULL;
-            /SUBSYSTEM:CONSOLE;
+            /DEBUG:FULL
+            /SUBSYSTEM:CONSOLE
+            /INCREMENTAL
             >
             $<$<CONFIG:Release>:
-            /DEBUG:FULL;
-            /SUBSYSTEM:WINDOWS;
+            /DEBUG
+            /SUBSYSTEM:WINDOWS
             >
             $<$<CONFIG:ReleaseEditor>:
-            /DEBUG:FULL;
-            /SUBSYSTEM:WINDOWS;
+            /DEBUG
+            /SUBSYSTEM:WINDOWS
             >
             )
 else ()
     add_compile_options(-Wall -Wextra -pedantic -Werror)
 endif ()
-target_precompile_headers(BalVulkan
-        PRIVATE [["algorithm"]]
-        PRIVATE [["array"]]
-        PRIVATE [["cmath"]]
-        PRIVATE [["cstdint"]]
-        PRIVATE [["format"]]
-        PRIVATE [["iostream"]]
-        PRIVATE [["string"]]
-        PRIVATE [["unordered_map"]]
-        PRIVATE [["vector"]]
-        )
 
 target_include_directories(BalEditor
         PRIVATE
@@ -116,7 +106,7 @@ target_include_directories(BalEditor
         ../3rdParty/ASSIMP/out/build/x64-Debug/include
         ../3rdParty/ASSIMP/out/build/windows-default/include
         ../3rdParty/GLM
-        ../3rdParty/mINI/src/mini
+        ../3rdParty/mINI/src/
         ../3rdParty/GLI
         ../3rdParty/Vulkan/Include
         ../Renderer/GraphicsVulkan

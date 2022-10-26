@@ -80,3 +80,11 @@ Balbino::CInputHandler* Balbino::CSystem::GetInputHandler() const
 {
     return m_pInputHandler;
 }
+void Balbino::CSystem::SetHeight( int i )
+{
+    m_windowHeight = (float) i;
+}
+void Balbino::CSystem::SetWidth( int i )
+{
+    m_windowWidth = (float) i;
+}

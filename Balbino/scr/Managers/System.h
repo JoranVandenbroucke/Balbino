@@ -30,7 +30,9 @@ namespace Balbino
         
         float GetWindowWidth() override;
         float GetWindowHeight() override;
-    
+        
+        void SetWidth( int i );
+        void SetHeight( int i );
     private:
         CInputHandler   * m_pInputHandler;
         IResourceManager* m_pResourceManager;

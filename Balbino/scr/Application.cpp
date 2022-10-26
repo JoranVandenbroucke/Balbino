@@ -212,6 +212,8 @@ void Balbino::Application::Run()
                             ini["WindowsClient"]["WindowedViewportHeight"] = std::to_string( h );
                             ini["WindowsClient"]["WindowedFlags"]          = std::to_string( m_windowFlags );
                             (void) file.generate( ini, true );
+                            m_system.SetWidth( w );
+                            m_system.SetHeight( h );
                             break;
                         }
                         default:

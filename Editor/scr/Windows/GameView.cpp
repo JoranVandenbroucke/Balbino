@@ -24,7 +24,7 @@
 
 void BalEditor::CGameView::Draw()
 {
-    int  flags = 1 << 0 | 1 << 1 | 1 << 3 | 1 << 5 | 1 << 7;
+    int  flags = 1 << 5 | 43 | 1 << 7 | 1 << 0;
     bool open{ true };
     BalEditor::EditorGUI::Begin( "GameView", open, flags );
     BalEditor::EditorGUI::BeginChild( "GameViewChild", { -1, -1 }, false, flags );

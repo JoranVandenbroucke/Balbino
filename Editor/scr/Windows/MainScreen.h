@@ -11,6 +11,8 @@ namespace BalEditor
     
     class CAssetBrowser;
     
+    class CPropertyPanel;
+    
     class CMainScreen
     {
     public:
@@ -22,7 +24,7 @@ namespace BalEditor
         CMainScreen& operator=( CMainScreen&& ) = delete;
         
         void Draw();
-        void SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph );
+        void SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph, CPropertyPanel* pPropertyPanel );
     
     private:
         std::string m_savePosition;
@@ -31,5 +33,6 @@ namespace BalEditor
         CSceneHierarchy* m_pSceneHierarchy{};
         CShaderGraph   * m_pShaderGraph{};
         IScene         * m_pContext{};
+        CPropertyPanel * m_pPropertyPanel{};
     };
 }

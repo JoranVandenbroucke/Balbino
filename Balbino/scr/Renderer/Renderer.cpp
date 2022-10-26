@@ -23,12 +23,11 @@ Balbino::CRenderer::CRenderer()
           m_pQueue{ nullptr },
           m_pCommandPool{ nullptr },
           m_pSignalingSemaphore{ nullptr },
-          m_pWaitingSemaphore{ nullptr }
+          m_pWaitingSemaphore{ nullptr },
 #ifdef BALBINO_EDITOR
-        ,
-          m_pInterface{ nullptr }
+          m_pInterface{ nullptr },
+          m_firstFramePassed{ false },
 #endif // BALBINO_EDITOR
-        ,
           m_width{ 0 },
           m_height{ 0 },
           m_imageIndex{ 0 },
@@ -116,9 +115,9 @@ void Balbino::CRenderer::RecreateSwapChain()
     
     m_pFrameBuffer->Initialize( m_pRenderPass, m_width, m_height, m_swapchainViews, m_pDepthImageView );
 
-//#ifdef BALBINO_EDITOR
-//	m_pInterface->Resize( m_pCommandPool, m_pQueue);
-//#endif
+#ifdef BALBINO_EDITOR
+    m_pInterface->Resize( m_width, m_height );
+#endif
     
     g_pDevice      = m_pDevice;
     g_pCommandPool = m_pCommandPool;
@@ -278,8 +277,13 @@ bool Balbino::CRenderer::StartDraw()
 bool Balbino::CRenderer::EndDraw()
 {
 #ifdef BALBINO_EDITOR
-    m_pInterface->Draw( m_pCommandPool );
+    if ( m_firstFramePassed )
+    {
+        m_pInterface->Draw( m_pCommandPool );
+    }
+    m_firstFramePassed = true;
 #endif // BALBINO_EDITOR
+    
     if ( m_pInFlightFences[m_imageIndex] != nullptr )
     {
         m_pInFlightFences[m_imageIndex]->Wait();

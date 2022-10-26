@@ -6,6 +6,7 @@
 #include "Windows/SceneHierarchy.h"
 #include "Windows/ShaderGraph.h"
 #include "Windows/MaterialEditor.h"
+#include "Windows/PropertyPanel.h"
 #include "Tools/FilesSystem/Inporter/MeshFileImporter.h"
 #include "Tools/FilesSystem/Inporter/TextureFileImporter.h"
 
@@ -83,7 +84,9 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     
     ImGui_ImplVulkan_Init( &info, pRenderPass->GetRenderPass());
     ImNodes::CreateContext();
-    ImNodes::StyleColorsDark();
+    
+    ImNodes::GetIO().LinkDetachWithModifierClick.Modifier = &ImGui::GetIO().KeyCtrl;
+    ImNodesStyle& style{ ImNodes::GetStyle() };
     
     ImGuiIO& io                = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
@@ -96,9 +99,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     io.DisplayFramebufferScale = ImVec2( 1.0f, 1.0f );
     
     // Setup Dear ImGui style
-    SetImGuiStyle();
-    
-    ImNodes::GetIO().LinkDetachWithModifierClick.Modifier = &ImGui::GetIO().KeyCtrl;
+    SetImGuiStyle( style );
     //ImNodes::PushAttributeFlag( ImNodes::AttributeFlags_EnableLinkDetachWithDragClick );
     
     // Upload Fonts
@@ -134,6 +135,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     m_pMaterialEditor  = new CMaterialEditor{};
     m_pMeshImporter    = new CMeshFileImporter{};
     m_pTextureImporter = new CTextureFileImporter{};
+    m_pPropertyPanel   = new CPropertyPanel{};
     
     m_pAssetBrowser->Initialize( pSystem );
     m_pMaterialEditor->Initialize( pSystem );
@@ -141,7 +143,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
 
 void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 {
-    if ( m_queueNextResource && m_pendingResources.size())
+    if ( m_queueNextResource && !m_pendingResources.empty())
     {
         ImportFile( m_pendingResources.back().c_str(), m_pAssetBrowser->GetCurrentDirectory(), m_pMeshImporter,
                     m_pTextureImporter );
@@ -160,6 +162,7 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
     m_pSceneHierarchy->Draw();
     m_pShaderGraph->Draw();
     m_pMaterialEditor->Draw();
+    m_pPropertyPanel->Draw();
     
     if ( m_pMeshImporter->IsVisible())
     {
@@ -191,6 +194,7 @@ void BalEditor::CInterface::Cleanup() const
     delete m_pMaterialEditor;
     delete m_pMeshImporter;
     delete m_pTextureImporter;
+    delete m_pPropertyPanel;
 }
 
 void BalEditor::CInterface::ProcessEvent( SDL_Event e )
@@ -334,13 +338,13 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
 
 void BalEditor::CInterface::SetContext( IScene* pScene, ISystem* pSystem )
 {
-    m_pMain->SetContext( pScene, m_pAssetBrowser, m_pSceneHierarchy, m_pShaderGraph );
+    m_pMain->SetContext( pScene, m_pAssetBrowser, m_pSceneHierarchy, m_pShaderGraph, m_pPropertyPanel );
     m_pSceneHierarchy->SetContext( pScene, pSystem );
     m_pGameView->SetContext( pScene->GetSystem(), pScene, m_pSceneHierarchy );
-    m_pAssetBrowser->SetShaderGraphReference( m_pShaderGraph, m_pMaterialEditor );
+    m_pAssetBrowser->SetShaderGraphReference( m_pShaderGraph, m_pMaterialEditor, m_pPropertyPanel );
 }
 
-void BalEditor::CInterface::SetImGuiStyle()
+void BalEditor::CInterface::SetImGuiStyle( ImNodesStyle& imNodesStyle )
 {
     ImGuiStyle* style  = &ImGui::GetStyle();
     ImVec4    * colors = style->Colors;
@@ -423,4 +427,37 @@ void BalEditor::CInterface::SetImGuiStyle()
     style->GrabRounding      = 0.0f;
     style->TabRounding       = 0.0f;
     style->LogSliderDeadzone = 1.0f;
+    
+    imNodesStyle.Colors[ImNodesCol_NodeBackground]         = IM_COL32( 240, 240, 240, 255 );
+    imNodesStyle.Colors[ImNodesCol_NodeBackgroundHovered]  = IM_COL32( 240, 240, 240, 255 );
+    imNodesStyle.Colors[ImNodesCol_NodeBackgroundSelected] = IM_COL32( 240, 240, 240, 255 );
+    imNodesStyle.Colors[ImNodesCol_NodeOutline]            = IM_COL32( 100, 100, 100, 255 );
+    imNodesStyle.Colors[ImNodesCol_TitleBar]               = IM_COL32( 248, 248, 248, 255 );
+    imNodesStyle.Colors[ImNodesCol_TitleBarHovered]        = IM_COL32( 209, 209, 209, 255 );
+    imNodesStyle.Colors[ImNodesCol_TitleBarSelected]       = IM_COL32( 209, 209, 209, 255 );
+    
+    imNodesStyle.Colors[ImNodesCol_Link] = IM_COL32( 150, 250, 66, 100 );
+    
+    imNodesStyle.Colors[ImNodesCol_LinkHovered]  = IM_COL32( 150, 250, 66, 242 );
+    imNodesStyle.Colors[ImNodesCol_LinkSelected] = IM_COL32( 150, 250, 66, 242 );
+    
+    imNodesStyle.Colors[ImNodesCol_Pin]                = IM_COL32( 150, 250, 66, 160 );
+    imNodesStyle.Colors[ImNodesCol_PinHovered]         = IM_COL32( 150, 250, 66, 255 );
+    imNodesStyle.Colors[ImNodesCol_BoxSelector]        = IM_COL32( 170, 250, 70, 30 );
+    imNodesStyle.Colors[ImNodesCol_BoxSelectorOutline] = IM_COL32( 170, 250, 70, 150 );
+    imNodesStyle.Colors[ImNodesCol_GridBackground]     = IM_COL32( 225, 225, 225, 255 );
+    imNodesStyle.Colors[ImNodesCol_GridLine]           = IM_COL32( 180, 180, 180, 100 );
+    imNodesStyle.Colors[ImNodesCol_GridLinePrimary]    = IM_COL32( 120, 120, 120, 100 );
+    
+    imNodesStyle.Colors[ImNodesCol_MiniMapBackground]        = IM_COL32( 25, 25, 25, 100 );
+    imNodesStyle.Colors[ImNodesCol_MiniMapBackgroundHovered] = IM_COL32( 25, 25, 25, 200 );
+    imNodesStyle.Colors[ImNodesCol_MiniMapOutline]           = IM_COL32( 150, 150, 150, 100 );
+    imNodesStyle.Colors[ImNodesCol_MiniMapOutlineHovered]    = IM_COL32( 150, 150, 150, 200 );
+    
+    imNodesStyle.Colors[ImNodesCol_MiniMapOutlineHovered]    = IM_COL32( 150, 150, 150, 200 );
+}
+void BalEditor::CInterface::Resize( const int32_t w, const int32_t h )
+{
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2((float) w, (float) h );
 }

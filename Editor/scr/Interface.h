@@ -30,6 +30,7 @@ namespace BalVulkan
 }
 
 struct SDL_Window;
+struct ImNodesStyle;
 
 namespace BalEditor
 {
@@ -49,32 +50,25 @@ namespace BalEditor
     
     class CTextureFileImporter;
     
+    class CPropertyPanel;
+    
     class CInterface final
     {
     public:
         CInterface();
         
         ~CInterface() = default;
-        
         CInterface( const CInterface& ) = delete;
-        
         CInterface( CInterface&& ) = delete;
-        
         CInterface& operator=( const CInterface& ) = delete;
-        
         CInterface& operator=( CInterface&& ) = delete;
         
         void Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CRenderPass* pRenderPass, const BalVulkan::CSwapchain* pSwapchain, ISystem* pSystem );
-        
         void Draw( BalVulkan::CCommandPool* pCommandPool );
-        
         void Cleanup() const;
-        
         void ProcessEvent( SDL_Event e );
-        
         void SetContext( IScene* pScene, ISystem* pSystem );
-        
-        void Resize( VkInstance instance, VkQueue queue );
+        void Resize( const int32_t w, const int32_t h );
     
     private:
         bool m_queueNextResource;
@@ -87,6 +81,7 @@ namespace BalEditor
         CMaterialEditor     * m_pMaterialEditor;
         CMeshFileImporter   * m_pMeshImporter;
         CTextureFileImporter* m_pTextureImporter;
+        CPropertyPanel      * m_pPropertyPanel;
         
         VkDescriptorPool m_descriptorPool;
         SDL_Window* m_pWindow;
@@ -95,6 +90,6 @@ namespace BalEditor
         
         std::vector<std::string> m_pendingResources;
         
-        static void SetImGuiStyle();
+        static void SetImGuiStyle( ImNodesStyle& imNodesStyle );
     };
 }
