@@ -28,7 +28,7 @@ namespace Balbino
         
         [[nodiscard]] CUuid GetUuid() const override;
         [[nodiscard]] const std::vector<Balbino::SMeshMetadata>& GetMetaData() const override;
-        [[nodiscard]] const uint32_t GetMaterialCount() const override;
+        [[nodiscard]] uint32_t GetMaterialCount() const override;
         static CMesh* CreateNew( std::vector<BalVulkan::SVertex>& vertices, std::vector<uint32_t>& indices, const std::vector<Balbino::SMeshMetadata>& metaData, uint64_t uuid );
     
     private:

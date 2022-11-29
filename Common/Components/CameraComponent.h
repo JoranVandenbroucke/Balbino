@@ -9,11 +9,11 @@ class CCameraComponent final
 public:
     CCameraComponent() = default;
     explicit CCameraComponent( IEntity* pEntity, ISystem* pSystem )
-            : m_pEntity{ pEntity },
-              m_renderIndex{},
+            : m_renderIndex{},
               m_fov{ 1.309f },
               m_nearClip{ 0.01f },
-              m_farClip{ 1000.f }
+              m_farClip{ 1000.f },
+              m_pEntity{ pEntity }
     {
         pSystem->GetCameraManager()->AddCamera( this );
     }

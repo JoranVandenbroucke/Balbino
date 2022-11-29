@@ -33,6 +33,6 @@ namespace Balbino
         
         [[nodiscard]] virtual CUuid GetUuid() const = 0;
         [[nodiscard]] virtual const std::vector<Balbino::SMeshMetadata>& GetMetaData() const = 0;
-        [[nodiscard]] virtual const uint32_t GetMaterialCount() const = 0;
+        [[nodiscard]] virtual uint32_t GetMaterialCount() const = 0;
     };
 }

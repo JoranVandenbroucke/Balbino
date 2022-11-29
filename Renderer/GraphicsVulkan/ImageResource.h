@@ -21,7 +21,7 @@ namespace BalVulkan
 
         VkResult InitFromSwapchain( VkImage image, VkImageLayout layout, uint32_t width, uint32_t height, VkFormat format );
 
-        VkResult Initialize( BalVulkan::EImageViewType type, BalVulkan::EFormat format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits usage, BalVulkan::EImageLayout layout = BalVulkan::EImageLayout::Undefined );
+        VkResult Initialize( BalVulkan::EImageViewType::Enum type, BalVulkan::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, BalVulkan::EImageLayout::Enum layout = BalVulkan::EImageLayout::Undefined );
 
         VkImage GetImage();
 
@@ -45,7 +45,7 @@ namespace BalVulkan
 
         uint32_t GetDepth() const;
 
-        void TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout newLayout );
+        void TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout::Enum newLayout );
 
         void GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand );
 

@@ -7,7 +7,7 @@ struct IResourceManager;
 
 class ICameraManager;
 
-struct BALBINO_API ISystem
+struct ISystem
 {
     virtual ~ISystem() = default;
     

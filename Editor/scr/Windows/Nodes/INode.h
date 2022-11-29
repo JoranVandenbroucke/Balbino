@@ -2,14 +2,16 @@
 #include <ostream>
 #include <vector>
 #include <set>
-
-enum class EAttributeType
+struct EAttributeType
 {
-	None,
-	Float,
-	Color,
-	Vector,
-    Texture
+    enum Enum
+    {
+        None,
+        Float,
+        Color,
+        Vector,
+        Texture
+    };
 };
 
 struct INode
@@ -24,7 +26,7 @@ struct INode
 	virtual void Draw() = 0;
 	virtual void Attach( int endAttr ) = 0;
 	virtual void Detach( int endAttr ) = 0;
-	virtual std::string Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType ) = 0;
+	virtual std::string Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType::Enum attributeType ) = 0;
 	[[nodiscard]] virtual bool HasFreeAttachment( int endAttr ) const = 0;
 	[[nodiscard]] virtual int GetId() const = 0;
 	[[nodiscard]] virtual std::vector<int> GetInputs() const = 0;

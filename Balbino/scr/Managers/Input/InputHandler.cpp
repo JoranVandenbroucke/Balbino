@@ -1,4 +1,3 @@
-
 #include "InputHandler.h"
 
 Balbino::CInputHandler::CInputHandler()

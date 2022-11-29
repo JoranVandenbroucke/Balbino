@@ -18,7 +18,7 @@ namespace BalVulkan
 
         ~CSampler() override;
 
-        void Initialize( int filterMode, int mipmapMode, ESamplerAddressMode samplerAddressModeU, ESamplerAddressMode samplerAddressModeV, ESamplerAddressMode samplerAddressModeW, int anisotropy, uint32_t mipLevels );
+        void Initialize( int filterMode, int mipmapMode, ESamplerAddressMode::Enum samplerAddressModeU, ESamplerAddressMode::Enum samplerAddressModeV, ESamplerAddressMode::Enum samplerAddressModeW, int anisotropy, uint32_t mipLevels );
 
         VkSampler GetSampler() const;
 

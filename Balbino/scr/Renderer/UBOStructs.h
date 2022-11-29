@@ -10,20 +10,36 @@
 
 struct SModelObject
 {
-    alignas( 16 ) glm::mat4 view;
-    alignas( 16 ) glm::mat4 proj;
-    alignas( 16 ) glm::vec4 viewPos;
-    alignas( 4 ) int        displayDebugTarget;
+    glm::mat4 view;
+    glm::mat4 proj;
+    glm::vec4 viewPos;
+    int       displayDebugTarget;
 };
 
 struct SLight
 {
-    alignas( 4 ) Balbino::ELightType type;      //type: Directional, Point, Spot, Area
-    alignas( 4 ) float               strength;                //strength
-    alignas( 16 ) glm::vec3          position;           //position
-    alignas( 16 ) glm::vec3          direction;          //direction
-    alignas( 16 ) glm::vec3          color;              //color
-    alignas( 16 ) glm::vec3          size;               //Point: size,0,0; Spot: size, front, back; area: width, height, 0
+    SLight() = default;
+    SLight( Balbino::ELightType::Enum t, float str, const glm::vec3& pos, const glm::vec3& dir, const glm::vec3& col, const glm::vec3& si )
+            : SLight{ (int) t, str, pos, dir, col, si }
+    {
+    }
+    SLight( int t, float str, const glm::vec3& pos, const glm::vec3& dir, const glm::vec3& col, const glm::vec3& si )
+            : type{ t }
+              , strength{ str }
+              , position{ pos }
+              , direction{ dir }
+              , color{ col }
+              , size{ si }
+    {
+    }
+    
+    int                    type;              //type: Directional, Point, Spot, Area
+    float                  strength;          //strength
+    alignas( 16 )glm::vec3 position;          //position
+    alignas( 16 )glm::vec3 direction;         //direction
+    alignas( 16 )glm::vec3 color;             //color
+    alignas( 16 )glm::vec3 size;              //Point: size,0,0; Spot: size, front, back; area: width, height, 0
+    
 };
 
 struct SLightObject

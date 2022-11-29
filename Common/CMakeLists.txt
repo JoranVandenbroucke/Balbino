@@ -1,7 +1,9 @@
-project(Common)
-file(GLOB headers *.h Components/*.h)
-add_library(Common INTERFACE ${headers})
+set(PROJECT_NAME Common)
 
-target_compile_definitions(Common INTERFACE
-        "BL_PLATFORM_WINDOWS;"
+file(GLOB headers
+        *.h
+        Components/*.h
         )
+
+add_library(${PROJECT_NAME} INTERFACE ${headers})
+

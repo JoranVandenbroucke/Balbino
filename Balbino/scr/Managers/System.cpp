@@ -7,8 +7,8 @@
 Balbino::CSystem::CSystem( float w, float h )
         : m_pInputHandler{ nullptr },
           m_pResourceManager{ nullptr },
-          m_pCurrentScene{ nullptr },
           m_pCameraManager{ nullptr },
+          m_pCurrentScene{ nullptr },
           m_windowWidth{ w },
           m_windowHeight{ h }
 {

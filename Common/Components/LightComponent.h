@@ -11,7 +11,7 @@ public:
             : m_pEntity{ pEntity }
             , m_color{1,1,1}
             , m_size{100}
-            , m_strength{100}
+            , m_strength{1}
             ,m_type{Balbino::ELightType::Point}
     {
     }
@@ -37,7 +37,7 @@ public:
         return m_strength;
     }
 
-    [[nodiscard]] Balbino::ELightType GetType() const
+    [[nodiscard]] Balbino::ELightType::Enum GetType() const
     {
         return m_type;
     }
@@ -62,7 +62,7 @@ public:
         m_strength = strength;
     }
 
-    void SetType( Balbino::ELightType type )
+    void SetType( Balbino::ELightType::Enum type )
     {
         m_type = type;
     }
@@ -72,5 +72,5 @@ private:
     glm::vec3 m_color;
     glm::vec3 m_size;
     float m_strength;
-    Balbino::ELightType m_type;
+    Balbino::ELightType::Enum m_type;
 };

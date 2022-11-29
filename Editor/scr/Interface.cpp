@@ -24,15 +24,18 @@
 #include "Instance.h"
 
 BalEditor::CInterface::CInterface()
-        : m_pMain{ nullptr },
+        : m_queueNextResource{ false },
+          m_pMain{ nullptr },
           m_pGameView{ nullptr },
           m_pAssetBrowser{ nullptr },
           m_pSceneHierarchy{ nullptr },
           m_pShaderGraph{ nullptr },
           m_pMaterialEditor{ nullptr },
+          m_pMeshImporter{ nullptr },
+          m_pTextureImporter{ nullptr },
+          m_pPropertyPanel{ nullptr },
           m_descriptorPool{ nullptr },
           m_pWindow{ nullptr },
-          m_queueNextResource{ false },
           m_pDevice{ nullptr }
 {
 }
@@ -138,7 +141,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     m_pPropertyPanel   = new CPropertyPanel{};
     
     m_pAssetBrowser->Initialize( pSystem );
-    m_pMaterialEditor->Initialize( pSystem );
+    m_pMaterialEditor->Initialize( pSystem, m_pPropertyPanel );
 }
 
 void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )

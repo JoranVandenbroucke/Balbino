@@ -2,13 +2,13 @@
 #define MAX_INSTANCE_COUNT 1024
 
 #include <vulkan/vulkan.h>
+#include <entt/entt.hpp>
 #include <Components/TransformComponent.h>
 #include <Vertex.h>
-#include <scr/Camera.h>
-#include "entt/entt.hpp"
 #include "UUID.h"
 #include "Entity.h"
 #include "IScene.h"
+#include "../Camera.h"
 #include "../Renderer/VertexBuffer.h"
 #include "../Renderer/UBOStructs.h"
 

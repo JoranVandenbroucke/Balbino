@@ -56,14 +56,14 @@ namespace BalEditor
     
     bool CTextureFileImporter::DrawImportSettings()
     {
-        if ( BalEditor::EditorGUI::StartPopup( "Import Texture" ))
+        if ( GUI::StartPopup( "Import Texture" ))
         {
-            std::string mipmapMode{ ToString( m_mipmapMode ) };
-            std::string filterMode{ ToString( m_filterMode ) };
-            std::string wrapU{ ToString( m_wrapModeU ) };
-            std::string wrapV{ ToString( m_wrapModeV ) };
-            std::string wrapW{ ToString( m_wrapModeW ) };
-            std::string sampleLevel{ ToString( m_sampleLevel ) };
+            uint64_t mipmapMode{ (uint64_t) m_mipmapMode };
+            uint64_t filterMode{ (uint64_t) m_filterMode };
+            uint64_t wrapU{ (uint64_t) m_wrapModeU };
+            uint64_t wrapV{ (uint64_t) m_wrapModeV };
+            uint64_t wrapW{ (uint64_t) m_wrapModeW };
+            uint64_t sampleLevel{ (uint64_t) m_sampleLevel };
             
             const std::vector<std::string> wrapModes{
                     ToString( BalVulkan::ESamplerAddressMode::Repeat ),
@@ -73,8 +73,7 @@ namespace BalEditor
                     ToString( BalVulkan::ESamplerAddressMode::MirrorClampToEdge )
             };
             const std::vector<std::string> sampleModes{
-                    ToString( BalVulkan::EFilter::Nearest ),
-                    ToString( BalVulkan::EFilter::Linear )
+                    ToString( BalVulkan::EFilter::Nearest ), ToString( BalVulkan::EFilter::Linear )
             };
             const std::vector<std::string> sampleLevels{
                     ToString( ESampleLevel::One ),
@@ -87,147 +86,40 @@ namespace BalEditor
                     ToString( ESampleLevel::Auto )
             };
             
-            BalEditor::EditorGUI::DrawText( std::format( "Importing from {}", m_path.string()).c_str());
-            BalEditor::EditorGUI::DrawToggle( "Use Mips", m_useMips, 200 );
-            BalEditor::EditorGUI::DrawToggle( "Generate Mips", m_generateMips, 200 );
-            BalEditor::EditorGUI::DrawComboBox( "Mipmap Mode", mipmapMode, sampleModes, 200 );
-            BalEditor::EditorGUI::DrawComboBox( "Filter Mode", filterMode, sampleModes, 200 );
+            GUI::DrawText( std::format( "Importing from {}", m_path.string()).c_str());
+            GUI::DrawToggle( "Use Mips", m_useMips, 200 );
+            GUI::DrawToggle( "Generate Mips", m_generateMips, 200 );
+            GUI::DrawComboBox( "Mipmap Mode", mipmapMode, sampleModes, 200 );
+            GUI::DrawComboBox( "Filter Mode", filterMode, sampleModes, 200 );
             
-            BalEditor::EditorGUI::DrawToggle( "Use Anisotropy", m_useAnisotropy, 200 );
-            BalEditor::EditorGUI::DrawInt( "Anisotropy Level", m_anisotropyLevel, 1, 1, 16, 200 );
+            GUI::DrawToggle( "Use Anisotropy", m_useAnisotropy, 200 );
+            GUI::DrawInt( "Anisotropy Level", m_anisotropyLevel, 1, 1, 16, 200 );
             
-            BalEditor::EditorGUI::DrawComboBox( "Sample Level", sampleLevel, sampleLevels, 200 );
-            BalEditor::EditorGUI::DrawComboBox( "Wrap Mode U", wrapU, wrapModes, 200 );
-            BalEditor::EditorGUI::DrawComboBox( "Wrap Mode V", wrapV, wrapModes, 200 );
-            BalEditor::EditorGUI::DrawComboBox( "Wrap Mode W", wrapW, wrapModes, 200 );
+            GUI::DrawComboBox( "Sample Level", sampleLevel, sampleLevels, 200 );
+            GUI::DrawComboBox( "Wrap Mode U", wrapU, wrapModes, 200 );
+            GUI::DrawComboBox( "Wrap Mode V", wrapV, wrapModes, 200 );
+            GUI::DrawComboBox( "Wrap Mode W", wrapW, wrapModes, 200 );
             
-            if ( BalEditor::EditorGUI::DrawButton( "Import" ))
+            if ( GUI::DrawButton( "Import" ))
             {
                 LoadTexture(); //TODO create a task
-                BalEditor::EditorGUI::EndPopup();
+                GUI::EndPopup();
                 m_isVisible = false;
                 return true;
             }
-            if ( BalEditor::EditorGUI::DrawButton( "Cancel" ))
+            if ( GUI::DrawButton( "Cancel" ))
             {
                 m_isVisible = false;
             }
             
-            if ( mipmapMode == ToString( BalVulkan::EFilter::Nearest ))
-            {
-                m_mipmapMode = BalVulkan::EFilter::Nearest;
-            }
-            else
-            {
-                m_mipmapMode = BalVulkan::EFilter::Linear;
-            }
+            m_mipmapMode  = BalVulkan::EFilter::Enum( mipmapMode );
+            m_filterMode  = BalVulkan::EFilter::Enum( filterMode );
+            m_sampleLevel = ESampleLevel::Enum( sampleLevel );
+            m_wrapModeU   = BalVulkan::ESamplerAddressMode::Enum( wrapU );
+            m_wrapModeV   = BalVulkan::ESamplerAddressMode::Enum( wrapV );
+            m_wrapModeW   = BalVulkan::ESamplerAddressMode::Enum( wrapW );
             
-            if ( filterMode == ToString( BalVulkan::EFilter::Nearest ))
-            {
-                m_filterMode = BalVulkan::EFilter::Nearest;
-            }
-            else
-            {
-                m_filterMode = BalVulkan::EFilter::Linear;
-            }
-            
-            if ( sampleLevel == ToString( ESampleLevel::One ))
-            {
-                m_sampleLevel = ESampleLevel::One;
-            }
-            else if ( sampleLevel == ToString( ESampleLevel::Two ))
-            {
-                m_sampleLevel = ESampleLevel::Two;
-            }
-            else if ( sampleLevel == ToString( ESampleLevel::Four ))
-            {
-                m_sampleLevel = ESampleLevel::Four;
-            }
-            else if ( sampleLevel == ToString( ESampleLevel::Eight ))
-            {
-                m_sampleLevel = ESampleLevel::Eight;
-            }
-            else if ( sampleLevel == ToString( ESampleLevel::Sixteen ))
-            {
-                m_sampleLevel = ESampleLevel::Sixteen;
-            }
-            else if ( sampleLevel == ToString( ESampleLevel::ThirtyTwo ))
-            {
-                m_sampleLevel = ESampleLevel::ThirtyTwo;
-            }
-            else if ( sampleLevel == ToString( ESampleLevel::SixtyFour ))
-            {
-                m_sampleLevel = ESampleLevel::SixtyFour;
-            }
-            else
-            {
-                m_sampleLevel = ESampleLevel::Auto;
-            }
-            
-            if ( wrapU == ToString( BalVulkan::ESamplerAddressMode::Repeat ))
-            {
-                m_wrapModeU = BalVulkan::ESamplerAddressMode::Repeat;
-            }
-            else if ( wrapU == ToString( BalVulkan::ESamplerAddressMode::MirroredRepeat ))
-            {
-                m_wrapModeU = BalVulkan::ESamplerAddressMode::MirroredRepeat;
-            }
-            else if ( wrapU == ToString( BalVulkan::ESamplerAddressMode::ClampToEdge ))
-            {
-                m_wrapModeU = BalVulkan::ESamplerAddressMode::ClampToEdge;
-            }
-            else if ( wrapU == ToString( BalVulkan::ESamplerAddressMode::ClampToBorder ))
-            {
-                m_wrapModeU = BalVulkan::ESamplerAddressMode::ClampToBorder;
-            }
-            else
-            {
-                m_wrapModeU = BalVulkan::ESamplerAddressMode::MirrorClampToEdge;
-            }
-            
-            if ( wrapV == ToString( BalVulkan::ESamplerAddressMode::Repeat ))
-            {
-                m_wrapModeV = BalVulkan::ESamplerAddressMode::Repeat;
-            }
-            else if ( wrapV == ToString( BalVulkan::ESamplerAddressMode::MirroredRepeat ))
-            {
-                m_wrapModeV = BalVulkan::ESamplerAddressMode::MirroredRepeat;
-            }
-            else if ( wrapV == ToString( BalVulkan::ESamplerAddressMode::ClampToEdge ))
-            {
-                m_wrapModeV = BalVulkan::ESamplerAddressMode::ClampToEdge;
-            }
-            else if ( wrapV == ToString( BalVulkan::ESamplerAddressMode::ClampToBorder ))
-            {
-                m_wrapModeV = BalVulkan::ESamplerAddressMode::ClampToBorder;
-            }
-            else
-            {
-                m_wrapModeV = BalVulkan::ESamplerAddressMode::MirrorClampToEdge;
-            }
-            
-            if ( wrapW == ToString( BalVulkan::ESamplerAddressMode::Repeat ))
-            {
-                m_wrapModeW = BalVulkan::ESamplerAddressMode::Repeat;
-            }
-            else if ( wrapW == ToString( BalVulkan::ESamplerAddressMode::MirroredRepeat ))
-            {
-                m_wrapModeW = BalVulkan::ESamplerAddressMode::MirroredRepeat;
-            }
-            else if ( wrapW == ToString( BalVulkan::ESamplerAddressMode::ClampToEdge ))
-            {
-                m_wrapModeW = BalVulkan::ESamplerAddressMode::ClampToEdge;
-            }
-            else if ( wrapW == ToString( BalVulkan::ESamplerAddressMode::ClampToBorder ))
-            {
-                m_wrapModeW = BalVulkan::ESamplerAddressMode::ClampToBorder;
-            }
-            else
-            {
-                m_wrapModeW = BalVulkan::ESamplerAddressMode::MirrorClampToEdge;
-            }
-            
-            BalEditor::EditorGUI::EndPopup();
+            GUI::EndPopup();
         }
         return false;
     }
@@ -261,18 +153,9 @@ namespace BalEditor
                 return false;
             }
             
-            Exporter::ExportImage( m_path.filename().string(),
-                                   m_destinationDirection + "\\",
-                                   (uint8_t) texture.target(),
-                                   (uint32_t) texture.format(),
-                                   (uint8_t) (( m_useMips && m_generateMips ) ? -1 : texture.max_level()),
-                                   (uint8_t) texture.max_face(),
-                                   (uint32_t) texture.extent().x,
-                                   (uint32_t) texture.extent().y,
-                                   (uint32_t) texture.max_layer(),
-                                   (uint8_t) (( texture.extent().x * texture.extent().y * texture.max_layer()) / texture.size()),
-                                   texture.data(), anisotropy, sampleLevel, mipmapMode, filterMode, wrapModeU,
-                                   wrapModeV, wrapModeW );
+            Exporter::ExportImage( m_path.filename().string(), m_destinationDirection + "\\", (uint8_t) texture.target(), (uint32_t) texture.format(), (uint8_t) (( m_useMips && m_generateMips ) ? -1 : texture.max_level()),
+                                   (uint8_t) texture.max_face(), (uint32_t) texture.extent().x, (uint32_t) texture.extent().y, (uint32_t) texture.max_layer(),
+                                   (uint8_t) (( texture.extent().x * texture.extent().y * texture.max_layer()) / texture.size()), texture.data(), anisotropy, sampleLevel, mipmapMode, filterMode, wrapModeU, wrapModeV, wrapModeW );
             
             texture.clear();
         }
@@ -284,12 +167,8 @@ namespace BalEditor
                 return false;
             }
             
-            Exporter::ExportImage( m_path.filename().string(), m_destinationDirection + "\\",
-                                   (uint8_t) BalVulkan::EImageViewType::Cube,
-                                   static_cast< uint32_t >( BalVulkan::EFormat::R16G16B16Sfloat),
-                                   ( m_useMips && m_generateMips ) ? -1 : 1, 6u, hdrLoaderResult.width,
-                                   hdrLoaderResult.height, 1, 3, hdrLoaderResult.cols, anisotropy, sampleLevel,
-                                   mipmapMode, filterMode, wrapModeU, wrapModeV, wrapModeW );
+            Exporter::ExportImage( m_path.filename().string(), m_destinationDirection + "\\", (uint8_t) BalVulkan::EImageViewType::Cube, static_cast< uint32_t >( BalVulkan::EFormat::R16G16B16Sfloat),
+                                   ( m_useMips && m_generateMips ) ? -1 : 1, 6u, hdrLoaderResult.width, hdrLoaderResult.height, 1, 3, hdrLoaderResult.cols, anisotropy, sampleLevel, mipmapMode, filterMode, wrapModeU, wrapModeV, wrapModeW );
         }
         else
         {
@@ -435,30 +314,14 @@ namespace BalEditor
                     break;
             }
             
-            Exporter::ExportImage( m_path.filename().string(),
-                                   m_destinationDirection + "\\",
-                                   2u,
-                                   imageFormat,
-                                   (uint8_t) (( m_useMips && m_generateMips ) ? -1 : 1 ),
-                                   1u,
-                                   (uint32_t) pSurface->w,
-                                   (uint32_t) pSurface->h,
-                                   1u,
-                                   (uint8_t) pSurface->format->BytesPerPixel,
-                                   pSurface->pixels,
-                                   anisotropy,
-                                   sampleLevel,
-                                   mipmapMode,
-                                   filterMode,
-                                   wrapModeU,
-                                   wrapModeV,
-                                   wrapModeW );
+            Exporter::ExportImage( m_path.filename().string(), m_destinationDirection + "\\", 2u, imageFormat, (uint8_t) (( m_useMips && m_generateMips ) ? -1 : 1 ), 1u, (uint32_t) pSurface->w, (uint32_t) pSurface->h, 1u,
+                                   (uint8_t) pSurface->format->BytesPerPixel, pSurface->pixels, anisotropy, sampleLevel, mipmapMode, filterMode, wrapModeU, wrapModeV, wrapModeW );
             SDL_FreeSurface( pSurface );
         }
         return true;
     }
     
-    const char* CTextureFileImporter::ToString( BalVulkan::ESamplerAddressMode mode )
+    const char* CTextureFileImporter::ToString( BalVulkan::ESamplerAddressMode::Enum mode )
     {
         switch ( mode )
         {
@@ -476,7 +339,7 @@ namespace BalEditor
         return nullptr;
     }
     
-    const char* CTextureFileImporter::ToString( BalVulkan::EFilter mode )
+    const char* CTextureFileImporter::ToString( BalVulkan::EFilter::Enum mode )
     {
         switch ( mode )
         {
@@ -489,7 +352,7 @@ namespace BalEditor
         return nullptr;
     }
     
-    const char* CTextureFileImporter::ToString( CTextureFileImporter::ESampleLevel mode )
+    const char* CTextureFileImporter::ToString( CTextureFileImporter::ESampleLevel::Enum mode )
     {
         switch ( mode )
         {

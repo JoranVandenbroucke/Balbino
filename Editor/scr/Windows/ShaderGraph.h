@@ -7,11 +7,6 @@
 
 struct INode;
 
-namespace ImNodes
-{
-    struct EditorContext;
-}
-
 namespace BalEditor
 {
     class CShaderGraph
@@ -24,8 +19,7 @@ namespace BalEditor
         CShaderGraph& operator=( const CShaderGraph& ) = delete;
         CShaderGraph& operator=( CShaderGraph&& ) = delete;
         void Draw();
-        void ShowWindow();
-        void SetShader( const SFile& shaderFile );
+        void ShowWindow(const SFile& shader={});
     private:
         enum class EUiNodeType
         {
@@ -102,7 +96,7 @@ namespace BalEditor
             int startAttr, endAttr;
         };
         
-        std::vector<INode*>      m_nodes;
+        std::vector<std::pair<int,INode*>>      m_nodes;
         std::vector<SLink>       m_links;
         std::vector<std::string> m_allNodeNames;
         
@@ -114,7 +108,10 @@ namespace BalEditor
         
         std::vector<SLink> GetNeighbors( int currentNode );
         void Evaluate();
-        void AddNode( EUiNodeType type, const glm::vec2& position );
+        void AddNode( EUiNodeType type, const glm::vec2& position, int id = -1 );
+        void LoadEditorFromData(const SFile& shader);
+        void LoadDefaultEditor();
+        std::string SaveEditor();
         static const char* ToString( EUiNodeType type );
     };
 }

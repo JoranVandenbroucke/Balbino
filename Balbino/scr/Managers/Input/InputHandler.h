@@ -1,12 +1,7 @@
 #pragma once
 #include <map>
-
+#include <SDL.h>
 #include <functional>
-//#pragma warning(push)
-//#pragma warning(disable:4201)
-//#pragma warning(disable:4324)
-//#define GLM_FORCE_RADIANS
-//#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <glm/glm.hpp>
 #include "InputButtons.h"
 
@@ -36,7 +31,7 @@ namespace Balbino
 		void GetRelativeMousePosition( float& x, float& y ) const;
 
 		template <class UserClass>
-		bool BindAction( const char* axisName, EInputEvent inputType, UserClass* pObject, void (UserClass::* func)() );
+		bool BindAction( const char* axisName, EInputEvent::Enum inputType, UserClass* pObject, void (UserClass::* func)() );
 		template <class UserClass>
 		bool BindAxis( const char* axisName, UserClass* pObject, void (UserClass::* func)( float value ) );
 		void ToggleCursor();
@@ -50,8 +45,7 @@ namespace Balbino
 }
 
 template <class UserClass>
-bool Balbino::CInputHandler::BindAction( const char* axisName, EInputEvent inputType, UserClass* pObject,
-                                         void (UserClass::* func)() )
+bool Balbino::CInputHandler::BindAction( const char* axisName, EInputEvent::Enum inputType, UserClass* pObject, void (UserClass::* func)() )
 {
 	if ( !pObject )
 		return false;

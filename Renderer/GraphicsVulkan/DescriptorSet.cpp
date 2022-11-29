@@ -28,7 +28,7 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
                                            } );
             if ( it != poolSizes.cend())
             {
-                ++( it->descriptorCount );
+                it->descriptorCount += 1;
             }
             else
             {
@@ -44,7 +44,7 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
                                            } );
             if ( it != poolSizes.cend())
             {
-                ++( it->descriptorCount );
+                it->descriptorCount += 1;
             }
             else
             {
@@ -60,7 +60,7 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
                                            } );
             if ( it != poolSizes.cend())
             {
-                ++( it->descriptorCount );
+                it->descriptorCount += 1;
             }
             else
             {
@@ -76,7 +76,7 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
                                            } );
             if ( it != poolSizes.cend())
             {
-                ++( it->descriptorCount );
+                it->descriptorCount += 1;
             }
             else
             {
@@ -87,9 +87,9 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
     
     const VkDescriptorPoolCreateInfo poolInfo{
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-            .maxSets = 3u,
+            .maxSets = 3,
             .poolSizeCount = static_cast< uint32_t >( poolSizes.size()),
-            .pPoolSizes = poolSizes.data(),
+            .pPoolSizes = poolSizes.empty()? nullptr : poolSizes.data(),
     };
     CheckVkResult( vkCreateDescriptorPool( GetDevice()->GetVkDevice(), &poolInfo, nullptr, &m_descriptorPool ),
                    "failed to create descriptor pool!" );

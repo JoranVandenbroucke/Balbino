@@ -68,18 +68,7 @@ namespace Balbino
             m_command->BindShader( m_shaderPipeline, m_descriptorSet );
         }
         
-        std::vector<BalVulkan::SShaderResource> GetShaderResourcesVector() const
-        {
-            std::vector<BalVulkan::SShaderResource> shaderResources;
-            const auto& resources = m_shaderPipeline->GetShaderResources();
-            shaderResources.reserve( resources.size());
-            for ( const auto& resource : resources )
-            {
-                shaderResources.push_back( resource.second );
-            }
-            return shaderResources;
-        }
-        const std::unordered_map<std::string, BalVulkan::SShaderResource>& GetShaderResourcesMap() const
+        [[nodiscard]] const std::vector<BalVulkan::SShaderResource>& GetShaderResourcesVector() const
         {
             return m_shaderPipeline->GetShaderResources();
         }

@@ -1,7 +1,6 @@
 //
 // Created by Joran Vandenbroucke on 01/06/2022.
 //
-
 #include "Random.h"
 
 Balbino::CRandom::CRandom(int seed)

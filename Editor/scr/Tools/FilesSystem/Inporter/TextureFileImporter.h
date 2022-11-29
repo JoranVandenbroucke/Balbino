@@ -24,53 +24,56 @@ namespace BalEditor
         CTextureFileImporter& operator =( const CTextureFileImporter& ) = delete;
 
         CTextureFileImporter operator =( CTextureFileImporter&& ) = delete;
-
+    
         void SetVisible( const std::filesystem::path& path, const std::string& destinationDirection = "../Data" );
-
+    
         bool IsVisible() const;
-
+    
         bool DrawImportSettings();
-
+    
         float GetImportPercentage();
 
     private:
-        enum class ESampleLevel : uint8_t
+        struct ESampleLevel
         {
-            One,
-            Two,
-            Four,
-            Eight,
-            Sixteen,
-            ThirtyTwo,
-            SixtyFour,
-            Auto
+            enum Enum : uint8_t
+            {
+                One,
+                Two,
+                Four,
+                Eight,
+                Sixteen,
+                ThirtyTwo,
+                SixtyFour,
+                Auto
+            };
         };
         bool m_isVisible;
-
+    
         bool m_useMips;
         bool m_generateMips;
         bool m_useAnisotropy;
-
+    
         int m_anisotropyLevel;
-
-        BalVulkan::EFilter             m_mipmapMode;
-        BalVulkan::EFilter             m_filterMode;
-        BalVulkan::ESamplerAddressMode m_wrapModeU;
-        BalVulkan::ESamplerAddressMode m_wrapModeV;
-        BalVulkan::ESamplerAddressMode m_wrapModeW;
-        ESampleLevel                   m_sampleLevel;
-
+    
+        BalVulkan::EFilter::Enum             m_mipmapMode;
+        BalVulkan::EFilter::Enum             m_filterMode;
+        BalVulkan::ESamplerAddressMode::Enum m_wrapModeU;
+        BalVulkan::ESamplerAddressMode::Enum m_wrapModeV;
+        BalVulkan::ESamplerAddressMode::Enum m_wrapModeW;
+        ESampleLevel::Enum                   m_sampleLevel;
+    
         float m_importPercentage;
-
+    
         std::filesystem::path m_path;
         std::string           m_destinationDirection;
-
-        static const char* ToString( BalVulkan::EFilter mode );
-
-        static const char* ToString( ESampleLevel mode );
-
-        static const char* ToString( BalVulkan::ESamplerAddressMode mode );
-
+    
+        static const char* ToString( BalVulkan::EFilter::Enum mode );
+    
+        static const char* ToString( ESampleLevel::Enum mode );
+    
+        static const char* ToString( BalVulkan::ESamplerAddressMode::Enum mode );
+    
         bool LoadTexture();
     };
 } // BalEditor

@@ -17,7 +17,7 @@ namespace BalVulkan
               m_hasInputAttachment{}
     {
     }
-    void CRenderPass::Initialize( std::vector<BalVulkan::EFormat> formats, uint32_t inputCount, bool hasColor )
+    void CRenderPass::Initialize( std::vector<BalVulkan::EFormat::Enum> formats, uint32_t inputCount, bool hasColor )
     {
         const uint32_t descriptionCount{ (uint32_t) formats.size() };
         m_hasInputAttachment   = inputCount != 0;

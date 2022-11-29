@@ -27,7 +27,7 @@ namespace BalVulkan
         
         ~CShaderPipeline() override;
         
-        void Initialize( uint16_t type, const std::vector<CShader*>& shaders, const CRenderPass& frameBuffer, const std::vector<EVertexComponent>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode cullModeFlag = ECullMode::Back );
+        void Initialize( uint16_t type, const std::vector<CShader*>& shaders, const CRenderPass& frameBuffer, const std::vector<EVertexComponent::Enum>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode::Enum cullModeFlag = ECullMode::Back );
         
         VkPipelineLayout GetPipelineLayout() const;
         
@@ -35,7 +35,7 @@ namespace BalVulkan
         
         VkPipeline GetPipeline();
         
-        const std::unordered_map<std::string, SShaderResource>& GetShaderResources() const;
+        const std::vector<SShaderResource>& GetShaderResources() const;
         
         static CShaderPipeline* CreateNew( const CDevice* pDevice );
     
@@ -45,9 +45,9 @@ namespace BalVulkan
         VkPipelineCache       m_pipelineCache;
         VkPipeline            m_pipeline;
         
-        std::unordered_map<std::string, SShaderResource>           m_shaderResources;
+        std::vector<SShaderResource>           m_shaderResources;
         std::unordered_map<uint32_t, std::vector<SShaderResource>> m_shaderSets;
         
-        static VkDescriptorType FindDescriptorType( EShaderResourceType resource_type, bool dynamic );
+        static VkDescriptorType FindDescriptorType( EShaderResourceType::Enum resource_type, bool dynamic );
     };
 }

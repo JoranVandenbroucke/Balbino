@@ -90,10 +90,10 @@ namespace BalEditor
         bool m_isItemSelected;
         bool m_openItem;
         
+        SFile m_itemToBeCreated;
         std::vector<SFile> m_currentDirectory;
         std::vector<SFile> m_files;
         std::string        m_currentDirectoryName;
-        std::string        m_currentName;
         
         void FindAllFiles();
         void DrawTree( const std::string& path, uint32_t& nodeIdx );
@@ -102,5 +102,6 @@ namespace BalEditor
         void HandelSelected( const SFile& currentFile, bool isSelected );
         void MoveFile( SFile* pFile, const std::filesystem::path& destination );
         void Rename( const std::filesystem::path& oldName, const std::filesystem::path& newName );
+        void CreateItem();
     };
 }

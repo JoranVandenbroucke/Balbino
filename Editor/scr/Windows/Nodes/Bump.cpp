@@ -72,7 +72,7 @@ void CBump::Detach( int endAttr )
 		m_connections[3] = false;
 }
 
-std::string CBump::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
+std::string CBump::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType::Enum attributeType )
 {
 	( void ) begin;
 	( void ) bindings;

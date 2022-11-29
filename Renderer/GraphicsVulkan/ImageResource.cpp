@@ -36,12 +36,12 @@ uint32_t BalVulkan::CImageResource::GetDepth() const
 // an image and put it into an active command buffer
 // See chapter 11.4 "Image Layout" for details
 
-void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout newLayout )
+void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout::Enum newLayout )
 {
 	pCommand->BeginSingleTimeCommands();
 
-	EPipelineStageFlagBits sourceStage{EPipelineStageFlagBits::AllCommandsBit};
-	EPipelineStageFlagBits destinationStage{EPipelineStageFlagBits::AllCommandsBit};
+	EPipelineStageFlagBits::Enum sourceStage{EPipelineStageFlagBits::AllCommandsBit};
+	EPipelineStageFlagBits::Enum destinationStage{EPipelineStageFlagBits::AllCommandsBit};
     VkImageAspectFlags aspectMask{VK_IMAGE_ASPECT_COLOR_BIT};
     
     switch ( newLayout )
@@ -293,7 +293,7 @@ VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, cons
 	return VK_SUCCESS;
 }
 
-VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType type, BalVulkan::EFormat format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits usage, BalVulkan::EImageLayout layout)
+VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType::Enum type, BalVulkan::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, BalVulkan::EImageLayout::Enum layout)
 {
     (void) sampleLevel;
 	if ( m_image )

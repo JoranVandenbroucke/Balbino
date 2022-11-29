@@ -12,17 +12,18 @@
 #include "Components/TransformComponent.h"
 
 Balbino::CScene::CScene()
-        : m_registry{},
-          m_lightObject{},
-          m_modelUbo{},
-          m_entityMap{},
-          m_pModelBuffer{},
-          m_pShadingBuffer{},
-          m_pCommandPool{},
-          m_pDevice{},
-          m_pQueue{},
-          m_pInstanceBuffer{},
-          m_pSystem{}
+        : m_registry{}
+          , m_camera{}
+          , m_entityMap{}
+          , m_pSystem{}
+          , m_lightObject{}
+          , m_modelUbo{}
+          , m_pModelBuffer{}
+          , m_pShadingBuffer{}
+          , m_pInstanceBuffer{}
+          , m_pCommandPool{}
+          , m_pDevice{}
+          , m_pQueue{}
 {
 }
 
@@ -55,12 +56,16 @@ void Balbino::CScene::Initialize( ISystem* pSystem )
     m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     
     m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+                                BalVulkan::EMemoryPropertyFlagBits::Enum(
+                                        BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
     m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                  BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+                                  BalVulkan::EMemoryPropertyFlagBits::Enum(
+                                          BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
     m_pInstanceBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ),
-                                   BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit,
-                                   BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
+                                   BalVulkan::EBufferUsageFlagBits::Enum(
+                                           BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit ),
+                                   BalVulkan::EMemoryPropertyFlagBits::Enum(
+                                           BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit ));
     
     // todo: PhysX bodies
 }
@@ -178,14 +183,18 @@ void Balbino::CScene::RecreateBuffers( BalVulkan::CCommandPool* commandPool, Bal
     m_pShadingBuffer  = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     
+
     m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
-    m_pShadingBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( SLightObject ),
-                                  BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                  BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+                                BalVulkan::EMemoryPropertyFlagBits::Enum(
+                                        BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
+    m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
+                                  BalVulkan::EMemoryPropertyFlagBits::Enum(
+                                          BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
     m_pInstanceBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ),
-                                   BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit,
-                                   BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
+                                   BalVulkan::EBufferUsageFlagBits::Enum(
+                                           BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit ),
+                                   BalVulkan::EMemoryPropertyFlagBits::Enum(
+                                           BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit ));
 }
 
 void Balbino::CScene::PrepareDraw()
@@ -202,7 +211,7 @@ void Balbino::CScene::PrepareDraw()
             {
                 m_camera.UpdateFrameBuffer( m_pSystem->GetWindowWidth(), m_pSystem->GetWindowHeight(), camera.GetFov(),
                                             camera.GetNearClip(), camera.GetFarClip());
-                m_camera.UpdateMatrices( transform.GetTranslation(), eulerAngles( transform.GetRotation()));
+                m_camera.UpdateMatrices( transform.GetTranslation(), transform.GetRotation());
                 break;
             }
         }
@@ -211,7 +220,7 @@ void Balbino::CScene::PrepareDraw()
         m_modelUbo.view               = m_camera.GetView();
         m_modelUbo.proj               = m_camera.GetProjection();
         m_modelUbo.viewPos            = m_camera.GetViewPosition();
-        m_modelUbo.displayDebugTarget = 0;
+        m_modelUbo.displayDebugTarget = 0;      //todo change with dropdown
         m_pModelBuffer->UpdateData( &m_modelUbo, sizeof( SModelObject ));
         
         const auto& lightGroup = m_registry.group<CTransformComponent>( entt::get<CLightComponent> );
@@ -219,10 +228,10 @@ void Balbino::CScene::PrepareDraw()
         for ( const auto& entity : lightGroup )
         {
             auto [ transform, light ] = lightGroup.get<CTransformComponent, CLightComponent>( entity );
-            m_lightObject.lights[id].type      = light.GetType();
+            m_lightObject.lights[id].type      = (int) light.GetType();
             m_lightObject.lights[id].strength  = light.GetStrength();
             m_lightObject.lights[id].position  = transform.GetTranslation();
-            m_lightObject.lights[id].direction = glm::vec3( 1, 0, 0 ) * transform.GetRotation();
+            m_lightObject.lights[id].direction = glm::rotate( transform.GetRotation(), { 0, 0, 1 } );
             m_lightObject.lights[id].color     = light.GetColor();
             m_lightObject.lights[id].size      = light.GetSize();
             ++id;
@@ -234,9 +243,9 @@ void Balbino::CScene::PrepareDraw()
         if ( id < LIGHT_COUNT - 1 )
         {
             m_lightObject.lights[id] = SLight{
-                    Balbino::ELightType::Directional, -1, { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 }};
+                    -1, -1, { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 }};
         }
-        m_pShadingBuffer->UpdateData( &m_lightObject, sizeof( SLightObject ));
+        m_pShadingBuffer->UpdateData( &m_lightObject, sizeof( SLightObject ) * id );
         
         // TODO CPU voxel Frustum culling
         // TODO GPU Frustum/Occlusion culling
@@ -290,7 +299,7 @@ void Balbino::CScene::PrepareDraw()
                                 .mesh = meshID, .material = currentMaterial, .firstInstance = 0, .instanceCount = 1, .firstIndex = mat[i].firstIndex, .indexCount = mat[i].indexCount
                         };
                         m_allDrawableObjects.push_back( newDraw );
-                        m_instanceData.push_back( {{ transform.GetTransform() }} );
+                        m_instanceData.push_back( { BalVulkan::InstanceBatch{ transform.GetTransform() }} );
                     }
                     ++count;
                 }

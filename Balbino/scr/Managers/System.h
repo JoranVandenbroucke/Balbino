@@ -6,7 +6,7 @@ namespace Balbino
 {
     class CInputHandler;
     
-    class BALBINO_API CSystem final : public ISystem
+    class CSystem final : public ISystem
     {
     public:
         CSystem( float w, float h );

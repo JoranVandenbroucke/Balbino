@@ -1,4 +1,3 @@
-
 #include "VertexBuffer.h"
 
 #include <iostream>
@@ -19,13 +18,14 @@ Balbino::CVertexBuffer::~CVertexBuffer()
 
 void Balbino::CVertexBuffer::Initialize( const std::vector<BalVulkan::SVertex>& vertices, const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
 {
-	const uint64_t size{ sizeof BalVulkan::SVertex * vertices.size() };
+	const uint64_t size{ sizeof( BalVulkan::SVertex) * vertices.size() };
 	BalVulkan::CBuffer stagingBuffer{ pDevice, pCommandPool, pQueue };
-	stagingBuffer.Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferSrcBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+
+	stagingBuffer.Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferSrcBit, BalVulkan::EMemoryPropertyFlagBits::Enum(BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
 	stagingBuffer.UpdateData( vertices.data(), size );
 
 	m_vertexBuffer = BalVulkan::CBuffer::CreateNew( pDevice, pCommandPool, pQueue );
-	m_vertexBuffer->Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit, BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
+	m_vertexBuffer->Initialize( size, BalVulkan::EBufferUsageFlagBits::Enum(BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit), BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
 
 	stagingBuffer.CopyBuffer( *m_vertexBuffer, size );
 }

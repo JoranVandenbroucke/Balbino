@@ -1,47 +1,88 @@
-cmake_minimum_required(VERSION 3.22.2)
-set(CMAKE_CONFIGURATION_TYPES Debug;DebugEditor;Release;ReleaseEditor;)
+set(PROJECT_NAME GraphicsVulkan)
 
-# Set Project Name
-project(BalVulkan)
+file(GLOB sourceGV
+        *.cpp *.h
+        )
 
-file(GLOB sourceGV *.cpp *.h)
+add_library(${PROJECT_NAME} STATIC ${sourceGV})
+target_precompile_headers(${PROJECT_NAME} PRIVATE
+        [["algorithm"]]
+        [["array"]]
+        [["cmath"]]
+        [["cstdint"]]
+        [["format"]]
+        [["iostream"]]
+        [["unordered_map"]]
+        [["vector"]]
+        [["glm/glm.hpp"]])
 
-add_library(BalVulkan STATIC ${sourceGV})
-set_property(TARGET BalVulkan PROPERTY CXX_STANDARD 23)
-set_property(TARGET BalVulkan PROPERTY C_STANDARD 17)
-set_property(TARGET BalVulkan PROPERTY CXX_STANDARD_REQUIRED ON)
-set_property(TARGET BalVulkan PROPERTY C_STANDARD_REQUIRED ON)
+set(ROOT_NAMESPACE GraphicsVulkan)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+        "../../3rdParty/GLM"
+        "../../3rdParty/SPIRV-Cross/include"
+        "../../3rdParty/Vulkan/include"
+        )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+        "$<$<CONFIG:Debug>:"
+        "_DEBUG"
+        ">"
+        "$<$<CONFIG:DebugEditor>:"
+        "_DEBUG"
+        "BALBINO_EDITOR;"
+        ">"
+        "$<$<CONFIG:Release>:"
+        "NDEBUG"
+        ">"
+        "$<$<CONFIG:ReleaseEditor>:"
+        "NDEBUG"
+        "BALBINO_EDITOR;"
+        ">"
+        "_CONSOLE;"
+        "UNICODE;"
+        "_UNICODE;"
+        "_LIB"
+        )
 
 if (MSVC)
-    target_compile_options(BalVulkan PRIVATE
+    target_compile_options(${PROJECT_NAME} PRIVATE
             $<$<CONFIG:Debug>:
-                /Od;
-                /ZI;
+            /Zi;
             /Ob0;
+            /Od;
             /RTC1;
             /MDd;
             >
             $<$<CONFIG:DebugEditor>:
-                /Od;
-                /ZI;
+            /Zi;
             /Ob0;
+            /Od;
             /RTC1;
             /MDd;
             >
             $<$<CONFIG:Release>:
-                /Ox
+            /Ox;
+            /Ob2;
+            /Oi;
+            /Gy
             >
             $<$<CONFIG:ReleaseEditor>:
-                /Ox
+            /Ox;
+            /Ob2;
+            /Oi;
+            /Gy
             >
-            /std:c++latest;
             /MP;
+            /std:c++20;
+            /permissive-;
+            /sdl;
             /W4;
-            /WX
-            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT}
+            /WX;
+            ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
             )
-    target_link_options(BalVulkan PRIVATE
+    target_link_options(${PROJECT_NAME} PRIVATE
             /INCREMENTAL;
             $<$<CONFIG:Debug>:
             /DEBUG:FULL;
@@ -52,48 +93,20 @@ if (MSVC)
             /SUBSYSTEM:CONSOLE;
             >
             $<$<CONFIG:Release>:
-            /DEBUG:FULL;
+            /OPT:REF;
+            /OPT:ICF;
             /SUBSYSTEM:WINDOWS;
             >
             $<$<CONFIG:ReleaseEditor>:
-            /DEBUG:FULL;
+            /OPT:REF;
+            /OPT:ICF;
             /SUBSYSTEM:WINDOWS;
             >
             )
-else()
-    add_compile_options(-Wall -Wextra -pedantic -Werror)
-endif()
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-        "$<$<CONFIG:Debug>:"
-        "_DEBUG;"
-        ">"
-        "$<$<CONFIG:DebugEditor>:"
-        "_DEBUG;"
-        ">"
-        "$<$<CONFIG:Release>:"
-        "NDEBUG;"
-        ">"
-        "$<$<CONFIG:ReleaseEditor>:"
-        "NDEBUG;"
-        ">"
-        "_LIBS;"
-        "_MBCS;"
-        )
-
-target_precompile_headers(BalVulkan
-        PRIVATE [["algorithm"]]
-        PRIVATE [["array"]]
-        PRIVATE [["cmath"]]
-        PRIVATE [["cstdint"]]
-        PRIVATE [["format"]]
-        PRIVATE [["iostream"]]
-        PRIVATE [["unordered_map"]]
-        PRIVATE [["vector"]]
-        PRIVATE [["glm/glm.hpp"]])
-
-target_include_directories(BalVulkan
-        PRIVATE "../../3rdParty/GLM"
-        PRIVATE "../../3rdParty/SPIRV-Cross/include"
-        PRIVATE "../../3rdParty/Vulkan/include"
-        )
+else ()
+    target_compile_options(${PROJECT_NAME} PRIVATE
+            -Wall;
+            -Werror;
+            -std=gnu++2b;
+            )
+endif ()

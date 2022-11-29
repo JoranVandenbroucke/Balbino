@@ -30,7 +30,7 @@ namespace BalEditor
 
         void Detach( int endAttr ) override;
 
-        std::string Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType ) override;
+        std::string Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType::Enum attributeType ) override;
 
         bool HasFreeAttachment( int endAttr ) const override;
 

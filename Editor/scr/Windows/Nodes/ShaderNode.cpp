@@ -28,9 +28,9 @@ namespace BalEditor
             for ( int n = 0; n < static_cast<int>( EShaderCombos::MaxIndex ); n++ )
             {
                 const bool isSelected = ( static_cast<int>( m_type ) == n );
-                if ( ImGui::Selectable( ToString( static_cast<EShaderCombos>( n )), isSelected ))
+                if ( ImGui::Selectable( ToString( static_cast<EShaderCombos::Enum>( n )), isSelected ))
                 {
-                    m_type = static_cast<EShaderCombos>( n );
+                    m_type = static_cast<EShaderCombos::Enum>( n );
                 }
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -41,7 +41,7 @@ namespace BalEditor
             }
             ImGui::EndCombo();
         }
-        BalEditor::EditorGUI::Spacing();
+        GUI::Spacing();
         switch ( m_type )
         {
             case EShaderCombos::Vertex:
@@ -100,7 +100,7 @@ namespace BalEditor
         m_connections[endAttr] = false;
     }
 
-    std::string CShaderNode::Evaluate( std::_Vector_iterator<std::_Vector_val<std::_Simple_types<INode*>>>& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
+    std::string CShaderNode::Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType::Enum attributeType )
     {
         (void) begin;
         (void) bindings;
@@ -165,7 +165,7 @@ namespace BalEditor
         return value;
     }
 
-    const char* CShaderNode::ToString( EShaderCombos type )
+    const char* CShaderNode::ToString( EShaderCombos::Enum type )
     {
         switch ( type )
         {

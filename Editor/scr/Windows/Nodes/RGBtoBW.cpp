@@ -52,7 +52,7 @@ void CRGBtoBW::Detach(int endAttr)
     }
 }
 
-std::string CRGBtoBW::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+std::string CRGBtoBW::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType::Enum attributeType)
 {
     (void) begin;
     (void) bindings;

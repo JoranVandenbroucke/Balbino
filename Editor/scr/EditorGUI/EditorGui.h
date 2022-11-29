@@ -10,7 +10,7 @@
 #include <glm/vec2.hpp>
 #include <FileParcer.h>
 
-namespace BalEditor::EditorGUI
+namespace BalEditor::GUI
 {
     void DrawIntValue( const char* name, uint64_t value, float width = 100 );
     void DrawIntValue( const char* name, int value, float width = 100 );
@@ -37,14 +37,13 @@ namespace BalEditor::EditorGUI
     bool DrawInt4( const char* name, int value[4], float steps, int resetValue = 0, float width = 100 );
     
     bool DrawToggle( const char* name, bool& value, float width = 100 );
-    bool DrawComboBox( const char* name, std::string& currentValue, const std::vector<std::string>& elements, float width = 100 );
-    bool DrawInputText( const char* name, char* inputText, int maxLength, float width = 100 );
     bool DrawColor( const char* name, float color[3], float width = 100 );
     void DrawText( const char* text );
     bool DrawButton( const char* name, const glm::vec2& size = { 0, 0 } );
-    bool DrawInputText( std::string_view name, char* text, int maxLength, float width, int flags );
+    bool DrawInputText( std::string_view name, char* text, int maxLength, float width = 100.f, int flags = 0.f );
     
-    int DrawPopupContextWindow( std::string_view name, const std::vector<std::string>& options );
+    bool DrawComboBox( const char* name, uint64_t& currentIndex, const std::vector<std::string>& elements, float width = 100, bool inMenuBar = false );
+    uint64_t DrawPopupContextWindow( std::string_view name, const std::vector<std::string>& options );
     
     bool StartPopup( const char* name, bool centered = true, glm::vec2 size = { 0, 0 } );
     bool BeginPopup( const char* name );

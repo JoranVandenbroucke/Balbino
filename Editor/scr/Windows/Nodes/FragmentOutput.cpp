@@ -68,7 +68,7 @@ void CFragmentOutputNode::Detach( int endAttr )
     m_connections[endAttr - m_attributeStartId] = false;
 }
 
-std::string CFragmentOutputNode::Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
+std::string CFragmentOutputNode::Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType::Enum attributeType )
 {
     (void) begin;
     (void) bindings;
@@ -80,6 +80,7 @@ std::string CFragmentOutputNode::Evaluate( std::vector<INode*>::iterator& begin,
 
 #version 450
 #include "default.glsl"
+#include "light.glsl"
 
 #define LIGHT_COUNT 8
 #define MEDIUM_MAX 65504.0
@@ -91,16 +92,6 @@ layout(location = 3) in vec4 fragTangent;
 layout(location = 4) in vec4 fragWorldPos;
 
 layout (location = 0) out vec4 outFragcolor;
-
-struct Light {
-    int type;//type: Directional, Point, Spot, Area
-    float strength;//strength
-    vec3 position;//position
-    vec3 direction;//direction
-    vec3 color;//color
-    vec3 size;//Point: size,0,0; Spot: size, front, back; area: width, height, 0
-};
-
 
 layout(set=0, binding=0) uniform ModelData {
     mat4 view;
@@ -196,7 +187,20 @@ void main()
         vec3 Fd = vec3(0, 0, 0);
         vec3 Fr = vec3(0.0);
 
-        vec3 l = normalize(light.position.xyz - fragWorldPos.xyz);
+        vec3 lightColor = light.color * light.strength;
+        vec3 lightVector = light.position.xyz - fragWorldPos.xyz;
+        vec3 l = normalize(lightVector);
+        if(light.type != 0)
+        {
+            lightColor *= GetSquareFalloffAttenuation(lightVector,1/light.size.x);
+            if(light.type == 2)
+                lightColor *= GetSpotAngleAttenuation(l, light.direction,light.size.y, light.size.z);
+        }
+        else
+        {
+            lightVector = light.direction;
+            l = normalize(light.direction);
+        }
         vec3 h = normalize(n + l);
 
         float NdotL = max(dot(n, l), 0.0);

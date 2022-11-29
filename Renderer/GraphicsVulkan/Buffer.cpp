@@ -1,4 +1,3 @@
-//
 #include "Buffer.h"
 #include "CommandPool.h"
 #include "Device.h"
@@ -84,16 +83,17 @@ void BalVulkan::CBuffer::UpdateData( const void* pData, const uint64_t size )
 	vkUnmapMemory( GetDevice()->GetVkDevice(), m_bufferMemory );
 }
 
-void BalVulkan::CBuffer::Initialize( uint64_t size, EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty )
+void BalVulkan::CBuffer::Initialize( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty )
 {
-    if(size > 0)
+    if ( size > 0 )
     {
         m_currentSize = size;
         
         const VkBufferCreateInfo bufferInfo{
                 .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO, .size = size, .usage = static_cast<VkBufferUsageFlags>( bufferUsage ), .sharingMode = VK_SHARING_MODE_EXCLUSIVE,
         };
-        CheckVkResult( vkCreateBuffer( GetDevice()->GetVkDevice(), &bufferInfo, nullptr, &m_buffer ), "failed to create buffer!" );
+        CheckVkResult( vkCreateBuffer( GetDevice()->GetVkDevice(), &bufferInfo, nullptr, &m_buffer ),
+                       "failed to create buffer!" );
         
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements( GetDevice()->GetVkDevice(), m_buffer, &memRequirements );
@@ -125,17 +125,17 @@ uint64_t BalVulkan::CBuffer::GetRange() const
 	return m_currentSize;
 }
 
-void BalVulkan::CBuffer::Rebuild( uint64_t size, EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty )
+void BalVulkan::CBuffer::Rebuild( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty )
 {
-	if ( m_buffer )
-	{
-		vkDestroyBuffer( GetDevice()->GetVkDevice(), m_buffer, nullptr );
-		m_buffer = VK_NULL_HANDLE;
-	}
-	if ( m_bufferMemory )
-	{
-		vkFreeMemory( GetDevice()->GetVkDevice(), m_bufferMemory, nullptr );
-		m_bufferMemory = VK_NULL_HANDLE;
+    if ( m_buffer )
+    {
+        vkDestroyBuffer( GetDevice()->GetVkDevice(), m_buffer, nullptr );
+        m_buffer = VK_NULL_HANDLE;
+    }
+    if ( m_bufferMemory )
+    {
+        vkFreeMemory( GetDevice()->GetVkDevice(), m_bufferMemory, nullptr );
+        m_bufferMemory = VK_NULL_HANDLE;
 	}
 	if ( m_commandBuffer )
 	{
@@ -220,9 +220,11 @@ void BalVulkan::CBuffer::EndSingleTimeCommands() const
 	//vkFreeCommandBuffers( GetDevice()->GetVkDevice(), m_commandPool->GetCommandPool(), 1, &m_commandBuffer );
 }
 
-void BalVulkan::CBuffer::PipelineBarrier( EPipelineStageFlagBits srcStageMask, EPipelineStageFlagBits destStageMask, VkImageMemoryBarrier* pBarrier ) const
+void BalVulkan::CBuffer::PipelineBarrier( EPipelineStageFlagBits::Enum srcStageMask, EPipelineStageFlagBits::Enum destStageMask, VkImageMemoryBarrier* pBarrier ) const
 {
-	vkCmdPipelineBarrier( m_commandBuffer, static_cast<VkPipelineStageFlagBits>( srcStageMask ), static_cast<VkPipelineStageFlagBits>( destStageMask ), 0, 0, nullptr, 0, nullptr, 1, pBarrier );
+    vkCmdPipelineBarrier( m_commandBuffer, static_cast<VkPipelineStageFlagBits>( srcStageMask ),
+                          static_cast<VkPipelineStageFlagBits>( destStageMask ), 0, 0, nullptr, 0, nullptr, 1,
+                          pBarrier );
 }
 
 void BalVulkan::CBuffer::Blit( const VkImage* pImage, const VkImageBlit* pBlit ) const

@@ -1,33 +1,28 @@
 #include "Application.h"
 
-#include <SDL.h>
 #include <SDL_vulkan.h>
 
 #include "Managers/Input/InputHandler.h"
 #include "Renderer/Renderer.h"
 #include "Scene/Scene.h"
 
-#include <chrono>
-#include <thread>
+//#include <chrono>
+//#include <thread>
 #include <ini.h>
 
 Balbino::Application::Application()
-        : m_pWindow{ nullptr },
-          m_system{ 1920, 1080 } //todo make the auto populate
-        ,
-          m_pRenderer{ nullptr },
-          m_pScene{ nullptr },
-          m_w{ 0 },
+        : m_w{ 0 },
           m_h{ 0 },
-          m_windowFlags{ 0 }
+          m_windowFlags{ 0 },
+          m_pWindow{ nullptr },
+          m_system{ 1920, 1080 }, //todo make the auto populate (from file)
+          m_pRenderer{ nullptr },
 #ifdef BALBINO_EDITOR
-        ,
-          m_pInterface{ nullptr }
+        m_pInterface{ nullptr },
 #endif // BALBINO_EDITOR
+          m_pScene{ nullptr }
 {
 }
-
-Balbino::Application::~Application() = default;
 
 void Balbino::Application::Initialize()
 {
@@ -40,14 +35,14 @@ void Balbino::Application::Initialize()
     {
         throw std::runtime_error( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError());
     }
-    
-    int audioFlags = MIX_INIT_FLAC | MIX_INIT_MOD | MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID | MIX_INIT_OPUS;
+
+    int audioFlags = MIX_INIT_FLAC | /*MIX_INIT_MOD |*/ MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID /*| MIX_INIT_OPUS*/;
     int initOut    = Mix_Init( audioFlags );
     if (( initOut & audioFlags ) != audioFlags )
     {
-        throw std::runtime_error( std::string( "Mix_Init: Failed to init all!\nMix_Init: %s\n", Mix_GetError()));
+        throw std::runtime_error( std::string( "Mix_Init: Failed to init all!\nMix_Init: ") + Mix_GetError());
     }
-    
+
     m_w           = current.w / 2;
     m_h           = current.h / 2;
     m_windowFlags = SDL_WINDOW_VULKAN;
@@ -59,7 +54,7 @@ void Balbino::Application::Initialize()
         m_h           = std::stoi( ini["WindowsClient"]["WindowedViewportHeight"] );
         m_windowFlags = static_cast<uint32_t>( std::stoi( ini["WindowsClient"]["WindowedFlags"] ));
     }
-    
+
     m_pWindow = SDL_CreateWindow( "Balbino Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 360, 640,
                                   SDL_WINDOW_VULKAN | SDL_WINDOW_BORDERLESS );
     if ( m_pWindow == nullptr )
@@ -96,11 +91,11 @@ void Balbino::Application::LoadGame()
 #else
     m_pRenderer->Setup( m_pWindow, extensions, extensionCount );
     m_pRenderer->GiveSceneRenderData( m_pScene );
-    m_pScene->Initialize( &m_manager );
+    m_pScene->Initialize( &m_system );
     delete[] extensions;
 #endif
     m_system.SetCurrentScene( m_pScene );
-    
+
     SDL_SetWindowBordered( m_pWindow, SDL_TRUE );
     SDL_SetWindowResizable( m_pWindow, SDL_TRUE );
     if ( m_windowFlags & SDL_WINDOW_MAXIMIZED )
@@ -123,7 +118,7 @@ void Balbino::Application::Cleanup()
     m_pInterface = nullptr;
 #endif
     m_system.Cleanup();
-    
+
     if ( m_pScene )
     {
         m_pScene->Cleanup();
@@ -136,11 +131,11 @@ void Balbino::Application::Cleanup()
         delete m_pRenderer;
         m_pRenderer = nullptr;
     }
-    
+
     SDL_DestroyWindow( m_pWindow );
     SDL_Quit();
     Mix_Quit();
-    
+
     m_pWindow = nullptr;
 }
 
@@ -154,7 +149,7 @@ void Balbino::Application::Run()
         auto        end{ std::chrono::system_clock::now() };
         const float deltaTime{ std::chrono::duration<float>( end - start ).count() };
         start = end;
-        
+
         SDL_Event e;
         while ( SDL_PollEvent( &e ))
         {
@@ -227,7 +222,7 @@ void Balbino::Application::Run()
             m_system.GetInputHandler()->ProcessEvents( e );
         }
         m_system.GetInputHandler()->Update();
-        
+
         m_pScene->Update( deltaTime );
         if ( m_pRenderer->StartDraw())
         {

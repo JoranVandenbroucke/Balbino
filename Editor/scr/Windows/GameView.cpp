@@ -26,8 +26,8 @@ void BalEditor::CGameView::Draw()
 {
     int  flags = 1 << 5 | 43 | 1 << 7 | 1 << 0;
     bool open{ true };
-    BalEditor::EditorGUI::Begin( "GameView", open, flags );
-    BalEditor::EditorGUI::BeginChild( "GameViewChild", { -1, -1 }, false, flags );
+    GUI::Begin( "GameView", open, flags );
+    GUI::BeginChild( "GameViewChild", { -1, -1 }, false, flags );
     if ( const IEntity* selected = m_pSceneHierarchy->GetSelectedEntity())
     {
         ImGuizmo::SetOrthographic( false );
@@ -75,14 +75,14 @@ void BalEditor::CGameView::Draw()
             }
         }
     }
-    BalEditor::EditorGUI::EndChild();
-    if ( void* pData = BalEditor::EditorGUI::ReceiveDragDrop( ToString( EFileTypes::Model )))
+    GUI::EndChild();
+    if ( void* pData = GUI::ReceiveDragDrop( ToString( EFileTypes::Model )))
     {
         const Balbino::IMesh* pModel = m_pSystem->GetResourceManager()->LoadModel( static_cast<SFile*>( pData )->path );
         IEntity             * pEnt   = m_pContext->CreateEntity();
         pEnt->AddComponent<CMeshRenderComponent>( pModel->GetUuid())->SetMaterialCount( pModel->GetMaterialCount());
     }
-    BalEditor::EditorGUI::End();
+    GUI::End();
 }
 
 void BalEditor::CGameView::SetContext( ISystem* pSystem, IScene* pContext, CSceneHierarchy* pSceneHierarchy )

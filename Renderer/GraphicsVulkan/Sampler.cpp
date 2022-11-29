@@ -15,7 +15,7 @@ BalVulkan::CSampler::~CSampler()
     vkDestroySampler( GetDevice()->GetVkDevice(), m_sampler, nullptr );
 }
 
-void BalVulkan::CSampler::Initialize( int filterMode, int mipmapMode, ESamplerAddressMode samplerAddressModeU, ESamplerAddressMode samplerAddressModeV, ESamplerAddressMode samplerAddressModeW, int anisotropy, uint32_t mipLevels )
+void BalVulkan::CSampler::Initialize( int filterMode, int mipmapMode, ESamplerAddressMode::Enum samplerAddressModeU, ESamplerAddressMode::Enum samplerAddressModeV, ESamplerAddressMode::Enum samplerAddressModeW, int anisotropy, uint32_t mipLevels )
 {
     if ( m_sampler )
     {

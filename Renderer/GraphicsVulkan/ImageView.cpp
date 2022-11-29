@@ -4,7 +4,7 @@
 #include "Funtions.h"
 #include "ImageResource.h"
 
-BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
+BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType::Enum type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
         : CDeviceObject{ pImage.GetDevice() },
           m_ownedBySwapchain{ false },
           m_imageView{ VK_NULL_HANDLE }
@@ -124,7 +124,7 @@ void BalVulkan::CImageView::Destroy()
     CDeviceObject::Destroy();
 }
 
-BalVulkan::CImageView* BalVulkan::CImageView::CreateNew( const CImageResource& pResource, EImageViewType type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
+BalVulkan::CImageView* BalVulkan::CImageView::CreateNew( const CImageResource& pResource, EImageViewType::Enum type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
 {
     return new CImageView{ pResource, type, firstMip, numMips, firstLayer, numLayers };
 }

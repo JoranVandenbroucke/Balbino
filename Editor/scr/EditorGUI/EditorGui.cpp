@@ -6,18 +6,18 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-namespace BalEditor::EditorGUI
+namespace BalEditor::GUI
 {
     
     void DrawIntValue( const char* name, uint64_t value, float width )
     {
         ImGui::PushID( name );
         
-        ImGui::BeginColumns( nullptr, 2 , ImGuiOldColumnFlags_NoResize);
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
-        ImGui::Text("%llu", value);
+        ImGui::Text( "%llu", value );
         ImGui::EndColumns();
         
         ImGui::PopID();
@@ -26,14 +26,14 @@ namespace BalEditor::EditorGUI
     {
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
         
         ImGui::Value( "##V", value );
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -44,7 +44,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -72,7 +72,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -83,7 +83,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -119,7 +119,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -130,7 +130,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -174,7 +174,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -183,14 +183,14 @@ namespace BalEditor::EditorGUI
     {
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
         
         ImGui::Value( "##V", value, "%.2f" );
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -202,7 +202,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -230,7 +230,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -241,7 +241,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -277,7 +277,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -288,7 +288,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -332,7 +332,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
     }
@@ -342,14 +342,14 @@ namespace BalEditor::EditorGUI
         bool hasChanged;
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
         
         hasChanged = ImGui::SliderInt( "##V", &value, min, max );
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -360,7 +360,7 @@ namespace BalEditor::EditorGUI
         ImGui::PushID( name );
         if ( showName )
         {
-            ImGui::Columns( 2 );
+            ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
             ImGui::SetColumnWidth( 0, width );
             ImGui::Text( "%s", name );
             ImGui::NextColumn();
@@ -368,7 +368,7 @@ namespace BalEditor::EditorGUI
         
         hasChanged = ImGui::SliderFloat( "##V", &value, min, max, "%.2f" );
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -379,13 +379,13 @@ namespace BalEditor::EditorGUI
         bool hasChanged;
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
         
         hasChanged = ImGui::DragFloat( "##V", &value, steps, 0.0f, 0.0f, "%.2f" );
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -398,7 +398,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -437,7 +437,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -450,7 +450,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -501,7 +501,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -514,7 +514,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -577,7 +577,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -588,14 +588,14 @@ namespace BalEditor::EditorGUI
         bool hasChanged;
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
         
         hasChanged = ImGui::DragInt( "##V", &value, steps, min, max );
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -608,7 +608,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -647,7 +647,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -660,7 +660,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -711,7 +711,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -724,7 +724,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
@@ -787,7 +787,7 @@ namespace BalEditor::EditorGUI
         
         ImGui::PopStyleVar();
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
@@ -798,59 +798,30 @@ namespace BalEditor::EditorGUI
         bool hasChanged;
         ImGui::PushID( name );
         
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
         
         hasChanged = ImGui::Checkbox( "##V", &value );
         
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         
         ImGui::PopID();
         return hasChanged;
     }
-    bool DrawComboBox( const char* name, std::string& currentValue, const std::vector<std::string>& elements, float width )
-    {
-        bool hasChanged{};
-        
-        ImGui::PushID( name );
-        ImGui::Columns( 2 );
-        ImGui::SetColumnWidth( 0, width );
-        ImGui::Text( "%s", name );
-        ImGui::NextColumn();
-        
-        if ( ImGui::BeginCombo( "##combo", currentValue.c_str()))
-        {
-            for ( const auto& element : elements )
-            {
-                const bool isSelected = ( currentValue == element );
-                if ( ImGui::Selectable( element.c_str(), isSelected ))
-                {
-                    currentValue = element;
-                    hasChanged   = true;
-                }
-                if ( isSelected )
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
-        }
-        ImGui::Columns( 1 );
-        ImGui::PopID();
-        return hasChanged;
-    }
-    bool DrawInputText( const char* name, char* inputText, int maxLength, float width )
+    
+    bool DrawInputText( std::string_view name, char* text, int maxLength, float width, int flags )
     {
         bool hasChanged;
-        ImGui::PushID( name );
-        ImGui::Columns( 2 );
+        const char* pName{ name.data() };
+        ImGui::PushID( pName );
+        ImGui::Columns( 2, pName, false );
         ImGui::SetColumnWidth( 0, width );
-        ImGui::Text( "%s", name );
+        ImGui::Text( "%s", pName );
         ImGui::NextColumn();
-        hasChanged = ImGui::InputText( name, inputText, maxLength, ImGuiInputTextFlags_EnterReturnsTrue );
-        ImGui::Columns( 1 );
+        hasChanged = ImGui::InputText( "##input", text, maxLength, flags );
+        ImGui::EndColumns();
         ImGui::PopID();
         return hasChanged;
     }
@@ -858,12 +829,12 @@ namespace BalEditor::EditorGUI
     {
         bool hasChanged;
         ImGui::PushID( name );
-        ImGui::Columns( 2 );
+        ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name );
         ImGui::NextColumn();
         hasChanged = ImGui::ColorEdit3( "##Col", color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel );
-        ImGui::Columns( 1 );
+        ImGui::EndColumns();
         ImGui::PopID();
         return hasChanged;
     }
@@ -873,42 +844,78 @@ namespace BalEditor::EditorGUI
     }
     bool DrawButton( const char* name, const glm::vec2& size )
     {
-        bool hasChanged;
-        
-        ImGui::PushID( name );
-        hasChanged = ImGui::Button( name, { size.x, size.y } );
-        ImGui::PopID();
-        
-        return hasChanged;
-    }
-    bool DrawInputText( std::string_view name, char* text, int maxLength, float width, int flags )
-    {
-        (void) name;
-        (void) width;
-        bool hasChanged;
-        ImGui::PushID( name.data());
-        
-        ImGui::Columns( 2 );
-        ImGui::SetColumnWidth( 0, width );
-        ImGui::Text( "%s", name.data());
-        ImGui::NextColumn();
-        const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.x + ImGui::GetWindowContentRegionWidth();
-        ImGui::SetColumnWidth( 1, footer_height_to_reserve );
-        
-        hasChanged = ImGui::InputText( "##v", text, maxLength, flags );
-        ImGui::Columns( 1 );
-        
-        ImGui::PopID();
-        return hasChanged;
+        return ImGui::Button( name, { size.x, size.y } );
     }
     
-    int DrawPopupContextWindow( const std::string_view name, const std::vector<std::string>& options )
+    bool GUI::DrawComboBox( const char* name, uint64_t& currentIndex, const std::vector<std::string>& elements, float width, bool inMenuBar )
+    {
+        if ( currentIndex >= elements.size())
+        {
+            return false;
+        }
+        
+        bool hasChanged{};
+        
+        if ( inMenuBar )
+        {
+            ImGui::SetNextItemWidth( width );
+            if ( ImGui::BeginCombo( name, elements[currentIndex].c_str()))
+            {
+                for ( uint64_t i{}; i < elements.size(); ++i )
+                {
+                    const bool isSelected = currentIndex == i;
+                    if ( ImGui::Selectable( elements[i].c_str(), isSelected ))
+                    {
+                        currentIndex = i;
+                        hasChanged   = true;
+                    }
+                    if ( isSelected )
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+        }
+        else
+        {
+            ImGui::PushID( name );
+            ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
+            ImGui::SetColumnWidth( 0, width );
+            ImGui::Text( "%s", name );
+            ImGui::NextColumn();
+            
+            ImGui::SetNextItemWidth( width );
+//            ImGui::SetNextItemWidth( ImGui::CalcTextSize( elements[currentIndex].c_str()).x + ImGui::GetStyle().FramePadding.x * 2.0f );
+            if ( ImGui::BeginCombo( "##name", elements[currentIndex].c_str()))
+            {
+                for ( uint64_t i{}; i < elements.size(); ++i )
+                {
+                    const bool isSelected = currentIndex == i;
+                    if ( ImGui::Selectable( elements[i].c_str(), isSelected ))
+                    {
+                        currentIndex = i;
+                        hasChanged   = true;
+                    }
+                    if ( isSelected )
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::EndColumns();
+            ImGui::PopID();
+        }
+        return hasChanged;
+    }
+    uint64_t DrawPopupContextWindow( const std::string_view name, const std::vector<std::string>& options )
     {
         if ( ImGui::BeginPopupContextWindow( name.data()))
         {
             DrawText( name.data());
             Separator();
-            for ( int n = 0; n < options.size(); n++ )
+            for ( uint64_t n = 0; n < options.size(); n++ )
             {
                 if ( MenuItem( options[n] ))
                 {
@@ -918,7 +925,7 @@ namespace BalEditor::EditorGUI
             }
             EndPopup();
         }
-        return -1;
+        return std::numeric_limits<unsigned long long>::max();
     }
     
     bool StartPopup( const char* name, bool centered, glm::vec2 size )
@@ -1103,9 +1110,9 @@ namespace BalEditor::EditorGUI
             ImGui::Text( "%s", file.fileName.c_str());
             ImGui::EndDragDropSource();
         }
-        BalEditor::EditorGUI::SameLine();
+        GUI::SameLine();
         ImGui::Image( descriptorSet, { imageSize, imageSize } );
-        BalEditor::EditorGUI::SameLine();
+        GUI::SameLine();
         ImGui::Text( "%s", file.fileName.c_str());
     }
     void PushId( const char* id )
@@ -1146,7 +1153,7 @@ namespace BalEditor::EditorGUI
     }
     void DrawSelectable( int id, bool& isSelected, float height )
     {
-        ImGui::Selectable( ("##file" + std::to_string(id)).c_str(), &isSelected, 1 << 2, { 0, height } );
+        ImGui::Selectable(( "##file" + std::to_string( id )).c_str(), &isSelected, 1 << 2, { 0, height } );
         isSelected |= ImGui::IsItemHovered();
     }
 }
