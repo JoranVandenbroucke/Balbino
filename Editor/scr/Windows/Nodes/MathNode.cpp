@@ -216,7 +216,7 @@ void CMathNode::Detach( const int endAttr )
 	}
 }
 
-std::string CMathNode::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
+std::string CMathNode::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType::Enum attributeType )
 {
 	( void ) begin;
 	( void ) bindings;

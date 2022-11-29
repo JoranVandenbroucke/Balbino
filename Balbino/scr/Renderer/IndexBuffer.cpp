@@ -1,4 +1,3 @@
-
 #include "IndexBuffer.h"
 
 #include <Buffer.h>
@@ -18,11 +17,11 @@ void Balbino::CIndexBuffer::Initialize( const std::vector<uint32_t>& indices, co
 {
 	const uint64_t size{ sizeof( uint32_t ) * indices.size() };
 	BalVulkan::CBuffer stagingBuffer{ pDevice, pCommandPool, pQueue };
-	stagingBuffer.Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferSrcBit, BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit );
+	stagingBuffer.Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferSrcBit, BalVulkan::EMemoryPropertyFlagBits::Enum(BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit) );
 	stagingBuffer.UpdateData( indices.data(), size );
 
 	m_pIndexBuffer = new BalVulkan::CBuffer{ pDevice, pCommandPool, pQueue };
-	m_pIndexBuffer->Initialize( size, BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::IndexBufferBit, BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
+	m_pIndexBuffer->Initialize( size, BalVulkan::EBufferUsageFlagBits::Enum(BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::IndexBufferBit), BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit );
 
 	stagingBuffer.CopyBuffer( *m_pIndexBuffer, size );
 }

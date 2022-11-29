@@ -12,17 +12,17 @@ void CVertexOutputNode::Draw()
 {
     ImGui::PushItemWidth( 200 );
     ImNodes::BeginNode( m_id );
-
+    
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted( "Vertex Output" );
     ImNodes::EndNodeTitleBar();
-
+    
     //position
     DrawInputVectorAttribute( m_positionFloats, m_attributeStartId, true, ":position" );
-
+    
     //color
     DrawInputColorAttribute( m_colorFloats, m_attributeStartId + 1, true, ":color" );
-
+    
     DrawOutputShaderAttribute( "Output:", m_attributeStartId + 2 );
     ImNodes::EndNode();
 }
@@ -51,7 +51,7 @@ void CVertexOutputNode::Detach( int endAttr )
     }
 }
 
-std::string CVertexOutputNode::Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType attributeType )
+std::string CVertexOutputNode::Evaluate( std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set<std::string>& includes, EAttributeType::Enum attributeType )
 {
     (void) begin;
     (void) bindings;
@@ -72,7 +72,7 @@ layout (location = 5) in mat4 instanceModelMatrix;
 layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragNormal;
-layout(location = 3) out vec3 fragTangent;
+layout(location = 3) out vec4 fragTangent;
 layout(location = 4) out vec4 fragWorldPos;
 
 layout(set=0, binding=0) uniform UniformBufferObject {
@@ -88,7 +88,7 @@ void main()
     fragColor = inColor;
     fragTexCoord = inTexCoord;
     fragNormal = normalize(mat3(instanceModelMatrix) * inNormal);
-    fragTangent = normalize(mat3(instanceModelMatrix) * inTangent.xyz) * inTangent.w;
+    fragTangent = vec4(normalize(mat3(instanceModelMatrix) * inTangent.xyz), inTangent.w);
     fragWorldPos = instanceModelMatrix * vec4(inPosition, 1.0f);
 })"
     };

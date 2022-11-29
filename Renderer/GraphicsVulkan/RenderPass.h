@@ -21,7 +21,7 @@ namespace BalVulkan
         CRenderPass& operator=( const CRenderPass& ) = delete;
         CRenderPass operator=( CRenderPass&& ) = delete;
         
-        void Initialize( std::vector<BalVulkan::EFormat> formats, uint32_t inputCount, bool hasColor );
+        void Initialize( std::vector<BalVulkan::EFormat::Enum> formats, uint32_t inputCount, bool hasColor );
         VkRenderPass GetRenderPass() const;
         static CRenderPass* CreateNew( const CDevice* pDevice );
         

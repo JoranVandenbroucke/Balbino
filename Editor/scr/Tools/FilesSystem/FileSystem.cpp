@@ -78,7 +78,7 @@ SFile BalEditor::GetData( const std::filesystem::path& path )
             uint8_t value;
             BinaryReadWrite::Read( fileStream, file.uuid );
             BinaryReadWrite::Read( fileStream, value );
-
+    
             file.type = static_cast< EFileTypes >( value );
 
             fileStream.close();

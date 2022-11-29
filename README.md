@@ -7,7 +7,7 @@ used Lybraries are:
 - [EnTT](https://github.com/skypjack/entt) as a entity component system;
 - [OpenGL Image](https://github.com/g-truc/gli) (GLI), for reading in DDS files;
 - [OpenGL Mathematics](https://github.com/g-truc/glm) (GLM), for math;
-- [mINI](https://github.com/g-truc/glm), for reading and writing ini files;
+- [mINI](https://github.com/pulzed/mINI), for reading and writing ini files;
 - [SDL2](https://github.com/libsdl-org/SDL), to initiate the window and handel input events;
 - [SDL2_images](https://github.com/libsdl-org/SDL_image), for loading in images;
 - [Vulkan SDK](https://vulkan.lunarg.com/), as render API;

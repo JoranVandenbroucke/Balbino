@@ -87,7 +87,7 @@ void BalVulkan::CCommandPool::BeginRender( CRenderPass* pRenderPass, CFrameBuffe
     std::vector<VkClearValue>      clearColor;
     if ( pRenderPass->HasColorAttachments())
     {
-        clearColor.emplace_back( VkClearValue{ .color = { 0.0f, 0.0f, 0.0f, 0.0f }} );
+        clearColor.emplace_back( VkClearValue{ .color = { 0.37647058823f, 0.37647058823f, 0.37647058823f, 1.0f }} );
     }
     if ( pRenderPass->HasDepthAttachment())
     {

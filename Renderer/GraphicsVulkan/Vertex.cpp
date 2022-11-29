@@ -20,21 +20,17 @@ VkVertexInputBindingDescription BalVulkan::InstanceBatch::GetBindingDescription(
     return bindingDescription;
 }
 
-std::vector<VkVertexInputAttributeDescription> BalVulkan::SVertex::GetAttributeDescriptions( uint32_t binding, const std::vector<EVertexComponent>& components )
+std::vector<VkVertexInputAttributeDescription> BalVulkan::SVertex::GetAttributeDescriptions( uint32_t binding, const std::vector<EVertexComponent::Enum>& components )
 {
     std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
     uint32_t                                       location{};
-    for ( const EVertexComponent                   component : components )
+    for ( const EVertexComponent::Enum             component : components )
     {
         switch ( component )
         {
             case EVertexComponent::Position:
-                attributeDescriptions.emplace_back(
-                        location,
-                        binding,
-                        VK_FORMAT_R32G32B32_SFLOAT,
-                        static_cast<uint32_t>(offsetof( SVertex, position ))
-                );
+                attributeDescriptions.emplace_back( location, binding, VK_FORMAT_R32G32B32_SFLOAT,
+                                                    static_cast<uint32_t>(offsetof( SVertex, position )));
                 break;
             case EVertexComponent::UV:
                 attributeDescriptions.emplace_back(

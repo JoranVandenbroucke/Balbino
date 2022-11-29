@@ -3,94 +3,95 @@
 #include <IScene.h>
 #include <IEntity.h>
 
-#include <imgui.h>
-
 #include <iostream>
 
 #include "AssetBrowser.h"
 #include "SceneHierarchy.h"
 #include "ShaderGraph.h"
+#include "PropertyPanel.h"
 #include "Components/LightComponent.h"
+#include "../EditorGUI/EditorGui.h"
 
 void BalEditor::CMainScreen::Draw()
 {
-	const ImGuiIO& io = ImGui::GetIO();
-	( void ) io;
-	const ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_NoBringToFrontOnFocus /*| ImGuiWindowFlags_NoDocking*/;
-	ImGui::SetNextWindowSize( io.DisplaySize );
-	ImGui::SetNextWindowPos( { 0, 0 } );
-	static ImGuiID dockspaceID = 0;
-	ImGui::Begin( "MainWindow", nullptr, flags );
-	if ( ImGui::BeginMenuBar() )
-	{
-		if ( ImGui::BeginMenu( "File" ) )
-		{
-			if ( ImGui::MenuItem( "New" ) )
-			{
-				m_saved = false;
-			}
-			if ( ImGui::MenuItem( "Open" ) )
-			{
-				//todo: load level
-			}
-			if ( ImGui::MenuItem( "Save Scene" ) )
-			{
-				//todo: save scene
-			}
-			if ( ImGui::MenuItem( "Save Scene As" ) )
-			{
-				//todo: save scene
-			}
-			ImGui::EndMenu();
-		}
-		if ( ImGui::BeginMenu( "GameObject" ) )
-		{
-			ImGui::Text( "Add GameObject" );
-			if ( ImGui::MenuItem( "Empty" ) )
-			{
-				m_pContext->CreateEntity();
-
-				std::cout << "add empty object\n";
-			}
-			if ( ImGui::MenuItem( "Light" ) )
-			{
-				IEntity* entity = m_pContext->CreateEntity();
+    const int           flags       = 1 << 0 | 1 << 1 | 1 << 2 | 1 << 5 | 1 << 7 | 1 << 10 | 1 << 13;
+    bool                open{ true };
+    static unsigned int dockspaceID = 0;
+    GUI::MaxNextWindow();
+    GUI::Begin( "MainWindow", open, flags );
+    if ( GUI::BeginMenuBar())
+    {
+        if ( GUI::BeginMenu( "File" ))
+        {
+            if ( GUI::MenuItem( "New" ))
+            {
+                m_saved = false;
+                //todo: load new level
+            }
+            if ( GUI::MenuItem( "Open" ))
+            {
+                //todo: load level
+            }
+            if ( GUI::MenuItem( "Save Scene" ))
+            {
+                //todo: save scene
+            }
+            if ( GUI::MenuItem( "Save Scene As" ))
+            {
+                //todo: save scene
+            }
+            GUI::EndMenu();
+        }
+        if ( GUI::BeginMenu( "GameObject" ))
+        {
+            GUI::DrawText( "Add GameObject" );
+            if ( GUI::MenuItem( "Empty" ))
+            {
+                m_pContext->CreateEntity();
+                
+                std::cout << "add empty object\n";
+            }
+            if ( GUI::MenuItem( "Light" ))
+            {
+                IEntity* entity = m_pContext->CreateEntity();
                 entity->AddComponent<CLightComponent>();
-			}
-			ImGui::EndMenu();
-		}
-		if ( ImGui::BeginMenu( "View" ) )
-		{
-			if ( ImGui::MenuItem( "Hierarchy" ) )
-			{
-				m_pSceneHierarchy->ShowWindow();
-			}
-			if ( ImGui::MenuItem( "Asset Browser" ) )
-			{
-				m_pAssetBrowser->ShowWindow();
-			}
-			if ( ImGui::MenuItem( "Shader Graph" ) )
-			{
-				m_pShaderGraph->ShowWindow();
-			}
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
-		static constexpr ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_AutoHideTabBar;
-		dockspaceID = ImGui::GetID( "MainWindowDockspace" );
-		ImGui::DockSpace( dockspaceID, ImVec2( 0.0f, 0.0f ), dockspaceFlags );
-	}
-	ImGui::End();
-
-	ImGui::SetNextWindowDockID( dockspaceID, ImGuiCond_FirstUseEver );
+            }
+            GUI::EndMenu();
+        }
+        if ( GUI::BeginMenu( "View" ))
+        {
+            if ( GUI::MenuItem( "Hierarchy" ))
+            {
+                m_pSceneHierarchy->ShowWindow();
+            }
+            if ( GUI::MenuItem( "Asset Browser" ))
+            {
+                m_pAssetBrowser->ShowWindow();
+            }
+            if ( GUI::MenuItem( "Shader Graph" ))
+            {
+                m_pShaderGraph->ShowWindow();
+            }
+            if ( GUI::MenuItem( "Properties..." ))
+            {
+                m_pPropertyPanel->ShowWindow();
+            }
+            GUI::EndMenu();
+        }
+        GUI::EndMenuBar();
+        static constexpr int dockspaceFlags = 1 << 6;
+        dockspaceID = GUI::GetID( "MainWindowDockspace" );
+        GUI::DockSpace( dockspaceID, { 0.0f, 0.0f }, dockspaceFlags );
+    }
+    GUI::End();
+    GUI::SetNextWindowDockID( dockspaceID, 1 << 2 );
 }
 
-void BalEditor::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph )
+void BalEditor::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph, CPropertyPanel* pPropertyPanel )
 {
-	m_pContext = pScene;
-	m_pAssetBrowser = pAssetBrowser;
-	m_pSceneHierarchy = pHierarchy;
-	m_pShaderGraph = pGraph;
+    m_pContext        = pScene;
+    m_pAssetBrowser   = pAssetBrowser;
+    m_pSceneHierarchy = pHierarchy;
+    m_pShaderGraph    = pGraph;
+    m_pPropertyPanel  = pPropertyPanel;
 }

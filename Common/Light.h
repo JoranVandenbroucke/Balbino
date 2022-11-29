@@ -7,13 +7,16 @@
 
 namespace Balbino
 {
-    enum class ELightType : uint8_t
+    struct ELightType
     {
-        Directional,
-        Point,
-        Spot,
-        Area,
-        Max
+        enum Enum : uint8_t
+        {
+            Directional,
+            Point,
+            Spot,
+            Area,
+            Max
+        };
     };
 }
 

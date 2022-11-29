@@ -21,6 +21,8 @@ namespace BalEditor
     
     class CMaterialEditor;
     
+    class CPropertyPanel;
+    
     class CAssetBrowser
     {
     public:
@@ -44,7 +46,7 @@ namespace BalEditor
         
         void ShowWindow();
         
-        void SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor );
+        void SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor, CPropertyPanel* pPropertyPanel );
         
         const char* GetCurrentDirectory();
     
@@ -75,32 +77,31 @@ namespace BalEditor
         
         CShaderGraph   * m_pShaderGraph;
         CMaterialEditor* m_pMaterialEditor;
+        CPropertyPanel * m_pPropertyPanel;
         
         const ISystem* m_pSystem;
         
-        uint64_t m_newFileFronID;
-        float    m_size;
-        bool     m_isVisible;
-        bool     m_newFile;
-        bool     m_updateCurrentDirectory;
+        float m_size;
+        bool  m_isVisible;
+        bool  m_updateCurrentDirectory;
         
+        bool m_isContextMenuOpen;
+        bool m_wasContextMenuOpen;
+        bool m_isItemSelected;
+        bool m_openItem;
+        
+        SFile m_itemToBeCreated;
         std::vector<SFile> m_currentDirectory;
         std::vector<SFile> m_files;
         std::string        m_currentDirectoryName;
-        std::string        m_currentName;
         
         void FindAllFiles();
-        
-        void CreateMaterial( const SFile& file, std::string_view name ) const;
-        
         void DrawTree( const std::string& path, uint32_t& nodeIdx );
-        
+        void DrawContextMenu(bool isSelected);
         void GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory );
-        
         void HandelSelected( const SFile& currentFile, bool isSelected );
-        
         void MoveFile( SFile* pFile, const std::filesystem::path& destination );
-        
-        void Rename( const std::filesystem::path& oldName, std::filesystem::path newName );
+        void Rename( const std::filesystem::path& oldName, const std::filesystem::path& newName );
+        void CreateItem();
     };
 }

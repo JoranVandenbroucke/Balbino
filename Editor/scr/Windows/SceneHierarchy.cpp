@@ -1,7 +1,5 @@
 #include "SceneHierarchy.h"
 
-#include <string>
-
 #include <IEntity.h>
 #include <IScene.h>
 
@@ -17,69 +15,70 @@
 #include "Material.h"
 
 #include "../EditorGUI/EditorGui.h"
-#include <imgui.h>
-#include <imgui_internal.h>
 
 BalEditor::CSceneHierarchy::CSceneHierarchy()
-        : m_pContext{ nullptr }
-          , m_pSelectionContext{ nullptr }
-          , m_isVisible{ true }
+        : m_pContext{ nullptr },
+          m_pSelectionContext{ nullptr },
+          m_pSystem{ nullptr },
+          m_isVisible{ true }
 {
 }
 
 void BalEditor::CSceneHierarchy::Draw()
 {
-    if ( m_isVisible )
+    if ( GUI::Begin( "Scene Hierarchy", m_isVisible, 0 ))
     {
-        if ( ImGui::Begin( "Scene Hierarchy", &m_isVisible ))
+        if ( m_pContext )
         {
-            if ( m_pContext )
+            const auto entities = m_pContext->GetAllEntities();
+            for ( const auto& entity : entities )
             {
-                const auto entities = m_pContext->GetAllEntities();
-                for ( const auto& entity: entities )
-                {
-                    DrawEntityNode( entity );
-                }
-                
-                if ( ImGui::IsMouseDown( 0 ) && ImGui::IsWindowHovered())
-                {
-                    m_pSelectionContext = {};
-                }
-                
-                // Right-click on blank space
-                if ( ImGui::BeginPopupContextWindow( nullptr, 1, false ))
-                {
-                    if ( ImGui::MenuItem( "CreateNew Empty Entity" ))
-                    {
-                        m_pContext->CreateEntity();
-                    }
-                    
-                    ImGui::EndPopup();
-                }
+                DrawEntityNode( entity );
+            }
+        
+            if ( GUI::IsMouseDown( 0 ) && GUI::IsWindowHovered())
+            {
+                m_pSelectionContext = {};
+            }
+        
+            // Right-click on blank space
+            uint64_t selectedOption{ GUI::DrawPopupContextWindow( "Right Click", { "Create Empty" } ) };
+            if ( selectedOption == 0 )
+            {
+                m_pContext->CreateEntity();
             }
         }
-        ImGui::End();
-        if ( ImGui::Begin( "Properties", &m_isVisible ))
+        if ( GUI::Begin( "Properties", m_isVisible, 0 ))
         {
             if ( m_pSelectionContext )
             {
                 DrawComponents( m_pSelectionContext );
+                if ( GUI::BeginPopup( "AddComponent" ))
+                {
+                    DisplayAddComponentEntry<CCameraComponent>( "Camera", m_pSystem );
+                    DisplayAddComponentEntry<CLightComponent>( "Light" );
+                    //DisplayAddComponentEntry<CMeshRenderComponent>( "MeshRender" );
+                
+                    GUI::EndPopup();
+                }
             }
+            GUI::End();
         }
-        ImGui::End();
+        GUI::End();
     }
 }
 
-void BalEditor::CSceneHierarchy::SetContext( IScene* pScene )
+void BalEditor::CSceneHierarchy::SetContext( IScene* pScene, ISystem* pSystem )
 {
     m_pContext = pScene;
+    m_pSystem  = pSystem;
 }
 
 void BalEditor::CSceneHierarchy::ShowWindow()
 {
     m_isVisible = true;
-    ImGui::SetWindowFocus( "Scene Hierarchy" );
-    ImGui::SetWindowFocus( "Properties" );
+    GUI::SetWindowFocus( "Scene Hierarchy" );
+    GUI::SetWindowFocus( "Properties" );
 }
 
 IEntity* BalEditor::CSceneHierarchy::GetSelectedEntity() const
@@ -90,38 +89,38 @@ IEntity* BalEditor::CSceneHierarchy::GetSelectedEntity() const
 template<typename T, typename UIFunction>
 static void DrawComponent( const std::string& name, IEntity* entity, UIFunction uiFunction )
 {
-    constexpr ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Framed | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_AllowItemOverlap | ImGuiTreeNodeFlags_FramePadding;
+    constexpr int treeNodeFlags = 1 << 1 | 1 << 2 | 1 << 5 | 1 << 10 | 1 << 11;
     if ( entity->HasComponent<T>())
     {
-        auto component = entity->GetComponent<T>();
-        const ImVec2 contentRegionAvailable = ImGui::GetContentRegionAvail();
-        
-        ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 } );
-        const float lineHeight = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
-        ImGui::Separator();
-        const bool open = ImGui::TreeNodeEx(( void* ) typeid( T ).hash_code(), treeNodeFlags, "%s", name.c_str());
-        ImGui::PopStyleVar();
-        ImGui::SameLine( contentRegionAvailable.x - lineHeight * 0.5f );
-        if ( ImGui::Button( "+", ImVec2{ lineHeight, lineHeight } ))
+        auto            component              = entity->GetComponent<T>();
+        const glm::vec2 contentRegionAvailable = BalEditor::GUI::GetContentRegionAvail();
+    
+        BalEditor::GUI::PushStyleVar( 5, glm::vec2{ 4, 4 } );
+        const float lineHeight = BalEditor::GUI::GetLineHeight();
+        BalEditor::GUI::Separator();
+        const bool open = BalEditor::GUI::TreeNodeEx((uint64_t) typeid( T ).hash_code(), treeNodeFlags, name.c_str());
+        BalEditor::GUI::PopStyleVar();
+        BalEditor::GUI::SameLine( contentRegionAvailable.x - lineHeight * 0.5f );
+        if ( BalEditor::GUI::DrawButton( "+", glm::vec2{ lineHeight, lineHeight } ))
         {
-            ImGui::OpenPopup( "ComponentSettings" );
+            BalEditor::GUI::StartPopup( "ComponentSettings", false );
         }
-        
+    
         bool removeComponent = false;
-        if ( ImGui::BeginPopup( "ComponentSettings" ))
+        if ( BalEditor::GUI::BeginPopup( "ComponentSettings" ))
         {
-            if ( ImGui::MenuItem( "Remove component" ))
+            if ( BalEditor::GUI::MenuItem( "Remove component" ))
             {
                 removeComponent = true;
             }
-            
-            ImGui::EndPopup();
+        
+            BalEditor::GUI::EndPopup();
         }
         
         if ( open )
         {
             uiFunction( component );
-            ImGui::TreePop();
+            BalEditor::GUI::TreePop();
         }
         
         if ( removeComponent )
@@ -140,38 +139,39 @@ void BalEditor::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
         return;
     }
     
-    const std::string tag = std::to_string( static_cast<uint64_t>( pIdComponent->GetUUID()));
+    const std::string tag    = std::to_string( static_cast<uint64_t>( pIdComponent->GetUUID()));
     //todo if children but closed, skip
-    const uint32_t childCount{ pEntity->GetComponent<CTransformComponent>()->GetChildCount() };
-    const ImGuiTreeNodeFlags flags = ( m_pSelectionContext == pEntity ? ImGuiTreeNodeFlags_Selected : 0 ) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ( !childCount ? ImGuiTreeNodeFlags_Leaf : 0 );
-    const bool opened = ImGui::TreeNodeEx(( void* ) static_cast<uint64_t>( static_cast<uint32_t>( *pEntity )), flags, "%s", tag.c_str());
-    if ( ImGui::IsItemClicked())
+    const uint32_t    childCount{ pEntity->GetComponent<CTransformComponent>()->GetChildCount() };
+    const int         flags  = ( m_pSelectionContext == pEntity ? 1 << 0 : 0 ) | 1 << 7 |
+                               1 << 11 | ( !childCount ? 1 << 8 : 0 );
+    const bool        opened = GUI::TreeNodeEx( static_cast<int>( *pEntity ), flags, tag.c_str());
+    if ( GUI::IsItemClicked())
     {
         m_pSelectionContext = pEntity;
     }
     
     bool entityDeleted = false;
-    if ( ImGui::BeginPopupContextItem())
+    if ( GUI::BeginPopupContextItem())
     {
-        if ( ImGui::MenuItem( "Delete Entity" ))
+        if ( GUI::MenuItem( "Delete Entity" ))
         {
             entityDeleted = true;
         }
         
-        ImGui::EndPopup();
+        GUI::EndPopup();
     }
     
     if ( opened )
     {
         if ( childCount )
         {
-            constexpr ImGuiTreeNodeFlags treeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-            if ( ImGui::TreeNodeEx( reinterpret_cast<void*>( 9817239 ), treeFlags, "%s", tag.c_str()))
+            constexpr int treeFlags = 1 << 7 | 1 << 11;
+            if ( GUI::TreeNodeEx( 9817239, treeFlags, tag.c_str()))
             {
-                ImGui::TreePop();
+                GUI::TreePop();
             }
         }
-        ImGui::TreePop();
+        GUI::TreePop();
     }
     
     if ( entityDeleted )
@@ -186,121 +186,104 @@ void BalEditor::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
 
 void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
 {
-    ( void ) pEntity;
+    (void) pEntity;
     DrawComponent<CTransformComponent>( "Transform", pEntity, []( auto component )
     {
         glm::vec3 translation = component->GetTranslation();
-        glm::vec3 rotation = glm::degrees( glm::eulerAngles( component->GetRotation()));
-        glm::vec3 scale = component->GetScale();
-        
+        glm::vec3 rotation    = glm::degrees( glm::eulerAngles( component->GetRotation()));
+        glm::vec3 scale       = component->GetScale();
+    
         float tra[3]{ translation.x, translation.y, translation.z };
         float rot[3]{ rotation.x, rotation.y, rotation.z };
         float sca[3]{ scale.x, scale.y, scale.z };
-        
-        BalEditor::EditorGUI::DrawFloat3( "Translation", tra, 0.01f );
-        BalEditor::EditorGUI::DrawFloat3( "Rotation", rot, 0.01f );
-        BalEditor::EditorGUI::DrawFloat3( "Scale", sca, 0.01f, 1 );
-        
-        component->SetScale( glm::vec3{ sca[ 0 ], sca[ 1 ], sca[ 2 ] } );
-        component->SetRotation( glm::quat( radians( glm::vec3{ rot[ 0 ], rot[ 1 ], rot[ 2 ] } )));
-        component->SetTranslation( glm::vec3{ tra[ 0 ], tra[ 1 ], tra[ 2 ] } );
+    
+        GUI::DrawFloat3( "Translation", tra, 0.01f );
+        GUI::DrawFloat3( "Rotation", rot, 0.01f );
+        GUI::DrawFloat3( "Scale", sca, 0.01f, 1 );
+    
+        component->SetScale( glm::vec3{ sca[0], sca[1], sca[2] } );
+        component->SetRotation( glm::quat( radians( glm::vec3{ rot[0], rot[1], rot[2] } )));
+        component->SetTranslation( glm::vec3{ tra[0], tra[1], tra[2] } );
     } );
     
     DrawComponent<CCameraComponent>( "Camera", pEntity, []( auto component )
     {
-        auto& camera = component->GetCamera();
-        bool isPrimary = component->IsPrimary();
-        if ( BalEditor::EditorGUI::DrawToggle( "Primary", isPrimary ))
-        {
-            component->SetIsPrimary( isPrimary );
-        }
-        
-        float perspectiveVerticalFov = glm::degrees( camera.GetFov());
-        float perspectiveNear = camera.GetNearClip();
-        float perspectiveFar = camera.GetFarClip();
-        bool changed = BalEditor::EditorGUI::DrawFloat( "Vertical FOV", perspectiveVerticalFov, 0.1f );
-        changed |= BalEditor::EditorGUI::DrawFloat( "Near", perspectiveNear, 0.01f );
-        changed |= BalEditor::EditorGUI::DrawFloat( "Far", perspectiveFar, 0.01f );
+        float fov  = glm::degrees( component->GetFov());
+        float near = component->GetNearClip();
+        float far  = component->GetFarClip();
+        bool  changed{};
+        changed |= GUI::DrawFloat( "Vertical FOV", fov, 0.1f );
+        changed |= GUI::DrawFloat( "Near", near, 0.01f );
+        changed |= GUI::DrawFloat( "Far", far, 0.01f );
         if ( changed )
         {
-            camera.UpdateProjectionMatrix( glm::radians( perspectiveVerticalFov ), perspectiveNear, perspectiveFar );
+            component->SetFov( glm::radians( fov ));
+            component->SetNearClip( near );
+            component->SetFarClip( far );
         }
     } );
     
     DrawComponent<CMeshRenderComponent>( "Mesh Render Component", pEntity, [ & ]( auto component )
     {
         const CUuid meshID = component->GetMeshId();
-        const std::vector<CUuid>& materials = component->GetMaterials();
+        const std::vector<CUuid>                     & materials       = component->GetMaterials();
         const std::map<uint64_t, Balbino::CMaterial*>& loadedMaterials = m_pContext->GetSystem()->GetResourceManager()->GetAllLoadedMaterials();
-        ImGui::Text( "%s", ( "mesh ID: " + std::to_string(( uint64_t ) meshID )).c_str());
+        GUI::DrawText(( "mesh ID: " + std::to_string((uint64_t) meshID )).c_str());
         for ( int i{}; i < materials.size(); ++i )
         {
-            ImGui::Text( "%s", ( "material ID: " + std::to_string(( uint64_t ) materials[ i ] )).c_str());
-            if ( ImGui::BeginDragDropTarget())
+            GUI::DrawText(( "material ID: " + std::to_string((uint64_t) materials[i] )).c_str());
+            if ( const void* payload = GUI::ReceiveDragDrop( ToString( EFileTypes::Material )))
             {
-                if ( const ImGuiPayload* payload = ImGui::AcceptDragDropPayload( ToString( EFileTypes::Material )))
-                {
-                    component->SetMaterial( i, (( SFile* ) payload->Data )->uuid );
-                }
-                ImGui::EndDragDropTarget();
+                component->SetMaterial( i, ((SFile*) payload )->uuid );
             }
         }
-        for ( auto& loadedMaterial: loadedMaterials )
+        for ( auto& loadedMaterial : loadedMaterials )
         {
-            ImGui::Separator();
-            const auto& mat = loadedMaterial.second;
-            const std::unordered_map<std::string, BalVulkan::SShaderResource>& resources = mat->GetShaderResourcesMap();
-            for ( const auto& resource: resources )
+            GUI::Separator();
+            const auto                                   & mat       = loadedMaterial.second;
+            const std::vector<BalVulkan::SShaderResource>& resources = mat->GetShaderResourcesVector();
+            for ( const auto                             & resource : resources )
             {
-                ImGui::Text( "%s", resource.first.c_str());
+                GUI::DrawText( resource.name.c_str());
             }
         }
     } );
     
     DrawComponent<CLightComponent>( "Light Component", pEntity, [ & ]( auto component )
     {
-        float strength{ component->GetStrength() };
-        glm::vec3 size{ component->GetSize() };
-        glm::vec3 color{ component->GetColor() };
-        Balbino::ELightType type{ component->GetType() };
-        
-        float colorFloat[3]{ color.r, color.g, color.b };
-        std::string typeName{};
-        std::string typeNameDup{};
-        switch ( type )
-        {
-            case Balbino::ELightType::Directional:typeName = "Directional";
-                break;
-            case Balbino::ELightType::Point:typeName = "Point";
-                break;
-            case Balbino::ELightType::Spot:typeName = "Spot";
-                break;
-            case Balbino::ELightType::Area:typeName = "Area";
-                break;
-            case Balbino::ELightType::Max:break;
-        }
+        float                     strength{ component->GetStrength() };
+        glm::vec3                 size{ component->GetSize() };
+        glm::vec3                 color{ component->GetColor() };
+        Balbino::ELightType::Enum type{ component->GetType() };
+    
+        float    colorFloat[3]{ color.r, color.g, color.b };
+        uint64_t typeName{ uint64_t( type ) };
+        uint64_t typeNameDup{};
         typeNameDup = typeName;
-        
+    
         bool hasChanged{};
-        hasChanged |= BalEditor::EditorGUI::DrawFloat3( "Color", colorFloat, 0.01f );
-        hasChanged |= BalEditor::EditorGUI::DrawFloat( "Strength", strength, 0.01f );
-        hasChanged |= BalEditor::EditorGUI::DrawComboBox( "Light Type", typeName, { "Directional", "Point", "Spot", "Area" } );
-        
+        hasChanged |= GUI::DrawFloat3( "Color", colorFloat, 0.01f );
+        hasChanged |= GUI::DrawFloat( "Strength", strength, 0.01f );
+        hasChanged |= GUI::DrawComboBox( "Light Type", typeName, { "Directional", "Point", "Spot", "Area" } );
+    
         switch ( type )
         {
-            case Balbino::ELightType::Directional:hasChanged |= BalEditor::EditorGUI::DrawFloat( "Size", size.r, 0.01f );
+            case Balbino::ELightType::Directional:
+            case Balbino::ELightType::Point:
+                hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
                 break;
-            case Balbino::ELightType::Point:hasChanged |= BalEditor::EditorGUI::DrawFloat( "Size", size.r, 0.01f );
+            case Balbino::ELightType::Spot:
+                hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
+                hasChanged |= GUI::DrawFloat( "Near Radius", size.g, 0.01f );
+                hasChanged |= GUI::DrawFloat( "Far Radius", size.b, 0.01f );
                 break;
-            case Balbino::ELightType::Spot:hasChanged |= BalEditor::EditorGUI::DrawFloat( "Size", size.r, 0.01f );
-                hasChanged |= BalEditor::EditorGUI::DrawFloat( "Near Radius", size.g, 0.01f );
-                hasChanged |= BalEditor::EditorGUI::DrawFloat( "Far Radius", size.b, 0.01f );
+            case Balbino::ELightType::Area:
+                hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
+                hasChanged |= GUI::DrawFloat( "Width", size.g, 0.01f );
+                hasChanged |= GUI::DrawFloat( "Height", size.b, 0.01f );
                 break;
-            case Balbino::ELightType::Area:hasChanged |= BalEditor::EditorGUI::DrawFloat( "Size", size.r, 0.01f );
-                hasChanged |= BalEditor::EditorGUI::DrawFloat( "Width", size.g, 0.01f );
-                hasChanged |= BalEditor::EditorGUI::DrawFloat( "Height", size.b, 0.01f );
+            case Balbino::ELightType::Max:
                 break;
-            case Balbino::ELightType::Max:break;
         }
         
         if ( hasChanged )
@@ -318,39 +301,54 @@ void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
             {
                 component->SetStrength( strength );
             }
-            if ( color.r != colorFloat[ 0 ] || color.b != colorFloat[ 1 ] || color.b != colorFloat[ 2 ] )
+            if ( color.r != colorFloat[0] || color.b != colorFloat[1] || color.b != colorFloat[2] )
             {
-                component->SetColor( glm::vec3{ colorFloat[ 0 ], colorFloat[ 1 ], colorFloat[ 2 ] } );
+                component->SetColor( glm::vec3{ colorFloat[0], colorFloat[1], colorFloat[2] } );
             }
             
             if ( typeName != typeNameDup )
             {
-                if ( typeName == "Directional" )
+                type = Balbino::ELightType::Enum( typeName );
+                switch ( type )
                 {
-                    type = Balbino::ELightType::Directional;
-                    size.g = size.b = 0;
-                }
-                else if ( typeName == "Point" )
-                {
-                    type = Balbino::ELightType::Point;
-                    size.g = size.b = 0;
-                }
-                else if ( typeName == "Spot" )
-                {
-                    type = Balbino::ELightType::Spot;
-                    size.g = 0.01f;
-                    size.b = 10.0f;
-                }
-                
-                else if ( typeName == "Area" )
-                {
-                    type = Balbino::ELightType::Area;
-                    size.g = 1.0f;
-                    size.b = 1.0f;
+                    case Balbino::ELightType::Directional:
+                        size.g = size.b = 0;
+                        break;
+                    case Balbino::ELightType::Point:
+                        size.g = size.b = 0;
+                        break;
+                    case Balbino::ELightType::Spot:
+                        size.g = 0.01f;
+                        size.b = 10.0f;
+                        break;
+                    case Balbino::ELightType::Area:
+                        size.g = 1.0f;
+                        break;
+                    case Balbino::ELightType::Max:
+                        size.b = 1.0f;
+                        break;
                 }
                 component->SetSize( size );
                 component->SetType( type );
             }
         }
     } );
+    
+    if ( GUI::DrawButton( "Add Component", { -1, 0 } ))
+    {
+        GUI::StartPopup( "AddComponent", false );
+    }
+}
+
+template<typename T, typename ... Args>
+void BalEditor::CSceneHierarchy::DisplayAddComponentEntry( const std::string& entryName, Args&& ... args )
+{
+    if ( !m_pSelectionContext->HasComponent<T>())
+    {
+        if ( GUI::MenuItem( entryName.c_str()))
+        {
+            m_pSelectionContext->AddComponent<T>( std::forward<Args>( args )... );
+            GUI::CloseCurrentPopup();
+        }
+    }
 }

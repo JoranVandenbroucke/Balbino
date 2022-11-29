@@ -17,7 +17,7 @@ namespace BalVulkan
         CBuffer& operator=( CBuffer&& ) noexcept = default;
         ~CBuffer() override;
         
-        void Initialize( uint64_t size, EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty );
+        void Initialize( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty );
         void UpdateData( const void* pData, uint64_t size );
         
         void Bind( bool isIndexBuffer, bool isInstanceBuffer = false ) const;
@@ -27,12 +27,12 @@ namespace BalVulkan
         
         void BeginSingleTimeCommands() const;
         void EndSingleTimeCommands() const;
-        void PipelineBarrier( EPipelineStageFlagBits srcStageMask, EPipelineStageFlagBits destStageMask, VkImageMemoryBarrier* pBarrier ) const;
+        void PipelineBarrier( EPipelineStageFlagBits::Enum srcStageMask, EPipelineStageFlagBits::Enum destStageMask, VkImageMemoryBarrier* pBarrier ) const;
         void Blit( const VkImage* pImage, const VkImageBlit* pBlit ) const;
         
         const VkBuffer& GetBuffer() const;
         uint64_t GetRange() const;
-        void Rebuild( uint64_t size, EBufferUsageFlagBits bufferUsage, EMemoryPropertyFlagBits memoryProperty );
+        void Rebuild( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty );
         void* GetMapped() const;
         void Flush( VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0 );
         static CBuffer* CreateNew( const CDevice* pDevice, const CCommandPool* commandPool, const CQueue* queue );

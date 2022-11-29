@@ -23,17 +23,7 @@
 
 enum class EFileTypes : uint8_t
 {
-    Unknown,
-    Folder,
-    Scene,
-    Image,
-    Audio,
-    Font,
-    Model,
-    Shader,
-    Material,
-    Code,
-    Preset
+    Unknown, Folder, Scene, Image, Audio, Font, Model, Shader, Material, Code, Preset, MaxFileTypes
 };
 
 inline const char* ToString( EFileTypes type )
@@ -68,16 +58,6 @@ inline const char* ToString( EFileTypes type )
 
 struct SFile
 {
-    ~SFile()
-    {
-        isFolder = false;
-        type     = EFileTypes::Unknown;
-        uuid     = 0u;
-        fileName = "";
-        path     = "";
-        depth    = 0;
-    }
-    
     bool                            isFolder;
     EFileTypes                      type;
     uint64_t                        uuid;
@@ -817,21 +797,21 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, BalVulkan::SShad
     Read( file, value.qualifiers );
     Read( file, value.resourceID );
     Read( file, value.name );
-    if ((BalVulkan::EShaderType) shaderStage == BalVulkan::EShaderType::Vertex )
+    if ((BalVulkan::EShaderType::Enum) shaderStage == BalVulkan::EShaderType::Vertex )
     {
         value.stages = VK_SHADER_STAGE_VERTEX_BIT;
     }
-    else if ((BalVulkan::EShaderType) shaderStage == BalVulkan::EShaderType::Geometry )
+    else if ((BalVulkan::EShaderType::Enum) shaderStage == BalVulkan::EShaderType::Geometry )
     {
         value.stages = VK_SHADER_STAGE_GEOMETRY_BIT;
     }
-    else if ((BalVulkan::EShaderType) shaderStage == BalVulkan::EShaderType::Fragment )
+    else if ((BalVulkan::EShaderType::Enum) shaderStage == BalVulkan::EShaderType::Fragment )
     {
         value.stages = VK_SHADER_STAGE_FRAGMENT_BIT;
     }
     
-    value.type = (BalVulkan::EShaderResourceType) resourceType;
-    value.mode = (BalVulkan::EShaderResourceMode) resourceMode;
+    value.type = (BalVulkan::EShaderResourceType::Enum) resourceType;
+    value.mode = (BalVulkan::EShaderResourceMode::Enum) resourceMode;
     return file;
 }
 

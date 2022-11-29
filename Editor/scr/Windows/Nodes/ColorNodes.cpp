@@ -1,7 +1,7 @@
 #include "ColorNodes.h"
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <format>
 
 #include "Attribute.h"
@@ -70,7 +70,7 @@ void CBrightContrast::Detach(int endAttr)
     }
 }
 
-std::string CBrightContrast::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+std::string CBrightContrast::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType::Enum attributeType)
 {
     (void) begin;
     (void) bindings;
@@ -166,7 +166,7 @@ void CGamma::Detach(int endAttr)
     }
 }
 
-std::string CGamma::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+std::string CGamma::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType::Enum attributeType)
 {
     (void) begin;
     (void) bindings;
@@ -258,7 +258,7 @@ void CHueSaturationValue::Detach(int endAttr)
     }
 }
 
-std::string CHueSaturationValue::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+std::string CHueSaturationValue::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType::Enum attributeType)
 {
     (void) begin;
     (void) bindings;
@@ -352,7 +352,7 @@ void CInvert::Detach(int endAttr)
     }
 }
 
-std::string CInvert::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+std::string CInvert::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType::Enum attributeType)
 {
     (void) begin;
     (void) bindings;
@@ -420,9 +420,9 @@ void CMix::Draw()
             for( int n = 0; n < static_cast<int>( EMode::MaxIndex ); n++ )
             {
                 const bool isSelected = ( static_cast<int>( m_type ) == n );
-                if( ImGui::Selectable( ToString( static_cast<EMode>( n )), isSelected ))
+                if( ImGui::Selectable( ToString( static_cast<EMode::Enum>( n )), isSelected ))
                 {
-                    m_type = static_cast<EMode>( n );
+                    m_type = static_cast<EMode::Enum>( n );
                 }
 
                 // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -476,7 +476,7 @@ void CMix::Detach(int endAttr)
     }
 }
 
-std::string CMix::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType attributeType)
+std::string CMix::Evaluate(std::vector<INode*>::iterator& begin, std::set<std::string>& bindings, std::set< std::string >& includes, EAttributeType::Enum attributeType)
 {
     (void) begin;
     (void) bindings;
@@ -622,7 +622,7 @@ std::vector< int > CMix::GetInputs() const
     return { m_attributeStartId, m_attributeStartId + 1, m_attributeStartId + 2 };
 }
 
-const char* CMix::ToString(EMode mode)
+const char* CMix::ToString(EMode::Enum mode)
 {
     switch( mode )
     {

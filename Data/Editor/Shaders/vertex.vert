@@ -12,7 +12,7 @@ layout (location = 5) in mat4 instanceModelMatrix;
 layout(location = 0) out vec4 fragColor;
 layout(location = 1) out vec2 fragTexCoord;
 layout(location = 2) out vec3 fragNormal;
-layout(location = 3) out vec3 fragTangent;
+layout(location = 3) out vec4 fragTangent;
 layout(location = 4) out vec4 fragWorldPos;
 
 layout(set=0, binding=0) uniform UniformBufferObject {
@@ -28,6 +28,6 @@ void main()
     fragColor = inColor;
     fragTexCoord = inTexCoord;
     fragNormal = normalize(mat3(instanceModelMatrix) * inNormal);
-    fragTangent = normalize(mat3(instanceModelMatrix) * inTangent.xyz) * inTangent.w;
+    fragTangent = vec4(normalize(mat3(instanceModelMatrix) * inTangent.xyz), inTangent.w);
     fragWorldPos = instanceModelMatrix * vec4(inPosition, 1.0f);
 }

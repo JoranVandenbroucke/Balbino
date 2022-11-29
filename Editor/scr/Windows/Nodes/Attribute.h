@@ -8,8 +8,8 @@
 
 inline void DrawInputFloatAttribute( float& value, const int id, const bool connected, const char* title = "Value", const float min = 0.0f, const float max = 0.0f, const float speed = 0.01f )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xffa1a1a1 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffa1a1a1 );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xffa1a1a1 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xffa1a1a1 );
     ImNodes::BeginInputAttribute( id );
     if ( !connected )
     {
@@ -27,8 +27,8 @@ inline void DrawInputFloatAttribute( float& value, const int id, const bool conn
 
 inline void DrawInputColorAttribute( std::array<float, 3>& value, int id, bool connected, const char* title = "Color" )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xff29c7c7 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xff29c7c7 );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xff29c7c7 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xff29c7c7 );
     ImNodes::BeginInputAttribute( id );
     if ( !connected )
     {
@@ -50,8 +50,8 @@ inline void DrawInputColorAttribute( std::array<float, 3>& value, int id, bool c
 
 inline void DrawInputVectorAttribute( std::array<float, 3>& value, int id, bool connected, const char* title = "Vector" )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xffc76363 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffc76363 );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xffc76363 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xffc76363 );
     ImNodes::BeginInputAttribute( id );
     ImGui::Text( "%s", title );
     if ( !connected )
@@ -69,8 +69,8 @@ inline void DrawInputVectorAttribute( std::array<float, 3>& value, int id, bool 
 
 inline void DrawOutputFloatAttribute( int id, const char* title = "output:" )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xffa1a1a1 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffa1a1a1 );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xffa1a1a1 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xffa1a1a1 );
     ImNodes::BeginOutputAttribute( id );
     ImGui::Text( "%s", title );
     ImNodes::EndOutputAttribute();
@@ -80,8 +80,8 @@ inline void DrawOutputFloatAttribute( int id, const char* title = "output:" )
 
 inline void DrawOutputColorAttribute( int id, const char* title = "output:" )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xff29c7c7 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xff29c7c7 );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xff29c7c7 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xff29c7c7 );
     ImNodes::BeginOutputAttribute( id );
     ImGui::Text( "%s", title );
     ImNodes::EndOutputAttribute();
@@ -91,8 +91,8 @@ inline void DrawOutputColorAttribute( int id, const char* title = "output:" )
 
 inline void DrawOutputVectorAttribute( int id, const char* title = "output:" )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xffc76363 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffc76363 );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xffc76363 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xffc76363 );
     ImNodes::BeginOutputAttribute( id );
     ImGui::Text( "%s", title );
     ImNodes::EndOutputAttribute();
@@ -102,8 +102,8 @@ inline void DrawOutputVectorAttribute( int id, const char* title = "output:" )
 
 inline void DrawOutputTextureAttribute( int id, const char* title = "output: " )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xff29c7c7 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xff29c7c7 );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xff29c7c7 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xff29c7c7 );
     ImNodes::BeginOutputAttribute( id );
     ImGui::Text( "%s", title );
     ImNodes::EndOutputAttribute();
@@ -113,9 +113,9 @@ inline void DrawOutputTextureAttribute( int id, const char* title = "output: " )
 
 inline void DrawInputShaderAttribute( const char* title, int id )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xffc729c7 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffc729c7 );
-    ImNodes::BeginInputAttribute( id, ImNodes::PinShape_QuadFilled );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xffc729c7 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xffc729c7 );
+    ImNodes::BeginInputAttribute( id, ImNodesPinShape_QuadFilled );
     ImGui::Text( "%s", title );
     ImNodes::EndOutputAttribute();
     ImNodes::PopColorStyle();
@@ -124,9 +124,9 @@ inline void DrawInputShaderAttribute( const char* title, int id )
 
 inline void DrawOutputShaderAttribute( const char* title, int id )
 {
-    PushColorStyle( ImNodes::ColorStyle_Pin, 0xffc729c7 );
-    PushColorStyle( ImNodes::ColorStyle_PinHovered, 0xffc729c7 );
-    ImNodes::BeginOutputAttribute( id, ImNodes::PinShape_QuadFilled );
+    ImNodes::PushColorStyle( ImNodesCol_Pin, 0xffc729c7 );
+    ImNodes::PushColorStyle( ImNodesCol_PinHovered, 0xffc729c7 );
+    ImNodes::BeginOutputAttribute( id, ImNodesPinShape_QuadFilled );
     ImGui::Text( "%s", title );
     ImNodes::EndOutputAttribute();
     ImNodes::PopColorStyle();
@@ -142,7 +142,7 @@ inline void StartNode( const char* title, const int id, float startWidth = 100 )
 {
     ImGui::PushItemWidth( startWidth );
     ImNodes::BeginNode( id );
-
+    
     ImNodes::BeginNodeTitleBar();
     ImGui::TextUnformatted( title );
     ImNodes::EndNodeTitleBar();

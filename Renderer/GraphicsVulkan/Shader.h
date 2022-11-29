@@ -10,85 +10,94 @@
 
 namespace BalVulkan
 {
-	enum class EShaderResourceType
-	{
-		None,
-		Input,
-		InputAttachment,
-		Output,
-		Image,
-		ImageSampler,
-		ImageStorage,
-		Sampler,
-		BufferUniform,
-		BufferStorage,
-		PushConstant,
-		SpecializationConstant,
-	};
-
-	struct SShaderResourceQualifiers
-	{
-		enum : uint32_t
-		{
-			None = 0,
-			NonReadable = 1,
-			NonWritable = 2,
-		};
-	};
-
-	enum class EShaderResourceMode
-	{
-		Static,
-		Dynamic,
-		UpdateAfterBind
-	};
-
-	struct SShaderResource
-	{
-		VkShaderStageFlags stages;
-		EShaderResourceType type;
-		EShaderResourceMode mode;
-		uint32_t set;
-		uint32_t binding;
-		uint32_t location;
-		uint32_t inputAttachmentIndex;
-		uint32_t vecSize;
-		uint32_t columns;
-		uint32_t arraySize;
-		uint32_t offset;
-		uint32_t size;
-		uint32_t constantId;
-		uint32_t qualifiers;
-		uint64_t resourceID;
-		std::string name;
-	};
-
-	enum class EShaderType : uint8_t
-	{
-		Vertex,
-		Geometry,
-		Fragment,
-		Count
-	};
-
-	class CShader final : public CDeviceObject
-	{
-	public:
-		explicit CShader( const CDevice* device );
-		CShader( const CShader& other );
-		CShader( CShader&& ) = default;
-		CShader& operator=( CShader&& ) = default;
-		~CShader() override;
-
-		void Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage stage );
-		const std::vector<SShaderResource>& GetShaderResources() const;
-		const VkShaderModule& GetShaderModule() const;
-		static CShader* CreateNew( const CDevice* pDevice );
-	private:
-		VkShaderModule m_shaderHandle;
-		std::vector<SShaderResource> m_resources;
-
-		VkShaderModule CreateShaderModule( const std::vector<uint32_t>& data ) const;
+    struct EShaderResourceType
+    {
+        enum Enum: uint8_t
+        {
+            None,
+            Input,
+            InputAttachment,
+            Output,
+            Image,
+            ImageSampler,
+            ImageStorage,
+            Sampler,
+            BufferUniform,
+            BufferStorage,
+            PushConstant,
+            SpecializationConstant,
+        };
+    };
+    
+    struct SShaderResourceQualifiers
+    {
+        enum Enum: uint32_t
+        {
+            None        = 0,
+            NonReadable = 1,
+            NonWritable = 2,
+        };
+    };
+    
+    struct EShaderResourceMode
+    {
+        enum Enum: uint8_t
+        {
+            Static,
+            Dynamic,
+            UpdateAfterBind
+        };
+    };
+    
+    struct SShaderResource
+    {
+        VkShaderStageFlags        stages;
+        EShaderResourceType::Enum type;
+        EShaderResourceMode::Enum mode;
+        uint32_t                  set;
+        uint32_t                  binding;
+        uint32_t                  location;
+        uint32_t                  inputAttachmentIndex;
+        uint32_t                  vecSize;
+        uint32_t                  columns;
+        uint32_t                  arraySize;
+        uint32_t                  offset;
+        uint32_t                  size;
+        uint32_t                  constantId;
+        uint32_t                  qualifiers;
+        uint64_t                  resourceID;
+        std::string               name;
+    };
+    
+    struct EShaderType
+    {
+        enum Enum: uint8_t
+        {
+            Vertex,
+            Geometry,
+            Fragment,
+            Count
+        };
+    };
+    
+    class CShader final : public CDeviceObject
+    {
+    public:
+        explicit CShader( const CDevice* device );
+        CShader( const CShader& other );
+        CShader( CShader&& ) = default;
+        CShader& operator=( CShader&& ) = default;
+        ~CShader() override;
+        
+        void Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage::Enum stage );
+        const std::vector<SShaderResource>& GetShaderResources() const;
+        const VkShaderModule& GetShaderModule() const;
+        static CShader* CreateNew( const CDevice* pDevice );
+    private:
+        VkShaderModule               m_shaderHandle;
+        std::vector<SShaderResource> m_resources;
+        
+        VkShaderModule CreateShaderModule( const std::vector<uint32_t>& data ) const;
 	};
 
 	class CFileIncluder final : public shaderc::CompileOptions::IncluderInterface

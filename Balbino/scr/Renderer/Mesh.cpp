@@ -52,7 +52,7 @@ Balbino::CMesh* Balbino::CMesh::CreateNew( std::vector<BalVulkan::SVertex>& vert
     return new CMesh{ vertices, indices, metaData, uuid };
 }
 
-const uint32_t Balbino::CMesh::GetMaterialCount() const
+uint32_t Balbino::CMesh::GetMaterialCount() const
 {
     return m_materialCount;
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "entt/entt.hpp"
+#include <entt/entt.hpp>
 #include "IEntity.h"
 #include "IScene.h"
 

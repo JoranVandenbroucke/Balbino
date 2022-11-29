@@ -18,6 +18,7 @@ namespace Balbino
     
     struct SMeshMetadata
     {
+        uint32_t marerialIndex{};
         uint32_t firstIndex{};
         uint32_t indexCount{};
         SSphere  boundingSphere{};

@@ -29,7 +29,7 @@ BalVulkan::CShader::CShader( const CShader& other )
 {
 }
 
-void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage stage )
+void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage::Enum stage )
 {
     VkShaderStageFlagBits stageBits{};
     switch ( stage )
