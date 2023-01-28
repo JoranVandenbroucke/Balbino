@@ -27,7 +27,7 @@ vec3 gradient(vec3 positoin, vec3 col1, vec3 col2, float type){
         result = (x + y) * 0.5;
     }
     else if (type < 5) {
-        result = atan2(y, x) / BALBINO_2PI + 0.5;
+        result = atan2(y, x) / PI2 + 0.5;
     }
     else {
         float r = 1.0 - sqrt(x * x + y * y + z * z);

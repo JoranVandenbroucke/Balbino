@@ -79,7 +79,7 @@ namespace BalEditor
             //Vector,
             Bump,
             Displacement,
-            Mapping, //todo Normal,
+            Mapping,
             NormalMap,
             //todo VectorCurves,
             //todo VectorDisplacement,
@@ -88,7 +88,7 @@ namespace BalEditor
             
             //Converter
             //todo Blackbody,
-            Clamp, //todo ColorRamp,
+            Clamp,
             //todo CombineSeparate,
             //todo FloatCurve,
             //todo MapRange,
@@ -96,10 +96,14 @@ namespace BalEditor
             RGBtoBW,
             VectorMath,
             //todo Wavelength,
+            //Input
+            ViewDirection,
+            ViewZ,
+            ViewDepth,
+            
             MaxIndex
             //todo ScreenDoorTransparency
             
-            ////////UE4 nodes////////
             
         };
         

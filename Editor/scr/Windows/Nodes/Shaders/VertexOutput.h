@@ -24,9 +24,9 @@ public:
     void SetVertexFlags( uint8_t flags );
 
 private:
-    bool                 m_connections[5];
-    bool                 m_useCameraTransform;
-    uint8_t              m_inputFlags;
+    bool    m_connections[5];
+    bool    m_useOnyProjection;
+    uint8_t m_inputFlags;
     std::array<float, 3> m_position;
     std::array<float, 3> m_uv;
     std::array<float, 3> m_color;

@@ -19,6 +19,7 @@
 #include "Nodes/Textures/ImageTexture.h"
 #include "Nodes/Textures/Mapping.h"
 #include "Nodes/Textures/NormalMap.h"
+#include "Nodes/Input/CameraDataNode.h"
 #include "../EditorGUI/EditorGui.h"
 #include "../Tools/FilesSystem/Exporter.h"
 
@@ -467,11 +468,19 @@ void BalEditor::CShaderGraph::AddNode( const EUiNodeType type, const glm::vec2& 
         case EUiNodeType::ShaderNode:
             pNode = new CShaderNode{ nodeID, m_currentAttributeId };
             break;
+        case EUiNodeType::ViewDirection:
+            pNode = new CCameraView{ nodeID, m_currentAttributeId };
+            break;
+        case EUiNodeType::ViewZ:
+            pNode = new CCameraZ{ nodeID, m_currentAttributeId };
+            break;
+        case EUiNodeType::ViewDepth:
+            pNode = new CCameraDepth{ nodeID, m_currentAttributeId };
+            break;
         case EUiNodeType::GeometryOutput:           //Todo
         case EUiNodeType::TesselationControl:       //Todo
         case EUiNodeType::TesselationEvaluation:    //Todo
         case EUiNodeType::MaxIndex:
-        default:
             break;
     }
     ImNodes::SetNodeScreenSpacePos( nodeID, position );
@@ -523,6 +532,12 @@ const char* BalEditor::CShaderGraph::ToString( const EUiNodeType type )
             return "Texture/Image Texture";
         case EUiNodeType::MaxIndex:
             break;
+        case EUiNodeType::ViewDirection:
+            return "Input/View Direction";
+        case EUiNodeType::ViewZ:
+            return "Input/View Z";
+        case EUiNodeType::ViewDepth:
+            return "Input/View Depth";
     }
     return "nullptr";
 }

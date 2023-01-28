@@ -1,14 +1,14 @@
 # Balbino
-This Game Engine was originaly used in a school assignment.
-Balbino has now been revamped multiple times and is starting to become a hobie and a project to show off to sompanies.
+This game engine was created as a school project.
+Balbino has been revamped multiple times and is starting to become a hobby and a project to show off.
 
-used Lybraries are:
+Used Libraries are:
 - [Open Asset Import Library](https://github.com/assimp/assimp)(Assimp), for loading 3d models;
-- [EnTT](https://github.com/skypjack/entt) as a entity component system;
-- [OpenGL Image](https://github.com/g-truc/gli) (GLI), for reading in DDS files;
+- [EnTT](https://github.com/skypjack/entt) as an entity component system;
+- [OpenGL Image](https://github.com/g-truc/gli) (GLI), for reading DDS and KTX files;
 - [OpenGL Mathematics](https://github.com/g-truc/glm) (GLM), for math;
 - [mINI](https://github.com/pulzed/mINI), for reading and writing ini files;
-- [SDL2](https://github.com/libsdl-org/SDL), to initiate the window and handel input events;
+- [SDL2](https://github.com/libsdl-org/SDL) to initiate the window and handle input events;
 - [SDL2_images](https://github.com/libsdl-org/SDL_image), for loading in images;
 - [Vulkan SDK](https://vulkan.lunarg.com/), as render API;
 - [ImGui](https://github.com/ocornut/imgui), [ImGuizmo](https://github.com/CedricGuillemet/ImGuizmo) and [imnodes](https://github.com/Nelarius/imnodes) for the UI;
@@ -21,9 +21,8 @@ Current features include:
 - Basic Shader Editor
 - Basic Lights
 - Basic Material Editor
-- Custom (Binalry)File type to unify all assets
+- Custom (Binary)File type that unifies all assets
 
-Most things are handled trough UUIDs (64bit integers)
-Assets are UUID bound, his means no mather were an asset is located it will find it back, even the name can change.
+64-bit integers, known as UUIDs, manage most tasks. Every asset possesses a UUID. The UUID ensures asset retrieval from any location within the project folder, regardless of a name or location change.
 
-My Goasls and planned features can be found back on my [Trello Page](https://trello.com/b/NjIxYnGU/balbino-development-goals)
+Goals and planned features found on [Trello Page](https://trello.com/b/NjIxYnGU/balbino-development-goals)

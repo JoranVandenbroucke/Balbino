@@ -1,17 +1,8 @@
 set(PROJECT_NAME Editor)
 
 # get source files
-file(GLOB sourceE
-        scr/*.cpp scr/*.h
-        scr/EditorGUI/*.cpp scr/EditorGUI/*.h
-        scr/Tools/FilesSystem/*.cpp scr/Tools/FilesSystem/*.h
-        scr/Tools/FilesSystem/Inporter/*.cpp scr/Tools/FilesSystem/Inporter/*.h scr/Tools/FilesSystem/Inporter/*.c
-        scr/Windows/*.cpp scr/Windows/*.h
-        scr/Windows/Nodes/*.cpp scr/Windows/Nodes/*.h
-        scr/Windows/Nodes/Colour/*.cpp scr/Windows/Nodes/Colour/*.h
-        scr/Windows/Nodes/Math/*.cpp scr/Windows/Nodes/Math/*.h
-        scr/Windows/Nodes/Shaders/*.cpp scr/Windows/Nodes/Shaders/*.h
-        scr/Windows/Nodes/Textures/*.cpp scr/Windows/Nodes/Textures/*.h
+file(GLOB_RECURSE sourceE
+        */*.cpp **/*.h **/*.c
         )
 
 # project setting

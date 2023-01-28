@@ -16,7 +16,7 @@ float BlinnPhongNDF(float a, float NdotH)//a: roughness^2    n: normal   h: half
 {
     // Blinn 1977, "Models of light reflection for computer synthesized pictures"
     float rought2 = a * a;
-    float p = (1.f/(BALBINO_PI * rought2));
+    float p = (1.f/(PI * rought2));
     return p * pow(NdotH, 2.f/(rought2)-2);
 }
 float BeckmannNDF(float a, float NdotH)
@@ -25,7 +25,7 @@ float BeckmannNDF(float a, float NdotH)
     float rough2 = a * a;
     float ndh2 = NdotH*NdotH;
     float ndh4 = ndh2*ndh2;
-    float p = (1.f/(BALBINO_PI * rough2 * ndh4));
+    float p = (1.f/(PI * rough2 * ndh4));
     return exp((ndh2-1)/(rough2*ndh2))*p;
 }
 float GGXNDF(float NdotH, float roughness )
@@ -34,7 +34,7 @@ float GGXNDF(float NdotH, float roughness )
     float oneMinusNoHSquared = 1.0 - NdotH * NdotH;
     float a = NdotH * roughness;
     float k = roughness / (oneMinusNoHSquared + a * a);
-    return min(k * k * (1.0 / BALBINO_PI), MEDIUM_MAX);
+    return min(k * k * (1.0 / PI), MEDIUM_MAX);
 }
 
 ///////////////////////////////////////
@@ -160,7 +160,7 @@ vec3 SchlickFresnel(float cosTheta, vec3 f0)
 
 float Lambert()
 {
-    return BALBINO_PI_INV;
+    return PI_INV;
 }
 float Burley(float NdotV, float NdotL, float LdotH, float roughness)
 {

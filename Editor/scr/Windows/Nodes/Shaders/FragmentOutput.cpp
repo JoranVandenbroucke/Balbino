@@ -22,6 +22,7 @@ CFragmentOutputNode::CFragmentOutputNode( int id, int& attributeStartId )
         , m_fresnelString{"SchlickFresnel(LdotH, f0)"}
         , m_diffuseString{"Burley(NdotV, NdotL, LdotH, roughness)"}
 {
+    m_vertexFlags = 0b00101000;
     attributeStartId += m_connectionSize + 1;
     for ( uint8_t i{}; i <= (uint8_t) ENormalDistributionFunction::GGX; ++i )
     {
@@ -341,7 +342,7 @@ std::vector<int> CFragmentOutputNode::GetInputs() const
 
 uint8_t CFragmentOutputNode::GetVertexFlags() const
 {
-    return 0;
+    return m_vertexFlags;
 }
 
 const char* CFragmentOutputNode::ToString( CFragmentOutputNode::ENormalDistributionFunction type )
@@ -406,7 +407,6 @@ const char* CFragmentOutputNode::ToString( CFragmentOutputNode::EDiffuse type )
 }
 void CFragmentOutputNode::SetVertexFlags( uint8_t flags )
 {
-    m_vertexFlags = flags;
     m_inputString = "";
     
     if(0b00000001&flags)

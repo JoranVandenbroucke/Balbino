@@ -17,7 +17,7 @@ CImageTexture::CImageTexture( int id, int& attributeStartId )
         , m_useUV{}
 {
     attributeStartId += 2;
-    m_vertexFlags = 1 << 2;
+    m_vertexFlags = 1 << 1;
 }
 
 void CImageTexture::Draw()
@@ -79,7 +79,7 @@ void CImageTexture::Detach( int endAttr )
     if ( endAttr == m_attributeStartId )
     {
         m_useUV       = false;
-        m_vertexFlags = 1 << 2;
+        m_vertexFlags = 1 << 1;
     }
 }
 
@@ -90,25 +90,40 @@ std::string CImageTexture::Evaluate( std::vector<INode*>::iterator& begin, std::
     (void) includes;
     (void) attributeType;
     std::string shader;
-    //todo: allow for custom Lod/Grad sampling
-    shader = std::format(
-            "GetTextureDiffused({},{}).xyz",
-            m_textureVariableName,
-            m_useUV ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : "fragTexCoord"
-    );
+    //todo: allow for custom Lod/Grad/Project sampling
     switch ( m_type )
     {
         case EMode::Texture2D:
             bindings.insert( "sampler2D " + m_textureVariableName );
+            shader = std::format(
+                    "GetTexture2D({},{}).xyz",
+                    m_textureVariableName,
+                    m_useUV ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Vector )+".xy" : "fragTexCoord"
+            );
             break;
         case EMode::Texture3D:
             bindings.insert( "sampler3D " + m_textureVariableName );
+            shader = std::format(
+                    "GetTexture3D({},{})",
+                    m_textureVariableName,
+                    m_useUV ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : "fragTexCoord"
+            );
             break;
         case EMode::TextureCube:
             bindings.insert( "samplerCube " + m_textureVariableName );
+            shader = std::format(
+                    "GetTextureCube({},{}).xyz",
+                    m_textureVariableName,
+                    m_useUV ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : "fragTexCoord"
+            );
             break;
         case EMode::Texture2DArray:
             bindings.insert( "sampler2DArray " + m_textureVariableName );
+            shader = std::format(
+                    "GetTexture2DArray({},{}).xyz",
+                    m_textureVariableName,
+                    m_useUV ? ( *( begin++ ))->Evaluate( begin, bindings, includes, EAttributeType::Vector ) : "fragTexCoord"
+            );
             break;
         case EMode::MaxIndex:
             break;

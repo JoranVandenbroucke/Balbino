@@ -5,7 +5,7 @@
 
 CVertexOutputNode::CVertexOutputNode( int id, int& attributeStartId )
         : INode{ id, attributeStartId }
-        , m_useCameraTransform{ true }
+        , m_useOnyProjection{ true }
         , m_inputFlags{}
         , m_position{}
         , m_color{}
@@ -20,7 +20,7 @@ CVertexOutputNode::CVertexOutputNode( int id, int& attributeStartId )
 void CVertexOutputNode::Draw()
 {
     ImNodes::BeginNode( m_id );
-    BalEditor::GUI::DrawToggle( "Use Camera Transform", m_useCameraTransform );
+    BalEditor::GUI::DrawToggle( "Use Camera Transform", m_useOnyProjection );
     DrawInputVectorAttribute( m_position, m_attributeStartId, false, "Positions" );
     BalEditor::GUI::SetTooltip( "This will add to the original vertex position." );
     
@@ -87,7 +87,7 @@ std::string CVertexOutputNode::Evaluate( std::vector<INode*>::iterator& begin, s
     {
         m_calculationsString.replace( idx, 3, vert );
     }
-    idx = m_calculationsString.find( "{2}" );
+    idx = m_calculationsString.find( "{1}" );
     if ( idx != std::string::npos )
     {
         m_calculationsString.replace(
@@ -96,7 +96,7 @@ std::string CVertexOutputNode::Evaluate( std::vector<INode*>::iterator& begin, s
                 ) : "inColor"
         );
     }
-    idx = m_calculationsString.find( "{3}" );
+    idx = m_calculationsString.find( "{2}" );
     if ( idx != std::string::npos )
     {
         m_calculationsString.replace(
@@ -105,7 +105,7 @@ std::string CVertexOutputNode::Evaluate( std::vector<INode*>::iterator& begin, s
                 ) : "inTexCoord"
         );
     }
-    idx = m_calculationsString.find( "{1}" );
+    idx = m_calculationsString.find( "{3}" );
     if ( idx != std::string::npos )
     {
         m_calculationsString.replace(
@@ -184,30 +184,36 @@ void CVertexOutputNode::SetVertexFlags( uint8_t flags )
     m_vertexFlags        = flags;
     m_inputString        = "layout(location = 0) in vec3 inPosition;\n";
     m_outputString       = "";
-    m_calculationsString = R"(    gl_Position = ubo.proj * ubo.view * instanceModelMatrix * vec4({0}, 1.0f);
-    fragNormal = normalize(mat3(instanceModelMatrix) * {1});
-    fragWorldPos = instanceModelMatrix * vec4({0}, 1.0f);
-)";
+    m_calculationsString = m_useOnyProjection ? "\tgl_Position = ubo.proj * vec4({0}, 1.0f);\n" : "\tgl_Position = ubo.proj * ubo.view * instanceModelMatrix * vec4({0}, 1.0f);\n";
+    
     if ( 0b00000001 & flags )
     {
         m_inputString += "layout(location = 1) in vec4 inColor;\n";
         m_outputString += "layout(location = 0) out vec4 fragColor;\n";
-        m_calculationsString += "fragColor={2};\n";
+        m_calculationsString += "\tfragColor={1};\n";
     }
     if ( 0b00000010 & flags )
     {
         m_inputString += "layout(location = 2) in vec2 inTexCoord;\n";
         m_outputString += "layout(location = 1) out vec2 fragTexCoord;\n";
-        m_calculationsString += "fragTexCoord = {3};\n";
+        m_calculationsString += "\tfragTexCoord = {2};\n";
     }
-    m_inputString += "layout(location = 3) in vec3 inNormal;\n";
-    m_outputString += "layout(location = 2) out vec3 fragNormal;\n";
-    if ( 0b00000100 & flags )
+    if ( 0b00001000 & flags )
+    {
+        m_inputString += "layout(location = 3) in vec3 inNormal;\n";
+        m_outputString += "layout(location = 2) out vec3 fragNormal;\n";
+        m_calculationsString +="\tfragNormal = normalize(mat3(instanceModelMatrix) * {3});\n";
+    }
+    if ( 0b00010000 & flags )
     {
         m_inputString += "layout(location = 4) in vec4 inTangent;\n";
-        m_outputString +=  "layout(location = 3) out vec4 fragTangent;\n";
-        m_calculationsString += "fragTangent = normalize(mat3(instanceModelMatrix) * {4}.xyz)*{4}.w;\n";
+        m_outputString += "layout(location = 3) out vec4 fragTangent;\n";
+        m_calculationsString += "\tfragTangent = normalize(mat3(instanceModelMatrix) * {4}.xyz)*{4}.w;\n";
     }
-    m_inputString += "layout(location = 5) in mat4 instanceModelMatrix;\n";
-    m_outputString += "layout(location = 4) out vec4 fragWorldPos;\n";
+    if ( 0b00100000 & flags )
+    {
+        m_inputString += "layout(location = 5) in mat4 instanceModelMatrix;\n";
+        m_outputString += "layout(location = 4) out vec4 fragWorldPos;\n";
+        m_calculationsString += "\tfragWorldPos = instanceModelMatrix * vec4({0}, 1.0f);\n";
+    }
 }
