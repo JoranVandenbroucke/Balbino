@@ -18,7 +18,7 @@ void CCameraView::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "View Direction" );
+    FawnForge::GUI::DrawText( "View Direction" );
     ImNodes::EndNodeTitleBar();
     
     DrawOutputShaderAttribute( "Output:", m_attributeStartId );
@@ -69,7 +69,7 @@ void CCameraZ::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "View Z" );
+    FawnForge::GUI::DrawText( "View Z" );
     ImNodes::EndNodeTitleBar();
     
     DrawOutputShaderAttribute( "Output:", m_attributeStartId );
@@ -120,7 +120,7 @@ void CCameraDepth::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "View Z" );
+    FawnForge::GUI::DrawText( "View Z" );
     ImNodes::EndNodeTitleBar();
     
     DrawOutputShaderAttribute( "Output:", m_attributeStartId );

@@ -1,16 +1,16 @@
 #include "Base.h"
 
-BalVulkan::CRefCounted::CRefCounted()
+FawnVision::CRefCounted::CRefCounted()
         : m_refCount{ 1 }
 {
 }
 
-uint32_t BalVulkan::CRefCounted::AddRef()
+uint32_t FawnVision::CRefCounted::AddRef()
 {
     return ++m_refCount;
 }
 
-uint32_t BalVulkan::CRefCounted::Release()
+uint32_t FawnVision::CRefCounted::Release()
 {
     if ( this == nullptr )
     {
@@ -24,29 +24,29 @@ uint32_t BalVulkan::CRefCounted::Release()
     return newRefCount;
 }
 
-bool BalVulkan::CRefCounted::IsDeletable() const
+bool FawnVision::CRefCounted::IsDeletable() const
 {
     return m_refCount == 0;
 }
 
-bool BalVulkan::CRefCounted::IsUniquelyOwned() const
+bool FawnVision::CRefCounted::IsUniquelyOwned() const
 {
     return m_refCount == 1;
 }
 
-void BalVulkan::CRefCounted::Destroy()
+void FawnVision::CRefCounted::Destroy()
 {
     delete this;
 }
 
-BalVulkan::CDeviceObject::CDeviceObject( const CDevice* device )
+FawnVision::CDeviceObject::CDeviceObject( const CDevice* device )
         : m_pDevice{ device }
 {
 }
 
-BalVulkan::CDeviceObject::~CDeviceObject() = default;
+FawnVision::CDeviceObject::~CDeviceObject() = default;
 
-const BalVulkan::CDevice* BalVulkan::CDeviceObject::GetDevice() const
+const FawnVision::CDevice* FawnVision::CDeviceObject::GetDevice() const
 {
     return m_pDevice;
 }

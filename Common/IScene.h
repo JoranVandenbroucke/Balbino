@@ -6,7 +6,7 @@
 
 struct IEntity;
 struct ISystem;
-namespace BalVulkan
+namespace FawnVision
 {
     class CBuffer;
 }
@@ -46,9 +46,9 @@ struct IScene
     
     [[nodiscard]] virtual ISystem* GetSystem() const = 0;
     
-    [[nodiscard]] virtual BalVulkan::CBuffer* GetModelBuffer() const = 0;
+    [[nodiscard]] virtual FawnVision::CBuffer* GetModelBuffer() const = 0;
     
-    [[nodiscard]] virtual BalVulkan::CBuffer* GetShadingBuffer() const = 0;
+    [[nodiscard]] virtual FawnVision::CBuffer* GetShadingBuffer() const = 0;
     
-    [[nodiscard]] virtual BalVulkan::CBuffer* GetInstanceBuffer() const = 0;
+    [[nodiscard]] virtual FawnVision::CBuffer* GetInstanceBuffer() const = 0;
 };

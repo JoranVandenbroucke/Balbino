@@ -4,7 +4,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CImageResource;
     

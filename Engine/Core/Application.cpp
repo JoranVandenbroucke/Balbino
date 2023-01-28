@@ -88,7 +88,7 @@ void Balbino::Application::LoadGame()
         throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ));
     }
     #ifdef BALBINO_EDITOR
-    m_pInterface = new BalEditor::CInterface{};
+    m_pInterface = new FawnForge::CInterface{};
     m_pRenderer->Setup( m_pWindow, extensions, extensionCount, m_pInterface, &m_system );
     m_pRenderer->GiveSceneRenderData( m_pScene );
     m_pScene->Initialize( &m_system );

@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <UUID.h>
 
-namespace BalEditor
+namespace FawnForge
 {
     class CPropertyPanel final
     {
@@ -85,6 +85,6 @@ namespace BalEditor
         void LoadFromIni();
         static const char* ToString( EPropertyTypes::Enum types );
     };
-} // BalEditor
+} // FawnForge
 
 #endif //GAME_PROPERTYPANEL_H

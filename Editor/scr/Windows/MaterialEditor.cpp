@@ -11,7 +11,7 @@
 #include "../Tools/FilesSystem/Exporter.h"
 #include "PropertyPanel.h"
 
-BalEditor::CMaterialEditor::CMaterialEditor()
+FawnForge::CMaterialEditor::CMaterialEditor()
         : m_isVisible{}
           , m_currentMaterial{}
           , m_shaderID{}
@@ -22,13 +22,13 @@ BalEditor::CMaterialEditor::CMaterialEditor()
 {
 }
 
-void BalEditor::CMaterialEditor::Initialize( const ISystem* pSystem, const CPropertyPanel* pPropertyPanel )
+void FawnForge::CMaterialEditor::Initialize( const ISystem* pSystem, const CPropertyPanel* pPropertyPanel )
 {
     m_pSystem        = pSystem;
     m_pPropertyPanel = pPropertyPanel;
 }
 
-void BalEditor::CMaterialEditor::Draw()
+void FawnForge::CMaterialEditor::Draw()
 {
     if ( m_isVisible )
     {
@@ -84,14 +84,14 @@ void BalEditor::CMaterialEditor::Draw()
             GUI::Columns( 2 );
             for ( auto& snd : m_shaderResources )
             {
-                if ( snd.type != BalVulkan::EShaderResourceType::Input || snd.type != BalVulkan::EShaderResourceType::Output )
+                if ( snd.type != FawnVision::EShaderResourceType::Input || snd.type != FawnVision::EShaderResourceType::Output )
                 {
                     switch ( snd.type )
                     {
-                        case BalVulkan::EShaderResourceType::Image:
-                        case BalVulkan::EShaderResourceType::ImageSampler:
-                        case BalVulkan::EShaderResourceType::ImageStorage:
-                        case BalVulkan::EShaderResourceType::Sampler:
+                        case FawnVision::EShaderResourceType::Image:
+                        case FawnVision::EShaderResourceType::ImageSampler:
+                        case FawnVision::EShaderResourceType::ImageStorage:
+                        case FawnVision::EShaderResourceType::Sampler:
                             GUI::DrawText( snd.name.c_str());
                             GUI::NextColumn();
                             GUI::DrawText( "Image / Image Sampler" );
@@ -116,11 +116,11 @@ void BalEditor::CMaterialEditor::Draw()
     }
 }
 
-void BalEditor::CMaterialEditor::Cleanup()
+void FawnForge::CMaterialEditor::Cleanup()
 {
 }
 
-void BalEditor::CMaterialEditor::ShowWindow( const SFile& currentMaterial )
+void FawnForge::CMaterialEditor::ShowWindow( const SFile& currentMaterial )
 {
     GUI::SetWindowFocus( "Material Editor" );
     m_isVisible       = true;
@@ -128,12 +128,12 @@ void BalEditor::CMaterialEditor::ShowWindow( const SFile& currentMaterial )
     LoadEditorFromData();
 }
 
-void BalEditor::CMaterialEditor::LoadShader()
+void FawnForge::CMaterialEditor::LoadShader()
 {
     m_shaderResources.clear();
     m_shaderResources = m_pSystem->GetResourceManager()->GetShader( m_shaderID, true )->GetShaderResources();
 }
-void BalEditor::CMaterialEditor::LoadEditorFromData()
+void FawnForge::CMaterialEditor::LoadEditorFromData()
 {
     std::ifstream file( m_currentMaterial.path, std::ios::in | std::ios::binary );
     if ( !file.is_open())
@@ -159,18 +159,18 @@ void BalEditor::CMaterialEditor::LoadEditorFromData()
     m_shaderResources.clear();
     BinaryReadWrite::Read( file, m_shaderID );
     BinaryReadWrite::Read( file, size );
-    void* pData = malloc( size * sizeof( BalVulkan::SShaderResource ));
-    BinaryReadWrite::Read( file, pData, size * sizeof( BalVulkan::SShaderResource ));
-    m_shaderResources.assign((BalVulkan::SShaderResource*) pData, (BalVulkan::SShaderResource*) pData + size );
+    void* pData = malloc( size * sizeof( FawnVision::SShaderResource ));
+    BinaryReadWrite::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
+    m_shaderResources.assign((FawnVision::SShaderResource*) pData, (FawnVision::SShaderResource*) pData + size );
     free( pData );
 }
-void BalEditor::CMaterialEditor::ReloadMaterial() const
+void FawnForge::CMaterialEditor::ReloadMaterial() const
 {
     m_pSystem->GetResourceManager()->UnloadMaterial( m_currentMaterial.uuid );
     m_pSystem->GetResourceManager()->LoadMaterial( m_currentMaterial.path );
     
 }
-void BalEditor::CMaterialEditor::SaveMaterial() const
+void FawnForge::CMaterialEditor::SaveMaterial() const
 {
     Exporter::ExportMaterial(
             m_currentMaterial.fileName,

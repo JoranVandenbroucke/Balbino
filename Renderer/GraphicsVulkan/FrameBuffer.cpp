@@ -8,12 +8,12 @@
 #include "ImageResource.h"
 #include "ImageView.h"
 
-BalVulkan::CFrameBuffer::CFrameBuffer( const CDevice* device )
+FawnVision::CFrameBuffer::CFrameBuffer( const CDevice* device )
         : CDeviceObject{ device }
 {
 }
 
-BalVulkan::CFrameBuffer::~CFrameBuffer()
+FawnVision::CFrameBuffer::~CFrameBuffer()
 {
     for ( auto& frameBuffer : m_frameBuffer )
     {
@@ -22,7 +22,7 @@ BalVulkan::CFrameBuffer::~CFrameBuffer()
     m_frameBuffer.clear();
 }
 
-void BalVulkan::CFrameBuffer::Initialize( BalVulkan::CRenderPass* pRenderPass, uint32_t width, uint32_t height, const std::vector<CImageView*>& renderTargets, CImageView* pDepth )
+void FawnVision::CFrameBuffer::Initialize( FawnVision::CRenderPass* pRenderPass, uint32_t width, uint32_t height, const std::vector<CImageView*>& renderTargets, CImageView* pDepth )
 {
     bool hasRenderTargets{ !renderTargets.empty() };
     if ( !hasRenderTargets && !pDepth || !width || !height || ( pRenderPass->HasDepthAttachment() && !pDepth ) || ( !pRenderPass->HasDepthAttachment() && pDepth ) || ( pRenderPass->HasColorAttachments() && !hasRenderTargets ) || ( !pRenderPass->HasColorAttachments() && hasRenderTargets ))
@@ -63,12 +63,12 @@ void BalVulkan::CFrameBuffer::Initialize( BalVulkan::CRenderPass* pRenderPass, u
 }
 
 
-VkFramebuffer BalVulkan::CFrameBuffer::GetFrameBuffer( const uint32_t idx ) const
+VkFramebuffer FawnVision::CFrameBuffer::GetFrameBuffer( const uint32_t idx ) const
 {
     return m_frameBuffer[idx];
 }
 
-BalVulkan::CFrameBuffer* BalVulkan::CFrameBuffer::CreateNew( const CDevice* pDevice )
+FawnVision::CFrameBuffer* FawnVision::CFrameBuffer::CreateNew( const CDevice* pDevice )
 {
     return new CFrameBuffer{ pDevice };
 }

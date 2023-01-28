@@ -12,7 +12,7 @@
 #include "Components/LightComponent.h"
 #include "../EditorGUI/EditorGui.h"
 
-void BalEditor::CMainScreen::Draw()
+void FawnForge::CMainScreen::Draw()
 {
     const int           flags       = 1 << 0 | 1 << 1 | 1 << 2 | 1 << 5 | 1 << 7 | 1 << 10 | 1 << 13;
     bool                open{ true };
@@ -87,7 +87,7 @@ void BalEditor::CMainScreen::Draw()
     GUI::SetNextWindowDockID( dockspaceID, 1 << 2 );
 }
 
-void BalEditor::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph, CPropertyPanel* pPropertyPanel )
+void FawnForge::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderGraph* pGraph, CPropertyPanel* pPropertyPanel )
 {
     m_pContext        = pScene;
     m_pAssetBrowser   = pAssetBrowser;

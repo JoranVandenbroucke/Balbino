@@ -1,18 +1,13 @@
 set(PROJECT_NAME Balbino)
 
 # get source files
-file(GLOB sourceB
+file(GLOB_RECURSE source
         *.cpp *.h
-        scr/*.cpp scr/*.h
-        scr/Audio/*.cpp scr/Audio/*.h
-        scr/Managers/Input/*.cpp scr/Managers/Input/*.h
-        scr/Managers/*.cpp scr/Managers/*.h
-        scr/Scene/*.cpp scr/Scene/*.h
-        scr/Renderer/*.cpp scr/Renderer/*.h
+        **/*.cpp **/*.h
         )
 
 # project setting
-add_library(${PROJECT_NAME} ${sourceB})
+add_library(${PROJECT_NAME} ${source})
 target_precompile_headers(${PROJECT_NAME}
         PUBLIC
         [["algorithm"]]

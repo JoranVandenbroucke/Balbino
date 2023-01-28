@@ -1,10 +1,10 @@
 set(PROJECT_NAME GraphicsVulkan)
 
-file(GLOB sourceGV
+file(GLOB sourceV
         *.cpp *.h
         )
 
-add_library(${PROJECT_NAME} STATIC ${sourceGV})
+add_library(${PROJECT_NAME} STATIC ${sourceV})
 target_precompile_headers(${PROJECT_NAME} PRIVATE
         [["algorithm"]]
         [["array"]]

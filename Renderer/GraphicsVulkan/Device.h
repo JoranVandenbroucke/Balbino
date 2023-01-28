@@ -5,7 +5,7 @@
 #include "ImageView.h"
 #include "Sampler.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CInstance;
     

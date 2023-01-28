@@ -9,7 +9,7 @@
 #include "ISystem.h"
 #include "ShaderPipeline.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     struct SDescriptorSet;
     
@@ -29,7 +29,7 @@ namespace Balbino
     class CMaterial
     {
     public:
-        CMaterial( CUuid uuid, CUuid shaderUUID, BalVulkan::CCommandPool* pPool )
+        CMaterial( CUuid uuid, CUuid shaderUUID, FawnVision::CCommandPool* pPool )
                 : m_descriptorSet{ nullptr }
                   , m_shaderPipeline{}
                   , m_command{ pPool }
@@ -43,14 +43,14 @@ namespace Balbino
         CMaterial( CMaterial&& ) = default;
         CMaterial& operator=( const CMaterial& ) = delete;
         CMaterial& operator=( CMaterial&& ) = delete;
-        static CMaterial* CreateNew( CUuid uuid, CUuid shaderUUID, BalVulkan::CCommandPool* pPool )
+        static CMaterial* CreateNew( CUuid uuid, CUuid shaderUUID, FawnVision::CCommandPool* pPool )
         {
             return new CMaterial{ uuid, shaderUUID, pPool };
         }
-        void Initialize( BalVulkan::CShaderPipeline* pShaderPipeline, const std::vector<BalVulkan::SDescriptorSet>& descriptorSetsInfo, const BalVulkan::CDevice* pDevice )
+        void Initialize( FawnVision::CShaderPipeline* pShaderPipeline, const std::vector<FawnVision::SDescriptorSet>& descriptorSetsInfo, const FawnVision::CDevice* pDevice )
         {
             m_shaderPipeline = pShaderPipeline;
-            m_descriptorSet  = BalVulkan::CDescriptorSet::CreateNew( pDevice );
+            m_descriptorSet  = FawnVision::CDescriptorSet::CreateNew( pDevice );
             m_descriptorSet->Initialize( m_shaderPipeline, descriptorSetsInfo );
             m_shaderPipeline->AddRef();
             m_command->AddRef();
@@ -68,7 +68,7 @@ namespace Balbino
             m_command->BindShader( m_shaderPipeline, m_descriptorSet );
         }
         
-        [[nodiscard]] const std::vector<BalVulkan::SShaderResource>& GetShaderResourcesVector() const
+        [[nodiscard]] const std::vector<FawnVision::SShaderResource>& GetShaderResourcesVector() const
         {
             return m_shaderPipeline->GetShaderResources();
         }
@@ -83,9 +83,9 @@ namespace Balbino
         }
     
     private:
-        BalVulkan::CDescriptorSet * m_descriptorSet;
-        BalVulkan::CShaderPipeline* m_shaderPipeline;
-        BalVulkan::CCommandPool   * m_command;
+        FawnVision::CDescriptorSet * m_descriptorSet;
+        FawnVision::CShaderPipeline* m_shaderPipeline;
+        FawnVision::CCommandPool   * m_command;
         CUuid m_uuid;
         CUuid m_shaderUUID;
     };

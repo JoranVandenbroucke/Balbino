@@ -5,7 +5,7 @@
 #include "Shader.h"
 #include "Vertex.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CSwapchain;
     

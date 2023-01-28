@@ -8,7 +8,7 @@
 
 #include <fstream>
 
-bool BalEditor::ImportFont( const std::filesystem::path& path, const char* pDestinationDirection )
+bool FawnForge::ImportFont( const std::filesystem::path& path, const char* pDestinationDirection )
 {
     TTF_Font* pFont = TTF_OpenFont( path.string().c_str(), 12 );
     if ( pFont == nullptr )
@@ -56,7 +56,7 @@ bool BalEditor::ImportFont( const std::filesystem::path& path, const char* pDest
     return true;
 }
 
-bool BalEditor::ImportAudio( const std::filesystem::path& path, const char* pDestinationDirection )
+bool FawnForge::ImportAudio( const std::filesystem::path& path, const char* pDestinationDirection )
 {
     (void) pDestinationDirection;
     Mix_Music* pMusic = Mix_LoadMUS( path.string().c_str());

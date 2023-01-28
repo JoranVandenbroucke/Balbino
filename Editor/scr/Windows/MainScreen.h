@@ -3,7 +3,7 @@
 
 struct IScene;
 
-namespace BalEditor
+namespace FawnForge
 {
     class CShaderGraph;
     

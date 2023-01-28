@@ -2,7 +2,7 @@
 #include <vulkan/vulkan.hpp>
 #include "Base.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CFence final : public CDeviceObject
     {

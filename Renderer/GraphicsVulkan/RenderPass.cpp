@@ -7,7 +7,7 @@
 #include "Instance.h"
 #include "Funtions.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     CRenderPass::CRenderPass( const CDevice* device )
             : CDeviceObject( device )
@@ -17,7 +17,7 @@ namespace BalVulkan
               , m_hasInputAttachment{}
     {
     }
-    void CRenderPass::Initialize( std::vector<BalVulkan::EFormat::Enum> formats, uint32_t inputCount, bool hasColor )
+    void CRenderPass::Initialize( std::vector<FawnVision::EFormat::Enum> formats, uint32_t inputCount, bool hasColor )
     {
         const uint32_t descriptionCount{ (uint32_t) formats.size() };
         m_hasInputAttachment   = inputCount != 0;
@@ -118,4 +118,4 @@ namespace BalVulkan
         vkDestroyRenderPass( GetDevice()->GetVkDevice(), m_renderPass, nullptr );
         
     }
-} // BalVulkan
+} // FawnVision

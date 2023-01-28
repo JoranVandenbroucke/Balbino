@@ -2,7 +2,7 @@
 #include "ISystem.h"
 #include "IScene.h"
 
-namespace BalEditor
+namespace FawnForge
 {
     class CSceneHierarchy;
     

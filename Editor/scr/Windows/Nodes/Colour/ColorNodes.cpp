@@ -22,14 +22,14 @@ void CBrightContrast::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Brightness / Contrast" );
+    FawnForge::GUI::DrawText( "Brightness / Contrast" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputColorAttribute( m_color, m_attributeStartId, m_connected[0], "Color" );
     DrawInputFloatAttribute( m_brightness, m_attributeStartId + 1, m_connected[1], "Brightness" );
     DrawInputFloatAttribute( m_contrast, m_attributeStartId + 2, m_connected[2], "Contrast" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputColorAttribute( m_attributeStartId + 3 );
     
     ImNodes::EndNode();
@@ -144,13 +144,13 @@ void CGamma::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Gamma" );
+    FawnForge::GUI::DrawText( "Gamma" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputColorAttribute( m_color, m_attributeStartId, m_connected[0], "Color" );
     DrawInputFloatAttribute( m_gamma, m_attributeStartId + 1, m_connected[1], "Gamma" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputColorAttribute( m_attributeStartId + 2 );
     
     ImNodes::EndNode();
@@ -253,7 +253,7 @@ void CHueSaturationValue::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Hue Saturation Value" );
+    FawnForge::GUI::DrawText( "Hue Saturation Value" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputColorAttribute( m_color, m_attributeStartId, m_connected[0], "Color" );
@@ -262,7 +262,7 @@ void CHueSaturationValue::Draw()
     DrawInputFloatAttribute( m_value, m_attributeStartId + 3, m_connected[1], "Value" );
     DrawInputFloatAttribute( m_factor, m_attributeStartId + 4, m_connected[1], "Factor", 0, 1 );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputColorAttribute( m_attributeStartId + 5 );
     
     ImNodes::EndNode();
@@ -365,13 +365,13 @@ void CInvert::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Invert" );
+    FawnForge::GUI::DrawText( "Invert" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputColorAttribute( m_color, m_attributeStartId, m_connected[0], "Color" );
     DrawInputFloatAttribute( m_factor, m_attributeStartId + 1, m_connected[1], "Factor" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputColorAttribute( m_attributeStartId + 2 );
     
     ImNodes::EndNode();
@@ -473,7 +473,7 @@ void CMix::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( ToString( m_type ));
+    FawnForge::GUI::DrawText( ToString( m_type ));
     ImNodes::EndNodeTitleBar();
     {
         std::vector<std::string> names;
@@ -483,7 +483,7 @@ void CMix::Draw()
         {
             names.push_back( ToString( EMode::Enum( n )));
         }
-        BalEditor::GUI::DrawComboBox( "Mode", current, names );
+        FawnForge::GUI::DrawComboBox( "Mode", current, names );
         m_type = EMode::Enum( current );
     }
     
@@ -491,7 +491,7 @@ void CMix::Draw()
     DrawInputColorAttribute( m_color2, m_attributeStartId + 1, m_connected[1], "Color" );
     DrawInputFloatAttribute( m_factor, m_attributeStartId + 2, m_connected[2], "Factor", 0, 1 );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputColorAttribute( m_attributeStartId + 3 );
     
     ImNodes::EndNode();

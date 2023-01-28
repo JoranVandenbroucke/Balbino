@@ -16,7 +16,7 @@
 
 #include "../EditorGUI/EditorGui.h"
 
-BalEditor::CSceneHierarchy::CSceneHierarchy()
+FawnForge::CSceneHierarchy::CSceneHierarchy()
         : m_pContext{ nullptr }
           , m_pSelectionContext{ nullptr }
           , m_pSystem{ nullptr }
@@ -24,7 +24,7 @@ BalEditor::CSceneHierarchy::CSceneHierarchy()
 {
 }
 
-void BalEditor::CSceneHierarchy::Draw()
+void FawnForge::CSceneHierarchy::Draw()
 {
     if ( GUI::Begin( "Scene Hierarchy", m_isVisible, 0 ))
     {
@@ -68,20 +68,20 @@ void BalEditor::CSceneHierarchy::Draw()
     }
 }
 
-void BalEditor::CSceneHierarchy::SetContext( IScene* pScene, ISystem* pSystem )
+void FawnForge::CSceneHierarchy::SetContext( IScene* pScene, ISystem* pSystem )
 {
     m_pContext = pScene;
     m_pSystem  = pSystem;
 }
 
-void BalEditor::CSceneHierarchy::ShowWindow()
+void FawnForge::CSceneHierarchy::ShowWindow()
 {
     m_isVisible = true;
     GUI::SetWindowFocus( "Scene Hierarchy" );
     GUI::SetWindowFocus( "Properties" );
 }
 
-IEntity* BalEditor::CSceneHierarchy::GetSelectedEntity() const
+IEntity* FawnForge::CSceneHierarchy::GetSelectedEntity() const
 {
     return m_pSelectionContext;
 }
@@ -93,34 +93,34 @@ static void DrawComponent( const std::string& name, IEntity* entity, UIFunction 
     if ( entity->HasComponent<T>())
     {
         auto            component              = entity->GetComponent<T>();
-        const glm::vec2 contentRegionAvailable = BalEditor::GUI::GetContentRegionAvail();
+        const glm::vec2 contentRegionAvailable = FawnForge::GUI::GetContentRegionAvail();
         
-        BalEditor::GUI::PushStyleVar( 5, glm::vec2{ 4, 4 } );
-        const float lineHeight = BalEditor::GUI::GetLineHeight();
-        BalEditor::GUI::Separator();
-        const bool open = BalEditor::GUI::TreeNodeEx((uint64_t) typeid( T ).hash_code(), treeNodeFlags, name.c_str());
-        BalEditor::GUI::PopStyleVar();
-        BalEditor::GUI::SameLine( contentRegionAvailable.x - lineHeight * 0.5f );
-        if ( BalEditor::GUI::DrawButton( "+", glm::vec2{ lineHeight, lineHeight } ))
+        FawnForge::GUI::PushStyleVar( 5, glm::vec2{ 4, 4 } );
+        const float lineHeight = FawnForge::GUI::GetLineHeight();
+        FawnForge::GUI::Separator();
+        const bool open = FawnForge::GUI::TreeNodeEx((uint64_t) typeid( T ).hash_code(), treeNodeFlags, name.c_str());
+        FawnForge::GUI::PopStyleVar();
+        FawnForge::GUI::SameLine( contentRegionAvailable.x - lineHeight * 0.5f );
+        if ( FawnForge::GUI::DrawButton( "+", glm::vec2{ lineHeight, lineHeight } ))
         {
-            BalEditor::GUI::StartPopup( "ComponentSettings", false );
+            FawnForge::GUI::StartPopup( "ComponentSettings", false );
         }
         
         bool removeComponent = false;
-        if ( BalEditor::GUI::BeginPopup( "ComponentSettings" ))
+        if ( FawnForge::GUI::BeginPopup( "ComponentSettings" ))
         {
-            if ( BalEditor::GUI::MenuItem( "Remove component" ))
+            if ( FawnForge::GUI::MenuItem( "Remove component" ))
             {
                 removeComponent = true;
             }
             
-            BalEditor::GUI::EndPopup();
+            FawnForge::GUI::EndPopup();
         }
         
         if ( open )
         {
             uiFunction( component );
-            BalEditor::GUI::TreePop();
+            FawnForge::GUI::TreePop();
         }
         
         if ( removeComponent )
@@ -130,7 +130,7 @@ static void DrawComponent( const std::string& name, IEntity* entity, UIFunction 
     }
 }
 
-void BalEditor::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
+void FawnForge::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
 {
     CIDComponent* pIdComponent;
     pIdComponent = pEntity->GetComponent<CIDComponent>();
@@ -184,7 +184,7 @@ void BalEditor::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
     }
 }
 
-void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
+void FawnForge::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
 {
     (void) pEntity;
     DrawComponent<CTransformComponent>(
@@ -246,7 +246,7 @@ void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
                 {
                     GUI::Separator();
                     const auto                                   & mat       = loadedMaterial.second;
-                    const std::vector<BalVulkan::SShaderResource>& resources = mat->GetShaderResourcesVector();
+                    const std::vector<FawnVision::SShaderResource>& resources = mat->GetShaderResourcesVector();
                     for ( const auto                             & resource : resources )
                     {
                         GUI::DrawText( resource.name.c_str());
@@ -349,7 +349,7 @@ void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
 }
 
 template<typename T, typename ... Args>
-void BalEditor::CSceneHierarchy::DisplayAddComponentEntry( const std::string& entryName, Args&& ... args )
+void FawnForge::CSceneHierarchy::DisplayAddComponentEntry( const std::string& entryName, Args&& ... args )
 {
     if ( !m_pSelectionContext->HasComponent<T>())
     {

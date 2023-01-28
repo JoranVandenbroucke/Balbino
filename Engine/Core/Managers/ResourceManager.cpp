@@ -97,17 +97,17 @@ Balbino::CTexture* CResourceManager::LoadTexture( const std::string_view assetPa
         uint32_t size{ width * height * depth * pitch };
         void* pImageData = malloc( size );
         BinaryReadWrite::Read( file, pImageData, size );
-        pTextureComponent->Initialize((BalVulkan::EImageViewType::Enum) imageType,
-                                      (BalVulkan::EFormat::Enum) imageFormat,
+        pTextureComponent->Initialize((FawnVision::EImageViewType::Enum) imageType,
+                                      (FawnVision::EFormat::Enum) imageFormat,
                                       mips,
                                       layers,
                                       anisotropy,
                                       sampleLevel,
                                       mipmapMode,
                                       filterMode,
-                                      (BalVulkan::ESamplerAddressMode::Enum) wrapModeU,
-                                      (BalVulkan::ESamplerAddressMode::Enum) wrapModeV,
-                                      (BalVulkan::ESamplerAddressMode::Enum) wrapModeW,
+                                      (FawnVision::ESamplerAddressMode::Enum) wrapModeU,
+                                      (FawnVision::ESamplerAddressMode::Enum) wrapModeV,
+                                      (FawnVision::ESamplerAddressMode::Enum) wrapModeW,
                                       width,
                                       height,
                                       depth,
@@ -125,7 +125,7 @@ Balbino::CTexture* CResourceManager::LoadTexture( const std::string_view assetPa
     return nullptr;
 }
 
-BalVulkan::CShaderPipeline* CResourceManager::LoadShader( std::string_view assetPath )
+FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
     if ( !file.is_open())
@@ -154,7 +154,7 @@ BalVulkan::CShaderPipeline* CResourceManager::LoadShader( std::string_view asset
     std::vector<uint8_t>  shaderTypes;
     std::vector<uint64_t> shadersSizes;
     BinaryReadWrite::Read( file, shaderCount );
-    std::vector<BalVulkan::CShader*> shaderVector( shaderCount, nullptr );
+    std::vector<FawnVision::CShader*> shaderVector( shaderCount, nullptr );
     shadersSizes.reserve( shaderCount );
     shaderTypes.reserve( shaderCount );
     for ( uint8_t i{}; i < shaderCount; ++i )
@@ -174,14 +174,14 @@ BalVulkan::CShaderPipeline* CResourceManager::LoadShader( std::string_view asset
         
         free( pData );
         
-        shaderVector[i] = BalVulkan::CShader::CreateNew( g_pDevice );
+        shaderVector[i] = FawnVision::CShader::CreateNew( g_pDevice );
         shaderVector[i]->Initialize(
                 shaderData.data(),
                 shaderData.size(),
-                BalVulkan::EShaderStage::Enum( 1 << shaderTypes[i] ));
+                FawnVision::EShaderStage::Enum( 1 << shaderTypes[i] ));
     }
     
-    BalVulkan::CShaderPipeline* pPipeline = BalVulkan::CShaderPipeline::CreateNew( g_pDevice );
+    FawnVision::CShaderPipeline* pPipeline = FawnVision::CShaderPipeline::CreateNew( g_pDevice );
     
     pPipeline->Initialize(
             shaderTypes, shaderVector, *g_pRenderPass, shaderVector[0]->GetVertexComponents(), 1, g_pSwapChain
@@ -216,41 +216,41 @@ Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
         uint64_t                                shaderId;
         uint64_t                                size;
         bool                                    hasOnlyShaderResources;
-        std::vector<BalVulkan::SShaderResource> shaderResources;
-        std::vector<BalVulkan::SDescriptorSet>  descriptorSets;
+        std::vector<FawnVision::SShaderResource> shaderResources;
+        std::vector<FawnVision::SDescriptorSet>  descriptorSets;
         BinaryReadWrite::Read( file, shaderId );
         BinaryReadWrite::Read( file, size );
         
-        void* pData = malloc( size * sizeof( BalVulkan::SShaderResource ));
-        BinaryReadWrite::Read( file, pData, size * sizeof( BalVulkan::SShaderResource ));
-        shaderResources.assign((BalVulkan::SShaderResource*) pData, (BalVulkan::SShaderResource*) pData + size );
+        void* pData = malloc( size * sizeof( FawnVision::SShaderResource ));
+        BinaryReadWrite::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
+        shaderResources.assign((FawnVision::SShaderResource*) pData, (FawnVision::SShaderResource*) pData + size );
         free( pData );
         
-        BinaryReadWrite::Read( file, pData, size * sizeof( BalVulkan::SShaderResource ));
+        BinaryReadWrite::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
         BinaryReadWrite::IsAtEnd( file, hasOnlyShaderResources );
         
         for ( const auto& resource : shaderResources )
         {
-            if ( resource.type == BalVulkan::EShaderResourceType::BufferUniform )
+            if ( resource.type == FawnVision::EShaderResourceType::BufferUniform )
             {
                 if ( resource.binding == 0 )
                 {
-                    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, 0, 0 );
+                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
+                    descriptorSets.emplace_back( FawnVision::SDescriptorSet::EType::Buffer, pUBO, 0, 0 );
                 }
                 else if ( resource.binding == 1 )
                 {
-                    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-                    descriptorSets.emplace_back( BalVulkan::SDescriptorSet::EType::Buffer, pUBO, 0, 1 );
+                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
+                    descriptorSets.emplace_back( FawnVision::SDescriptorSet::EType::Buffer, pUBO, 0, 1 );
                 }
             }
-            else if ( resource.type == BalVulkan::EShaderResourceType::Image || resource.type == BalVulkan::EShaderResourceType::ImageSampler )
+            else if ( resource.type == FawnVision::EShaderResourceType::Image || resource.type == FawnVision::EShaderResourceType::ImageSampler )
             {
                 const auto& texture = GetTexture( resource.resourceID, true );
                 if ( texture )
                 {
                     descriptorSets.emplace_back(
-                            BalVulkan::SDescriptorSet::EType::Image,
+                            FawnVision::SDescriptorSet::EType::Image,
                             texture->GetImageViewObject(),
                             texture->GetSamplerObject(),
                             resource.set,
@@ -292,7 +292,7 @@ Balbino::IMesh* CResourceManager::LoadModel( std::string_view assetPath )
         uint64_t                            verticesSize;
         uint64_t                            metadataSize;
         std::vector<uint32_t>               indices;
-        std::vector<BalVulkan::SVertex>     vertices;
+        std::vector<FawnVision::SVertex>     vertices;
         std::vector<Balbino::SMeshMetadata> metadata;
         
         BinaryReadWrite::Read( file, indicesSize );
@@ -304,9 +304,9 @@ Balbino::IMesh* CResourceManager::LoadModel( std::string_view assetPath )
         indices.assign((uint32_t*) pData, (uint32_t*) pData + indicesSize );
         free( pData );
         
-        pData = malloc( verticesSize * sizeof( BalVulkan::SVertex ));
-        BinaryReadWrite::Read( file, pData, verticesSize * sizeof( BalVulkan::SVertex ));
-        vertices.assign((BalVulkan::SVertex*) pData, (BalVulkan::SVertex*) pData + verticesSize );
+        pData = malloc( verticesSize * sizeof( FawnVision::SVertex ));
+        BinaryReadWrite::Read( file, pData, verticesSize * sizeof( FawnVision::SVertex ));
+        vertices.assign((FawnVision::SVertex*) pData, (FawnVision::SVertex*) pData + verticesSize );
         free( pData );
         
         metadata.resize( metadataSize );
@@ -357,7 +357,7 @@ Balbino::CTexture* CResourceManager::GetTexture( CUuid getMeshId, bool tryToCrea
     return nullptr;
 }
 
-BalVulkan::CShaderPipeline* CResourceManager::GetShader( CUuid getMeshId, bool tryToCreateWhenNotFound )
+FawnVision::CShaderPipeline* CResourceManager::GetShader( CUuid getMeshId, bool tryToCreateWhenNotFound )
 {
     if ( m_loadedShaderMap.contains((uint64_t) getMeshId ))
     {
@@ -416,7 +416,7 @@ const std::map<uint64_t, Balbino::CMaterial*>& CResourceManager::GetAllLoadedMat
     return m_loadedMaterialMap;
 }
 
-void CResourceManager::ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue )
+void CResourceManager::ReloadAll( FawnVision::CCommandPool* commandPool, FawnVision::CQueue* queue )
 {
     g_pCommandPool = commandPool;
     g_pQueue       = queue;
@@ -443,8 +443,8 @@ void CResourceManager::ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulka
         uint8_t                                 type;
         uint64_t                                shaderId;
         bool                                    hasOnlyShaderResources;
-        std::vector<BalVulkan::SShaderResource> shaderResources;
-        std::vector<BalVulkan::SDescriptorSet>  descriptorSets;
+        std::vector<FawnVision::SShaderResource> shaderResources;
+        std::vector<FawnVision::SDescriptorSet>  descriptorSets;
         BinaryReadWrite::Read( file, uuid );
         BinaryReadWrite::Read( file, type );
         BinaryReadWrite::Read( file, shaderId );
@@ -453,32 +453,32 @@ void CResourceManager::ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulka
         
         for ( const auto& resource : shaderResources )
         {
-            if ( resource.type == BalVulkan::EShaderResourceType::BufferUniform )
+            if ( resource.type == FawnVision::EShaderResourceType::BufferUniform )
             {
                 if ( resource.set == 0 && resource.binding == 0 )
                 {
-                    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
+                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
                     pUBO->Initialize(
                             sizeof( SModelObject ),
-                            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                            BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+                            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+                            FawnVision::EMemoryPropertyFlagBits::Enum(
+                                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
                             ));
                     descriptorSets.emplace_back(
-                            BalVulkan::SDescriptorSet::EType::Buffer, pUBO, resource.set, resource.binding
+                            FawnVision::SDescriptorSet::EType::Buffer, pUBO, resource.set, resource.binding
                     );
                 }
                 else if ( resource.set == 0 && resource.binding == 1 )
                 {
-                    BalVulkan::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
+                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
                     pUBO->Initialize(
                             sizeof( SLightObject ),
-                            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                            BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+                            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+                            FawnVision::EMemoryPropertyFlagBits::Enum(
+                                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
                             ));
                     descriptorSets.emplace_back(
-                            BalVulkan::SDescriptorSet::EType::DynamicBuffer, pUBO, resource.set, resource.binding
+                            FawnVision::SDescriptorSet::EType::DynamicBuffer, pUBO, resource.set, resource.binding
                     );
                 }
             }
@@ -488,7 +488,7 @@ void CResourceManager::ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulka
                 if ( texture )
                 {
                     descriptorSets.emplace_back(
-                            BalVulkan::SDescriptorSet::EType::Image,
+                            FawnVision::SDescriptorSet::EType::Image,
                             texture->GetImageViewObject(),
                             texture->GetSamplerObject(),
                             resource.set,

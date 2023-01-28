@@ -2,7 +2,7 @@
 
 #include <filesystem>
 
-namespace BalEditor
+namespace FawnForge
 {
     bool ImportFont( const std::filesystem::path& path, const char* pDestinationDirection = "../Data" );
     

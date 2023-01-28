@@ -167,7 +167,7 @@ namespace BinaryReadWrite
     
     std::ostream& Write( std::ostream& file, const std::string& value );
     
-    std::ostream& Write( std::ostream& file, const BalVulkan::SShaderResource& value );
+    std::ostream& Write( std::ostream& file, const FawnVision::SShaderResource& value );
     
     std::ostream& Write( std::ostream& file, const Balbino::SMeshMetadata& value );
     
@@ -231,7 +231,7 @@ namespace BinaryReadWrite
     
     std::istream& Read( std::istream& file, std::string& value );
     
-    std::istream& Read( std::istream& file, BalVulkan::SShaderResource& value );
+    std::istream& Read( std::istream& file, FawnVision::SShaderResource& value );
     
     std::istream& Read( std::istream& file, Balbino::SMeshMetadata& value );
     
@@ -755,7 +755,7 @@ inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const std::stri
     return file.write( pText, size );
 }
 
-inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const BalVulkan::SShaderResource& value )
+inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const FawnVision::SShaderResource& value )
 {
     if ( value.stages == VK_SHADER_STAGE_VERTEX_BIT )
     {
@@ -804,7 +804,7 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, std::string& val
     return file;
 }
 
-inline std::istream& BinaryReadWrite::Read( std::istream& file, BalVulkan::SShaderResource& value )
+inline std::istream& BinaryReadWrite::Read( std::istream& file, FawnVision::SShaderResource& value )
 {
     uint8_t shaderStage;
     uint8_t resourceType;
@@ -825,21 +825,21 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, BalVulkan::SShad
     Read( file, value.qualifiers );
     Read( file, value.resourceID );
     Read( file, value.name );
-    if ((BalVulkan::EShaderType::Enum) shaderStage == BalVulkan::EShaderType::Vertex )
+    if ((FawnVision::EShaderType::Enum) shaderStage == FawnVision::EShaderType::Vertex )
     {
         value.stages = VK_SHADER_STAGE_VERTEX_BIT;
     }
-    else if ((BalVulkan::EShaderType::Enum) shaderStage == BalVulkan::EShaderType::Geometry )
+    else if ((FawnVision::EShaderType::Enum) shaderStage == FawnVision::EShaderType::Geometry )
     {
         value.stages = VK_SHADER_STAGE_GEOMETRY_BIT;
     }
-    else if ((BalVulkan::EShaderType::Enum) shaderStage == BalVulkan::EShaderType::Fragment )
+    else if ((FawnVision::EShaderType::Enum) shaderStage == FawnVision::EShaderType::Fragment )
     {
         value.stages = VK_SHADER_STAGE_FRAGMENT_BIT;
     }
     
-    value.type = (BalVulkan::EShaderResourceType::Enum) resourceType;
-    value.mode = (BalVulkan::EShaderResourceMode::Enum) resourceMode;
+    value.type = (FawnVision::EShaderResourceType::Enum) resourceType;
+    value.mode = (FawnVision::EShaderResourceMode::Enum) resourceMode;
     return file;
 }
 

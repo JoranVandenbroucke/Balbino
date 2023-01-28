@@ -4,7 +4,7 @@
 #include "Funtions.h"
 #include "ImageResource.h"
 
-BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType::Enum type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
+FawnVision::CImageView::CImageView( const CImageResource& pImage, EImageViewType::Enum type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
         : CDeviceObject{ pImage.GetDevice() }
           , m_ownedBySwapchain{ false }
           , m_imageView{ VK_NULL_HANDLE }
@@ -95,7 +95,7 @@ BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType:
     CheckVkResult( vkCreateImageView( GetDevice()->GetVkDevice(), &info, nullptr, &m_imageView ));
 }
 
-BalVulkan::CImageView::~CImageView()
+FawnVision::CImageView::~CImageView()
 {
     if ( !m_ownedBySwapchain )
     {
@@ -103,17 +103,17 @@ BalVulkan::CImageView::~CImageView()
     }
 }
 
-VkImageView BalVulkan::CImageView::GetImageView() const
+VkImageView FawnVision::CImageView::GetImageView() const
 {
     return m_imageView;
 }
 
-void BalVulkan::CImageView::Destroy()
+void FawnVision::CImageView::Destroy()
 {
     CDeviceObject::Destroy();
 }
 
-BalVulkan::CImageView* BalVulkan::CImageView::CreateNew( const CImageResource& pResource, EImageViewType::Enum type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
+FawnVision::CImageView* FawnVision::CImageView::CreateNew( const CImageResource& pResource, EImageViewType::Enum type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
 {
     return new CImageView{ pResource, type, firstMip, numMips, firstLayer, numLayers };
 }

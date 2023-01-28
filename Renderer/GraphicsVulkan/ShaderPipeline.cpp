@@ -7,14 +7,14 @@
 #include "Swapchain.h"
 
 
-BalVulkan::CShaderPipeline::~CShaderPipeline()
+FawnVision::CShaderPipeline::~CShaderPipeline()
 {
     vkDestroyPipeline( GetDevice()->GetVkDevice(), m_pipeline, nullptr );
     vkDestroyPipelineLayout( GetDevice()->GetVkDevice(), m_pipelineLayout, nullptr );
     vkDestroyDescriptorSetLayout( GetDevice()->GetVkDevice(), m_descriptorSetLayout, nullptr );
 }
 
-void BalVulkan::CShaderPipeline::Initialize( const std::vector<uint8_t>& types, const std::vector<CShader*>& shaders, const CRenderPass& renderPass, const std::vector<EVertexComponent::Enum>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode::Enum cullModeFlag )
+void FawnVision::CShaderPipeline::Initialize( const std::vector<uint8_t>& types, const std::vector<CShader*>& shaders, const CRenderPass& renderPass, const std::vector<EVertexComponent::Enum>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode::Enum cullModeFlag )
 {
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages{};
     std::vector<VkDescriptorSetLayoutBinding>    setLayoutBindings{};
@@ -115,7 +115,7 @@ void BalVulkan::CShaderPipeline::Initialize( const std::vector<uint8_t>& types, 
                     std::find_if(
                             m_shaderResources.begin(),
                             m_shaderResources.end(),
-                            [ shaderResource ]( const BalVulkan::SShaderResource& resource )
+                            [ shaderResource ]( const FawnVision::SShaderResource& resource )
                             {
                                 if (( shaderResource.type == EShaderResourceType::Input && resource.type == EShaderResourceType::Input ) || ( shaderResource.type == EShaderResourceType::Output && resource.type == EShaderResourceType::Output ))
                                 {
@@ -296,32 +296,32 @@ void BalVulkan::CShaderPipeline::Initialize( const std::vector<uint8_t>& types, 
     );
 }
 
-VkPipelineLayout BalVulkan::CShaderPipeline::GetPipelineLayout() const
+VkPipelineLayout FawnVision::CShaderPipeline::GetPipelineLayout() const
 {
     return m_pipelineLayout;
 }
 
-const VkDescriptorSetLayout& BalVulkan::CShaderPipeline::GetDescriptorSetLayout() const
+const VkDescriptorSetLayout& FawnVision::CShaderPipeline::GetDescriptorSetLayout() const
 {
     return m_descriptorSetLayout;
 }
 
-VkPipeline BalVulkan::CShaderPipeline::GetPipeline()
+VkPipeline FawnVision::CShaderPipeline::GetPipeline()
 {
     return m_pipeline;
 }
 
-const std::vector<BalVulkan::SShaderResource>& BalVulkan::CShaderPipeline::GetShaderResources() const
+const std::vector<FawnVision::SShaderResource>& FawnVision::CShaderPipeline::GetShaderResources() const
 {
     return m_shaderResources;
 }
 
-BalVulkan::CShaderPipeline* BalVulkan::CShaderPipeline::CreateNew( const CDevice* pDevice )
+FawnVision::CShaderPipeline* FawnVision::CShaderPipeline::CreateNew( const CDevice* pDevice )
 {
     return new CShaderPipeline{ pDevice };
 }
 
-VkDescriptorType BalVulkan::CShaderPipeline::FindDescriptorType( EShaderResourceType::Enum resource_type, bool dynamic )
+VkDescriptorType FawnVision::CShaderPipeline::FindDescriptorType( EShaderResourceType::Enum resource_type, bool dynamic )
 {
     switch ( resource_type )
     {

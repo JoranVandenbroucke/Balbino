@@ -4,18 +4,18 @@
 #include "Funtions.h"
 #include "Instance.h"
 
-BalVulkan::CSampler::CSampler( const CDevice* pDevice )
+FawnVision::CSampler::CSampler( const CDevice* pDevice )
         : CDeviceObject{ pDevice }
           , m_sampler{ VK_NULL_HANDLE }
 {
 }
 
-BalVulkan::CSampler::~CSampler()
+FawnVision::CSampler::~CSampler()
 {
     vkDestroySampler( GetDevice()->GetVkDevice(), m_sampler, nullptr );
 }
 
-void BalVulkan::CSampler::Initialize( int filterMode, int mipmapMode, ESamplerAddressMode::Enum samplerAddressModeU, ESamplerAddressMode::Enum samplerAddressModeV, ESamplerAddressMode::Enum samplerAddressModeW, int anisotropy, uint32_t mipLevels )
+void FawnVision::CSampler::Initialize( int filterMode, int mipmapMode, ESamplerAddressMode::Enum samplerAddressModeU, ESamplerAddressMode::Enum samplerAddressModeV, ESamplerAddressMode::Enum samplerAddressModeW, int anisotropy, uint32_t mipLevels )
 {
     if ( m_sampler )
     {
@@ -37,17 +37,17 @@ void BalVulkan::CSampler::Initialize( int filterMode, int mipmapMode, ESamplerAd
     );
 }
 
-VkSampler BalVulkan::CSampler::GetSampler() const
+VkSampler FawnVision::CSampler::GetSampler() const
 {
     return m_sampler;
 }
 
-BalVulkan::CSampler* BalVulkan::CSampler::CreateNew( const CDevice* pDevice )
+FawnVision::CSampler* FawnVision::CSampler::CreateNew( const CDevice* pDevice )
 {
     return new CSampler{ pDevice };
 }
 
-void BalVulkan::CSampler::Destroy()
+void FawnVision::CSampler::Destroy()
 {
     CDeviceObject::Destroy();
 }

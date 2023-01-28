@@ -25,7 +25,7 @@ void CImageTexture::Draw()
     ImNodes::BeginNode( m_id, 350.f );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Texture" );
+    FawnForge::GUI::DrawText( "Texture" );
     ImNodes::EndNodeTitleBar();
     char      name[64]{};
     for ( int i{}; i < m_textureVariableName.size(); ++i )
@@ -33,7 +33,7 @@ void CImageTexture::Draw()
         name[i] = m_textureVariableName[i];
     }
     
-    if ( BalEditor::GUI::DrawInputText( "Texture Variable Name", name, 64, 175 ))
+    if ( FawnForge::GUI::DrawInputText( "Texture Variable Name", name, 64, 175 ))
     {
         m_textureVariableName = "";
         for ( int i{}; i < 64; ++i )
@@ -54,12 +54,12 @@ void CImageTexture::Draw()
             types.emplace_back( ToString( EMode( i )));
         }
         
-        BalEditor::GUI::DrawComboBox( "Mode", type, types, {}, 175 );
+        FawnForge::GUI::DrawComboBox( "Mode", type, types, {}, 175 );
         m_type =(EMode)type;
     }
     DrawInputVectorAttribute( m_uv, m_attributeStartId, true, "UV" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputTextureAttribute( m_attributeStartId + 1 );
     //todo add options to overwrite auto binding and set
     ImNodes::EndNode();

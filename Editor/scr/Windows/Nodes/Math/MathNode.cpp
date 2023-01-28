@@ -119,10 +119,10 @@ void CMathNode::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( ToString( m_currentMode ));
+    FawnForge::GUI::DrawText( ToString( m_currentMode ));
     ImNodes::EndNodeTitleBar();
-    BalEditor::GUI::DrawComboBox( "Mode", current, options, { 10, 18, 27, 37 } );
-    BalEditor::GUI::DrawToggle( "Clam", m_clamp );
+    FawnForge::GUI::DrawComboBox( "Mode", current, options, { 10, 18, 27, 37 } );
+    FawnForge::GUI::DrawToggle( "Clam", m_clamp );
     DrawInputFloatAttribute( m_a, m_attributeStartId, m_connectedA );
     
     m_currentMode = (EMode)current;
@@ -165,7 +165,7 @@ void CMathNode::Draw()
             break;
     }
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputFloatAttribute( m_attributeStartId + 3 );
     
     ImNodes::EndNode();

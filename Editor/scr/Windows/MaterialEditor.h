@@ -9,7 +9,7 @@ namespace Balbino
     class CMaterial;
 }
 
-namespace BalEditor
+namespace FawnForge
 {
     class CPropertyPanel;
     
@@ -36,7 +36,7 @@ namespace BalEditor
         
         const ISystem       * m_pSystem;
         const CPropertyPanel* m_pPropertyPanel;
-        std::vector<BalVulkan::SShaderResource> m_shaderResources;
+        std::vector<FawnVision::SShaderResource> m_shaderResources;
         std::vector<std::string>                m_defaultShaderNames;
         
         void LoadShader();

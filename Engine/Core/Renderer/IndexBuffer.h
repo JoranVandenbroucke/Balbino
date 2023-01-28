@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CDevice;
     
@@ -23,10 +23,10 @@ namespace Balbino
         CIndexBuffer& operator=( const CIndexBuffer& ) = delete;
         CIndexBuffer& operator=( CIndexBuffer&& ) = delete;
         
-        void Initialize( const std::vector<uint32_t>& indices, const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue );
+        void Initialize( const std::vector<uint32_t>& indices, const FawnVision::CDevice* pDevice, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CQueue* pQueue );
         void Cleanup();
         void Bind() const;
     private:
-        BalVulkan::CBuffer* m_pIndexBuffer;
+        FawnVision::CBuffer* m_pIndexBuffer;
     };
 }

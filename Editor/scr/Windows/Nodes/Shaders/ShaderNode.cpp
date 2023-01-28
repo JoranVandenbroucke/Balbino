@@ -26,9 +26,9 @@ void CShaderNode::Draw()
         options.emplace_back( ToString( EMode( n )));
     }
     StartNode( "Shader Output", m_id );
-    BalEditor::GUI::DrawComboBox( "Mode", current, options );
+    FawnForge::GUI::DrawComboBox( "Mode", current, options );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     switch ( m_type )
     {
         case EMode::Graphics:

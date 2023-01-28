@@ -6,7 +6,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-namespace BalEditor::GUI
+namespace FawnForge::GUI
 {
     
     void DrawIntValue( const char* name, uint64_t value, float width )
@@ -878,7 +878,7 @@ namespace BalEditor::GUI
                     if ( dividers[divider] == i )
                     {
                         ++divider;
-                        BalEditor::GUI::Separator();
+                        FawnForge::GUI::Separator();
                     }
                 }
                 ImGui::EndCombo();

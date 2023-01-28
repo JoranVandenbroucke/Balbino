@@ -6,7 +6,7 @@
 #include "Instance.h"
 #include "Queue.h"
 
-BalVulkan::CBuffer::CBuffer( const CDevice* pDevice, const CCommandPool* commandPool, const CQueue* queue )
+FawnVision::CBuffer::CBuffer( const CDevice* pDevice, const CCommandPool* commandPool, const CQueue* queue )
         : CDeviceObject{ pDevice }
           , m_buffer{ VK_NULL_HANDLE }
           , m_commandBuffer{ VK_NULL_HANDLE }
@@ -18,7 +18,7 @@ BalVulkan::CBuffer::CBuffer( const CDevice* pDevice, const CCommandPool* command
 {
 }
 
-BalVulkan::CBuffer::~CBuffer()
+FawnVision::CBuffer::~CBuffer()
 {
     vkDestroyBuffer( GetDevice()->GetVkDevice(), m_buffer, nullptr );
     vkFreeMemory( GetDevice()->GetVkDevice(), m_bufferMemory, nullptr );
@@ -29,7 +29,7 @@ BalVulkan::CBuffer::~CBuffer()
     m_queue         = nullptr;
 }
 
-void BalVulkan::CBuffer::Bind( const bool isIndexBuffer, bool isInstanceBuffer ) const
+void FawnVision::CBuffer::Bind( const bool isIndexBuffer, bool isInstanceBuffer ) const
 {
     if ( isInstanceBuffer )
     {
@@ -47,7 +47,7 @@ void BalVulkan::CBuffer::Bind( const bool isIndexBuffer, bool isInstanceBuffer )
     }
 }
 
-void BalVulkan::CBuffer::CopyBufferToImage( const CImageResource* pResource ) const
+void FawnVision::CBuffer::CopyBufferToImage( const CImageResource* pResource ) const
 {
     BeginSingleTimeCommands();
     
@@ -65,7 +65,7 @@ void BalVulkan::CBuffer::CopyBufferToImage( const CImageResource* pResource ) co
     EndSingleTimeCommands();
 }
 
-void BalVulkan::CBuffer::UpdateData( const void* pData, const uint64_t size )
+void FawnVision::CBuffer::UpdateData( const void* pData, const uint64_t size )
 {
     if ( size == 0 )
     {
@@ -77,7 +77,7 @@ void BalVulkan::CBuffer::UpdateData( const void* pData, const uint64_t size )
     vkUnmapMemory( GetDevice()->GetVkDevice(), m_bufferMemory );
 }
 
-void BalVulkan::CBuffer::Initialize( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty )
+void FawnVision::CBuffer::Initialize( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty )
 {
     if ( size > 0 )
     {
@@ -114,17 +114,17 @@ void BalVulkan::CBuffer::Initialize( uint64_t size, EBufferUsageFlagBits::Enum b
     CheckVkResult( vkAllocateCommandBuffers( GetDevice()->GetVkDevice(), &allocCommandBufferInfo, &m_commandBuffer ));
 }
 
-const VkBuffer& BalVulkan::CBuffer::GetBuffer() const
+const VkBuffer& FawnVision::CBuffer::GetBuffer() const
 {
     return m_buffer;
 }
 
-uint64_t BalVulkan::CBuffer::GetRange() const
+uint64_t FawnVision::CBuffer::GetRange() const
 {
     return m_currentSize;
 }
 
-void BalVulkan::CBuffer::Rebuild( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty )
+void FawnVision::CBuffer::Rebuild( uint64_t size, EBufferUsageFlagBits::Enum bufferUsage, EMemoryPropertyFlagBits::Enum memoryProperty )
 {
     if ( m_buffer )
     {
@@ -144,12 +144,12 @@ void BalVulkan::CBuffer::Rebuild( uint64_t size, EBufferUsageFlagBits::Enum buff
     Initialize( size, bufferUsage, memoryProperty );
 }
 
-void* BalVulkan::CBuffer::GetMapped() const
+void* FawnVision::CBuffer::GetMapped() const
 {
     return m_pMappedData;
 }
 
-void BalVulkan::CBuffer::Flush( const VkDeviceSize size, const VkDeviceSize offset )
+void FawnVision::CBuffer::Flush( const VkDeviceSize size, const VkDeviceSize offset )
 {
     VkMappedMemoryRange mappedRange{
             .sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE, .memory = m_bufferMemory, .offset = offset, .size = size,
@@ -157,12 +157,12 @@ void BalVulkan::CBuffer::Flush( const VkDeviceSize size, const VkDeviceSize offs
     vkFlushMappedMemoryRanges( GetDevice()->GetVkDevice(), 1, &mappedRange );
 }
 
-BalVulkan::CBuffer* BalVulkan::CBuffer::CreateNew( const CDevice* pDevice, const CCommandPool* commandPool, const CQueue* queue )
+FawnVision::CBuffer* FawnVision::CBuffer::CreateNew( const CDevice* pDevice, const CCommandPool* commandPool, const CQueue* queue )
 {
     return new CBuffer{ pDevice, commandPool, queue };
 }
 
-void BalVulkan::CBuffer::Unmapped()
+void FawnVision::CBuffer::Unmapped()
 {
     if ( m_pMappedData )
     {
@@ -171,17 +171,17 @@ void BalVulkan::CBuffer::Unmapped()
     }
 }
 
-void BalVulkan::CBuffer::Map( const uint64_t size, const uint64_t offset )
+void FawnVision::CBuffer::Map( const uint64_t size, const uint64_t offset )
 {
     vkMapMemory( GetDevice()->GetVkDevice(), m_bufferMemory, offset, size, 0, &m_pMappedData );
 }
 
-void BalVulkan::CBuffer::ReassignCommandPool( const CCommandPool* commandPool )
+void FawnVision::CBuffer::ReassignCommandPool( const CCommandPool* commandPool )
 {
     m_commandPool = commandPool;
 }
 
-void BalVulkan::CBuffer::CopyBuffer( const CBuffer& dstBuffer, uint64_t size ) const
+void FawnVision::CBuffer::CopyBuffer( const CBuffer& dstBuffer, uint64_t size ) const
 {
     BeginSingleTimeCommands();
     
@@ -191,7 +191,7 @@ void BalVulkan::CBuffer::CopyBuffer( const CBuffer& dstBuffer, uint64_t size ) c
     EndSingleTimeCommands();
 }
 
-void BalVulkan::CBuffer::BeginSingleTimeCommands() const
+void FawnVision::CBuffer::BeginSingleTimeCommands() const
 {
     constexpr VkCommandBufferBeginInfo beginInfo{
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
@@ -200,7 +200,7 @@ void BalVulkan::CBuffer::BeginSingleTimeCommands() const
     CheckVkResult( vkBeginCommandBuffer( m_commandBuffer, &beginInfo ));
 }
 
-void BalVulkan::CBuffer::EndSingleTimeCommands() const
+void FawnVision::CBuffer::EndSingleTimeCommands() const
 {
     vkEndCommandBuffer( m_commandBuffer );
     
@@ -213,7 +213,7 @@ void BalVulkan::CBuffer::EndSingleTimeCommands() const
     //vkFreeCommandBuffers( GetDevice()->GetVkDevice(), m_commandPool->GetCommandPool(), 1, &m_commandBuffer );
 }
 
-void BalVulkan::CBuffer::PipelineBarrier( EPipelineStageFlagBits::Enum srcStageMask, EPipelineStageFlagBits::Enum destStageMask, VkImageMemoryBarrier* pBarrier ) const
+void FawnVision::CBuffer::PipelineBarrier( EPipelineStageFlagBits::Enum srcStageMask, EPipelineStageFlagBits::Enum destStageMask, VkImageMemoryBarrier* pBarrier ) const
 {
     vkCmdPipelineBarrier(
             m_commandBuffer,
@@ -229,7 +229,7 @@ void BalVulkan::CBuffer::PipelineBarrier( EPipelineStageFlagBits::Enum srcStageM
     );
 }
 
-void BalVulkan::CBuffer::Blit( const VkImage* pImage, const VkImageBlit* pBlit ) const
+void FawnVision::CBuffer::Blit( const VkImage* pImage, const VkImageBlit* pBlit ) const
 {
     vkCmdBlitImage(
             m_commandBuffer,

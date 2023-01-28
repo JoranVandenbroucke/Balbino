@@ -18,12 +18,12 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, 
 
 #endif //_DEBUG && !BL_EDITOR
 
-BalVulkan::CInstanceHolder::CInstanceHolder()
+FawnVision::CInstanceHolder::CInstanceHolder()
         : m_instanceHandle( VK_NULL_HANDLE )
 {
 }
 
-BalVulkan::CInstanceHolder::~CInstanceHolder()
+FawnVision::CInstanceHolder::~CInstanceHolder()
 {
     if ( m_instanceHandle != VK_NULL_HANDLE )
     {
@@ -31,7 +31,7 @@ BalVulkan::CInstanceHolder::~CInstanceHolder()
     }
 }
 
-BalVulkan::CInstance::CInstance()
+FawnVision::CInstance::CInstance()
         : CInstanceHolder{}
           , m_debugReport{ VK_NULL_HANDLE }
           , m_pCallbacks{ nullptr }
@@ -39,7 +39,7 @@ BalVulkan::CInstance::CInstance()
 {
 }
 
-BalVulkan::CInstance::~CInstance()
+FawnVision::CInstance::~CInstance()
 {
     #ifdef _DEBUG
     if ( vkpfn_DestroyDebugReportCallbackEXT && m_debugReport )
@@ -51,7 +51,7 @@ BalVulkan::CInstance::~CInstance()
     #endif
 }
 
-bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t extensionsCount )
+bool FawnVision::CInstance::Initialize( const char** extensions, const uint32_t extensionsCount )
 {
     if ( m_instanceHandle )
     {
@@ -146,17 +146,17 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
     return true;
 }
 
-void BalVulkan::CInstance::SetSurface( const VkSurfaceKHR& newSurface )
+void FawnVision::CInstance::SetSurface( const VkSurfaceKHR& newSurface )
 {
     m_surfaceKhr = newSurface;
 }
 
-uint8_t BalVulkan::CInstance::DeviceCount() const
+uint8_t FawnVision::CInstance::DeviceCount() const
 {
     return static_cast<uint8_t>( m_physicalDevices.size());
 }
 
-BalVulkan::CDevice* BalVulkan::CInstance::CreateDevice( uint32_t physicalDeviceIndex )
+FawnVision::CDevice* FawnVision::CInstance::CreateDevice( uint32_t physicalDeviceIndex )
 {
     const SPhysicalDeviceInfo& info{
             m_physicalDevices[std::max(
@@ -174,7 +174,7 @@ BalVulkan::CDevice* BalVulkan::CInstance::CreateDevice( uint32_t physicalDeviceI
     );
 }
 
-uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf )
+uint32_t FawnVision::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf )
 {
     for ( uint32_t i = 0; i < static_cast<uint32_t>( m_physicalDevices.size()); ++i )
     {
@@ -191,27 +191,27 @@ uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& 
     return 0;
 }
 
-VkDebugReportCallbackEXT BalVulkan::CInstance::GetReportCallbackExt() const
+VkDebugReportCallbackEXT FawnVision::CInstance::GetReportCallbackExt() const
 {
     return m_debugReport;
 }
 
-VkSurfaceKHR BalVulkan::CInstance::GetSurface() const
+VkSurfaceKHR FawnVision::CInstance::GetSurface() const
 {
     return m_surfaceKhr;
 }
 
-BalVulkan::CInstance* BalVulkan::CInstance::CreateNew()
+FawnVision::CInstance* FawnVision::CInstance::CreateNew()
 {
     return new CInstance{};
 }
 
-const VkInstance& BalVulkan::CInstanceHolder::GetHandle() const
+const VkInstance& FawnVision::CInstanceHolder::GetHandle() const
 {
     return m_instanceHandle;
 }
 
-VkFormat BalVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features ) const
+VkFormat FawnVision::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<VkFormat>& candidates, const VkImageTiling& tiling, const VkFormatFeatureFlags& features ) const
 {
     for ( const VkFormat format : candidates )
     {
@@ -231,7 +231,7 @@ VkFormat BalVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<
     throw std::runtime_error( "failed to find supported format!" );
 }
 
-VkFormat BalVulkan::SPhysicalDeviceInfo::GetDepthFormat() const
+VkFormat FawnVision::SPhysicalDeviceInfo::GetDepthFormat() const
 {
     return FindSupportedFormat(
             std::vector{
@@ -244,7 +244,7 @@ VkFormat BalVulkan::SPhysicalDeviceInfo::GetDepthFormat() const
     );
 }
 
-VkSampleCountFlagBits BalVulkan::SPhysicalDeviceInfo::GetMaxUsableSampleCount() const
+VkSampleCountFlagBits FawnVision::SPhysicalDeviceInfo::GetMaxUsableSampleCount() const
 {
     //VkPhysicalDeviceProperties physicalDeviceProperties;
     //vkGetPhysicalDeviceProperties( device, &physicalDeviceProperties );

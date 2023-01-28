@@ -5,7 +5,7 @@
 #include <source_location>
 #include <vulkan/vulkan.h>
 
-namespace BalVulkan
+namespace FawnVision
 {
     inline bool CheckVkResult( VkResult err, std::string_view failMessage = "", VkResult exclusions = VK_SUCCESS, const std::source_location location = std::source_location::current())
     {

@@ -5,7 +5,7 @@
 #include "Managers/System.h"
 
 #ifdef BALBINO_EDITOR
-namespace BalEditor
+namespace FawnForge
 {
     class CInterface;
 }
@@ -50,7 +50,7 @@ namespace Balbino
         CSystem m_system;
         CRenderer* m_pRenderer;
         #ifdef BALBINO_EDITOR
-        BalEditor::CInterface* m_pInterface;
+        FawnForge::CInterface* m_pInterface;
         #endif
         CScene* m_pScene;
     };

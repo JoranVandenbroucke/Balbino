@@ -4,7 +4,7 @@
 #include "Base.h"
 #include "Common.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CBuffer;
     
@@ -21,7 +21,7 @@ namespace BalVulkan
         
         VkResult InitFromSwapchain( VkImage image, VkImageLayout layout, uint32_t width, uint32_t height, VkFormat format );
         
-        VkResult Initialize( BalVulkan::EImageViewType::Enum type, BalVulkan::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, BalVulkan::EImageLayout::Enum layout = BalVulkan::EImageLayout::Undefined );
+        VkResult Initialize( FawnVision::EImageViewType::Enum type, FawnVision::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, FawnVision::EImageLayout::Enum layout = FawnVision::EImageLayout::Undefined );
         
         VkImage GetImage();
         

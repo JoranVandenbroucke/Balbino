@@ -51,27 +51,27 @@ void Balbino::CScene::Initialize( ISystem* pSystem )
 {
     m_pSystem = pSystem;
     CreateEntity()->AddComponent<CCameraComponent>( m_pSystem );
-    m_pModelBuffer    = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pShadingBuffer  = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
+    m_pModelBuffer    = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
+    m_pShadingBuffer  = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
+    m_pInstanceBuffer = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     
     m_pModelBuffer->Initialize(
             sizeof( SModelObject ),
-            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-            BalVulkan::EMemoryPropertyFlagBits::Enum(
-                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+            FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
             ));
     m_pShadingBuffer->Initialize(
             sizeof( SLightObject ),
-            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-            BalVulkan::EMemoryPropertyFlagBits::Enum(
-                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+            FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
             ));
     m_pInstanceBuffer->Initialize(
-            MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ), BalVulkan::EBufferUsageFlagBits::Enum(
-                    BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit
-            ), BalVulkan::EMemoryPropertyFlagBits::Enum(
-                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit
+            MAX_INSTANCE_COUNT * sizeof( FawnVision::InstanceBatch ), FawnVision::EBufferUsageFlagBits::Enum(
+                    FawnVision::EBufferUsageFlagBits::TransferDstBit | FawnVision::EBufferUsageFlagBits::VertexBufferBit
+            ), FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::DeviceLocalBit
             ));
     
 }
@@ -165,17 +165,17 @@ ISystem* Balbino::CScene::GetSystem() const
     return m_pSystem;
 }
 
-BalVulkan::CBuffer* Balbino::CScene::GetModelBuffer() const
+FawnVision::CBuffer* Balbino::CScene::GetModelBuffer() const
 {
     return m_pModelBuffer;
 }
 
-BalVulkan::CBuffer* Balbino::CScene::GetShadingBuffer() const
+FawnVision::CBuffer* Balbino::CScene::GetShadingBuffer() const
 {
     return m_pShadingBuffer;
 }
 
-void Balbino::CScene::RecreateBuffers( BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue )
+void Balbino::CScene::RecreateBuffers( FawnVision::CCommandPool* commandPool, FawnVision::CQueue* queue )
 {
     m_pCommandPool = commandPool;
     m_pQueue       = queue;
@@ -183,28 +183,28 @@ void Balbino::CScene::RecreateBuffers( BalVulkan::CCommandPool* commandPool, Bal
     m_pModelBuffer->Release();
     m_pInstanceBuffer->Release();
     
-    m_pModelBuffer    = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pShadingBuffer  = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
+    m_pModelBuffer    = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
+    m_pShadingBuffer  = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
+    m_pInstanceBuffer = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     
     
     m_pModelBuffer->Initialize(
             sizeof( SModelObject ),
-            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-            BalVulkan::EMemoryPropertyFlagBits::Enum(
-                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+            FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
             ));
     m_pShadingBuffer->Initialize(
             sizeof( SLightObject ),
-            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-            BalVulkan::EMemoryPropertyFlagBits::Enum(
-                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+            FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
             ));
     m_pInstanceBuffer->Initialize(
-            MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ), BalVulkan::EBufferUsageFlagBits::Enum(
-                    BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit
-            ), BalVulkan::EMemoryPropertyFlagBits::Enum(
-                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit
+            MAX_INSTANCE_COUNT * sizeof( FawnVision::InstanceBatch ), FawnVision::EBufferUsageFlagBits::Enum(
+                    FawnVision::EBufferUsageFlagBits::TransferDstBit | FawnVision::EBufferUsageFlagBits::VertexBufferBit
+            ), FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::DeviceLocalBit
             ));
 }
 
@@ -316,7 +316,7 @@ void Balbino::CScene::PrepareDraw()
                                 .mesh = meshID, .material = currentMaterial, .firstInstance = 0, .instanceCount = 1, .firstIndex = mat[i].firstIndex, .indexCount = mat[i].indexCount
                         };
                         m_allDrawableObjects.push_back( newDraw );
-                        m_instanceData.push_back( { BalVulkan::InstanceBatch{ transform.GetTransform() }} );
+                        m_instanceData.push_back( { FawnVision::InstanceBatch{ transform.GetTransform() }} );
                     }
                     ++count;
                 }
@@ -341,12 +341,12 @@ void Balbino::CScene::Draw()
                 m_instanceData[i].data(),
                 ( m_instanceData[i].size() < MAX_INSTANCE_COUNT
                   ? m_instanceData[i].size()
-                  : MAX_INSTANCE_COUNT ) * sizeof( BalVulkan::InstanceBatch ));
+                  : MAX_INSTANCE_COUNT ) * sizeof( FawnVision::InstanceBatch ));
         m_pSystem->GetResourceManager()->GetModel( m_allDrawableObjects[i].mesh )->Bind();
         m_pInstanceBuffer->Bind( false, true );
         if ( m_pSystem->GetResourceManager()->BindMaterial((uint64_t) m_allDrawableObjects[i].material ))
         {
-            BalVulkan::DrawMesh(
+            FawnVision::DrawMesh(
                     m_pCommandPool,
                     m_allDrawableObjects[i].indexCount,
                     m_allDrawableObjects[i].firstIndex,
@@ -357,7 +357,7 @@ void Balbino::CScene::Draw()
     }
 }
 
-BalVulkan::CBuffer* Balbino::CScene::GetInstanceBuffer() const
+FawnVision::CBuffer* Balbino::CScene::GetInstanceBuffer() const
 {
     return m_pInstanceBuffer;
 }

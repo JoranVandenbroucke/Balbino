@@ -3,7 +3,7 @@
 #include "Base.h"
 #include "Common.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CImageResource;
     

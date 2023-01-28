@@ -6,7 +6,7 @@
 #include "Instance.h"
 #include "Semaphore.h"
 
-BalVulkan::CSwapchain::CSwapchain( const CDevice* device, const VkSurfaceKHR& surface )
+FawnVision::CSwapchain::CSwapchain( const CDevice* device, const VkSurfaceKHR& surface )
         : CDeviceObject{ device }
           , m_surfaceCapabilities{}
           , m_swapchain{ VK_NULL_HANDLE }
@@ -19,13 +19,13 @@ BalVulkan::CSwapchain::CSwapchain( const CDevice* device, const VkSurfaceKHR& su
 {
 }
 
-BalVulkan::CSwapchain::~CSwapchain()
+FawnVision::CSwapchain::~CSwapchain()
 {
     vkDestroySwapchainKHR( GetDevice()->GetVkDevice(), m_swapchain, nullptr );
 }
 
 //create swap chain (https://sopyer.github.io/Blog/post/minimal-vulkan-sample/)
-void BalVulkan::CSwapchain::Initialize( uint32_t width, uint32_t height )
+void FawnVision::CSwapchain::Initialize( uint32_t width, uint32_t height )
 {
     VkSwapchainKHR oldSwapchain = m_swapchain;
     GetQueueFamiliesProperties();
@@ -46,7 +46,7 @@ void BalVulkan::CSwapchain::Initialize( uint32_t width, uint32_t height )
     CheckVkResult( vkGetSwapchainImagesKHR( GetDevice()->GetVkDevice(), m_swapchain, &m_imageCount, m_images.data()));
 }
 
-bool BalVulkan::CSwapchain::AcquireNextImage( CSemaphore* presentCompleteSemaphore, uint32_t* imageIndex ) const
+bool FawnVision::CSwapchain::AcquireNextImage( CSemaphore* presentCompleteSemaphore, uint32_t* imageIndex ) const
 {
     const VkResult result = vkAcquireNextImageKHR(
             GetDevice()->GetVkDevice(),
@@ -60,37 +60,37 @@ bool BalVulkan::CSwapchain::AcquireNextImage( CSemaphore* presentCompleteSemapho
     return result == VK_ERROR_OUT_OF_DATE_KHR;
 }
 
-VkSurfaceFormatKHR BalVulkan::CSwapchain::GetSurfaceFormat() const
+VkSurfaceFormatKHR FawnVision::CSwapchain::GetSurfaceFormat() const
 {
     return m_swapSurfaceFormat;
 }
 
-VkExtent2D BalVulkan::CSwapchain::GetExtend() const
+VkExtent2D FawnVision::CSwapchain::GetExtend() const
 {
     return m_swapchainExtent;
 }
 
-const VkSwapchainKHR& BalVulkan::CSwapchain::GetVkSwapchain() const
+const VkSwapchainKHR& FawnVision::CSwapchain::GetVkSwapchain() const
 {
     return m_swapchain;
 }
 
-uint32_t BalVulkan::CSwapchain::GetMinImage() const
+uint32_t FawnVision::CSwapchain::GetMinImage() const
 {
     return m_minImageCount;
 }
 
-uint32_t BalVulkan::CSwapchain::GetImageCount() const
+uint32_t FawnVision::CSwapchain::GetImageCount() const
 {
     return m_imageCount;
 }
 
-BalVulkan::CSwapchain* BalVulkan::CSwapchain::CreateNew( const CDevice* device, const VkSurfaceKHR& surface )
+FawnVision::CSwapchain* FawnVision::CSwapchain::CreateNew( const CDevice* device, const VkSurfaceKHR& surface )
 {
     return new CSwapchain{ device, surface };
 }
 
-void BalVulkan::CSwapchain::GetImages( std::vector<CImageResource*>& swapChainImages, uint32_t& count ) const
+void FawnVision::CSwapchain::GetImages( std::vector<CImageResource*>& swapChainImages, uint32_t& count ) const
 {
     swapChainImages.clear();
     swapChainImages.reserve( m_imageCount );
@@ -108,7 +108,7 @@ void BalVulkan::CSwapchain::GetImages( std::vector<CImageResource*>& swapChainIm
     count = m_imageCount;
 }
 
-void BalVulkan::CSwapchain::GetSwapExtent( uint32_t w, uint32_t h )
+void FawnVision::CSwapchain::GetSwapExtent( uint32_t w, uint32_t h )
 {
     CheckVkResult(
             vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
@@ -136,7 +136,7 @@ void BalVulkan::CSwapchain::GetSwapExtent( uint32_t w, uint32_t h )
     );
 }
 
-void BalVulkan::CSwapchain::GetSwapSurfaceFormat()
+void FawnVision::CSwapchain::GetSwapSurfaceFormat()
 {
     VkSurfaceFormatKHR            & swapSurfaceFormat{ m_surfaceFormats[0] };
     for ( const VkSurfaceFormatKHR& surfaceFormat : m_surfaceFormats )
@@ -150,7 +150,7 @@ void BalVulkan::CSwapchain::GetSwapSurfaceFormat()
     m_swapSurfaceFormat = swapSurfaceFormat;
 }
 
-void BalVulkan::CSwapchain::GetQueueFamiliesProperties()
+void FawnVision::CSwapchain::GetQueueFamiliesProperties()
 {
     uint32_t formatCount{};
     CheckVkResult(

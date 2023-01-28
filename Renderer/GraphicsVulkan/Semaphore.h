@@ -2,7 +2,7 @@
 #include <vulkan/vulkan.hpp>
 #include "Base.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CSemaphore final : public CDeviceObject
     {

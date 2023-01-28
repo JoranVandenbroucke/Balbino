@@ -23,7 +23,7 @@
 #include "imnodes.h"
 #include "Instance.h"
 
-BalEditor::CInterface::CInterface()
+FawnForge::CInterface::CInterface()
         : m_queueNextResource{ false }
           , m_pMain{ nullptr }
           , m_pGameView{ nullptr }
@@ -40,7 +40,7 @@ BalEditor::CInterface::CInterface()
 {
 }
 
-void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CRenderPass* pRenderPass, const BalVulkan::CSwapchain* pSwapchain, ISystem* pSystem )
+void FawnForge::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const FawnVision::CDevice* pDevice, const FawnVision::CQueue* pQueue, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CRenderPass* pRenderPass, const FawnVision::CSwapchain* pSwapchain, ISystem* pSystem )
 {
     (void) pSystem;
     m_pWindow = pWindow;
@@ -144,7 +144,7 @@ void BalEditor::CInterface::Initialize( SDL_Window* pWindow, const int32_t w, co
     m_pMaterialEditor->Initialize( pSystem, m_pPropertyPanel );
 }
 
-void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
+void FawnForge::CInterface::Draw( FawnVision::CCommandPool* pCommandPool )
 {
     if ( m_queueNextResource && !m_pendingResources.empty())
     {
@@ -183,7 +183,7 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
     ImGui_ImplVulkan_RenderDrawData( ImGui::GetDrawData(), pCommandPool->GetCommandBuffer());
 }
 
-void BalEditor::CInterface::Cleanup() const
+void FawnForge::CInterface::Cleanup() const
 {
     //ImNodes::PopAttributeFlag();
     m_pAssetBrowser->Cleanup();
@@ -204,7 +204,7 @@ void BalEditor::CInterface::Cleanup() const
     delete m_pPropertyPanel;
 }
 
-void BalEditor::CInterface::ProcessEvent( SDL_Event e )
+void FawnForge::CInterface::ProcessEvent( SDL_Event e )
 {
     ImGui_ImplSDL2_ProcessEvent( &e );
     switch ( e.type )
@@ -343,7 +343,7 @@ void BalEditor::CInterface::ProcessEvent( SDL_Event e )
     }
 }
 
-void BalEditor::CInterface::SetContext( IScene* pScene, ISystem* pSystem )
+void FawnForge::CInterface::SetContext( IScene* pScene, ISystem* pSystem )
 {
     m_pMain->SetContext( pScene, m_pAssetBrowser, m_pSceneHierarchy, m_pShaderGraph, m_pPropertyPanel );
     m_pSceneHierarchy->SetContext( pScene, pSystem );
@@ -351,7 +351,7 @@ void BalEditor::CInterface::SetContext( IScene* pScene, ISystem* pSystem )
     m_pAssetBrowser->SetShaderGraphReference( m_pShaderGraph, m_pMaterialEditor, m_pPropertyPanel );
 }
 
-void BalEditor::CInterface::SetImGuiStyle( ImNodesStyle& imNodesStyle )
+void FawnForge::CInterface::SetImGuiStyle( ImNodesStyle& imNodesStyle )
 {
     ImGuiStyle* style  = &ImGui::GetStyle();
     ImVec4    * colors = style->Colors;
@@ -463,7 +463,7 @@ void BalEditor::CInterface::SetImGuiStyle( ImNodesStyle& imNodesStyle )
     
     imNodesStyle.Colors[ImNodesCol_MiniMapOutlineHovered] = IM_COL32( 150, 150, 150, 200 );
 }
-void BalEditor::CInterface::Resize( const int32_t w, const int32_t h )
+void FawnForge::CInterface::Resize( const int32_t w, const int32_t h )
 {
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float) w, (float) h );

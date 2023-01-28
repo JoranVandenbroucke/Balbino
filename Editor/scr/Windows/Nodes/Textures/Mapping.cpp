@@ -32,15 +32,15 @@ void CMapping::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( ToString( m_type ));
+    FawnForge::GUI::DrawText( ToString( m_type ));
     ImNodes::EndNodeTitleBar();
-    BalEditor::GUI::DrawComboBox( "Mode", current, options, {}, 42 );
+    FawnForge::GUI::DrawComboBox( "Mode", current, options, {}, 42 );
     DrawInputVectorAttribute( m_vector, m_attributeStartId, false, "Vector" );
     DrawInputVectorAttribute( m_position, m_attributeStartId + 1, m_connected[1], "Position" );
     DrawInputVectorAttribute( m_rotation, m_attributeStartId + 2, m_connected[2], "Rotation" );
     DrawInputVectorAttribute( m_scale, m_attributeStartId + 3, m_connected[3], "Scale" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputVectorAttribute( m_attributeStartId + 4 );
     
     ImNodes::EndNode();

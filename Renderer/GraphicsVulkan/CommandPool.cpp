@@ -9,7 +9,7 @@
 #include "ShaderPipeline.h"
 #include "Swapchain.h"
 
-BalVulkan::CCommandPool::CCommandPool( const CDevice* device )
+FawnVision::CCommandPool::CCommandPool( const CDevice* device )
         : CDeviceObject{ device }
           , m_commandPool{ VK_NULL_HANDLE }
           , m_commandBuffers{}
@@ -17,7 +17,7 @@ BalVulkan::CCommandPool::CCommandPool( const CDevice* device )
 {
 }
 
-BalVulkan::CCommandPool::~CCommandPool()
+FawnVision::CCommandPool::~CCommandPool()
 {
     vkDestroyCommandPool( GetDevice()->GetVkDevice(), m_commandPool, nullptr );
     for ( const CImageResource* pImageResource : m_imageResources )
@@ -27,7 +27,7 @@ BalVulkan::CCommandPool::~CCommandPool()
     m_imageResources.clear();
 }
 
-void BalVulkan::CCommandPool::Initialize( uint32_t queueFamilyIndex, const CSwapchain* pSwapchain )
+void FawnVision::CCommandPool::Initialize( uint32_t queueFamilyIndex, const CSwapchain* pSwapchain )
 {
     if ( !m_commandPool )
     {
@@ -59,22 +59,22 @@ void BalVulkan::CCommandPool::Initialize( uint32_t queueFamilyIndex, const CSwap
     }
 }
 
-void BalVulkan::CCommandPool::UpdateFrameIndex()
+void FawnVision::CCommandPool::UpdateFrameIndex()
 {
     m_currentFrameIndex = ++m_currentFrameIndex % m_commandBuffers.size();
 }
 
-const VkCommandPool& BalVulkan::CCommandPool::GetCommandPool() const
+const VkCommandPool& FawnVision::CCommandPool::GetCommandPool() const
 {
     return m_commandPool;
 }
 
-const VkCommandBuffer& BalVulkan::CCommandPool::GetCommandBuffer() const
+const VkCommandBuffer& FawnVision::CCommandPool::GetCommandBuffer() const
 {
     return m_commandBuffers[m_currentFrameIndex];
 }
 
-void BalVulkan::CCommandPool::EndRender() const
+void FawnVision::CCommandPool::EndRender() const
 {
     vkCmdEndRenderPass( m_commandBuffers[m_currentFrameIndex] );
     if ( vkEndCommandBuffer( m_commandBuffers[m_currentFrameIndex] ) != VK_SUCCESS )
@@ -83,7 +83,7 @@ void BalVulkan::CCommandPool::EndRender() const
     }
 }
 
-void BalVulkan::CCommandPool::BeginRender( CRenderPass* pRenderPass, CFrameBuffer* pFrameBuffer, CSwapchain* pSwapchain ) const
+void FawnVision::CCommandPool::BeginRender( CRenderPass* pRenderPass, CFrameBuffer* pFrameBuffer, CSwapchain* pSwapchain ) const
 {
     const VkCommandBufferBeginInfo beginInfo{
             .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, .flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT
@@ -109,7 +109,7 @@ void BalVulkan::CCommandPool::BeginRender( CRenderPass* pRenderPass, CFrameBuffe
     vkCmdBeginRenderPass( m_commandBuffers[m_currentFrameIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
 }
 
-void BalVulkan::CCommandPool::BindShader( CShaderPipeline* pPipeline, CDescriptorSet* pDescriptorSet ) const
+void FawnVision::CCommandPool::BindShader( CShaderPipeline* pPipeline, CDescriptorSet* pDescriptorSet ) const
 {
     uint32_t offset{};
 //    uint32_t offset{sizeof(glm::mat4) * 3};
@@ -129,21 +129,21 @@ void BalVulkan::CCommandPool::BindShader( CShaderPipeline* pPipeline, CDescripto
     );
 }
 
-BalVulkan::CCommandPool* BalVulkan::CCommandPool::CreateNew( const CDevice* pDevice )
+FawnVision::CCommandPool* FawnVision::CCommandPool::CreateNew( const CDevice* pDevice )
 {
     return new CCommandPool{ pDevice };
 }
 
-uint32_t BalVulkan::CCommandPool::GetCommandBufferCount() const
+uint32_t FawnVision::CCommandPool::GetCommandBufferCount() const
 {
     return static_cast<uint32_t>( m_commandBuffers.size());
 }
 
-uint32_t BalVulkan::CCommandPool::GetCurrentIndex() const
+uint32_t FawnVision::CCommandPool::GetCurrentIndex() const
 {
     return m_currentFrameIndex;
 }
-void BalVulkan::CCommandPool::NextSubpass()
+void FawnVision::CCommandPool::NextSubpass()
 {
     vkCmdNextSubpass( m_commandBuffers[m_currentFrameIndex], VK_SUBPASS_CONTENTS_INLINE );
 }

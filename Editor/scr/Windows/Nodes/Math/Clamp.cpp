@@ -19,14 +19,14 @@ void CClamp::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Clamp" );
+    FawnForge::GUI::DrawText( "Clamp" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputFloatAttribute( m_value[0], m_attributeStartId, m_connected[0] );
     DrawInputFloatAttribute( m_value[1], m_attributeStartId, m_connected[1], ":Min" );
     DrawInputFloatAttribute( m_value[2], m_attributeStartId, m_connected[2], ":Max" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputFloatAttribute( m_attributeStartId + 3 );
     
     ImNodes::EndNode();

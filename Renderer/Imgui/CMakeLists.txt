@@ -1,13 +1,13 @@
 set(PROJECT_NAME Imgui)
 
 # get source files
-file(GLOB sourceImGui
+file(GLOB sourcemGui
         *.cpp *.h
         **/*.cpp **/*.h
         )
 
 # project setting
-add_library(${PROJECT_NAME} ${sourceImGui})
+add_library(${PROJECT_NAME} ${sourcemGui})
 
 
 set(ROOT_NAMESPACE Imgui)

@@ -18,7 +18,7 @@ void CUnlitFragmentOutput::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Unlit Fragment Output" );
+    FawnForge::GUI::DrawText( "Unlit Fragment Output" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputColorAttribute( m_color, m_attributeStartId, m_connected, "Diffuse Color" );

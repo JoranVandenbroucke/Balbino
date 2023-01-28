@@ -6,7 +6,7 @@
 
 #include <fstream>
 
-bool BalEditor::ImportFile( const char* pPath, const char* pDestinationDirection, BalEditor::CMeshFileImporter* pMeshImporter, BalEditor::CTextureFileImporter* pTextureImporter )
+bool FawnForge::ImportFile( const char* pPath, const char* pDestinationDirection, FawnForge::CMeshFileImporter* pMeshImporter, FawnForge::CTextureFileImporter* pTextureImporter )
 {
     std::ifstream fileChecker{ pPath };
     if ( !fileChecker.is_open())
@@ -47,7 +47,7 @@ bool BalEditor::ImportFile( const char* pPath, const char* pDestinationDirection
     return false;
 }
 
-SFile BalEditor::GetData( const std::filesystem::path& path )
+SFile FawnForge::GetData( const std::filesystem::path& path )
 {
     SFile       file{};
     std::string extension = path.extension().string();
@@ -62,7 +62,7 @@ SFile BalEditor::GetData( const std::filesystem::path& path )
         file.type     = EFileTypes::Folder;
         file.isFolder = true;
     }
-    else if ( extension == ".BalEditor" )
+    else if ( extension == ".FawnForge" )
     {
         file.type = EFileTypes::Scene;
     }

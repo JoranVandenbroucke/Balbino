@@ -2,7 +2,7 @@
 
 #include <utility>
 
-Balbino::CMesh::CMesh( std::vector<BalVulkan::SVertex> vertices, std::vector<uint32_t> indices, std::vector<Balbino::SMeshMetadata> metadatas, const CUuid& uuid )
+Balbino::CMesh::CMesh( std::vector<FawnVision::SVertex> vertices, std::vector<uint32_t> indices, std::vector<Balbino::SMeshMetadata> metadatas, const CUuid& uuid )
         : m_vertices{ std::move( vertices ) }
           , m_indices{ std::move( indices ) }
           , m_metadatas{ std::move( metadatas ) }
@@ -19,7 +19,7 @@ Balbino::CMesh::~CMesh()
     m_metadatas.clear();
 }
 
-void Balbino::CMesh::Initialize( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue )
+void Balbino::CMesh::Initialize( const FawnVision::CDevice* pDevice, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CQueue* pQueue )
 {
     m_vertex.Initialize( m_vertices, pDevice, pCommandPool, pQueue );
     m_index.Initialize( m_indices, pDevice, pCommandPool, pQueue );
@@ -47,7 +47,7 @@ const std::vector<Balbino::SMeshMetadata>& Balbino::CMesh::GetMetaData() const
     return m_metadatas;
 }
 
-Balbino::CMesh* Balbino::CMesh::CreateNew( std::vector<BalVulkan::SVertex>& vertices, std::vector<uint32_t>& indices, const std::vector<Balbino::SMeshMetadata>& metaData, uint64_t uuid )
+Balbino::CMesh* Balbino::CMesh::CreateNew( std::vector<FawnVision::SVertex>& vertices, std::vector<uint32_t>& indices, const std::vector<Balbino::SMeshMetadata>& metaData, uint64_t uuid )
 {
     return new CMesh{ vertices, indices, metaData, uuid };
 }

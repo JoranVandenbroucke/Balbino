@@ -16,7 +16,7 @@ namespace Balbino
     struct SMeshMetadata;
 }
 
-namespace BalEditor
+namespace FawnForge
 {
     namespace Exporter
     {
@@ -50,7 +50,7 @@ namespace BalEditor
         *
         * Editor Data (not yet implemented)
         */
-        bool ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<BalVulkan::SVertex>& vertices, const std::vector<Balbino::SMeshMetadata>& metadata, CUuid id = CUuid{} );
+        bool ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<FawnVision::SVertex>& vertices, const std::vector<Balbino::SMeshMetadata>& metadata, CUuid id = CUuid{} );
         
         /*
         * Layout
@@ -63,7 +63,7 @@ namespace BalEditor
         *
         * Editor Data (not yet implemented)
         */
-        bool ExportMaterial( const std::string& assetName, const std::string& assetPath, CUuid shaderID, const std::vector<BalVulkan::SShaderResource>& resources, CUuid id = CUuid{} );
+        bool ExportMaterial( const std::string& assetName, const std::string& assetPath, CUuid shaderID, const std::vector<FawnVision::SShaderResource>& resources, CUuid id = CUuid{} );
         
         /*
         * Layout

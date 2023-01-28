@@ -1,5 +1,4 @@
 #pragma once
-#include "../../Balbino/scr/Scene/Camera.h"
 
 #include "../IEntity.h"
 #include "../ISystem.h"

@@ -8,14 +8,14 @@
 
 struct ISystem;
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CDevice;
     
     class CImageResource;
 }
 
-namespace BalEditor
+namespace FawnForge
 {
     class CShaderGraph;
     

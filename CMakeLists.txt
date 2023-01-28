@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.2 FATAL_ERROR)
 
-project(Balbino C CXX)
+project(Engine C CXX)
 
 set(CMAKE_CONFIGURATION_TYPES
         "Debug"
@@ -35,7 +35,7 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_subdirectory(Balbino)
+add_subdirectory(Engine)
 add_subdirectory(Common)
 add_subdirectory(Editor)
 add_subdirectory(Game)

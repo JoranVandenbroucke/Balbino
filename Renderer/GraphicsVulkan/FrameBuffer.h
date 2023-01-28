@@ -3,7 +3,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CImageView;
     
@@ -18,7 +18,7 @@ namespace BalVulkan
         ~CFrameBuffer() override;
         
         //the framebuffer assumes that rendering is forward
-        void Initialize( BalVulkan::CRenderPass* pRenderPass, uint32_t width, uint32_t height, const std::vector<CImageView*>& renderTargets, CImageView* pDepth );
+        void Initialize( FawnVision::CRenderPass* pRenderPass, uint32_t width, uint32_t height, const std::vector<CImageView*>& renderTargets, CImageView* pDepth );
         
         VkFramebuffer GetFrameBuffer( uint32_t idx ) const;
         static CFrameBuffer* CreateNew( const CDevice* pDevice );

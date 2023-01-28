@@ -2,7 +2,7 @@
 
 #include <atomic>
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CDevice;
     

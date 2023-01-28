@@ -10,7 +10,7 @@
 struct IScene;
 struct ISystem;
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CRenderPass;
     
@@ -32,7 +32,7 @@ namespace BalVulkan
 struct SDL_Window;
 struct ImNodesStyle;
 
-namespace BalEditor
+namespace FawnForge
 {
     class CSceneHierarchy;
     
@@ -63,8 +63,8 @@ namespace BalEditor
         CInterface& operator=( const CInterface& ) = delete;
         CInterface& operator=( CInterface&& ) = delete;
         
-        void Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const BalVulkan::CDevice* pDevice, const BalVulkan::CQueue* pQueue, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CRenderPass* pRenderPass, const BalVulkan::CSwapchain* pSwapchain, ISystem* pSystem );
-        void Draw( BalVulkan::CCommandPool* pCommandPool );
+        void Initialize( SDL_Window* pWindow, const int32_t w, const int32_t h, const FawnVision::CDevice* pDevice, const FawnVision::CQueue* pQueue, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CRenderPass* pRenderPass, const FawnVision::CSwapchain* pSwapchain, ISystem* pSystem );
+        void Draw( FawnVision::CCommandPool* pCommandPool );
         void Cleanup() const;
         void ProcessEvent( SDL_Event e );
         void SetContext( IScene* pScene, ISystem* pSystem );
@@ -86,7 +86,7 @@ namespace BalEditor
         VkDescriptorPool m_descriptorPool;
         SDL_Window* m_pWindow;
         
-        const BalVulkan::CDevice* m_pDevice;
+        const FawnVision::CDevice* m_pDevice;
         
         std::vector<std::string> m_pendingResources;
         

@@ -1,6 +1,6 @@
 #include "Vertex.h"
 
-VkVertexInputBindingDescription BalVulkan::SVertex::GetBindingDescription()
+VkVertexInputBindingDescription FawnVision::SVertex::GetBindingDescription()
 {
     constexpr VkVertexInputBindingDescription bindingDescription{
             .binding = 0, .stride = sizeof( SVertex ), .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
@@ -8,7 +8,7 @@ VkVertexInputBindingDescription BalVulkan::SVertex::GetBindingDescription()
     return bindingDescription;
 }
 
-VkVertexInputBindingDescription BalVulkan::InstanceBatch::GetBindingDescription()
+VkVertexInputBindingDescription FawnVision::InstanceBatch::GetBindingDescription()
 {
     constexpr VkVertexInputBindingDescription bindingDescription{
             .binding = 1, .stride = sizeof( InstanceBatch ), .inputRate = VK_VERTEX_INPUT_RATE_INSTANCE,
@@ -16,7 +16,7 @@ VkVertexInputBindingDescription BalVulkan::InstanceBatch::GetBindingDescription(
     return bindingDescription;
 }
 
-std::vector<VkVertexInputAttributeDescription> BalVulkan::SVertex::GetAttributeDescriptions( uint32_t binding, const std::vector<EVertexComponent::Enum>& components )
+std::vector<VkVertexInputAttributeDescription> FawnVision::SVertex::GetAttributeDescriptions( uint32_t binding, const std::vector<EVertexComponent::Enum>& components )
 {
     std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
     
@@ -51,7 +51,7 @@ std::vector<VkVertexInputAttributeDescription> BalVulkan::SVertex::GetAttributeD
     return attributeDescriptions;
 }
 
-std::vector<VkVertexInputAttributeDescription> BalVulkan::InstanceBatch::GetAttributeDescriptions()
+std::vector<VkVertexInputAttributeDescription> FawnVision::InstanceBatch::GetAttributeDescriptions()
 {
     std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
     uint32_t                                       location{ 5 };
@@ -73,7 +73,7 @@ std::vector<VkVertexInputAttributeDescription> BalVulkan::InstanceBatch::GetAttr
     return attributeDescriptions;
 }
 
-BalVulkan::SVertex::SVertex( const glm::vec3& position, const glm::vec4& color, const glm::vec2& uv, const glm::vec3& normal, const glm::vec4& tangent )
+FawnVision::SVertex::SVertex( const glm::vec3& position, const glm::vec4& color, const glm::vec2& uv, const glm::vec3& normal, const glm::vec4& tangent )
         : position{ position }
         , color{ color }
         , uv{ uv }

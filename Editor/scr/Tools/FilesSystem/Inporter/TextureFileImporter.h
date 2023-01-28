@@ -9,7 +9,7 @@
 #include <Common.h>
 #include "glm/glm.hpp"
 
-namespace BalEditor
+namespace FawnForge
 {
     class CTextureFileImporter
     {
@@ -70,11 +70,11 @@ namespace BalEditor
         
         int m_anisotropyLevel;
         
-        BalVulkan::EFilter::Enum             m_mipmapMode;
-        BalVulkan::EFilter::Enum             m_filterMode;
-        BalVulkan::ESamplerAddressMode::Enum m_wrapModeU;
-        BalVulkan::ESamplerAddressMode::Enum m_wrapModeV;
-        BalVulkan::ESamplerAddressMode::Enum m_wrapModeW;
+        FawnVision::EFilter::Enum             m_mipmapMode;
+        FawnVision::EFilter::Enum             m_filterMode;
+        FawnVision::ESamplerAddressMode::Enum m_wrapModeU;
+        FawnVision::ESamplerAddressMode::Enum m_wrapModeV;
+        FawnVision::ESamplerAddressMode::Enum m_wrapModeW;
         ESampleLevel                         m_sampleLevel;
         ETextureType                         m_type;
         ETextureShape                        m_shape;
@@ -84,8 +84,8 @@ namespace BalEditor
         std::filesystem::path m_path;
         std::string           m_destinationDirection;
         
-        static const char* ToString( BalVulkan::ESamplerAddressMode::Enum mode );
-        static const char* ToString( BalVulkan::EFilter::Enum mode );
+        static const char* ToString( FawnVision::ESamplerAddressMode::Enum mode );
+        static const char* ToString( FawnVision::EFilter::Enum mode );
         static const char* ToString( ESampleLevel mode );
         static const char* ToString( ETextureType mode );
         static const char* ToString( ETextureShape mode );
@@ -97,6 +97,6 @@ namespace BalEditor
         static glm::vec3 ReconstructPosition( const glm::vec2& uv, float z, const glm::mat4x4& InvVP );
         
     };
-} // BalEditor
+} // FawnForge
 
 #endif //GAME_TEXTUREFILEIMPORTER_H

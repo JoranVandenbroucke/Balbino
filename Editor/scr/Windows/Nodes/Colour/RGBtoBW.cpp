@@ -21,12 +21,12 @@ void CRGBtoBW::Draw()
 {
     ImNodes::BeginNode( m_id );
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "RGB To BW" );
+    FawnForge::GUI::DrawText( "RGB To BW" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputColorAttribute( m_color, m_attributeStartId, m_connections );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputFloatAttribute( m_attributeStartId + 1 );
     
     ImNodes::EndNode();

@@ -25,7 +25,7 @@ void CDisplacement::Draw()
 {
     ImNodes::BeginNode( m_id );
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Displacement Map" );
+    FawnForge::GUI::DrawText( "Displacement Map" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputFloatAttribute( m_strength, m_attributeStartId, m_connections[0], "Height", 0, 1 );
@@ -33,7 +33,7 @@ void CDisplacement::Draw()
     DrawInputFloatAttribute( m_strength, m_attributeStartId + 2, m_connections[2], "Strength" );
     DrawInputVectorAttribute( m_normal, m_attributeStartId + 3, false, "Normal" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputVectorAttribute( m_attributeStartId + 4, "Normal" );
     ImNodes::EndNode();
 }

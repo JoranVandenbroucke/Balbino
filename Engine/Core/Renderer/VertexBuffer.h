@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 
-namespace BalVulkan
+namespace FawnVision
 {
     struct SVertex;
     
@@ -26,10 +26,10 @@ namespace Balbino
         CVertexBuffer& operator=( const CVertexBuffer& ) = delete;
         CVertexBuffer& operator=( CVertexBuffer&& ) = delete;
         
-        void Initialize( const std::vector<BalVulkan::SVertex>& vertices, const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue );
+        void Initialize( const std::vector<FawnVision::SVertex>& vertices, const FawnVision::CDevice* pDevice, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CQueue* pQueue );
         void Cleanup();
         void Bind() const;
     private:
-        BalVulkan::CBuffer* m_vertexBuffer;
+        FawnVision::CBuffer* m_vertexBuffer;
     };
 }

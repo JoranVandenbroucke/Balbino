@@ -20,7 +20,7 @@
 #include "../EditorGUI/EditorGui.h"
 
 
-void BalEditor::CGameView::Draw()
+void FawnForge::CGameView::Draw()
 {
     int  flags = 1 << 5 | 43 | 1 << 7 | 1 << 0;
     bool open{ true };
@@ -102,24 +102,24 @@ void BalEditor::CGameView::Draw()
     GUI::End();
 }
 
-void BalEditor::CGameView::SetContext( ISystem* pSystem, IScene* pContext, CSceneHierarchy* pSceneHierarchy )
+void FawnForge::CGameView::SetContext( ISystem* pSystem, IScene* pContext, CSceneHierarchy* pSceneHierarchy )
 {
     m_pSceneHierarchy = pSceneHierarchy;
     m_pContext        = pContext;
     m_pSystem         = pSystem;
 }
 
-void BalEditor::CGameView::SetSnap( bool snap )
+void FawnForge::CGameView::SetSnap( bool snap )
 {
     m_snap = snap;
 }
 
-void BalEditor::CGameView::SetGuizmo( int key )
+void FawnForge::CGameView::SetGuizmo( int key )
 {
     m_gizmoType = key;
 }
 
-int BalEditor::CGameView::GetGuizmoType() const
+int FawnForge::CGameView::GetGuizmoType() const
 {
     return m_gizmoType;
 }

@@ -24,17 +24,17 @@ void CBump::Draw()
 {
     ImNodes::BeginNode( m_id );
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Bump Node" );
+    FawnForge::GUI::DrawText( "Bump Node" );
     ImNodes::EndNodeTitleBar();
     
-    BalEditor::GUI::DrawToggle( "invert", m_invert );
+    FawnForge::GUI::DrawToggle( "invert", m_invert );
     
     DrawInputFloatAttribute( m_strength, m_attributeStartId, m_connections[0], "Strength", 0, 1 );
     DrawInputFloatAttribute( m_distance, m_attributeStartId + 1, m_connections[1], "Distance", 0, 1 );
     DrawInputFloatAttribute( m_height, m_attributeStartId + 2, false, "Height", 0, 1 );
     DrawInputVectorAttribute( m_normal, m_attributeStartId + 3, false, "Normal" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputVectorAttribute( m_attributeStartId + 4, "Normal" );
     ImNodes::EndNode();
 }

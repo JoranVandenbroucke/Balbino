@@ -13,7 +13,7 @@
 #include "UUID.h"
 
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CQueue;
     
@@ -31,7 +31,7 @@ namespace Balbino
     class CTexture
     {
     public:
-        explicit CTexture( const BalVulkan::CDevice* pDevice, CUuid uuid )
+        explicit CTexture( const FawnVision::CDevice* pDevice, CUuid uuid )
                 : m_uuid{ uuid }
                   , m_pView{ nullptr }
                   , m_pResource{ nullptr }
@@ -61,28 +61,28 @@ namespace Balbino
             return (uint64_t) m_uuid;
         }
         
-        void Initialize( BalVulkan::EImageViewType::Enum type, BalVulkan::EFormat::Enum format, uint8_t mips, uint8_t layers, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, BalVulkan::ESamplerAddressMode::Enum sampleU, BalVulkan::ESamplerAddressMode::Enum sampleV, BalVulkan::ESamplerAddressMode::Enum sampleW, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, void* pData, BalVulkan::CCommandPool* pPool, BalVulkan::CQueue* pQueue )
+        void Initialize( FawnVision::EImageViewType::Enum type, FawnVision::EFormat::Enum format, uint8_t mips, uint8_t layers, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, FawnVision::ESamplerAddressMode::Enum sampleU, FawnVision::ESamplerAddressMode::Enum sampleV, FawnVision::ESamplerAddressMode::Enum sampleW, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, void* pData, FawnVision::CCommandPool* pPool, FawnVision::CQueue* pQueue )
         {
             const uint64_t imageSize{ width * height * depth * pitch };
             bool           needsMipGenerating{ sampleLevel == 1 && mips == (uint8_t) -1 };
             mips = needsMipGenerating ? static_cast<uint8_t>( std::floor(
                     std::log2( std::max( width, height )))) + 1 : ( sampleLevel ) ? 1u : mips;
             
-            BalVulkan::CBuffer stagingBuffer{ m_pDevice, pPool, pQueue };
+            FawnVision::CBuffer stagingBuffer{ m_pDevice, pPool, pQueue };
             stagingBuffer.Initialize(
                     imageSize,
-                    BalVulkan::EBufferUsageFlagBits::TransferSrcBit,
-                    BalVulkan::EMemoryPropertyFlagBits::Enum(
-                            BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+                    FawnVision::EBufferUsageFlagBits::TransferSrcBit,
+                    FawnVision::EMemoryPropertyFlagBits::Enum(
+                            FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
                     ));
             stagingBuffer.UpdateData( pData, imageSize );
             
-            m_pResource = BalVulkan::CImageResource::CreateNew( m_pDevice );
+            m_pResource = FawnVision::CImageResource::CreateNew( m_pDevice );
             m_pResource->Initialize(
-                    type, format, width, height, depth, mips, layers, sampleLevel, BalVulkan::EImageUsageFlagBits::Enum(
-                            BalVulkan::EImageUsageFlagBits::TransferDstBit | BalVulkan::EImageUsageFlagBits::SampledBit
+                    type, format, width, height, depth, mips, layers, sampleLevel, FawnVision::EImageUsageFlagBits::Enum(
+                            FawnVision::EImageUsageFlagBits::TransferDstBit | FawnVision::EImageUsageFlagBits::SampledBit
                     ));
-            m_pResource->TransitionImageLayout( mips, &stagingBuffer, BalVulkan::EImageLayout::TransferDstOptimal );
+            m_pResource->TransitionImageLayout( mips, &stagingBuffer, FawnVision::EImageLayout::TransferDstOptimal );
             stagingBuffer.CopyBufferToImage( m_pResource );
             if ( needsMipGenerating )
             {
@@ -91,18 +91,18 @@ namespace Balbino
             else
             {
                 m_pResource->TransitionImageLayout(
-                        mips, &stagingBuffer, BalVulkan::EImageLayout::ShaderReadOnlyOptimal
+                        mips, &stagingBuffer, FawnVision::EImageLayout::ShaderReadOnlyOptimal
                 );
             }
             
-            m_pView    = BalVulkan::CImageView::CreateNew(
+            m_pView    = FawnVision::CImageView::CreateNew(
                     *m_pResource,
                     type,
                     0u,
                     m_pResource->GetMipCount(),
                     0u,
                     m_pResource->GetLayerCount());
-            m_pSampler = BalVulkan::CSampler::CreateNew( m_pDevice );
+            m_pSampler = FawnVision::CSampler::CreateNew( m_pDevice );
             m_pSampler->Initialize(
                     filterMode,
                     mipmapMode,
@@ -135,12 +135,12 @@ namespace Balbino
             return m_pSampler->GetSampler();
         }
         
-        [[nodiscard]] BalVulkan::CImageView* GetImageViewObject() const
+        [[nodiscard]] FawnVision::CImageView* GetImageViewObject() const
         {
             return m_pView;
         }
         
-        [[nodiscard]] BalVulkan::CSampler* GetSamplerObject() const
+        [[nodiscard]] FawnVision::CSampler* GetSamplerObject() const
         {
             return m_pSampler;
         }
@@ -153,9 +153,9 @@ namespace Balbino
     private:
         CUuid m_uuid;
         
-        BalVulkan::CImageView    * m_pView;
-        BalVulkan::CImageResource* m_pResource;
-        BalVulkan::CSampler      * m_pSampler;
-        const BalVulkan::CDevice * m_pDevice;
+        FawnVision::CImageView    * m_pView;
+        FawnVision::CImageResource* m_pResource;
+        FawnVision::CSampler      * m_pSampler;
+        const FawnVision::CDevice * m_pDevice;
     };
 }

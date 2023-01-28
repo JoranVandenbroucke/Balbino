@@ -4,7 +4,7 @@
 #include "MeshMetadata.h"
 #include "UUID.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CQueue;
     
@@ -27,7 +27,7 @@ namespace Balbino
         IMesh& operator=( const IMesh& ) = delete;
         IMesh& operator=( IMesh&& ) = delete;
         
-        virtual void Initialize( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue ) = 0;
+        virtual void Initialize( const FawnVision::CDevice* pDevice, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CQueue* pQueue ) = 0;
         virtual void Cleanup() = 0;
         virtual void Bind() const = 0;
         

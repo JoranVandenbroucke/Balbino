@@ -12,7 +12,7 @@
 #include "../../../EditorGUI/EditorGui.h"
 #include "../Exporter.h"
 
-BalEditor::CMeshFileImporter::CMeshFileImporter()
+FawnForge::CMeshFileImporter::CMeshFileImporter()
         : m_importPercentage{}
           , m_isVisible{}
           , m_importMeshes{ true }
@@ -27,7 +27,7 @@ BalEditor::CMeshFileImporter::CMeshFileImporter()
 {
 }
 
-bool BalEditor::CMeshFileImporter::DrawImportSettings()
+bool FawnForge::CMeshFileImporter::DrawImportSettings()
 {
     if ( GUI::StartPopup( "Import Mesh" ))
     {
@@ -65,24 +65,24 @@ bool BalEditor::CMeshFileImporter::DrawImportSettings()
     return false;
 }
 
-float BalEditor::CMeshFileImporter::GetImportPercentage()
+float FawnForge::CMeshFileImporter::GetImportPercentage()
 {
     return m_importPercentage;
 }
 
-void BalEditor::CMeshFileImporter::SetVisible( const std::filesystem::path& path, const std::string& destinationDirection )
+void FawnForge::CMeshFileImporter::SetVisible( const std::filesystem::path& path, const std::string& destinationDirection )
 {
     m_isVisible            = true;
     m_path                 = path;
     m_destinationDirection = destinationDirection;
 }
 
-bool BalEditor::CMeshFileImporter::IsVisible() const
+bool FawnForge::CMeshFileImporter::IsVisible() const
 {
     return m_isVisible;
 }
 
-bool BalEditor::CMeshFileImporter::LoadMesh()
+bool FawnForge::CMeshFileImporter::LoadMesh()
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(
@@ -115,7 +115,7 @@ bool BalEditor::CMeshFileImporter::LoadMesh()
             );
             if ( m_mergeMeshes )
             {
-                std::vector<BalVulkan::SVertex>     vertices;
+                std::vector<FawnVision::SVertex>     vertices;
                 std::vector<uint32_t>               indices;
                 std::vector<Balbino::SMeshMetadata> meshData;
                 for ( const auto& mesh : m_meshes )
@@ -124,7 +124,7 @@ bool BalEditor::CMeshFileImporter::LoadMesh()
                     indices.insert( indices.end(), mesh.indices.begin(), mesh.indices.end());
                     meshData.push_back( mesh.meshData );
                 }
-                BalEditor::Exporter::ExportMesh(
+                FawnForge::Exporter::ExportMesh(
                         m_path.filename().string(), m_destinationDirection, indices, vertices, meshData
                 );
             }
@@ -132,7 +132,7 @@ bool BalEditor::CMeshFileImporter::LoadMesh()
     }
     return true;
 }
-void BalEditor::CMeshFileImporter::ProcessMeshRecursively( const aiNode* pMesh, const aiScene* pScene, int index )
+void FawnForge::CMeshFileImporter::ProcessMeshRecursively( const aiNode* pMesh, const aiScene* pScene, int index )
 {
     const unsigned int meshCount{ pMesh->mNumMeshes };
     for ( unsigned int i = 0; i < meshCount; i++ )
@@ -146,12 +146,12 @@ void BalEditor::CMeshFileImporter::ProcessMeshRecursively( const aiNode* pMesh, 
         ProcessMeshRecursively( pMesh->mChildren[i], pScene, index + meshCount );
     }
 }
-void BalEditor::CMeshFileImporter::ProcessMesh( const aiMesh* pMesh, SMesh& mesh, const aiMatrix4x4& transform ) const
+void FawnForge::CMeshFileImporter::ProcessMesh( const aiMesh* pMesh, SMesh& mesh, const aiMatrix4x4& transform ) const
 {
     mesh.meshData.indexCount = pMesh->mNumFaces * 3;
     mesh.meshData.firstIndex = static_cast<uint32_t>( mesh.indices.size());
     const uint32_t prevSize{ static_cast<uint32_t>( mesh.vertices.size()) };
-    mesh.vertices.resize( prevSize + pMesh->mNumVertices, BalVulkan::SVertex{} );
+    mesh.vertices.resize( prevSize + pMesh->mNumVertices, FawnVision::SVertex{} );
     mesh.indices.resize( mesh.meshData.firstIndex + mesh.meshData.indexCount, 0 );
     
     const bool hasColor{ pMesh->HasVertexColors( 0 ) && pMesh->mColors[0] != nullptr };

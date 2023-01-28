@@ -5,7 +5,7 @@
 #include "ImageResource.h"
 #include "ShaderPipeline.h"
 
-BalVulkan::CDescriptorSet::CDescriptorSet( const CDevice* pDevice )
+FawnVision::CDescriptorSet::CDescriptorSet( const CDevice* pDevice )
         : CDeviceObject{ pDevice }
           , m_descriptorSet{}
           , m_dynamicCount{}
@@ -13,7 +13,7 @@ BalVulkan::CDescriptorSet::CDescriptorSet( const CDevice* pDevice )
 {
 }
 
-void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeline, const std::vector<SDescriptorSet>& descriptorSetsInfo )
+void FawnVision::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeline, const std::vector<SDescriptorSet>& descriptorSetsInfo )
 {
     std::vector<VkDescriptorPoolSize> poolSizes{};
     poolSizes.reserve( descriptorSetsInfo.size());
@@ -180,22 +180,22 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
     );
 }
 
-const VkDescriptorSet* BalVulkan::CDescriptorSet::GetDescriptorSets() const
+const VkDescriptorSet* FawnVision::CDescriptorSet::GetDescriptorSets() const
 {
     return &m_descriptorSet;
 }
 
-BalVulkan::CDescriptorSet* BalVulkan::CDescriptorSet::CreateNew( const CDevice* pDevice )
+FawnVision::CDescriptorSet* FawnVision::CDescriptorSet::CreateNew( const CDevice* pDevice )
 {
     return new CDescriptorSet{ pDevice };
 }
 
-uint32_t BalVulkan::CDescriptorSet::GetDynamicCount() const
+uint32_t FawnVision::CDescriptorSet::GetDynamicCount() const
 {
     return m_dynamicCount;
 }
 
-uint32_t BalVulkan::CDescriptorSet::GetDescriptorSetCount() const
+uint32_t FawnVision::CDescriptorSet::GetDescriptorSetCount() const
 {
     return 1u;
 }

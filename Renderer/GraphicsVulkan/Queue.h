@@ -3,7 +3,7 @@
 #include "CommandPool.h"
 #include "Semaphore.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CSwapchain;
     

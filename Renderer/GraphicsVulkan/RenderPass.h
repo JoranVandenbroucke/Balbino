@@ -9,7 +9,7 @@
 
 #include <vulkan/vulkan.hpp>
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CRenderPass final : public CDeviceObject
     {
@@ -21,7 +21,7 @@ namespace BalVulkan
         CRenderPass& operator=( const CRenderPass& ) = delete;
         CRenderPass operator=( CRenderPass&& ) = delete;
         
-        void Initialize( std::vector<BalVulkan::EFormat::Enum> formats, uint32_t inputCount, bool hasColor );
+        void Initialize( std::vector<FawnVision::EFormat::Enum> formats, uint32_t inputCount, bool hasColor );
         VkRenderPass GetRenderPass() const;
         static CRenderPass* CreateNew( const CDevice* pDevice );
         
@@ -36,6 +36,6 @@ namespace BalVulkan
         uint32_t     m_inputAttachmentCount;
         VkRenderPass m_renderPass;
     };
-} // BalVulkan
+} // FawnVision
 
 #endif //GAME_RENDERPASS_H

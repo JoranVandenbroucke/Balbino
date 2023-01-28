@@ -9,27 +9,27 @@
 #include "Funtions.h"
 
 
-BalVulkan::CShader::~CShader()
+FawnVision::CShader::~CShader()
 {
     vkDestroyShaderModule( GetDevice()->GetVkDevice(), m_shaderHandle, nullptr );
     m_resources.clear();
 }
 
 
-BalVulkan::CShader::CShader( const CDevice* const device )
+FawnVision::CShader::CShader( const CDevice* const device )
         : CDeviceObject{ device }
         , m_shaderHandle{ VK_NULL_HANDLE }
 {
 }
 
-BalVulkan::CShader::CShader( const CShader& other )
+FawnVision::CShader::CShader( const CShader& other )
         : CDeviceObject{ other.GetDevice() }
         , m_shaderHandle{ other.m_shaderHandle }
         , m_resources{ other.m_resources }
 {
 }
 
-void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage::Enum stage )
+void FawnVision::CShader::Initialize( const void* pShaderCode, size_t shaderCodeSize, EShaderStage::Enum stage )
 {
     VkShaderStageFlagBits stageBits{};
     switch ( stage )
@@ -380,22 +380,22 @@ void BalVulkan::CShader::Initialize( const void* pShaderCode, size_t shaderCodeS
     m_shaderHandle = CreateShaderModule( sprv );
 }
 
-const std::vector<BalVulkan::SShaderResource>& BalVulkan::CShader::GetShaderResources() const
+const std::vector<FawnVision::SShaderResource>& FawnVision::CShader::GetShaderResources() const
 {
     return m_resources;
 }
 
-const VkShaderModule& BalVulkan::CShader::GetShaderModule() const
+const VkShaderModule& FawnVision::CShader::GetShaderModule() const
 {
     return m_shaderHandle;
 }
 
-BalVulkan::CShader* BalVulkan::CShader::CreateNew( const CDevice* pDevice )
+FawnVision::CShader* FawnVision::CShader::CreateNew( const CDevice* pDevice )
 {
     return new CShader{ pDevice };
 }
 
-VkShaderModule BalVulkan::CShader::CreateShaderModule( const std::vector<uint32_t>& data ) const
+VkShaderModule FawnVision::CShader::CreateShaderModule( const std::vector<uint32_t>& data ) const
 {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -411,7 +411,7 @@ VkShaderModule BalVulkan::CShader::CreateShaderModule( const std::vector<uint32_
     return shaderModule;
 }
 
-shaderc_include_result* BalVulkan::CFileIncluder::GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth )
+shaderc_include_result* FawnVision::CFileIncluder::GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth )
 {
     (void) includeDepth;
     std::filesystem::path src{ requestingSource };
@@ -443,18 +443,18 @@ shaderc_include_result* BalVulkan::CFileIncluder::GetInclude( const char* reques
     return new shaderc_include_result{ pFilePath, fullPath.size(), pData, newFileInfoContent.size(), nullptr };
 }
 
-void BalVulkan::CFileIncluder::ReleaseInclude( shaderc_include_result* include_result )
+void FawnVision::CFileIncluder::ReleaseInclude( shaderc_include_result* include_result )
 {
     delete[] include_result->source_name;
     delete[] include_result->content;
     delete include_result;
 }
 
-const std::unordered_set<std::string>& BalVulkan::CFileIncluder::FilePathTrace() const
+const std::unordered_set<std::string>& FawnVision::CFileIncluder::FilePathTrace() const
 {
     return m_includedFiles;
 }
-const std::vector<BalVulkan::EVertexComponent::Enum>& BalVulkan::CShader::GetVertexComponents() const
+const std::vector<FawnVision::EVertexComponent::Enum>& FawnVision::CShader::GetVertexComponents() const
 {
     return m_vertexComponents;
 }

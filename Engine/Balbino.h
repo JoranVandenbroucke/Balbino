@@ -1,6 +1,6 @@
 #pragma once
-#include "scr/Application.h"
+#include "Core/Application.h"
 
 // --Entry Point--------------------------------------
-#include "scr/EntryPoint.h"
+#include "Core/EntryPoint.h"
 // --Entry Point--------------------------------------

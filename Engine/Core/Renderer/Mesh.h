@@ -13,14 +13,14 @@ namespace Balbino
     class CMesh final : public IMesh
     {
     public:
-        CMesh( std::vector<BalVulkan::SVertex> vertices, std::vector<uint32_t> indices, std::vector<Balbino::SMeshMetadata> metadatas, const CUuid& uuid );
+        CMesh( std::vector<FawnVision::SVertex> vertices, std::vector<uint32_t> indices, std::vector<Balbino::SMeshMetadata> metadatas, const CUuid& uuid );
         ~CMesh() override;
         CMesh( const CMesh& ) = delete;
         CMesh( CMesh&& ) = delete;
         CMesh& operator=( const CMesh& ) = delete;
         CMesh& operator=( CMesh&& ) = delete;
         
-        void Initialize( const BalVulkan::CDevice* pDevice, const BalVulkan::CCommandPool* pCommandPool, const BalVulkan::CQueue* pQueue ) override;
+        void Initialize( const FawnVision::CDevice* pDevice, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CQueue* pQueue ) override;
         
         void Cleanup() override;
         
@@ -29,10 +29,10 @@ namespace Balbino
         [[nodiscard]] CUuid GetUuid() const override;
         [[nodiscard]] const std::vector<Balbino::SMeshMetadata>& GetMetaData() const override;
         [[nodiscard]] uint32_t GetMaterialCount() const override;
-        static CMesh* CreateNew( std::vector<BalVulkan::SVertex>& vertices, std::vector<uint32_t>& indices, const std::vector<Balbino::SMeshMetadata>& metaData, uint64_t uuid );
+        static CMesh* CreateNew( std::vector<FawnVision::SVertex>& vertices, std::vector<uint32_t>& indices, const std::vector<Balbino::SMeshMetadata>& metaData, uint64_t uuid );
     
     private:
-        std::vector<BalVulkan::SVertex>     m_vertices;
+        std::vector<FawnVision::SVertex>     m_vertices;
         std::vector<uint32_t>               m_indices;
         std::vector<Balbino::SMeshMetadata> m_metadatas;
         

@@ -41,7 +41,7 @@ Balbino::CRenderer::CRenderer()
 
 #ifdef BALBINO_EDITOR
 
-void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface, ISystem* pSystem )
+void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, FawnForge::CInterface* pInterface, ISystem* pSystem )
 {
     Setup( pWindow, extensions, extensionsCount );
     g_pDevice      = m_pDevice;
@@ -86,30 +86,30 @@ void Balbino::CRenderer::RecreateSwapChain()
     m_swapchainViews.clear();
     m_swapchainResources.clear();
     
-    m_pQueue       = BalVulkan::CQueue::CreateNew( m_pDevice );
-    m_pCommandPool = BalVulkan::CCommandPool::CreateNew( m_pDevice );
-    m_pRenderPass  = BalVulkan::CRenderPass::CreateNew( m_pDevice );
-    m_pFrameBuffer = BalVulkan::CFrameBuffer::CreateNew( m_pDevice );
+    m_pQueue       = FawnVision::CQueue::CreateNew( m_pDevice );
+    m_pCommandPool = FawnVision::CCommandPool::CreateNew( m_pDevice );
+    m_pRenderPass  = FawnVision::CRenderPass::CreateNew( m_pDevice );
+    m_pFrameBuffer = FawnVision::CFrameBuffer::CreateNew( m_pDevice );
     
     m_pQueue->Initialize();
     m_pCommandPool->Initialize( m_pQueue->GetQueFamily(), m_pSwapchain );
     
     uint32_t                              imageResourceSize;
-    std::vector<BalVulkan::EFormat::Enum> formats;
+    std::vector<FawnVision::EFormat::Enum> formats;
     m_pSwapchain->GetImages( m_swapchainResources, imageResourceSize );
     m_swapchainViews.reserve( imageResourceSize );
     for ( uint32_t i = 0; i < imageResourceSize; ++i )
     {
         m_swapchainViews.push_back(
-                BalVulkan::CImageView::CreateNew( *m_swapchainResources[i], BalVulkan::EImageViewType::View2D ));
+                FawnVision::CImageView::CreateNew( *m_swapchainResources[i], FawnVision::EImageViewType::View2D ));
     }
-    formats.push_back((BalVulkan::EFormat::Enum) m_swapchainResources[0]->GetFormat());
-    formats.push_back((BalVulkan::EFormat::Enum) m_pDevice->GetPhysicalDeviceInfo()->GetDepthFormat());
+    formats.push_back((FawnVision::EFormat::Enum) m_swapchainResources[0]->GetFormat());
+    formats.push_back((FawnVision::EFormat::Enum) m_pDevice->GetPhysicalDeviceInfo()->GetDepthFormat());
     m_pRenderPass->Initialize( formats, 0u, (uint32_t) m_swapchainViews.size());
     
-    m_pDepthImage = BalVulkan::CImageResource::CreateNew( m_pDevice );
+    m_pDepthImage = FawnVision::CImageResource::CreateNew( m_pDevice );
     m_pDepthImage->Initialize(
-            BalVulkan::EImageViewType::View2D,
+            FawnVision::EImageViewType::View2D,
             formats.back(),
             m_pSwapchain->GetExtend().width,
             m_pSwapchain->GetExtend().height,
@@ -117,11 +117,11 @@ void Balbino::CRenderer::RecreateSwapChain()
             1,
             1,
             0,
-            BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
-            BalVulkan::EImageLayout::Undefined
+            FawnVision::EImageUsageFlagBits::DepthStencilAttachmentBit,
+            FawnVision::EImageLayout::Undefined
     );
-    m_pDepthImageView = BalVulkan::CImageView::CreateNew(
-            *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0, 1
+    m_pDepthImageView = FawnVision::CImageView::CreateNew(
+            *m_pDepthImage, FawnVision::EImageViewType::View2D, 0, 1, 0, 1
     );
     
     m_pFrameBuffer->Initialize( m_pRenderPass, m_width, m_height, m_swapchainViews, m_pDepthImageView );
@@ -145,7 +145,7 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
     m_pWindow = pWindow;
     VkSurfaceKHR surface;
     
-    m_pInstance = BalVulkan::CInstance::CreateNew();
+    m_pInstance = FawnVision::CInstance::CreateNew();
     m_pInstance->Initialize( extensions, extensionsCount );
     
     SDL_Vulkan_CreateSurface( pWindow, m_pInstance->GetHandle(), &surface );
@@ -154,32 +154,32 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
     m_pDevice = m_pInstance->CreateDevice( m_pInstance->FindBestPhysicalDeviceIndex( surface ));
     
     m_aspectRation = static_cast<float>( m_height ) / static_cast<float>( m_width );
-    m_pSwapchain   = BalVulkan::CSwapchain::CreateNew( m_pDevice, surface );
+    m_pSwapchain   = FawnVision::CSwapchain::CreateNew( m_pDevice, surface );
     
-    m_pQueue       = BalVulkan::CQueue::CreateNew( m_pDevice );
-    m_pCommandPool = BalVulkan::CCommandPool::CreateNew( m_pDevice );
-    m_pRenderPass  = BalVulkan::CRenderPass::CreateNew( m_pDevice );
-    m_pFrameBuffer = BalVulkan::CFrameBuffer::CreateNew( m_pDevice );
+    m_pQueue       = FawnVision::CQueue::CreateNew( m_pDevice );
+    m_pCommandPool = FawnVision::CCommandPool::CreateNew( m_pDevice );
+    m_pRenderPass  = FawnVision::CRenderPass::CreateNew( m_pDevice );
+    m_pFrameBuffer = FawnVision::CFrameBuffer::CreateNew( m_pDevice );
     m_pQueue->Initialize();
     m_pSwapchain->Initialize( m_width, m_height );
     m_pCommandPool->Initialize( m_pQueue->GetQueFamily(), m_pSwapchain );
     
     uint32_t                              imageResourceSize;
-    std::vector<BalVulkan::EFormat::Enum> formats;
+    std::vector<FawnVision::EFormat::Enum> formats;
     m_pSwapchain->GetImages( m_swapchainResources, imageResourceSize );
     m_swapchainViews.reserve( imageResourceSize );
     for ( uint32_t i = 0; i < imageResourceSize; ++i )
     {
         m_swapchainViews.push_back(
-                BalVulkan::CImageView::CreateNew( *m_swapchainResources[i], BalVulkan::EImageViewType::View2D ));
+                FawnVision::CImageView::CreateNew( *m_swapchainResources[i], FawnVision::EImageViewType::View2D ));
     }
-    formats.push_back((BalVulkan::EFormat::Enum) m_swapchainResources[0]->GetFormat());
-    formats.push_back((BalVulkan::EFormat::Enum) m_pDevice->GetPhysicalDeviceInfo()->GetDepthFormat());
+    formats.push_back((FawnVision::EFormat::Enum) m_swapchainResources[0]->GetFormat());
+    formats.push_back((FawnVision::EFormat::Enum) m_pDevice->GetPhysicalDeviceInfo()->GetDepthFormat());
     m_pRenderPass->Initialize( formats, 0, (uint32_t) m_swapchainViews.size());
     
-    m_pDepthImage = BalVulkan::CImageResource::CreateNew( m_pDevice );
+    m_pDepthImage = FawnVision::CImageResource::CreateNew( m_pDevice );
     m_pDepthImage->Initialize(
-            BalVulkan::EImageViewType::View2D,
+            FawnVision::EImageViewType::View2D,
             formats.back(),
             m_pSwapchain->GetExtend().width,
             m_pSwapchain->GetExtend().height,
@@ -187,24 +187,24 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
             1,
             1,
             0,
-            BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
-            BalVulkan::EImageLayout::Undefined
+            FawnVision::EImageUsageFlagBits::DepthStencilAttachmentBit,
+            FawnVision::EImageLayout::Undefined
     );
-    m_pDepthImageView = BalVulkan::CImageView::CreateNew(
-            *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0, 1
+    m_pDepthImageView = FawnVision::CImageView::CreateNew(
+            *m_pDepthImage, FawnVision::EImageViewType::View2D, 0, 1, 0, 1
     );
     
     m_pFrameBuffer->Initialize( m_pRenderPass, m_width, m_height, m_swapchainViews, m_pDepthImageView );
     
-    m_pSignalingSemaphore = BalVulkan::CSemaphore::CreateNew( m_pDevice );
-    m_pWaitingSemaphore   = BalVulkan::CSemaphore::CreateNew( m_pDevice );
+    m_pSignalingSemaphore = FawnVision::CSemaphore::CreateNew( m_pDevice );
+    m_pWaitingSemaphore   = FawnVision::CSemaphore::CreateNew( m_pDevice );
     m_pSignalingSemaphore->Initialize();
     m_pWaitingSemaphore->Initialize();
     const uint32_t size = m_pCommandPool->GetCommandBufferCount();
     m_pFences.reserve( size );
     for ( uint32_t i = 0; i < size; ++i )
     {
-        m_pFences.push_back( BalVulkan::CFence::CreateNew( m_pDevice ));
+        m_pFences.push_back( FawnVision::CFence::CreateNew( m_pDevice ));
         m_pFences.back()->Initialize();
         m_pInFlightFences.push_back( nullptr );
     }

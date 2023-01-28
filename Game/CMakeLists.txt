@@ -8,7 +8,7 @@ target_precompile_headers(${PROJECT_NAME}
 set(ROOT_NAMESPACE Game)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
-        ../Balbino/
+        ../Engine/
         ../Common/
         ../3rdParty/SDL2/include
         ../3rdParty/SDL2_image/include

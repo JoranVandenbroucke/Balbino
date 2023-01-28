@@ -7,7 +7,7 @@ struct IEntity;
 struct IScene;
 struct ISystem;
 
-namespace BalEditor
+namespace FawnForge
 {
     class CSceneHierarchy
     {

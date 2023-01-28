@@ -1,6 +1,6 @@
 #pragma once
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CSampler;
     

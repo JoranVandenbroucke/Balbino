@@ -7,7 +7,7 @@
 
 #include "FileParcer.h"
 
-namespace BalEditor
+namespace FawnForge
 {
     class CMeshFileImporter;
     
@@ -100,7 +100,7 @@ namespace BalEditor
             ".NDO"
     };
     
-    bool ImportFile( const char* pPath, const char* pDestinationDirection, BalEditor::CMeshFileImporter* pMeshImporter, BalEditor::CTextureFileImporter* pTextureImporter );
+    bool ImportFile( const char* pPath, const char* pDestinationDirection, FawnForge::CMeshFileImporter* pMeshImporter, FawnForge::CTextureFileImporter* pTextureImporter );
     
     SFile GetData( const std::filesystem::path& path );
 }

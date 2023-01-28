@@ -23,19 +23,19 @@
 
 #pragma warning (pop)
 
-namespace BalEditor
+namespace FawnForge
 {
-    BalEditor::CTextureFileImporter::CTextureFileImporter() noexcept
+    FawnForge::CTextureFileImporter::CTextureFileImporter() noexcept
             : m_importPercentage{}
               , m_isVisible{}
               , m_generateNormalFromGray{}
               , m_generateMips{ true }
               , m_useSRGB{ true }
-              , m_wrapModeU{ BalVulkan::ESamplerAddressMode::Repeat }
-              , m_wrapModeV{ BalVulkan::ESamplerAddressMode::Repeat }
-              , m_wrapModeW{ BalVulkan::ESamplerAddressMode::Repeat }
-              , m_mipmapMode{ BalVulkan::EFilter::Nearest }
-              , m_filterMode{ BalVulkan::EFilter::Nearest }
+              , m_wrapModeU{ FawnVision::ESamplerAddressMode::Repeat }
+              , m_wrapModeV{ FawnVision::ESamplerAddressMode::Repeat }
+              , m_wrapModeW{ FawnVision::ESamplerAddressMode::Repeat }
+              , m_mipmapMode{ FawnVision::EFilter::Nearest }
+              , m_filterMode{ FawnVision::EFilter::Nearest }
               , m_sampleLevel{ ESampleLevel::Auto }
               , m_anisotropyLevel{ 1 }
               , m_path{}
@@ -82,14 +82,14 @@ namespace BalEditor
                     ToString( ETextureShape::Texture3D )
             };
             const std::vector<std::string> wrapModes{
-                    ToString( BalVulkan::ESamplerAddressMode::Repeat ),
-                    ToString( BalVulkan::ESamplerAddressMode::MirroredRepeat ),
-                    ToString( BalVulkan::ESamplerAddressMode::ClampToEdge ),
-                    ToString( BalVulkan::ESamplerAddressMode::ClampToBorder ),
-                    ToString( BalVulkan::ESamplerAddressMode::MirrorClampToEdge )
+                    ToString( FawnVision::ESamplerAddressMode::Repeat ),
+                    ToString( FawnVision::ESamplerAddressMode::MirroredRepeat ),
+                    ToString( FawnVision::ESamplerAddressMode::ClampToEdge ),
+                    ToString( FawnVision::ESamplerAddressMode::ClampToBorder ),
+                    ToString( FawnVision::ESamplerAddressMode::MirrorClampToEdge )
             };
             const std::vector<std::string> sampleModes{
-                    ToString( BalVulkan::EFilter::Nearest ), ToString( BalVulkan::EFilter::Linear )
+                    ToString( FawnVision::EFilter::Nearest ), ToString( FawnVision::EFilter::Linear )
             };
             const std::vector<std::string> sampleLevels{
                     ToString( ESampleLevel::One ),
@@ -143,12 +143,12 @@ namespace BalEditor
             }
             GUI::EndPopup();
             
-            m_mipmapMode  = BalVulkan::EFilter::Enum( mipmapMode );
-            m_filterMode  = BalVulkan::EFilter::Enum( filterMode );
+            m_mipmapMode  = FawnVision::EFilter::Enum( mipmapMode );
+            m_filterMode  = FawnVision::EFilter::Enum( filterMode );
             m_sampleLevel = ESampleLevel( sampleLevel );
-            m_wrapModeU   = BalVulkan::ESamplerAddressMode::Enum( wrapU );
-            m_wrapModeV   = BalVulkan::ESamplerAddressMode::Enum( wrapV );
-            m_wrapModeW   = BalVulkan::ESamplerAddressMode::Enum( wrapW );
+            m_wrapModeU   = FawnVision::ESamplerAddressMode::Enum( wrapU );
+            m_wrapModeV   = FawnVision::ESamplerAddressMode::Enum( wrapV );
+            m_wrapModeW   = FawnVision::ESamplerAddressMode::Enum( wrapW );
             m_type        = ETextureType( textureType );
             m_shape       = ETextureShape( textureShape );
             
@@ -178,19 +178,19 @@ namespace BalEditor
         int     wrapModeU{ (int) m_wrapModeU };
         int     wrapModeV{ (int) m_wrapModeV };
         int     wrapModeW{ (int) m_wrapModeW };
-        uint8_t type{ BalVulkan::EImageViewType::View2D };
+        uint8_t type{ FawnVision::EImageViewType::View2D };
         
         if ( m_shape == ETextureShape::Texture2DArray )
         {
-            type = BalVulkan::EImageViewType::View2DArray;
+            type = FawnVision::EImageViewType::View2DArray;
         }
         else if ( m_shape == ETextureShape::TextureCube )
         {
-            type = BalVulkan::EImageViewType::Cube;
+            type = FawnVision::EImageViewType::Cube;
         }
         else if ( m_shape == ETextureShape::Texture3D )
         {
-            type = BalVulkan::EImageViewType::View3D;
+            type = FawnVision::EImageViewType::View3D;
         }
         
         if ( extension == ".KTX" || extension == ".DDS" )
@@ -328,7 +328,7 @@ namespace BalEditor
                     m_path.filename().string(),
                     m_destinationDirection,
                     type,
-                    static_cast< uint32_t >( BalVulkan::EFormat::R16G16B16Sfloat),
+                    static_cast< uint32_t >( FawnVision::EFormat::R16G16B16Sfloat),
                     ( m_generateMips ) ? -1 : 1,
                     6u,
                     hdrLoaderResult.width,
@@ -500,36 +500,36 @@ namespace BalEditor
         return false;
     }
     
-    const char* CTextureFileImporter::ToString( BalVulkan::ESamplerAddressMode::Enum mode )
+    const char* CTextureFileImporter::ToString( FawnVision::ESamplerAddressMode::Enum mode )
     {
         switch ( mode )
         {
-            case BalVulkan::ESamplerAddressMode::Repeat:
+            case FawnVision::ESamplerAddressMode::Repeat:
                 return "Repeat";
-            case BalVulkan::ESamplerAddressMode::MirroredRepeat:
+            case FawnVision::ESamplerAddressMode::MirroredRepeat:
                 return "Mirror";
-            case BalVulkan::ESamplerAddressMode::ClampToEdge:
+            case FawnVision::ESamplerAddressMode::ClampToEdge:
                 return "Clamp To Edge";
-            case BalVulkan::ESamplerAddressMode::ClampToBorder:
+            case FawnVision::ESamplerAddressMode::ClampToBorder:
                 return "Clamp To Border";
-            case BalVulkan::ESamplerAddressMode::MirrorClampToEdge:
+            case FawnVision::ESamplerAddressMode::MirrorClampToEdge:
                 return "Mirror Once";
-            case BalVulkan::ESamplerAddressMode::MaxEnum:
+            case FawnVision::ESamplerAddressMode::MaxEnum:
                 break;
         }
         return nullptr;
     }
     
-    const char* CTextureFileImporter::ToString( BalVulkan::EFilter::Enum mode )
+    const char* CTextureFileImporter::ToString( FawnVision::EFilter::Enum mode )
     {
         switch ( mode )
         {
             
-            case BalVulkan::EFilter::Nearest:
+            case FawnVision::EFilter::Nearest:
                 return "Nearest";
-            case BalVulkan::EFilter::Linear:
+            case FawnVision::EFilter::Linear:
                 return "Linear";
-            case BalVulkan::EFilter::MaxEnum:
+            case FawnVision::EFilter::MaxEnum:
                 break;
         }
         return nullptr;
@@ -601,13 +601,13 @@ namespace BalEditor
                 glm::ivec2 uv1{ uv + glm::ivec2( 1, 0 ) }; // right
                 glm::ivec2 uv2{ uv + glm::ivec2( 0, 1 ) }; // top
                 
-                if ( m_wrapModeU == BalVulkan::ESamplerAddressMode::Repeat )
+                if ( m_wrapModeU == FawnVision::ESamplerAddressMode::Repeat )
                 {
                     uv0.x = uv0.x % w;
                     uv1.x = uv1.x % w;
                     uv2.x = uv2.x % w;
                 }
-                else if ( m_wrapModeU == BalVulkan::ESamplerAddressMode::MirroredRepeat )
+                else if ( m_wrapModeU == FawnVision::ESamplerAddressMode::MirroredRepeat )
                 {
                     if ( uv0.x > w )
                     {
@@ -622,7 +622,7 @@ namespace BalEditor
                         uv2.x -= w;
                     }
                 }
-                else if ( m_wrapModeU == BalVulkan::ESamplerAddressMode::MirrorClampToEdge )
+                else if ( m_wrapModeU == FawnVision::ESamplerAddressMode::MirrorClampToEdge )
                 {
                     if ( uv0.x > w )
                     {
@@ -655,13 +655,13 @@ namespace BalEditor
                     uv1.x = std::min( uv1.x, w );
                     uv2.x = std::min( uv2.x, w );
                 }
-                if ( m_wrapModeV == BalVulkan::ESamplerAddressMode::Repeat )
+                if ( m_wrapModeV == FawnVision::ESamplerAddressMode::Repeat )
                 {
                     uv0.y = uv0.y % h;
                     uv1.y = uv1.y % h;
                     uv2.y = uv2.y % h;
                 }
-                else if ( m_wrapModeV == BalVulkan::ESamplerAddressMode::MirroredRepeat )
+                else if ( m_wrapModeV == FawnVision::ESamplerAddressMode::MirroredRepeat )
                 {
                     if ( uv0.y > h )
                     {
@@ -676,7 +676,7 @@ namespace BalEditor
                         uv2.y -= h;
                     }
                 }
-                else if ( m_wrapModeV == BalVulkan::ESamplerAddressMode::MirrorClampToEdge )
+                else if ( m_wrapModeV == FawnVision::ESamplerAddressMode::MirrorClampToEdge )
                 {
                     if ( uv0.y > h )
                     {
@@ -733,4 +733,4 @@ namespace BalEditor
         float     s          = 1.0f / position_v.w;
         return glm::vec3{ position_v.x, position_v.y, position_v.z } * s;
     }
-} // BalEditor
+} // FawnForge

@@ -6,7 +6,7 @@
 #include "../EditorGUI/EditorGui.h"
 #include <mini/ini.h>
 
-namespace BalEditor
+namespace FawnForge
 {
     CPropertyPanel::CPropertyPanel()
             : m_currentPropertyType{ EPropertyTypes::Audio }
@@ -357,4 +357,4 @@ namespace BalEditor
     {
         return m_defaultTextureID;
     }
-} // BalEditor
+} // FawnForge

@@ -6,7 +6,7 @@
 
 struct STempMesh
 {
-    std::vector<BalVulkan::SVertex> vertices;
+    std::vector<FawnVision::SVertex> vertices;
     std::vector<uint32_t>           indices;
 };
 

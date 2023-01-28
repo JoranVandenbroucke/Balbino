@@ -1,12 +1,12 @@
 set(PROJECT_NAME Editor)
 
 # get source files
-file(GLOB_RECURSE sourceE
-        */*.cpp **/*.h **/*.c
+file(GLOB_RECURSE source
+        **/*.cpp **/*.h **/*.c
         )
 
 # project setting
-add_library(${PROJECT_NAME} ${sourceE})
+add_library(${PROJECT_NAME} ${source})
 
 set(ROOT_NAMESPACE Editor)
 

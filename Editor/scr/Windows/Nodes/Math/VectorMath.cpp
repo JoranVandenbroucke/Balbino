@@ -31,9 +31,9 @@ void CVectorMath::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( ToString( m_type ));
+    FawnForge::GUI::DrawText( ToString( m_type ));
     ImNodes::EndNodeTitleBar();
-    BalEditor::GUI::DrawComboBox( "Mode", current, options, { 10, 18, 27, 37 } );
+    FawnForge::GUI::DrawComboBox( "Mode", current, options, { 10, 18, 27, 37 } );
     
     DrawInputVectorAttribute( m_vectorA, m_attributeStartId, m_connected[0] );
     m_type = (EMode)current;
@@ -70,7 +70,7 @@ void CVectorMath::Draw()
         default:;
     }
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputVectorAttribute( m_attributeStartId + 3 );
     
     ImNodes::EndNode();

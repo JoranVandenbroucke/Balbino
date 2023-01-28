@@ -18,7 +18,7 @@ namespace Balbino
     class CMesh;
 }
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CShaderPipeline;
     
@@ -33,11 +33,11 @@ namespace BalVulkan
     class CSwapchain;
 }
 
-inline BalVulkan::CDevice     * g_pDevice{ nullptr };
-inline BalVulkan::CCommandPool* g_pCommandPool{ nullptr };
-inline BalVulkan::CQueue      * g_pQueue{ nullptr };
-inline BalVulkan::CRenderPass * g_pRenderPass{ nullptr };
-inline BalVulkan::CSwapchain  * g_pSwapChain{ nullptr };
+inline FawnVision::CDevice     * g_pDevice{ nullptr };
+inline FawnVision::CCommandPool* g_pCommandPool{ nullptr };
+inline FawnVision::CQueue      * g_pQueue{ nullptr };
+inline FawnVision::CRenderPass * g_pRenderPass{ nullptr };
+inline FawnVision::CSwapchain  * g_pSwapChain{ nullptr };
 
 class CResourceManager final : public IResourceManager
 {
@@ -53,22 +53,22 @@ public:
     void Cleanup() override;
     
     Balbino::CTexture* LoadTexture( std::string_view assetPath ) override;
-    BalVulkan::CShaderPipeline* LoadShader( std::string_view assetPath ) override;
+    FawnVision::CShaderPipeline* LoadShader( std::string_view assetPath ) override;
     Balbino::CMaterial* LoadMaterial( std::string_view assetPath ) override;
     Balbino::IMesh* LoadModel( std::string_view assetPath ) override;
     
     bool BindMaterial( uint64_t id ) override;
     Balbino::CTexture* GetTexture( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
-    BalVulkan::CShaderPipeline* GetShader( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
+    FawnVision::CShaderPipeline* GetShader( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
     Balbino::CMaterial* GetMaterial( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
     Balbino::IMesh* GetModel( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
     
     [[nodiscard]]const std::map<uint64_t, Balbino::CMaterial*>& GetAllLoadedMaterials() const override;
-    void ReloadAll( BalVulkan::CCommandPool* commandPool, BalVulkan::CQueue* queue ) override;
+    void ReloadAll( FawnVision::CCommandPool* commandPool, FawnVision::CQueue* queue ) override;
     void UnloadMaterial( CUuid materialId ) override;
 private:
     std::map<uint64_t, Balbino::CTexture*>          m_loadedTextureMap;
-    std::map<uint64_t, BalVulkan::CShaderPipeline*> m_loadedShaderMap;
+    std::map<uint64_t, FawnVision::CShaderPipeline*> m_loadedShaderMap;
     std::map<uint64_t, Balbino::CMaterial*>         m_loadedMaterialMap;
     std::map<uint64_t, Balbino::IMesh*>             m_loadedMeshMap;
     

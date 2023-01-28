@@ -23,7 +23,7 @@
 #include "../EditorGUI/EditorGui.h"
 #include "../Tools/FilesSystem/Exporter.h"
 
-BalEditor::CShaderGraph::CShaderGraph()
+FawnForge::CShaderGraph::CShaderGraph()
         : m_isVisible{ false }
         , m_wantsToSave{ false }
 {
@@ -33,7 +33,7 @@ BalEditor::CShaderGraph::CShaderGraph()
     }
 }
 
-BalEditor::CShaderGraph::~CShaderGraph()
+FawnForge::CShaderGraph::~CShaderGraph()
 {
     for ( const auto& element : m_nodes )
     {
@@ -43,7 +43,7 @@ BalEditor::CShaderGraph::~CShaderGraph()
     m_links.clear();
 }
 
-void BalEditor::CShaderGraph::Draw()
+void FawnForge::CShaderGraph::Draw()
 {
     if ( GUI::Begin( "Shader Graph", m_isVisible, 1 << 10 ))
     {
@@ -134,7 +134,7 @@ void BalEditor::CShaderGraph::Draw()
         GUI::End();
     }
 }
-void BalEditor::CShaderGraph::ShowWindow( const SFile& shader )
+void FawnForge::CShaderGraph::ShowWindow( const SFile& shader )
 {
     m_isVisible = true;
     
@@ -158,7 +158,7 @@ void BalEditor::CShaderGraph::ShowWindow( const SFile& shader )
         LoadEditorFromData( shader );
     }
 }
-std::vector<BalEditor::CShaderGraph::SLink> BalEditor::CShaderGraph::GetNeighbors( const int currentNode )
+std::vector<FawnForge::CShaderGraph::SLink> FawnForge::CShaderGraph::GetNeighbors( const int currentNode )
 {
     std::vector<SLink> links;
     auto               it = m_links.begin();
@@ -176,7 +176,7 @@ std::vector<BalEditor::CShaderGraph::SLink> BalEditor::CShaderGraph::GetNeighbor
     std::ranges::reverse( links );
     return links;
 }
-void BalEditor::CShaderGraph::Evaluate()
+void FawnForge::CShaderGraph::Evaluate()
 {
     bool canTraverseGraph{ true };
     if ( m_currentShaderFile.isFolder )
@@ -293,7 +293,7 @@ void BalEditor::CShaderGraph::Evaluate()
             options.SetOptimizationLevel( shaderc_optimization_level_performance );
             options.SetWarningsAsErrors();
             options.SetTargetSpirv( shaderc_spirv_version_1_5 );
-            options.SetIncluder( std::make_unique<BalVulkan::CFileIncluder>());
+            options.SetIncluder( std::make_unique<FawnVision::CFileIncluder>());
             
             shaderc_shader_kind shaderType{ shaderc_vertex_shader };
             const char* extension{ ".vert" };
@@ -391,7 +391,7 @@ void BalEditor::CShaderGraph::Evaluate()
         }
         
         std::string editorData{ SaveEditor() };
-        BalEditor::Exporter::ExportShader(
+        FawnForge::Exporter::ExportShader(
                 m_currentShaderFile.fileName,
                 m_currentShaderFile.path,
                 compiledShaders,
@@ -402,7 +402,7 @@ void BalEditor::CShaderGraph::Evaluate()
         m_wantsToSave = false;
     }
 }
-void BalEditor::CShaderGraph::AddNode( const EUiNodeType type, const glm::vec2& position, int id )
+void FawnForge::CShaderGraph::AddNode( const EUiNodeType type, const glm::vec2& position, int id )
 {
     INode* pNode{ nullptr };
     int nodeID;
@@ -486,7 +486,7 @@ void BalEditor::CShaderGraph::AddNode( const EUiNodeType type, const glm::vec2& 
     ImNodes::SetNodeScreenSpacePos( nodeID, position );
     m_nodes.emplace_back((int) type, pNode );
 }
-const char* BalEditor::CShaderGraph::ToString( const EUiNodeType type )
+const char* FawnForge::CShaderGraph::ToString( const EUiNodeType type )
 {
     switch ( type )
     {
@@ -541,7 +541,7 @@ const char* BalEditor::CShaderGraph::ToString( const EUiNodeType type )
     }
     return "nullptr";
 }
-void BalEditor::CShaderGraph::LoadEditorFromData( const SFile& shader )
+void FawnForge::CShaderGraph::LoadEditorFromData( const SFile& shader )
 {
     std::ifstream file( shader.path, std::ios::in | std::ios::binary );
     if ( !file.is_open())
@@ -609,7 +609,7 @@ void BalEditor::CShaderGraph::LoadEditorFromData( const SFile& shader )
     file.close();
     ImNodes::LoadCurrentEditorStateFromIniString( editor, leftoverSize );
 }
-void BalEditor::CShaderGraph::LoadDefaultEditor()
+void FawnForge::CShaderGraph::LoadDefaultEditor()
 {
     AddNode( EUiNodeType::ShaderNode, glm::vec2{ 512, 128 } );
     if ( m_currentShaderFile.uuid == 0 )
@@ -619,7 +619,7 @@ void BalEditor::CShaderGraph::LoadDefaultEditor()
     m_currentShaderFile.isFolder = true;
     m_currentShaderFile.path     = "../Data";
 }
-std::string BalEditor::CShaderGraph::SaveEditor()
+std::string FawnForge::CShaderGraph::SaveEditor()
 {
     uint64_t          size{};
     std::string       editorNodes{};
@@ -645,7 +645,7 @@ std::string BalEditor::CShaderGraph::SaveEditor()
     stringStream.clear();
     return editorNodes;
 }
-bool BalEditor::CShaderGraph::HasCycleStartingFrom( const INode* pStartNode )
+bool FawnForge::CShaderGraph::HasCycleStartingFrom( const INode* pStartNode )
 {
     std::unordered_map<int, INode*> nodes;
     for ( const auto& [ id, node ] : m_nodes )
@@ -681,7 +681,7 @@ bool BalEditor::CShaderGraph::HasCycleStartingFrom( const INode* pStartNode )
     }
     return false;
 }
-void BalEditor::CShaderGraph::AddLink( SLink& link )
+void FawnForge::CShaderGraph::AddLink( SLink& link )
 {
     int        nodeId{ link.endNodeId };
     const auto it = std::ranges::find_if(

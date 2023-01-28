@@ -52,10 +52,10 @@ void CFragmentOutputNode::Draw()
     ImNodes::BeginNode( m_id );
     
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Fragment Output" );
+    FawnForge::GUI::DrawText( "Fragment Output" );
     ImNodes::EndNodeTitleBar();
     
-    if(BalEditor::GUI::DrawComboBox( "Diffuse", di, m_diffuses ))
+    if(FawnForge::GUI::DrawComboBox( "Diffuse", di, m_diffuses ))
     {
         m_diffuse = EDiffuse( di );
         switch ( m_diffuse )
@@ -71,7 +71,7 @@ void CFragmentOutputNode::Draw()
                 break;
         }
     }
-    if(BalEditor::GUI::DrawComboBox( "Shadow", sh, m_shadows )){
+    if(FawnForge::GUI::DrawComboBox( "Shadow", sh, m_shadows )){
     
         m_shadow = EShadow( sh );
         switch ( m_shadow )
@@ -102,7 +102,7 @@ void CFragmentOutputNode::Draw()
                 break;
         }
     }
-    if(BalEditor::GUI::DrawComboBox( "Specular", sp, m_ndfs )){
+    if(FawnForge::GUI::DrawComboBox( "Specular", sp, m_ndfs )){
     
         m_ndf = ENormalDistributionFunction( sp );
         switch ( m_ndf )
@@ -118,7 +118,7 @@ void CFragmentOutputNode::Draw()
                 break;
         }
     }
-    if(BalEditor::GUI::DrawComboBox( "Fresnel", fr, m_fresnels )){
+    if(FawnForge::GUI::DrawComboBox( "Fresnel", fr, m_fresnels )){
     
         m_fresnel = EFresnel( fr );
         switch ( m_fresnel )

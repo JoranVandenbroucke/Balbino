@@ -2,7 +2,7 @@
 #include "Base.h"
 #include "Semaphore.h"
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CImageResource;
     

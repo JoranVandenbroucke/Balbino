@@ -21,13 +21,13 @@ void CNormalMap::Draw()
 {
     ImNodes::BeginNode( m_id );
     ImNodes::BeginNodeTitleBar();
-    BalEditor::GUI::DrawText( "Normal Map" );
+    FawnForge::GUI::DrawText( "Normal Map" );
     ImNodes::EndNodeTitleBar();
     
     DrawInputFloatAttribute( m_strength, m_attributeStartId, m_connections[0], "Strength", 0, 1 );
     DrawInputVectorAttribute( m_normal, m_attributeStartId + 1, m_connections[1], "Normal" );
     
-    BalEditor::GUI::Spacing();
+    FawnForge::GUI::Spacing();
     DrawOutputVectorAttribute( m_attributeStartId + 2, "Normal" );
     ImNodes::EndNode();
 }

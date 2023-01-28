@@ -3,13 +3,13 @@
 #ifdef BALBINO_EDITOR
 #include <scr/Interface.h>
 
-namespace BalEditor
+namespace FawnForge
 {
     class CInterface;
 }
 #endif
 
-namespace BalVulkan
+namespace FawnVision
 {
     class CBuffer;
     
@@ -60,7 +60,7 @@ namespace Balbino
         CRenderer& operator=( CRenderer&& ) = delete;
         
         #ifdef BALBINO_EDITOR
-        void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface, ISystem* pSystem );
+        void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, FawnForge::CInterface* pInterface, ISystem* pSystem );
         #endif // BALBINO_EDITOR
         
         void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount );
@@ -72,25 +72,25 @@ namespace Balbino
         void GiveSceneRenderData( CScene* pScene );
     
     private:
-        BalVulkan::CInstance   * m_pInstance;
-        BalVulkan::CDevice     * m_pDevice;
-        BalVulkan::CSwapchain  * m_pSwapchain;
-        BalVulkan::CRenderPass * m_pRenderPass;
-        BalVulkan::CFrameBuffer* m_pFrameBuffer;
+        FawnVision::CInstance   * m_pInstance;
+        FawnVision::CDevice     * m_pDevice;
+        FawnVision::CSwapchain  * m_pSwapchain;
+        FawnVision::CRenderPass * m_pRenderPass;
+        FawnVision::CFrameBuffer* m_pFrameBuffer;
         
-        BalVulkan::CQueue      * m_pQueue;
-        BalVulkan::CCommandPool* m_pCommandPool;
-        BalVulkan::CSemaphore  * m_pSignalingSemaphore;
-        BalVulkan::CSemaphore  * m_pWaitingSemaphore;
-        std::vector<BalVulkan::CFence*>         m_pFences;
-        std::vector<BalVulkan::CFence*>         m_pInFlightFences;
-        std::vector<BalVulkan::CImageResource*> m_swapchainResources;
-        std::vector<BalVulkan::CImageView*>     m_swapchainViews;
-        BalVulkan::CImageResource* m_pDepthImage;
-        BalVulkan::CImageView    * m_pDepthImageView;
+        FawnVision::CQueue      * m_pQueue;
+        FawnVision::CCommandPool* m_pCommandPool;
+        FawnVision::CSemaphore  * m_pSignalingSemaphore;
+        FawnVision::CSemaphore  * m_pWaitingSemaphore;
+        std::vector<FawnVision::CFence*>         m_pFences;
+        std::vector<FawnVision::CFence*>         m_pInFlightFences;
+        std::vector<FawnVision::CImageResource*> m_swapchainResources;
+        std::vector<FawnVision::CImageView*>     m_swapchainViews;
+        FawnVision::CImageResource* m_pDepthImage;
+        FawnVision::CImageView    * m_pDepthImageView;
         
         #ifdef BALBINO_EDITOR
-        BalEditor::CInterface* m_pInterface;
+        FawnForge::CInterface* m_pInterface;
         bool m_firstFramePassed;
         #endif
         

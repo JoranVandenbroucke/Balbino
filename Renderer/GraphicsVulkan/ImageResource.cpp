@@ -5,7 +5,7 @@
 #include "Funtions.h"
 #include "Instance.h"
 
-BalVulkan::CImageResource::CImageResource( const CDevice* const device )
+FawnVision::CImageResource::CImageResource( const CDevice* const device )
         : CDeviceObject{ device }
           , m_ownedBySwapchain{ false }
           , m_mipLevels{ 0 }
@@ -17,17 +17,17 @@ BalVulkan::CImageResource::CImageResource( const CDevice* const device )
 {
 }
 
-uint32_t BalVulkan::CImageResource::GetWidth() const
+uint32_t FawnVision::CImageResource::GetWidth() const
 {
     return m_createInfo.extent.width;
 }
 
-uint32_t BalVulkan::CImageResource::GetHeight() const
+uint32_t FawnVision::CImageResource::GetHeight() const
 {
     return m_createInfo.extent.height;
 }
 
-uint32_t BalVulkan::CImageResource::GetDepth() const
+uint32_t FawnVision::CImageResource::GetDepth() const
 {
     return m_createInfo.extent.depth;
 }
@@ -36,7 +36,7 @@ uint32_t BalVulkan::CImageResource::GetDepth() const
 // an image and put it into an active command buffer
 // See chapter 11.4 "Image Layout" for details
 
-void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout::Enum newLayout )
+void FawnVision::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout::Enum newLayout )
 {
     pCommand->BeginSingleTimeCommands();
     
@@ -168,7 +168,7 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
     pCommand->EndSingleTimeCommands();
 }
 
-void BalVulkan::CImageResource::GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand )
+void FawnVision::CImageResource::GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand )
 {
     VkFormatProperties formatProperties;
     vkGetPhysicalDeviceFormatProperties( GetDevice()->GetPhysicalDeviceInfo()->device, m_format, &formatProperties );
@@ -240,17 +240,17 @@ void BalVulkan::CImageResource::GenerateMipMaps( uint32_t mipLevels, const CBuff
     pCommand->EndSingleTimeCommands();
 }
 
-VkImageLayout BalVulkan::CImageResource::GetLayout() const
+VkImageLayout FawnVision::CImageResource::GetLayout() const
 {
     return {};
 }
 
-BalVulkan::CImageResource* BalVulkan::CImageResource::CreateNew( const CDevice* pDevice )
+FawnVision::CImageResource* FawnVision::CImageResource::CreateNew( const CDevice* pDevice )
 {
     return new CImageResource{ pDevice };
 }
 
-BalVulkan::CImageResource::~CImageResource()
+FawnVision::CImageResource::~CImageResource()
 {
     if ( !m_ownedBySwapchain )
     {
@@ -259,7 +259,7 @@ BalVulkan::CImageResource::~CImageResource()
     }
 }
 
-VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, const VkImageLayout layout, const uint32_t width, const uint32_t height, const VkFormat format )
+VkResult FawnVision::CImageResource::InitFromSwapchain( const VkImage image, const VkImageLayout layout, const uint32_t width, const uint32_t height, const VkFormat format )
 {
     if ( m_image )
     {
@@ -279,7 +279,7 @@ VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, cons
     return VK_SUCCESS;
 }
 
-VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType::Enum type, BalVulkan::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, BalVulkan::EImageLayout::Enum layout )
+VkResult FawnVision::CImageResource::Initialize( FawnVision::EImageViewType::Enum type, FawnVision::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, FawnVision::EImageLayout::Enum layout )
 {
     (void) sampleLevel;
     if ( m_image )
@@ -357,47 +357,47 @@ VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType::Enum 
     return VK_SUCCESS;
 }
 
-VkImage BalVulkan::CImageResource::GetImage()
+VkImage FawnVision::CImageResource::GetImage()
 {
     return m_image;
 }
 
-const VkImage& BalVulkan::CImageResource::GetImage() const
+const VkImage& FawnVision::CImageResource::GetImage() const
 {
     return m_image;
 }
 
-const VkImageLayout& BalVulkan::CImageResource::GetImageLayout() const
+const VkImageLayout& FawnVision::CImageResource::GetImageLayout() const
 {
     return m_imageLayout;
 }
 
-const VkImageCreateInfo& BalVulkan::CImageResource::GetImageCreateInfo() const
+const VkImageCreateInfo& FawnVision::CImageResource::GetImageCreateInfo() const
 {
     return m_createInfo;
 }
 
-VkImageType BalVulkan::CImageResource::GetDimensionality() const
+VkImageType FawnVision::CImageResource::GetDimensionality() const
 {
     return m_createInfo.imageType;
 }
 
-uint32_t BalVulkan::CImageResource::GetMipCount() const
+uint32_t FawnVision::CImageResource::GetMipCount() const
 {
     return m_createInfo.mipLevels;
 }
 
-uint32_t BalVulkan::CImageResource::GetLayerCount() const
+uint32_t FawnVision::CImageResource::GetLayerCount() const
 {
     return m_createInfo.arrayLayers;
 }
 
-VkFormat BalVulkan::CImageResource::GetFormat() const
+VkFormat FawnVision::CImageResource::GetFormat() const
 {
     return m_createInfo.format;
 }
 
-[[maybe_unused]] BalVulkan::CImageResource* BalVulkan::CImageResource::LoadFromFile( const std::string& path )
+[[maybe_unused]] FawnVision::CImageResource* FawnVision::CImageResource::LoadFromFile( const std::string& path )
 {
     (void) path;
     return nullptr;

@@ -10,7 +10,7 @@
 #include <glm/vec2.hpp>
 #include <FileParcer.h>
 
-namespace BalEditor::GUI
+namespace FawnForge::GUI
 {
     void DrawIntValue( const char* name, uint64_t value, float width = 100 );
     void DrawIntValue( const char* name, int value, float width = 100 );

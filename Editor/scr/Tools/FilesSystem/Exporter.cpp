@@ -7,7 +7,7 @@
 #include <fstream>
 #include <FileParcer.h>
 
-bool BalEditor::Exporter::ExportShader( const std::string& assetName, const std::string& assetPath, const std::vector<std::vector<uint32_t>>& compiledShaders, const std::vector<uint8_t>& types, CUuid id, const std::string& editorData )
+bool FawnForge::Exporter::ExportShader( const std::string& assetName, const std::string& assetPath, const std::vector<std::vector<uint32_t>>& compiledShaders, const std::vector<uint8_t>& types, CUuid id, const std::string& editorData )
 {
     std::filesystem::path path{ SanitizePath(assetPath) + assetName };
     path.replace_extension( ".basset" );
@@ -38,7 +38,7 @@ bool BalEditor::Exporter::ExportShader( const std::string& assetName, const std:
     return true;
 }
 
-bool BalEditor::Exporter::ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<BalVulkan::SVertex>& vertices, const std::vector<Balbino::SMeshMetadata>& pMetadata, CUuid id )
+bool FawnForge::Exporter::ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<FawnVision::SVertex>& vertices, const std::vector<Balbino::SMeshMetadata>& pMetadata, CUuid id )
 {
     std::filesystem::path path{ SanitizePath(assetPath) + assetName };
     path.replace_extension( ".basset" );
@@ -55,7 +55,7 @@ bool BalEditor::Exporter::ExportMesh( const std::string& assetName, const std::s
     BinaryReadWrite::Write( file, (uint64_t) vertices.size());
     BinaryReadWrite::Write( file, (uint64_t) pMetadata.size());
     BinaryReadWrite::Write( file, indices.data(), sizeof( uint32_t ) * indices.size());
-    BinaryReadWrite::Write( file, vertices.data(), sizeof( BalVulkan::SVertex ) * vertices.size());
+    BinaryReadWrite::Write( file, vertices.data(), sizeof( FawnVision::SVertex ) * vertices.size());
     for ( const auto& metadata : pMetadata )
     {
         BinaryReadWrite::Write( file, metadata );
@@ -65,7 +65,7 @@ bool BalEditor::Exporter::ExportMesh( const std::string& assetName, const std::s
     return true;
 }
 
-bool BalEditor::Exporter::ExportMaterial( const std::string& assetName, const std::string& assetPath, CUuid shaderID, const std::vector<BalVulkan::SShaderResource>& resources, CUuid id )
+bool FawnForge::Exporter::ExportMaterial( const std::string& assetName, const std::string& assetPath, CUuid shaderID, const std::vector<FawnVision::SShaderResource>& resources, CUuid id )
 {
     std::filesystem::path path{ SanitizePath(assetPath) + assetName + ".basset" };
     std::ofstream         file{ path, std::ios::out | std::ios::binary };
@@ -79,13 +79,13 @@ bool BalEditor::Exporter::ExportMaterial( const std::string& assetName, const st
     BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Material );
     BinaryReadWrite::Write( file, (uint64_t) shaderID );
     BinaryReadWrite::Write( file, resources.size());
-    BinaryReadWrite::Write( file, resources.data(), resources.size() * sizeof( BalVulkan::SShaderResource ));
+    BinaryReadWrite::Write( file, resources.data(), resources.size() * sizeof( FawnVision::SShaderResource ));
     
     file.close();
     return true;
 }
 
-bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, const void* const pData, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, int wrapModeU, int wrapModeV, int wrapModeW, CUuid id )
+bool FawnForge::Exporter::ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, const void* const pData, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, int wrapModeU, int wrapModeV, int wrapModeW, CUuid id )
 {
     std::filesystem::path path{ SanitizePath(assetPath) + assetName };
     path.replace_extension( ".basset" );

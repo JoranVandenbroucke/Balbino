@@ -20,26 +20,26 @@ CVertexOutputNode::CVertexOutputNode( int id, int& attributeStartId )
 void CVertexOutputNode::Draw()
 {
     ImNodes::BeginNode( m_id );
-    BalEditor::GUI::DrawToggle( "Use Camera Transform", m_useOnyProjection );
+    FawnForge::GUI::DrawToggle( "Use Camera Transform", m_useOnyProjection );
     DrawInputVectorAttribute( m_position, m_attributeStartId, false, "Positions" );
-    BalEditor::GUI::SetTooltip( "This will add to the original vertex position." );
+    FawnForge::GUI::SetTooltip( "This will add to the original vertex position." );
     
     if ( 0b00000001 & m_vertexFlags )
     {
         DrawInputColorAttribute( m_color, m_attributeStartId + 1, m_connections[1], "Colour" );
-        BalEditor::GUI::SetTooltip( "This will override the original vertex colour." );
+        FawnForge::GUI::SetTooltip( "This will override the original vertex colour." );
     }
     if ( 0b00000010 & m_vertexFlags )
     {
         DrawInputVectorAttribute( m_uv, m_attributeStartId + 2, m_connections[2], "UV" );
-        BalEditor::GUI::SetTooltip( "This will override the original vertex UVs." );
+        FawnForge::GUI::SetTooltip( "This will override the original vertex UVs." );
     }
     DrawInputVectorAttribute( m_normal, m_attributeStartId + 3, true, "Normal" );
-    BalEditor::GUI::SetTooltip( "This will override the original vertex Normals." );
+    FawnForge::GUI::SetTooltip( "This will override the original vertex Normals." );
     if ( 0b00000100 & m_vertexFlags )
     {
         DrawInputVectorAttribute( m_tangent, m_attributeStartId + 4, false, "Tangent" );
-        BalEditor::GUI::SetTooltip( "This will override the original vertex Tangents." );
+        FawnForge::GUI::SetTooltip( "This will override the original vertex Tangents." );
     }
     DrawOutputShaderAttribute( "Output:", m_attributeStartId + 5 );
     ImNodes::EndNode();

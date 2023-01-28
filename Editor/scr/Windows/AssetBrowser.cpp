@@ -12,7 +12,7 @@
 #include "backends/imgui_impl_vulkan.h"
 #include "../Tools/FilesSystem/Exporter.h"
 
-BalEditor::CAssetBrowser::CAssetBrowser()
+FawnForge::CAssetBrowser::CAssetBrowser()
         : m_pUnknownIcon{ nullptr }
           , m_pFolderIcon{ nullptr }
           , m_pBalbinoIcon{ nullptr }
@@ -50,9 +50,9 @@ BalEditor::CAssetBrowser::CAssetBrowser()
 {
 }
 
-BalEditor::CAssetBrowser::~CAssetBrowser() = default;
+FawnForge::CAssetBrowser::~CAssetBrowser() = default;
 
-void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
+void FawnForge::CAssetBrowser::Initialize( const ISystem* pSystem )
 {
     m_pUnknownIcon  = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/UnknownFile.basset" );
     m_pFolderIcon   = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/Folder.basset" );
@@ -104,7 +104,7 @@ void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
     m_currentDirectoryName = "..\\Data";
 }
 
-void BalEditor::CAssetBrowser::Draw()
+void FawnForge::CAssetBrowser::Draw()
 {
     FindAllFiles();
     if ( m_updateCurrentDirectory )
@@ -218,26 +218,26 @@ void BalEditor::CAssetBrowser::Draw()
     GUI::End();
 }
 
-void BalEditor::CAssetBrowser::Cleanup()
+void FawnForge::CAssetBrowser::Cleanup()
 {
     m_currentDirectory.clear();
     m_files.clear();
 }
 
-void BalEditor::CAssetBrowser::ShowWindow()
+void FawnForge::CAssetBrowser::ShowWindow()
 {
     m_isVisible = true;
     GUI::SetWindowFocus( "Asset Browser" );
 }
 
-void BalEditor::CAssetBrowser::SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor, CPropertyPanel* pPropertyPanel )
+void FawnForge::CAssetBrowser::SetShaderGraphReference( CShaderGraph* pShaderGraph, CMaterialEditor* pMaterialEditor, CPropertyPanel* pPropertyPanel )
 {
     m_pShaderGraph    = pShaderGraph;
     m_pMaterialEditor = pMaterialEditor;
     m_pPropertyPanel  = pPropertyPanel;
 }
 
-void BalEditor::CAssetBrowser::FindAllFiles()
+void FawnForge::CAssetBrowser::FindAllFiles()
 {
     auto it = m_files.begin();
     while ( it != m_files.end())
@@ -294,7 +294,7 @@ void BalEditor::CAssetBrowser::FindAllFiles()
     }
 }
 
-void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& nodeIdx )
+void FawnForge::CAssetBrowser::DrawTree( const std::string& path, uint32_t& nodeIdx )
 {
     const auto& fileIter = std::ranges::find_if(
             std::as_const( m_files ), [ &path ]( const SFile& f ) -> bool
@@ -356,7 +356,7 @@ void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& node
     }
 }
 
-void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory )
+void FawnForge::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory )
 {
     const auto& fileIter = std::ranges::find_if(
             std::as_const( m_files ), [ &path ]( const SFile& f ) -> bool
@@ -385,7 +385,7 @@ void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std:
     }
 }
 
-void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool isSelected )
+void FawnForge::CAssetBrowser::HandelSelected( const SFile& currentFile, bool isSelected )
 {
     switch ( currentFile.type )
     {
@@ -432,21 +432,21 @@ void BalEditor::CAssetBrowser::HandelSelected( const SFile& currentFile, bool is
     }
 }
 
-const char* BalEditor::CAssetBrowser::GetCurrentDirectory()
+const char* FawnForge::CAssetBrowser::GetCurrentDirectory()
 {
     return m_currentDirectoryName.c_str();
 }
 
-void BalEditor::CAssetBrowser::MoveFile( SFile* pFile, const std::filesystem::path& destination )
+void FawnForge::CAssetBrowser::MoveFile( SFile* pFile, const std::filesystem::path& destination )
 {
     Rename( pFile->path, destination.string() + "\\" + pFile->fileName );
 }
 
-void BalEditor::CAssetBrowser::Rename( const std::filesystem::path& oldName, const std::filesystem::path& newName )
+void FawnForge::CAssetBrowser::Rename( const std::filesystem::path& oldName, const std::filesystem::path& newName )
 {
     std::filesystem::rename( oldName, newName );
 }
-void BalEditor::CAssetBrowser::DrawContextMenu( bool isSelected )
+void FawnForge::CAssetBrowser::DrawContextMenu( bool isSelected )
 {
     bool showInExplorer;
     m_openItem = false;
@@ -511,7 +511,7 @@ void BalEditor::CAssetBrowser::DrawContextMenu( bool isSelected )
     }
     m_wasContextMenuOpen = m_isContextMenuOpen;
 }
-void BalEditor::CAssetBrowser::CreateItem()
+void FawnForge::CAssetBrowser::CreateItem()
 {
     bool saved{};
     bool cancel{};

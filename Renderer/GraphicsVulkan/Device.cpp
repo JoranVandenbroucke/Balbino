@@ -3,13 +3,13 @@
 #include "Funtions.h"
 #include "Instance.h"
 
-BalVulkan::CDeviceHolder::CDeviceHolder( VkDevice device, VkAllocationCallbacks* hostAllocator )
+FawnVision::CDeviceHolder::CDeviceHolder( VkDevice device, VkAllocationCallbacks* hostAllocator )
         : m_pCallbacks( hostAllocator )
           , m_device( device )
 {
 }
 
-BalVulkan::CDeviceHolder::~CDeviceHolder()
+FawnVision::CDeviceHolder::~CDeviceHolder()
 {
     if ( m_device != VK_NULL_HANDLE )
     {
@@ -17,14 +17,14 @@ BalVulkan::CDeviceHolder::~CDeviceHolder()
     }
 }
 
-BalVulkan::CDevice::CDevice( const SPhysicalDeviceInfo* pDeviceInfo, VkAllocationCallbacks* pCallbacks, VkDevice device )
+FawnVision::CDevice::CDevice( const SPhysicalDeviceInfo* pDeviceInfo, VkAllocationCallbacks* pCallbacks, VkDevice device )
         : CDeviceHolder( device, pCallbacks )
           , CRefCounted{}
           , m_pDeviceInfo( pDeviceInfo )
 {
 }
 
-BalVulkan::CDevice::~CDevice()
+FawnVision::CDevice::~CDevice()
 {
     vkDeviceWaitIdle( m_device );
     //for ( auto & deferredImageView : m_deferredImageViews )
@@ -43,23 +43,23 @@ BalVulkan::CDevice::~CDevice()
     //vkDestroyDevice( GetVkDevice(), nullptr );
 }
 
-void BalVulkan::CDevice::WaitIdle() const
+void FawnVision::CDevice::WaitIdle() const
 {
     vkDeviceWaitIdle( m_device );
 }
 
-const VkDevice& BalVulkan::CDevice::GetVkDevice() const
+const VkDevice& FawnVision::CDevice::GetVkDevice() const
 {
     return m_device;
 }
 
-const BalVulkan::SPhysicalDeviceInfo* BalVulkan::CDevice::GetPhysicalDeviceInfo() const
+const FawnVision::SPhysicalDeviceInfo* FawnVision::CDevice::GetPhysicalDeviceInfo() const
 {
     return m_pDeviceInfo;
 }
 
 
-BalVulkan::CDevice* BalVulkan::CDevice::Create( const SPhysicalDeviceInfo* pDeviceInfo, VkAllocationCallbacks* pCallbacks, const std::vector<const char*>& layersToEnable, const std::vector<const char*>& extensionsToEnable )
+FawnVision::CDevice* FawnVision::CDevice::Create( const SPhysicalDeviceInfo* pDeviceInfo, VkAllocationCallbacks* pCallbacks, const std::vector<const char*>& layersToEnable, const std::vector<const char*>& extensionsToEnable )
 {
     (void) layersToEnable;
     (void) extensionsToEnable;
@@ -92,30 +92,30 @@ BalVulkan::CDevice* BalVulkan::CDevice::Create( const SPhysicalDeviceInfo* pDevi
     return pDevice;
 }
 
-BalVulkan::CDevice::SRenderPass::SRenderPass( SRenderPass&& ) noexcept = default;
+FawnVision::CDevice::SRenderPass::SRenderPass( SRenderPass&& ) noexcept = default;
 
-BalVulkan::CDevice::SRenderPass::SRenderPass( const VkDevice& s, const VkRenderPass& r, const VkFramebuffer& f )
+FawnVision::CDevice::SRenderPass::SRenderPass( const VkDevice& s, const VkRenderPass& r, const VkFramebuffer& f )
         : self( s )
           , renderPass( r )
           , frameBuffer( f )
 {
 }
 
-BalVulkan::CDevice::SRenderPass::~SRenderPass()
+FawnVision::CDevice::SRenderPass::~SRenderPass()
 {
     vkDestroyRenderPass( self, renderPass, nullptr );
     vkDestroyFramebuffer( self, frameBuffer, nullptr );
 }
 
-BalVulkan::CDevice::SPipeline::SPipeline( SPipeline&& ) noexcept = default;
+FawnVision::CDevice::SPipeline::SPipeline( SPipeline&& ) noexcept = default;
 
-BalVulkan::CDevice::SPipeline::SPipeline( const VkDevice& s, const VkPipeline& p )
+FawnVision::CDevice::SPipeline::SPipeline( const VkDevice& s, const VkPipeline& p )
         : self( s )
           , pipeline( p )
 {
 }
 
-BalVulkan::CDevice::SPipeline::~SPipeline()
+FawnVision::CDevice::SPipeline::~SPipeline()
 {
     vkDestroyPipeline( self, pipeline, nullptr );
 }

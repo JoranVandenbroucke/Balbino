@@ -3,19 +3,19 @@
 #include "Device.h"
 #include "Funtions.h"
 
-BalVulkan::CFence::CFence( const CDevice* pDevice )
+FawnVision::CFence::CFence( const CDevice* pDevice )
         : CDeviceObject{ pDevice }
           , m_fence{ VK_NULL_HANDLE }
 {
 }
 
-BalVulkan::CFence::~CFence()
+FawnVision::CFence::~CFence()
 {
     vkDestroyFence( GetDevice()->GetVkDevice(), m_fence, nullptr );
     m_fence = VK_NULL_HANDLE;
 }
 
-void BalVulkan::CFence::Initialize()
+void FawnVision::CFence::Initialize()
 {
     VkFenceCreateInfo fenceInfo{
             .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, .flags = VK_FENCE_CREATE_SIGNALED_BIT,
@@ -27,22 +27,22 @@ void BalVulkan::CFence::Initialize()
     );
 }
 
-VkFence BalVulkan::CFence::Get() const
+VkFence FawnVision::CFence::Get() const
 {
     return m_fence;
 }
 
-void BalVulkan::CFence::Wait() const
+void FawnVision::CFence::Wait() const
 {
     vkWaitForFences( GetDevice()->GetVkDevice(), 1, &m_fence, VK_TRUE, UINT64_MAX );
 }
 
-void BalVulkan::CFence::Reset() const
+void FawnVision::CFence::Reset() const
 {
     vkResetFences( GetDevice()->GetVkDevice(), 1, &m_fence );
 }
 
-BalVulkan::CFence* BalVulkan::CFence::CreateNew( const CDevice* pDevice )
+FawnVision::CFence* FawnVision::CFence::CreateNew( const CDevice* pDevice )
 {
     return new CFence{ pDevice };
 }

@@ -14,7 +14,7 @@
 struct aiMesh;
 struct aiNode;
 struct aiScene;
-namespace BalEditor
+namespace FawnForge
 {
     class CMeshFileImporter
     {
@@ -30,7 +30,7 @@ namespace BalEditor
     private:
         struct SMesh
         {
-            std::vector<BalVulkan::SVertex> vertices;
+            std::vector<FawnVision::SVertex> vertices;
             std::vector<uint32_t>           indices;
             Balbino::SMeshMetadata          meshData;
         };

@@ -7,7 +7,7 @@
 
 struct INode;
 
-namespace BalEditor
+namespace FawnForge
 {
     class CShaderGraph
     {
