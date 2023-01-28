@@ -90,14 +90,14 @@ namespace BalEditor
         bool m_isItemSelected;
         bool m_openItem;
         
-        SFile m_itemToBeCreated;
+        SFile              m_itemToBeCreated;
         std::vector<SFile> m_currentDirectory;
         std::vector<SFile> m_files;
         std::string        m_currentDirectoryName;
         
         void FindAllFiles();
         void DrawTree( const std::string& path, uint32_t& nodeIdx );
-        void DrawContextMenu(bool isSelected);
+        void DrawContextMenu( bool isSelected );
         void GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory );
         void HandelSelected( const SFile& currentFile, bool isSelected );
         void MoveFile( SFile* pFile, const std::filesystem::path& destination );

@@ -1,3 +1,5 @@
+#ifndef MATH_UTIL_GLSL
+#define MATH_UTIL_GLSL
 /* Float Math */
 
 float SafeDivide(float a, float b)
@@ -148,3 +150,4 @@ vec3 PointTransformM4V3(vec3 vin, mat4 mat )
 {
     return (mat * vec4(vin, 1.0)).xyz;
 }
+#endif  // MATH_UTIL_GLSL

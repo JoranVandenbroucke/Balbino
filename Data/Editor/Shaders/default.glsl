@@ -1,3 +1,6 @@
+#ifndef DEFAULT_GLSL
+#define DEFAULT_GLSL
+
 #define BALBINO_PI        3.14159265359f
 #define BALBINO_2PI        6.28318530718f
 #define BALBINO_4PI        12.56637061436f
@@ -62,3 +65,7 @@ int GetTextureMipCount(sampler3D tex){ return textureQueryLevels(tex); }
 int GetTextureMipCount(samplerCube tex){ return textureQueryLevels(tex); }
 vec3 GetTextureDiffused(in sampler2D tex, vec2 uv){ return GetTexture2D(tex, uv).xyz; }
 float GetTextureAlpha(in sampler2D tex, vec2 uv){ return GetTexture2D(tex, uv).a; }
+
+float sqr(float x) { return x * x; }
+
+#endif  // DEFAULT_GLSL

@@ -283,7 +283,7 @@ namespace IMNODES_NAMESPACE
     void PopStyleVar( int count = 1 );
 
 // id can be any positive or negative integer, but INT_MIN is currently reserved for internal use.
-    void BeginNode( int id );
+    void BeginNode( int id, float width = 200.f );
     void EndNode();
     
     ImVec2 GetNodeDimensions( int id );

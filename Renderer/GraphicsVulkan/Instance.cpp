@@ -32,23 +32,23 @@ BalVulkan::CInstanceHolder::~CInstanceHolder()
 }
 
 BalVulkan::CInstance::CInstance()
-        : CInstanceHolder{},
-          m_debugReport{ VK_NULL_HANDLE },
-          m_pCallbacks{ nullptr },
-          m_surfaceKhr{ VK_NULL_HANDLE }
+        : CInstanceHolder{}
+          , m_debugReport{ VK_NULL_HANDLE }
+          , m_pCallbacks{ nullptr }
+          , m_surfaceKhr{ VK_NULL_HANDLE }
 {
 }
 
 BalVulkan::CInstance::~CInstance()
 {
-#ifdef _DEBUG
+    #ifdef _DEBUG
     if ( vkpfn_DestroyDebugReportCallbackEXT && m_debugReport )
     {
         vkpfn_DestroyDebugReportCallbackEXT( m_instanceHandle, m_debugReport, m_pCallbacks );
     }
     vkDestroySurfaceKHR( m_instanceHandle, m_surfaceKhr, m_pCallbacks );
     //vkDestroyDebugReportCallbackEXT( m_instanceHandle, m_debugReport, m_pCallbacks );
-#endif
+    #endif
 }
 
 bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t extensionsCount )
@@ -61,13 +61,11 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
     // CreateNew Vulkan Instance
     {
         VkApplicationInfo    applicationInfo{
-                .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-                .pNext = nullptr,
-                .pApplicationName = "Balbino",  //todo read form file
+                .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO, .pNext = nullptr, .pApplicationName = "Balbino",  //todo read form file
                 .applicationVersion = VK_MAKE_VERSION( 0, 0, 0 ),   //todo read from file
-                .pEngineName = "Balbino Engine",
-                .engineVersion = VK_MAKE_VERSION( 0, 1, 1 ),
-                .apiVersion = VK_API_VERSION_1_3,
+                .pEngineName = "Balbino Engine", .engineVersion = VK_MAKE_VERSION( 0,
+                                                                                   1,
+                                                                                   1 ), .apiVersion = VK_API_VERSION_1_3,
         };
         VkInstanceCreateInfo createInfo{
                 .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO, .pNext = nullptr, .flags = 0, .pApplicationInfo = &applicationInfo,
@@ -76,7 +74,7 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
                 .enabledExtensionCount = extensionsCount, .ppEnabledExtensionNames = extensions,
         };
         VkResult             err = VK_ERROR_INITIALIZATION_FAILED;
-#if defined(_DEBUG)
+        #if defined(_DEBUG)
         
         // Enabling validation layers
         const char* layers[]{ "VK_LAYER_KHRONOS_validation" };
@@ -98,22 +96,23 @@ bool BalVulkan::CInstance::Initialize( const char** extensions, const uint32_t e
         if ( err == VK_SUCCESS )
         {
             vkpfn_CreateDebugReportCallbackEXT  = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>( vkGetInstanceProcAddr(
-                    m_instanceHandle, "vkCreateDebugReportCallbackEXT" ));
+                    m_instanceHandle, "vkCreateDebugReportCallbackEXT"
+            ));
             vkpfn_DestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>( vkGetInstanceProcAddr(
-                    m_instanceHandle, "vkDestroyDebugReportCallbackEXT" ));
+                    m_instanceHandle, "vkDestroyDebugReportCallbackEXT"
+            ));
             if ( vkpfn_CreateDebugReportCallbackEXT && vkpfn_DestroyDebugReportCallbackEXT )
             {
                 VkDebugReportCallbackCreateInfoEXT debugReportCi{};
                 debugReportCi.sType       = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-                debugReportCi.flags       = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT |
-                                            VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
+                debugReportCi.flags       = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
                 debugReportCi.pfnCallback = DebugReport;
                 debugReportCi.pUserData   = nullptr;
                 vkpfn_CreateDebugReportCallbackEXT( m_instanceHandle, &debugReportCi, m_pCallbacks, &m_debugReport );
                 CheckVkResult( err );
             }
         }
-#endif
+        #endif
         if ( err != VK_SUCCESS )
         {
             CheckVkResult( vkCreateInstance( &createInfo, m_pCallbacks, &m_instanceHandle ));
@@ -159,17 +158,20 @@ uint8_t BalVulkan::CInstance::DeviceCount() const
 
 BalVulkan::CDevice* BalVulkan::CInstance::CreateDevice( uint32_t physicalDeviceIndex )
 {
-    const SPhysicalDeviceInfo& info{ m_physicalDevices[std::max( static_cast<uint32_t>( 0 ),
-                                                                 std::min( physicalDeviceIndex,
-                                                                           static_cast<uint32_t>( m_physicalDevices.size())))]
+    const SPhysicalDeviceInfo& info{
+            m_physicalDevices[std::max(
+                    static_cast<uint32_t>( 0 ), std::min(
+                            physicalDeviceIndex, static_cast<uint32_t>( m_physicalDevices.size())))]
     };
-    return CDevice::Create( &info, m_pCallbacks
-#ifdef _DEBUG
+    return CDevice::Create(
+            &info, m_pCallbacks
+            #ifdef _DEBUG
             , { "VK_LAYER_KHRONOS_validation" }
-#else
+            #else
             , {}
-#endif
-            , { VK_KHR_SWAPCHAIN_EXTENSION_NAME } );
+            #endif
+            , { VK_KHR_SWAPCHAIN_EXTENSION_NAME }
+    );
 }
 
 uint32_t BalVulkan::CInstance::FindBestPhysicalDeviceIndex( const VkSurfaceKHR& surf )
@@ -231,13 +233,15 @@ VkFormat BalVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector<
 
 VkFormat BalVulkan::SPhysicalDeviceInfo::GetDepthFormat() const
 {
-    return FindSupportedFormat( std::vector{
-            VK_FORMAT_D32_SFLOAT_S8_UINT,
-            VK_FORMAT_D32_SFLOAT,
-            VK_FORMAT_D24_UNORM_S8_UINT,
-            VK_FORMAT_D16_UNORM_S8_UINT,
-            VK_FORMAT_D16_UNORM
-    }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
+    return FindSupportedFormat(
+            std::vector{
+                    VK_FORMAT_D32_SFLOAT_S8_UINT,
+                    VK_FORMAT_D32_SFLOAT,
+                    VK_FORMAT_D24_UNORM_S8_UINT,
+                    VK_FORMAT_D16_UNORM_S8_UINT,
+                    VK_FORMAT_D16_UNORM
+            }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+    );
 }
 
 VkSampleCountFlagBits BalVulkan::SPhysicalDeviceInfo::GetMaxUsableSampleCount() const

@@ -30,11 +30,11 @@ namespace Balbino
     {
     public:
         CMaterial( CUuid uuid, CUuid shaderUUID, BalVulkan::CCommandPool* pPool )
-                : m_descriptorSet{ nullptr },
-                  m_shaderPipeline{},
-                  m_command{ pPool },
-                  m_uuid{ uuid },
-                  m_shaderUUID{ shaderUUID }
+                : m_descriptorSet{ nullptr }
+                  , m_shaderPipeline{}
+                  , m_command{ pPool }
+                  , m_uuid{ uuid }
+                  , m_shaderUUID{ shaderUUID }
         {
         }
         

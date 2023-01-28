@@ -61,10 +61,10 @@ namespace BalVulkan
         VkSurfaceKHR m_surfaceKhr;
         
         std::vector<SPhysicalDeviceInfo> m_physicalDevices;
-
-#ifdef _DEBUG
+        
+        #ifdef _DEBUG
         PFN_vkCreateDebugReportCallbackEXT  vkpfn_CreateDebugReportCallbackEXT  = nullptr;
         PFN_vkDestroyDebugReportCallbackEXT vkpfn_DestroyDebugReportCallbackEXT = nullptr;
-#endif
+        #endif
     };
 }

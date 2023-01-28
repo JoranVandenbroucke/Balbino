@@ -133,20 +133,20 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 message(STATUS "CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
 add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2/lib/x64/SDL2.dll                                ${CMAKE_CURRENT_BINARY_DIR}/SDL2.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/SDL2_image.dll                    ${CMAKE_CURRENT_BINARY_DIR}/SDL2_image.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/SDL2_mixer.dll                    ${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_ttf/lib/x64/SDL2_ttf.dll                        ${CMAKE_CURRENT_BINARY_DIR}/SDL2_ttf.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/ASSIMP/build/x64/bin/Debug/assimp-vc143-mtd.dll      ${CMAKE_CURRENT_BINARY_DIR}/assimp-vc143-mtd.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/ASSIMP/build/x64/bin/Release/assimp-vc143-mt.dll     ${CMAKE_CURRENT_BINARY_DIR}/assimp-vc143-mt.dll
-        COMMAND ${CMAKE_COMMAND} -E copy_directory  ${CMAKE_CURRENT_BINARY_DIR}/../../Data/                                                         ${CMAKE_CURRENT_BINARY_DIR}/../Data/
-#######################################################################################################################################################################################################
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/optional/libtiff-5.dll            ${CMAKE_CURRENT_BINARY_DIR}/libtiff-5.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/optional/libwebp-7.dll            ${CMAKE_CURRENT_BINARY_DIR}/libwebp-7.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2/lib/x64/SDL2.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/SDL2_image.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2_image.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/SDL2_mixer.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2_mixer.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_ttf/lib/x64/SDL2_ttf.dll ${CMAKE_CURRENT_BINARY_DIR}/SDL2_ttf.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/ASSIMP/build/x64/bin/Debug/assimp-vc143-mtd.dll ${CMAKE_CURRENT_BINARY_DIR}/assimp-vc143-mtd.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/ASSIMP/build/x64/bin/Release/assimp-vc143-mt.dll ${CMAKE_CURRENT_BINARY_DIR}/assimp-vc143-mt.dll
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/../../Data/ ${CMAKE_CURRENT_BINARY_DIR}/../Data/
+        #######################################################################################################################################################################################################
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/optional/libtiff-5.dll ${CMAKE_CURRENT_BINARY_DIR}/libtiff-5.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_image/lib/x64/optional/libwebp-7.dll ${CMAKE_CURRENT_BINARY_DIR}/libwebp-7.dll
 
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libmodplug-1.dll         ${CMAKE_CURRENT_BINARY_DIR}/libFLAC-8.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libogg-0.dll             ${CMAKE_CURRENT_BINARY_DIR}/libmodplug-1.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libopus-0.dll            ${CMAKE_CURRENT_BINARY_DIR}/libmpg123-0.dll
-        COMMAND ${CMAKE_COMMAND} -E copy            ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libopusfile-0.dll        ${CMAKE_CURRENT_BINARY_DIR}/libogg-0.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libmodplug-1.dll ${CMAKE_CURRENT_BINARY_DIR}/libFLAC-8.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libogg-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libmodplug-1.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libopus-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libmpg123-0.dll
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/../../3rdParty/SDL2_mixer/lib/x64/optional/libopusfile-0.dll ${CMAKE_CURRENT_BINARY_DIR}/libogg-0.dll
 
 )

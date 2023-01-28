@@ -6,30 +6,30 @@
 #include "Instance.h"
 
 BalVulkan::CImageResource::CImageResource( const CDevice* const device )
-	: CDeviceObject{ device }
-	, m_ownedBySwapchain{ false }
-	, m_mipLevels{ 0 }
-	, m_image{ VK_NULL_HANDLE }
-	, m_imageLayout{}
-	, m_createInfo{}
-	, m_memory{ VK_NULL_HANDLE }
-	, m_format{}
+        : CDeviceObject{ device }
+          , m_ownedBySwapchain{ false }
+          , m_mipLevels{ 0 }
+          , m_image{ VK_NULL_HANDLE }
+          , m_imageLayout{}
+          , m_createInfo{}
+          , m_memory{ VK_NULL_HANDLE }
+          , m_format{}
 {
 }
 
 uint32_t BalVulkan::CImageResource::GetWidth() const
 {
-	return m_createInfo.extent.width;
+    return m_createInfo.extent.width;
 }
 
 uint32_t BalVulkan::CImageResource::GetHeight() const
 {
-	return m_createInfo.extent.height;
+    return m_createInfo.extent.height;
 }
 
 uint32_t BalVulkan::CImageResource::GetDepth() const
 {
-	return m_createInfo.extent.depth;
+    return m_createInfo.extent.depth;
 }
 // https://github.com/SaschaWillems/Vulkan/blob/master/base/VulkanTools.cpp
 // Create an image memory barrier for changing the layout of
@@ -38,11 +38,11 @@ uint32_t BalVulkan::CImageResource::GetDepth() const
 
 void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const CBuffer* pCommand, EImageLayout::Enum newLayout )
 {
-	pCommand->BeginSingleTimeCommands();
-
-	EPipelineStageFlagBits::Enum sourceStage{EPipelineStageFlagBits::AllCommandsBit};
-	EPipelineStageFlagBits::Enum destinationStage{EPipelineStageFlagBits::AllCommandsBit};
-    VkImageAspectFlags aspectMask{VK_IMAGE_ASPECT_COLOR_BIT};
+    pCommand->BeginSingleTimeCommands();
+    
+    EPipelineStageFlagBits::Enum sourceStage{ EPipelineStageFlagBits::AllCommandsBit };
+    EPipelineStageFlagBits::Enum destinationStage{ EPipelineStageFlagBits::AllCommandsBit };
+    VkImageAspectFlags           aspectMask{ VK_IMAGE_ASPECT_COLOR_BIT };
     
     switch ( newLayout )
     {
@@ -62,27 +62,17 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
             break;
     }
     
-	// CreateNew an image barrier object
-	VkImageMemoryBarrier barrier{
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.oldLayout = m_imageLayout,
-		.newLayout = static_cast<VkImageLayout>( newLayout ),
-		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = m_image,
-		.subresourceRange{
-			.aspectMask = aspectMask,
-			.baseMipLevel = 0,
-			.levelCount = mipLevels,
-			.baseArrayLayer = 0,
-			.layerCount = 1,
-		},
-	};
-	m_imageLayout = barrier.newLayout;
+    // CreateNew an image barrier object
+    VkImageMemoryBarrier barrier{
+            .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER, .oldLayout = m_imageLayout, .newLayout = static_cast<VkImageLayout>( newLayout ), .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED, .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED, .image = m_image, .subresourceRange{
+                    .aspectMask = aspectMask, .baseMipLevel = 0, .levelCount = mipLevels, .baseArrayLayer = 0, .layerCount = 1,
+            },
+    };
+    m_imageLayout = barrier.newLayout;
     // Source layouts (old)
     // Source access mask controls actions that have to be finished on the old layout
     // before it will be transitioned to the new layout
-    switch (barrier.oldLayout)
+    switch ( barrier.oldLayout )
     {
         case VK_IMAGE_LAYOUT_UNDEFINED:
             // Image layout is undefined (or does not matter)
@@ -134,7 +124,7 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
     
     // Target layouts (new)
     // Destination access mask controls the dependency for the new image layout
-    switch (barrier.newLayout)
+    switch ( barrier.newLayout )
     {
         case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
             // Image will be used as a transfer destination
@@ -163,7 +153,7 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
         case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
             // Image will be read in a shader (sampler, input attachment)
             // Make sure any writes to the image have been finished
-            if (barrier.srcAccessMask == 0)
+            if ( barrier.srcAccessMask == 0 )
             {
                 barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT | VK_ACCESS_TRANSFER_WRITE_BIT;
             }
@@ -173,144 +163,143 @@ void BalVulkan::CImageResource::TransitionImageLayout( uint32_t mipLevels, const
             // Other source layouts aren't handled (yet)
             break;
     }
-	pCommand->PipelineBarrier( sourceStage, destinationStage, &barrier );
-
-	pCommand->EndSingleTimeCommands();
+    pCommand->PipelineBarrier( sourceStage, destinationStage, &barrier );
+    
+    pCommand->EndSingleTimeCommands();
 }
 
 void BalVulkan::CImageResource::GenerateMipMaps( uint32_t mipLevels, const CBuffer* pCommand )
 {
-	VkFormatProperties formatProperties;
-	vkGetPhysicalDeviceFormatProperties( GetDevice()->GetPhysicalDeviceInfo()->device, m_format, &formatProperties );
-
-	if ( !( formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT ) )
-	{
-		throw std::runtime_error( "texture image format does not support linear blitting!" );
-	}
-
-	pCommand->BeginSingleTimeCommands();
+    VkFormatProperties formatProperties;
+    vkGetPhysicalDeviceFormatProperties( GetDevice()->GetPhysicalDeviceInfo()->device, m_format, &formatProperties );
+    
+    if ( !( formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT ))
+    {
+        throw std::runtime_error( "texture image format does not support linear blitting!" );
+    }
+    
+    pCommand->BeginSingleTimeCommands();
     
     VkImageMemoryBarrier barrier{
-		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-		.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
-		.image = m_image,
-		.subresourceRange{
-			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.levelCount = 1,
-			.baseArrayLayer = 0,
-			.layerCount = 1,
-		},
-	};
-
-	int32_t mipWidth = static_cast<int32_t>( m_createInfo.extent.width );
-	int32_t mipHeight = static_cast<int32_t>( m_createInfo.extent.height );
-
-	for ( uint32_t i = 1; i < mipLevels; i++ )
-	{
-		barrier.subresourceRange.baseMipLevel = i - 1;
-		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		pCommand->PipelineBarrier( EPipelineStageFlagBits::TransferBit, EPipelineStageFlagBits::TransferBit, &barrier );
-		const VkImageBlit blit{
-			.srcSubresource{
-				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-				.mipLevel = i - 1,
-				.baseArrayLayer = 0,
-				.layerCount = 1,
-			},
-			.srcOffsets = { { 0, 0, 0 }, { mipWidth, mipHeight, 0 } },
-			.dstSubresource =
-			{
-				.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-				.mipLevel = i,
-				.baseArrayLayer = 0,
-				.layerCount = 1,
-			},
-			.dstOffsets = { { 0, 0, 0 }, { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 } },
-		};
-		pCommand->Blit( &m_image, &blit );
-
-		barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-		barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-		pCommand->PipelineBarrier( EPipelineStageFlagBits::TransferBit, EPipelineStageFlagBits::FragmentShaderBit, &barrier );
-
-		if ( mipWidth > 1 )
-			mipWidth /= 2;
-		if ( mipHeight > 1 )
-			mipHeight /= 2;
-	}
-
-	barrier.subresourceRange.baseMipLevel = mipLevels - 1;
-	barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-	barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-	pCommand->PipelineBarrier( EPipelineStageFlagBits::TransferBit, EPipelineStageFlagBits::FragmentShaderBit, &barrier );
-	pCommand->EndSingleTimeCommands();
+            .sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER, .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED, .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED, .image = m_image, .subresourceRange{
+                    .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .levelCount = 1, .baseArrayLayer = 0, .layerCount = 1,
+            },
+    };
+    
+    int32_t mipWidth  = static_cast<int32_t>( m_createInfo.extent.width );
+    int32_t mipHeight = static_cast<int32_t>( m_createInfo.extent.height );
+    
+    for ( uint32_t i = 1; i < mipLevels; i++ )
+    {
+        barrier.subresourceRange.baseMipLevel = i - 1;
+        barrier.oldLayout                     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        barrier.newLayout                     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+        barrier.srcAccessMask                 = VK_ACCESS_TRANSFER_WRITE_BIT;
+        barrier.dstAccessMask                 = VK_ACCESS_TRANSFER_READ_BIT;
+        pCommand->PipelineBarrier( EPipelineStageFlagBits::TransferBit, EPipelineStageFlagBits::TransferBit, &barrier );
+        const VkImageBlit blit{
+                .srcSubresource{
+                        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .mipLevel = i - 1, .baseArrayLayer = 0, .layerCount = 1,
+                }, .srcOffsets = {{ 0,        0,         0 },
+                                  { mipWidth, mipHeight, 0 }}, .dstSubresource =
+                        {
+                                .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .mipLevel = i, .baseArrayLayer = 0, .layerCount = 1,
+                        }, .dstOffsets = {{ 0,                               0,                                 0 },
+                                          { mipWidth > 1 ? mipWidth / 2 : 1, mipHeight > 1 ? mipHeight / 2 : 1, 1 }},
+        };
+        pCommand->Blit( &m_image, &blit );
+        
+        barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+        barrier.newLayout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+        barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        
+        pCommand->PipelineBarrier(
+                EPipelineStageFlagBits::TransferBit, EPipelineStageFlagBits::FragmentShaderBit, &barrier
+        );
+        
+        if ( mipWidth > 1 )
+        {
+            mipWidth /= 2;
+        }
+        if ( mipHeight > 1 )
+        {
+            mipHeight /= 2;
+        }
+    }
+    
+    barrier.subresourceRange.baseMipLevel = mipLevels - 1;
+    barrier.oldLayout                     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+    barrier.newLayout                     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    barrier.srcAccessMask                 = VK_ACCESS_TRANSFER_WRITE_BIT;
+    barrier.dstAccessMask                 = VK_ACCESS_SHADER_READ_BIT;
+    
+    pCommand->PipelineBarrier(
+            EPipelineStageFlagBits::TransferBit, EPipelineStageFlagBits::FragmentShaderBit, &barrier
+    );
+    pCommand->EndSingleTimeCommands();
 }
 
 VkImageLayout BalVulkan::CImageResource::GetLayout() const
 {
-	return {};
+    return {};
 }
 
 BalVulkan::CImageResource* BalVulkan::CImageResource::CreateNew( const CDevice* pDevice )
 {
-	return new CImageResource{ pDevice };
+    return new CImageResource{ pDevice };
 }
 
 BalVulkan::CImageResource::~CImageResource()
 {
-	if ( !m_ownedBySwapchain )
-	{
-		vkDestroyImage( GetDevice()->GetVkDevice(), m_image, nullptr );
-		vkFreeMemory( GetDevice()->GetVkDevice(), m_memory, nullptr );
-	}
+    if ( !m_ownedBySwapchain )
+    {
+        vkDestroyImage( GetDevice()->GetVkDevice(), m_image, nullptr );
+        vkFreeMemory( GetDevice()->GetVkDevice(), m_memory, nullptr );
+    }
 }
 
 VkResult BalVulkan::CImageResource::InitFromSwapchain( const VkImage image, const VkImageLayout layout, const uint32_t width, const uint32_t height, const VkFormat format )
 {
-	if ( m_image )
-		return VK_ERROR_UNKNOWN;
-	m_image = image;
-	m_createInfo.format = format;
-	m_createInfo.extent.width = width;
-	m_createInfo.extent.height = height;
-	m_createInfo.extent.depth = 1;
-	m_createInfo.arrayLayers = 1;
-	m_createInfo.mipLevels = 1;
-	m_createInfo.imageType = VK_IMAGE_TYPE_2D;
-	m_ownedBySwapchain = true;
-	m_imageLayout = layout;
-
-	return VK_SUCCESS;
+    if ( m_image )
+    {
+        return VK_ERROR_UNKNOWN;
+    }
+    m_image = image;
+    m_createInfo.format        = format;
+    m_createInfo.extent.width  = width;
+    m_createInfo.extent.height = height;
+    m_createInfo.extent.depth  = 1;
+    m_createInfo.arrayLayers   = 1;
+    m_createInfo.mipLevels     = 1;
+    m_createInfo.imageType     = VK_IMAGE_TYPE_2D;
+    m_ownedBySwapchain = true;
+    m_imageLayout      = layout;
+    
+    return VK_SUCCESS;
 }
 
-VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType::Enum type, BalVulkan::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, BalVulkan::EImageLayout::Enum layout)
+VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType::Enum type, BalVulkan::EFormat::Enum format, uint32_t width, uint32_t height, uint32_t depth, uint8_t mips, uint8_t layers, int sampleLevel, EImageUsageFlagBits::Enum usage, BalVulkan::EImageLayout::Enum layout )
 {
     (void) sampleLevel;
-	if ( m_image )
-		return VK_ERROR_UNKNOWN;
-
-	const auto imageLayout{ static_cast<VkImageLayout>( layout ) };
-	const auto usageFlags{ static_cast<VkImageUsageFlagBits>( usage ) };
-	const auto imageFormat{ static_cast<VkFormat>( format ) };
-
-    VkImageType imageType{VK_IMAGE_TYPE_2D
+    if ( m_image )
+    {
+        return VK_ERROR_UNKNOWN;
+    }
+    
+    const auto imageLayout{ static_cast<VkImageLayout>( layout ) };
+    const auto usageFlags{ static_cast<VkImageUsageFlagBits>( usage ) };
+    const auto imageFormat{ static_cast<VkFormat>( format ) };
+    
+    VkImageType imageType{
+            VK_IMAGE_TYPE_2D
     };
-    uint32_t flags{};
-    switch(type)
+    uint32_t    flags{};
+    switch ( type )
     {
         case EImageViewType::View1D:
         case EImageViewType::View1DArray:
-            imageType= VK_IMAGE_TYPE_1D;
+            imageType = VK_IMAGE_TYPE_1D;
             break;
         case EImageViewType::Cube:
         case EImageViewType::CubeArray:
@@ -319,90 +308,96 @@ VkResult BalVulkan::CImageResource::Initialize( BalVulkan::EImageViewType::Enum 
         case EImageViewType::View2DArray:
         case EImageViewType::Rect:
         case EImageViewType::RectArray:
-            imageType= VK_IMAGE_TYPE_2D;
+            imageType = VK_IMAGE_TYPE_2D;
             break;
         case EImageViewType::View3D:
-            imageType= VK_IMAGE_TYPE_3D;
+            imageType = VK_IMAGE_TYPE_3D;
             break;
     }
-
-	m_imageLayout = imageLayout;
-	m_createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-	m_createInfo.flags = flags;
-	m_createInfo.imageType = imageType;
-	m_createInfo.format = imageFormat;
-	m_createInfo.extent = VkExtent3D{ width, height, depth };
-	m_createInfo.mipLevels = mips;
-	m_createInfo.arrayLayers = layers;
+    
+    m_imageLayout = imageLayout;
+    m_createInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    m_createInfo.flags         = flags;
+    m_createInfo.imageType     = imageType;
+    m_createInfo.format        = imageFormat;
+    m_createInfo.extent        = VkExtent3D{ width, height, depth };
+    m_createInfo.mipLevels     = mips;
+    m_createInfo.arrayLayers   = layers;
 //	m_createInfo.samples = VkSampleCountFlagBits((sampleLevel == 7)? GetDevice()->GetPhysicalDeviceInfo()->GetMaxUsableSampleCount() : 1<<sampleLevel);
-	m_createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-	m_createInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	m_createInfo.usage = usageFlags;
-	m_createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	m_createInfo.initialLayout = imageLayout;
-
-	CheckVkResult( vkCreateImage( GetDevice()->GetVkDevice(), &m_createInfo, nullptr, &m_image ), "failed to create image!" );
-	m_mipLevels = mips;
-	m_format = imageFormat;
-
-	VkMemoryRequirements memRequirements;
-	vkGetImageMemoryRequirements( GetDevice()->GetVkDevice(), m_image, &memRequirements );
-
-	VkMemoryAllocateInfo allocInfo{};
-	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize = memRequirements.size;
-	allocInfo.memoryTypeIndex = FindMemoryType( GetDevice()->GetPhysicalDeviceInfo()->device, memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT );
-
-	if ( vkAllocateMemory( GetDevice()->GetVkDevice(), &allocInfo, nullptr, &m_memory ) != VK_SUCCESS )
-	{
-		throw std::runtime_error( "failed to allocate image memory!" );
-	}
-
-	CheckVkResult( vkBindImageMemory( GetDevice()->GetVkDevice(), m_image, m_memory, 0 ) );
-	return VK_SUCCESS;
+    m_createInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
+    m_createInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
+    m_createInfo.usage         = usageFlags;
+    m_createInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+    m_createInfo.initialLayout = imageLayout;
+    
+    CheckVkResult(
+            vkCreateImage( GetDevice()->GetVkDevice(), &m_createInfo, nullptr, &m_image ), "failed to create image!"
+    );
+    m_mipLevels = mips;
+    m_format    = imageFormat;
+    
+    VkMemoryRequirements memRequirements;
+    vkGetImageMemoryRequirements( GetDevice()->GetVkDevice(), m_image, &memRequirements );
+    
+    VkMemoryAllocateInfo allocInfo{};
+    allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize  = memRequirements.size;
+    allocInfo.memoryTypeIndex = FindMemoryType(
+            GetDevice()->GetPhysicalDeviceInfo()->device,
+            memRequirements.memoryTypeBits,
+            VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
+    
+    if ( vkAllocateMemory( GetDevice()->GetVkDevice(), &allocInfo, nullptr, &m_memory ) != VK_SUCCESS )
+    {
+        throw std::runtime_error( "failed to allocate image memory!" );
+    }
+    
+    CheckVkResult( vkBindImageMemory( GetDevice()->GetVkDevice(), m_image, m_memory, 0 ));
+    return VK_SUCCESS;
 }
 
 VkImage BalVulkan::CImageResource::GetImage()
 {
-	return m_image;
+    return m_image;
 }
 
 const VkImage& BalVulkan::CImageResource::GetImage() const
 {
-	return m_image;
+    return m_image;
 }
 
 const VkImageLayout& BalVulkan::CImageResource::GetImageLayout() const
 {
-	return m_imageLayout;
+    return m_imageLayout;
 }
 
 const VkImageCreateInfo& BalVulkan::CImageResource::GetImageCreateInfo() const
 {
-	return m_createInfo;
+    return m_createInfo;
 }
 
 VkImageType BalVulkan::CImageResource::GetDimensionality() const
 {
-	return m_createInfo.imageType;
+    return m_createInfo.imageType;
 }
 
 uint32_t BalVulkan::CImageResource::GetMipCount() const
 {
-	return m_createInfo.mipLevels;
+    return m_createInfo.mipLevels;
 }
 
 uint32_t BalVulkan::CImageResource::GetLayerCount() const
 {
-	return m_createInfo.arrayLayers;
+    return m_createInfo.arrayLayers;
 }
 
 VkFormat BalVulkan::CImageResource::GetFormat() const
 {
-	return m_createInfo.format;
+    return m_createInfo.format;
 }
 
-[[maybe_unused]] BalVulkan::CImageResource* BalVulkan::CImageResource::LoadFromFile(const std::string& path)
+[[maybe_unused]] BalVulkan::CImageResource* BalVulkan::CImageResource::LoadFromFile( const std::string& path )
 {
     (void) path;
     return nullptr;

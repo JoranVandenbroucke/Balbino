@@ -25,12 +25,7 @@ BalVulkan::CFrameBuffer::~CFrameBuffer()
 void BalVulkan::CFrameBuffer::Initialize( BalVulkan::CRenderPass* pRenderPass, uint32_t width, uint32_t height, const std::vector<CImageView*>& renderTargets, CImageView* pDepth )
 {
     bool hasRenderTargets{ !renderTargets.empty() };
-    if ( !hasRenderTargets && !pDepth ||
-         !width || !height ||
-         ( pRenderPass->HasDepthAttachment() && !pDepth ) ||
-         ( !pRenderPass->HasDepthAttachment() && pDepth ) ||
-         ( pRenderPass->HasColorAttachments() && !hasRenderTargets ) ||
-         ( !pRenderPass->HasColorAttachments() && hasRenderTargets ))
+    if ( !hasRenderTargets && !pDepth || !width || !height || ( pRenderPass->HasDepthAttachment() && !pDepth ) || ( !pRenderPass->HasDepthAttachment() && pDepth ) || ( pRenderPass->HasColorAttachments() && !hasRenderTargets ) || ( !pRenderPass->HasColorAttachments() && hasRenderTargets ))
     {
         return;
     }
@@ -46,15 +41,7 @@ void BalVulkan::CFrameBuffer::Initialize( BalVulkan::CRenderPass* pRenderPass, u
         imageViews.push_back( pDepth->GetImageView());
     }
     VkFramebufferCreateInfo bufCreateInfo = {
-            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-            .pNext = VK_NULL_HANDLE,
-            .flags = 0,
-            .renderPass = pRenderPass->GetRenderPass(),
-            .attachmentCount = static_cast<uint32_t>( imageViews.size()),
-            .pAttachments = imageViews.data(),
-            .width = width,
-            .height = height,
-            .layers = 1,
+            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO, .pNext = VK_NULL_HANDLE, .flags = 0, .renderPass = pRenderPass->GetRenderPass(), .attachmentCount = static_cast<uint32_t>( imageViews.size()), .pAttachments = imageViews.data(), .width = width, .height = height, .layers = 1,
     };
     m_frameBuffer.resize( hasRenderTargets ? renderTargets.size() : 1, VK_NULL_HANDLE );
     if ( hasRenderTargets )
@@ -64,12 +51,15 @@ void BalVulkan::CFrameBuffer::Initialize( BalVulkan::CRenderPass* pRenderPass, u
             imageViews[0] = renderTargets[i]->GetImageView();
             CheckVkResult(
                     vkCreateFramebuffer( GetDevice()->GetVkDevice(), &bufCreateInfo, nullptr, &m_frameBuffer[i] ),
-                    "failed to create frame buffer!" );
+                    "failed to create frame buffer!"
+            );
         }
         return;
     }
-    CheckVkResult( vkCreateFramebuffer( GetDevice()->GetVkDevice(), &bufCreateInfo, nullptr, &m_frameBuffer[0] ),
-                   "failed to create frame buffer!" );
+    CheckVkResult(
+            vkCreateFramebuffer( GetDevice()->GetVkDevice(), &bufCreateInfo, nullptr, &m_frameBuffer[0] ),
+            "failed to create frame buffer!"
+    );
 }
 
 

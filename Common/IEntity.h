@@ -11,16 +11,16 @@
 struct IEntity
 {
     IEntity( entt::entity entity, IScene* scene )
-            : m_entityHandle{ entity },
-              m_pScene{ scene }
+            : m_entityHandle{ entity }
+              , m_pScene{ scene }
     {
     }
     
     IEntity( const IEntity& other ) = default;
     
     IEntity( IEntity&& other ) noexcept
-            : m_entityHandle{ other.m_entityHandle },
-              m_pScene{ other.m_pScene }
+            : m_entityHandle{ other.m_entityHandle }
+              , m_pScene{ other.m_pScene }
     {
     }
     
@@ -123,8 +123,9 @@ ComponentType* IEntity::AddComponent( Args&& ... args )
     {
         return GetComponent<ComponentType>();
     }
-    ComponentType& component = m_pScene->GetRegistry().emplace<ComponentType>( m_entityHandle, this,
-                                                                               std::forward<Args>( args )... );
+    ComponentType& component = m_pScene->GetRegistry().emplace<ComponentType>(
+            m_entityHandle, this, std::forward<Args>( args )...
+    );
     return &component;
 }
 
@@ -142,9 +143,11 @@ template<typename ComponentType, typename ... Args>
 ComponentType* IEntity::CreateOrReplaceComponent( Args&& ... args )
 {
     //ComponentType& component = m_pScene->GetRegistry().emplace_or_replace<ComponentType>( m_entityHandle, this, std::forward<Args>( args )... );
-    ComponentType& component = m_pScene->GetRegistry().emplace_or_replace<ComponentType>( m_entityHandle,
-                                                                                          std::forward<Args>(
-                                                                                                  args )... );
+    ComponentType& component = m_pScene->GetRegistry().emplace_or_replace<ComponentType>(
+            m_entityHandle, std::forward<Args>(
+                    args
+            )...
+    );
     return &component;
 }
 

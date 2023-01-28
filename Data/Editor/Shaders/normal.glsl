@@ -1,3 +1,6 @@
+#ifndef NORMAL_GLSL
+#define NORMAL_GLSL
+
 vec3 Normal( float strength, vec3 normal, vec4 tangent, vec3 texnormal )
 {
     texnormal = 2.0 * vec3(texnormal.r - 0.5, texnormal.g - 0.5, texnormal.b - 0.5);
@@ -12,3 +15,4 @@ vec3 Normal( float strength, vec3 normal, vec4 tangent, vec3 texnormal )
     outnormal = texnormal.x * tangent.xyz + texnormal.y * B + texnormal.z * normal;
     return normalize(outnormal);
 }
+#endif  // NORMAL_GLSL

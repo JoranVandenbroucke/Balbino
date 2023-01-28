@@ -10,10 +10,11 @@
 namespace BalEditor
 {
     class CMeshFileImporter;
-
+    
     class CTextureFileImporter;
-
+    
     const std::array supportedImageFormat{
+            ".HDR",
             ".BMP",
             ".GIF",
             ".JPEG",
@@ -98,8 +99,8 @@ namespace BalEditor
             ".HMP",
             ".NDO"
     };
-
+    
     bool ImportFile( const char* pPath, const char* pDestinationDirection, BalEditor::CMeshFileImporter* pMeshImporter, BalEditor::CTextureFileImporter* pTextureImporter );
-
+    
     SFile GetData( const std::filesystem::path& path );
 }

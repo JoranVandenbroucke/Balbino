@@ -10,11 +10,11 @@
 namespace BalVulkan
 {
     CRenderPass::CRenderPass( const CDevice* device )
-            : CDeviceObject( device ),
-              m_renderPass{ VK_NULL_HANDLE },
-              m_hasDepthAttachment{},
-              m_hasColorAttachment{},
-              m_hasInputAttachment{}
+            : CDeviceObject( device )
+              , m_renderPass{ VK_NULL_HANDLE }
+              , m_hasDepthAttachment{}
+              , m_hasColorAttachment{}
+              , m_hasInputAttachment{}
     {
     }
     void CRenderPass::Initialize( std::vector<BalVulkan::EFormat::Enum> formats, uint32_t inputCount, bool hasColor )
@@ -55,46 +55,39 @@ namespace BalVulkan
         }
         
         const VkAttachmentReference colorAttachmentRef{
-                .attachment = (uint32_t) inputAttachmentRef.size(),
-                .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+                .attachment = (uint32_t) inputAttachmentRef.size(), .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         };
         const VkAttachmentReference depthAttachmentRef{
-                .attachment = (uint32_t) inputAttachmentRef.size() + ( hasColor ? 1u : 0u ),
-                .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+                .attachment = (uint32_t) inputAttachmentRef.size() + ( hasColor
+                                                                       ? 1u
+                                                                       : 0u ), .layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
         };
         
         const VkSubpassDescription surpass{
-                .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
-                .inputAttachmentCount = inputCount,
-                .pInputAttachments = inputCount ? inputAttachmentRef.data() : nullptr,
-                .colorAttachmentCount = hasColor ? 1u : 0u,
-                .pColorAttachments = hasColor ? &colorAttachmentRef : nullptr,
-                .pResolveAttachments = nullptr,     //todo support?
-                .pDepthStencilAttachment = m_hasDepthAttachment ? &depthAttachmentRef : nullptr,
-                .preserveAttachmentCount = 0,       //todo support?
+                .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS, .inputAttachmentCount = inputCount, .pInputAttachments = inputCount
+                                                                                                                               ? inputAttachmentRef.data()
+                                                                                                                               : nullptr, .colorAttachmentCount = hasColor
+                                                                                                                                                                  ? 1u
+                                                                                                                                                                  : 0u, .pColorAttachments = hasColor
+                                                                                                                                                                                             ? &colorAttachmentRef
+                                                                                                                                                                                             : nullptr, .pResolveAttachments = nullptr,     //todo support?
+                .pDepthStencilAttachment = m_hasDepthAttachment
+                                           ? &depthAttachmentRef
+                                           : nullptr, .preserveAttachmentCount = 0,       //todo support?
                 .pPreserveAttachments = nullptr,    //todo support?
         };
         
         const VkSubpassDependency dependency{
-                .srcSubpass = VK_SUBPASS_EXTERNAL,
-                .dstSubpass = 0,
-                .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-                .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT,
-                .srcAccessMask = 0,
-                .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+                .srcSubpass = VK_SUBPASS_EXTERNAL, .dstSubpass = 0, .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT, .srcAccessMask = 0, .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
         };
         
         const VkRenderPassCreateInfo renderPassInfo{
-                .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-                .attachmentCount = static_cast<uint32_t>( attachmentDescs.size()),
-                .pAttachments = attachmentDescs.data(),
-                .subpassCount = 1,
-                .pSubpasses = &surpass,
-                .dependencyCount = 1,
-                .pDependencies = &dependency,
+                .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO, .attachmentCount = static_cast<uint32_t>( attachmentDescs.size()), .pAttachments = attachmentDescs.data(), .subpassCount = 1, .pSubpasses = &surpass, .dependencyCount = 1, .pDependencies = &dependency,
         };
-        CheckVkResult( vkCreateRenderPass( GetDevice()->GetVkDevice(), &renderPassInfo, nullptr, &m_renderPass ),
-                       "failed to create render pass!" );
+        CheckVkResult(
+                vkCreateRenderPass( GetDevice()->GetVkDevice(), &renderPassInfo, nullptr, &m_renderPass ),
+                "failed to create render pass!"
+        );
     }
     VkRenderPass CRenderPass::GetRenderPass() const
     {

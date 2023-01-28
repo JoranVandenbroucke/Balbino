@@ -5,13 +5,14 @@
 #include "ImageResource.h"
 
 BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType::Enum type, uint32_t firstMip, uint32_t numMips, uint32_t firstLayer, uint32_t numLayers )
-        : CDeviceObject{ pImage.GetDevice() },
-          m_ownedBySwapchain{ false },
-          m_imageView{ VK_NULL_HANDLE }
+        : CDeviceObject{ pImage.GetDevice() }
+          , m_ownedBySwapchain{ false }
+          , m_imageView{ VK_NULL_HANDLE }
 {
     const uint32_t  actualNumMips   = ( numMips == VK_REMAINING_MIP_LEVELS) ? pImage.GetMipCount() - firstMip : numMips;
-    const uint32_t  actualNumLayers = ( numLayers == VK_REMAINING_ARRAY_LAYERS) ? pImage.GetLayerCount() -
-                                                                                  firstLayer : numLayers;
+    const uint32_t  actualNumLayers = ( numLayers == VK_REMAINING_ARRAY_LAYERS)
+                                      ? pImage.GetLayerCount() - firstLayer
+                                      : numLayers;
     VkImageViewType viewType{ (VkImageViewType) type };
     switch ( type )
     {
@@ -43,36 +44,24 @@ BalVulkan::CImageView::CImageView( const CImageResource& pImage, EImageViewType:
             viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
             break;
     }
-
-
-#if _DEBUG
+    
+    
+    #if _DEBUG
     const bool bIsCubeLike  = ( viewType == VK_IMAGE_VIEW_TYPE_CUBE ) || ( viewType == VK_IMAGE_VIEW_TYPE_CUBE_ARRAY );
-    const bool bIsArrayLike =
-                       ( viewType == VK_IMAGE_VIEW_TYPE_1D_ARRAY ) || ( viewType == VK_IMAGE_VIEW_TYPE_2D_ARRAY ) ||
-                       ( viewType == VK_IMAGE_VIEW_TYPE_CUBE_ARRAY );
+    const bool bIsArrayLike = ( viewType == VK_IMAGE_VIEW_TYPE_1D_ARRAY ) || ( viewType == VK_IMAGE_VIEW_TYPE_2D_ARRAY ) || ( viewType == VK_IMAGE_VIEW_TYPE_CUBE_ARRAY );
     assert( firstMip + actualNumMips <= pImage.GetMipCount() && "Image mips out of range" );
     assert( firstLayer + actualNumLayers <= pImage.GetLayerCount() && "Image Layers out of range" );
     assert( actualNumMips * actualNumLayers >= 1 && "No subresources selected" );
-    assert(( !bIsCubeLike || ( actualNumLayers % 6 == 0 )) &&
-           "Cannot create cubes when number of Layers is not a multiple of 6" );
-    assert(( bIsArrayLike || ( actualNumLayers == ( bIsCubeLike ? 6u : 1u ))) &&
-           "Cannot create non-array view when Layer count is not 1" );
-    assert(( viewType != VK_IMAGE_VIEW_TYPE_3D || actualNumLayers == 1 ) &&
-           "Cannot create array view on volume textures" );
-#endif
+    assert(( !bIsCubeLike || ( actualNumLayers % 6 == 0 )) && "Cannot create cubes when number of Layers is not a multiple of 6" );
+    assert(( bIsArrayLike || ( actualNumLayers == ( bIsCubeLike
+                                                    ? 6u
+                                                    : 1u ))) && "Cannot create non-array view when Layer count is not 1" );
+    assert(( viewType != VK_IMAGE_VIEW_TYPE_3D || actualNumLayers == 1 ) && "Cannot create array view on volume textures" );
+    #endif
     
     VkImageViewCreateInfo info{
-            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-            .pNext = nullptr,
-            .flags = 0,
-            .image = pImage.GetImage(),
-            .viewType = viewType,
-            .format = pImage.GetFormat(),
-            .subresourceRange = {
-                    .baseMipLevel = firstMip,
-                    .levelCount = actualNumMips,
-                    .baseArrayLayer = firstLayer,
-                    .layerCount = actualNumLayers,
+            .sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO, .pNext = nullptr, .flags = 0, .image = pImage.GetImage(), .viewType = viewType, .format = pImage.GetFormat(), .subresourceRange = {
+                    .baseMipLevel = firstMip, .levelCount = actualNumMips, .baseArrayLayer = firstLayer, .layerCount = actualNumLayers,
             },
     };
     

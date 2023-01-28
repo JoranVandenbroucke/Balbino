@@ -8,6 +8,10 @@ file(GLOB sourceE
         scr/Tools/FilesSystem/Inporter/*.cpp scr/Tools/FilesSystem/Inporter/*.h scr/Tools/FilesSystem/Inporter/*.c
         scr/Windows/*.cpp scr/Windows/*.h
         scr/Windows/Nodes/*.cpp scr/Windows/Nodes/*.h
+        scr/Windows/Nodes/Colour/*.cpp scr/Windows/Nodes/Colour/*.h
+        scr/Windows/Nodes/Math/*.cpp scr/Windows/Nodes/Math/*.h
+        scr/Windows/Nodes/Shaders/*.cpp scr/Windows/Nodes/Shaders/*.h
+        scr/Windows/Nodes/Textures/*.cpp scr/Windows/Nodes/Textures/*.h
         )
 
 # project setting

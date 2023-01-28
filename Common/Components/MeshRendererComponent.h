@@ -25,7 +25,7 @@ public:
     {
         if ( idx < m_materielUuid.size())
         {
-            m_materielUuid[ idx ] = materialId;
+            m_materielUuid[idx] = materialId;
         }
     }
     void SetMaterialCount( uint64_t size )
@@ -42,6 +42,6 @@ public:
     }
 private:
     IEntity* m_pEntity{};
-    CUuid m_meshId;
+    CUuid              m_meshId;
     std::vector<CUuid> m_materielUuid;
 };

@@ -9,23 +9,23 @@
 namespace BalEditor
 {
     CPropertyPanel::CPropertyPanel()
-            : m_currentPropertyType{ EPropertyTypes::Audio },
-              m_isVisible{},
-              m_defaultShaderID{},
-              m_defaultTransparentShaderID{},
-              m_defaultClothShaderID{},
-              m_defaultSkinShaderID{},
-              m_defaultHairShaderID{},
-              m_defaultDebugShaderID{},
-              m_defaultSkyboxShaderID{},
-              m_defaultMaterialID{},
-              m_defaultTransparentMaterialID{},
-              m_defaultClothMaterialID{},
-              m_defaultSkinMaterialID{},
-              m_defaultHairMaterialID{},
-              m_defaultDebugMaterialID{},
-              m_defaultSkyboxMaterialID{},
-              m_defaultTextureID{}
+            : m_currentPropertyType{ EPropertyTypes::Audio }
+              , m_isVisible{}
+              , m_defaultShaderID{}
+              , m_defaultTransparentShaderID{}
+              , m_defaultClothShaderID{}
+              , m_defaultSkinShaderID{}
+              , m_defaultHairShaderID{}
+              , m_defaultDebugShaderID{}
+              , m_defaultSkyboxShaderID{}
+              , m_defaultMaterialID{}
+              , m_defaultTransparentMaterialID{}
+              , m_defaultClothMaterialID{}
+              , m_defaultSkinMaterialID{}
+              , m_defaultHairMaterialID{}
+              , m_defaultDebugMaterialID{}
+              , m_defaultSkyboxMaterialID{}
+              , m_defaultTextureID{}
     {
         LoadFromIni();
     }
@@ -234,7 +234,11 @@ namespace BalEditor
             std::string defaultTextureID             = ini["Graphics"]["Default_Texture"];
             
             m_defaultShaderID            = std::stoull( defaultShaderID.empty() ? "0" : defaultShaderID );
-            m_defaultTransparentShaderID = std::stoull( defaultTransparentShaderID.empty() ? "0" : defaultTransparentShaderID );
+            m_defaultTransparentShaderID = std::stoull(
+                    defaultTransparentShaderID.empty()
+                    ? "0"
+                    : defaultTransparentShaderID
+            );
             m_defaultSkinShaderID        = std::stoull( defaultSkinShaderID.empty() ? "0" : defaultSkinShaderID );
             m_defaultHairShaderID        = std::stoull( defaultHairShaderID.empty() ? "0" : defaultHairShaderID );
             m_defaultClothShaderID       = std::stoull( defaultClothShaderID.empty() ? "0" : defaultClothShaderID );
@@ -242,12 +246,28 @@ namespace BalEditor
             m_defaultSkyboxShaderID      = std::stoull( defaultSkyboxShaderID.empty() ? "0" : defaultSkyboxShaderID );
             
             m_defaultMaterialID            = std::stoull( defaultMaterialID.empty() ? "0" : defaultMaterialID );
-            m_defaultTransparentMaterialID = std::stoull( defaultTransparentMaterialID.empty() ? "0" : defaultTransparentMaterialID );
+            m_defaultTransparentMaterialID = std::stoull(
+                    defaultTransparentMaterialID.empty()
+                    ? "0"
+                    : defaultTransparentMaterialID
+            );
             m_defaultSkinMaterialID        = std::stoull( defaultSkinMaterialID.empty() ? "0" : defaultSkinMaterialID );
             m_defaultHairMaterialID        = std::stoull( defaultHairMaterialID.empty() ? "0" : defaultHairMaterialID );
-            m_defaultClothMaterialID       = std::stoull( defaultClothMaterialID.empty() ? "0" : defaultClothMaterialID );
-            m_defaultDebugMaterialID       = std::stoull( defaultDebugMaterialID.empty() ? "0" : defaultDebugMaterialID );
-            m_defaultSkyboxMaterialID      = std::stoull( defaultSkyboxMaterialID.empty() ? "0" : defaultSkyboxMaterialID );
+            m_defaultClothMaterialID       = std::stoull(
+                    defaultClothMaterialID.empty()
+                    ? "0"
+                    : defaultClothMaterialID
+            );
+            m_defaultDebugMaterialID       = std::stoull(
+                    defaultDebugMaterialID.empty()
+                    ? "0"
+                    : defaultDebugMaterialID
+            );
+            m_defaultSkyboxMaterialID      = std::stoull(
+                    defaultSkyboxMaterialID.empty()
+                    ? "0"
+                    : defaultSkyboxMaterialID
+            );
             
             m_defaultTextureID = std::stoull( defaultTextureID.empty() ? "0" : defaultTextureID );
         }

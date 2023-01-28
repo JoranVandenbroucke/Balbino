@@ -1,3 +1,5 @@
+#ifndef BRICK_TEXTURE_GLSL
+#define BRICK_TEXTURE_GLSL
 //  https://thebookofshaders.com/09/
 vec3 BrickTile(vec3 point, float size, float offset, float offsetFrequency, float squash, float squashFrequecy){
     point *= size;
@@ -25,3 +27,4 @@ vec3 Brick(vec3 point, vec3 color1, vec3 color2, float morterSize, float size, f
     point = brickTile(point, size, offset, offsetFrequency, squash, squashFrequecy);
     return mix( color1, color2, box( st, vec3(1 - morterSize) ));
 }
+#endif  //BRICK_TEXTURE_GLSL

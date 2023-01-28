@@ -17,10 +17,10 @@
 #include "../EditorGUI/EditorGui.h"
 
 BalEditor::CSceneHierarchy::CSceneHierarchy()
-        : m_pContext{ nullptr },
-          m_pSelectionContext{ nullptr },
-          m_pSystem{ nullptr },
-          m_isVisible{ true }
+        : m_pContext{ nullptr }
+          , m_pSelectionContext{ nullptr }
+          , m_pSystem{ nullptr }
+          , m_isVisible{ true }
 {
 }
 
@@ -35,12 +35,12 @@ void BalEditor::CSceneHierarchy::Draw()
             {
                 DrawEntityNode( entity );
             }
-        
+            
             if ( GUI::IsMouseDown( 0 ) && GUI::IsWindowHovered())
             {
                 m_pSelectionContext = {};
             }
-        
+            
             // Right-click on blank space
             uint64_t selectedOption{ GUI::DrawPopupContextWindow( "Right Click", { "Create Empty" } ) };
             if ( selectedOption == 0 )
@@ -58,7 +58,7 @@ void BalEditor::CSceneHierarchy::Draw()
                     DisplayAddComponentEntry<CCameraComponent>( "Camera", m_pSystem );
                     DisplayAddComponentEntry<CLightComponent>( "Light" );
                     //DisplayAddComponentEntry<CMeshRenderComponent>( "MeshRender" );
-                
+                    
                     GUI::EndPopup();
                 }
             }
@@ -94,7 +94,7 @@ static void DrawComponent( const std::string& name, IEntity* entity, UIFunction 
     {
         auto            component              = entity->GetComponent<T>();
         const glm::vec2 contentRegionAvailable = BalEditor::GUI::GetContentRegionAvail();
-    
+        
         BalEditor::GUI::PushStyleVar( 5, glm::vec2{ 4, 4 } );
         const float lineHeight = BalEditor::GUI::GetLineHeight();
         BalEditor::GUI::Separator();
@@ -105,7 +105,7 @@ static void DrawComponent( const std::string& name, IEntity* entity, UIFunction 
         {
             BalEditor::GUI::StartPopup( "ComponentSettings", false );
         }
-    
+        
         bool removeComponent = false;
         if ( BalEditor::GUI::BeginPopup( "ComponentSettings" ))
         {
@@ -113,7 +113,7 @@ static void DrawComponent( const std::string& name, IEntity* entity, UIFunction 
             {
                 removeComponent = true;
             }
-        
+            
             BalEditor::GUI::EndPopup();
         }
         
@@ -187,152 +187,160 @@ void BalEditor::CSceneHierarchy::DrawEntityNode( IEntity* pEntity )
 void BalEditor::CSceneHierarchy::DrawComponents( IEntity* pEntity ) const
 {
     (void) pEntity;
-    DrawComponent<CTransformComponent>( "Transform", pEntity, []( auto component )
-    {
-        glm::vec3 translation = component->GetTranslation();
-        glm::vec3 rotation    = glm::degrees( glm::eulerAngles( component->GetRotation()));
-        glm::vec3 scale       = component->GetScale();
-    
-        float tra[3]{ translation.x, translation.y, translation.z };
-        float rot[3]{ rotation.x, rotation.y, rotation.z };
-        float sca[3]{ scale.x, scale.y, scale.z };
-    
-        GUI::DrawFloat3( "Translation", tra, 0.01f );
-        GUI::DrawFloat3( "Rotation", rot, 0.01f );
-        GUI::DrawFloat3( "Scale", sca, 0.01f, 1 );
-    
-        component->SetScale( glm::vec3{ sca[0], sca[1], sca[2] } );
-        component->SetRotation( glm::quat( radians( glm::vec3{ rot[0], rot[1], rot[2] } )));
-        component->SetTranslation( glm::vec3{ tra[0], tra[1], tra[2] } );
-    } );
-    
-    DrawComponent<CCameraComponent>( "Camera", pEntity, []( auto component )
-    {
-        float fov  = glm::degrees( component->GetFov());
-        float near = component->GetNearClip();
-        float far  = component->GetFarClip();
-        bool  changed{};
-        changed |= GUI::DrawFloat( "Vertical FOV", fov, 0.1f );
-        changed |= GUI::DrawFloat( "Near", near, 0.01f );
-        changed |= GUI::DrawFloat( "Far", far, 0.01f );
-        if ( changed )
-        {
-            component->SetFov( glm::radians( fov ));
-            component->SetNearClip( near );
-            component->SetFarClip( far );
-        }
-    } );
-    
-    DrawComponent<CMeshRenderComponent>( "Mesh Render Component", pEntity, [ & ]( auto component )
-    {
-        const CUuid meshID = component->GetMeshId();
-        const std::vector<CUuid>                     & materials       = component->GetMaterials();
-        const std::map<uint64_t, Balbino::CMaterial*>& loadedMaterials = m_pContext->GetSystem()->GetResourceManager()->GetAllLoadedMaterials();
-        GUI::DrawText(( "mesh ID: " + std::to_string((uint64_t) meshID )).c_str());
-        for ( int i{}; i < materials.size(); ++i )
-        {
-            GUI::DrawText(( "material ID: " + std::to_string((uint64_t) materials[i] )).c_str());
-            if ( const void* payload = GUI::ReceiveDragDrop( ToString( EFileTypes::Material )))
+    DrawComponent<CTransformComponent>(
+            "Transform", pEntity, []( auto component )
             {
-                component->SetMaterial( i, ((SFile*) payload )->uuid );
+                glm::vec3 translation = component->GetTranslation();
+                glm::vec3 rotation    = glm::degrees( glm::eulerAngles( component->GetRotation()));
+                glm::vec3 scale       = component->GetScale();
+                
+                float tra[3]{ translation.x, translation.y, translation.z };
+                float rot[3]{ rotation.x, rotation.y, rotation.z };
+                float sca[3]{ scale.x, scale.y, scale.z };
+                
+                GUI::DrawFloat3( "Translation", tra, 0.01f );
+                GUI::DrawFloat3( "Rotation", rot, 0.01f );
+                GUI::DrawFloat3( "Scale", sca, 0.01f, 1 );
+                
+                component->SetScale( glm::vec3{ sca[0], sca[1], sca[2] } );
+                component->SetRotation( glm::quat( radians( glm::vec3{ rot[0], rot[1], rot[2] } )));
+                component->SetTranslation( glm::vec3{ tra[0], tra[1], tra[2] } );
             }
-        }
-        for ( auto& loadedMaterial : loadedMaterials )
-        {
-            GUI::Separator();
-            const auto                                   & mat       = loadedMaterial.second;
-            const std::vector<BalVulkan::SShaderResource>& resources = mat->GetShaderResourcesVector();
-            for ( const auto                             & resource : resources )
-            {
-                GUI::DrawText( resource.name.c_str());
-            }
-        }
-    } );
+    );
     
-    DrawComponent<CLightComponent>( "Light Component", pEntity, [ & ]( auto component )
-    {
-        float                     strength{ component->GetStrength() };
-        glm::vec3                 size{ component->GetSize() };
-        glm::vec3                 color{ component->GetColor() };
-        Balbino::ELightType::Enum type{ component->GetType() };
-    
-        float    colorFloat[3]{ color.r, color.g, color.b };
-        uint64_t typeName{ uint64_t( type ) };
-        uint64_t typeNameDup{};
-        typeNameDup = typeName;
-    
-        bool hasChanged{};
-        hasChanged |= GUI::DrawFloat3( "Color", colorFloat, 0.01f );
-        hasChanged |= GUI::DrawFloat( "Strength", strength, 0.01f );
-        hasChanged |= GUI::DrawComboBox( "Light Type", typeName, { "Directional", "Point", "Spot", "Area" } );
-    
-        switch ( type )
-        {
-            case Balbino::ELightType::Directional:
-            case Balbino::ELightType::Point:
-                hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
-                break;
-            case Balbino::ELightType::Spot:
-                hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
-                hasChanged |= GUI::DrawFloat( "Near Radius", size.g, 0.01f );
-                hasChanged |= GUI::DrawFloat( "Far Radius", size.b, 0.01f );
-                break;
-            case Balbino::ELightType::Area:
-                hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
-                hasChanged |= GUI::DrawFloat( "Width", size.g, 0.01f );
-                hasChanged |= GUI::DrawFloat( "Height", size.b, 0.01f );
-                break;
-            case Balbino::ELightType::Max:
-                break;
-        }
-        
-        if ( hasChanged )
-        {
-            /*float size{ component->GetSize() };
-        glm::vec3 strength{ component->GetStrength() };
-        glm::vec3 color{ component->GetColor() };
-        Balbino::ELightType type{ component->GetType() };
-             "Directional","Point","Spot","Area"*/
-            if ( size != component->GetSize())
+    DrawComponent<CCameraComponent>(
+            "Camera", pEntity, []( auto component )
             {
-                component->SetSize( size );
+                float fov  = glm::degrees( component->GetFov());
+                float near = component->GetNearClip();
+                float far  = component->GetFarClip();
+                bool  changed{};
+                changed |= GUI::DrawFloat( "Vertical FOV", fov, 0.1f );
+                changed |= GUI::DrawFloat( "Near", near, 0.01f );
+                changed |= GUI::DrawFloat( "Far", far, 0.01f );
+                if ( changed )
+                {
+                    component->SetFov( glm::radians( fov ));
+                    component->SetNearClip( near );
+                    component->SetFarClip( far );
+                }
             }
-            if ( strength != component->GetStrength())
+    );
+    
+    DrawComponent<CMeshRenderComponent>(
+            "Mesh Render Component", pEntity, [ & ]( auto component )
             {
-                component->SetStrength( strength );
+                const CUuid meshID = component->GetMeshId();
+                const std::vector<CUuid>                     & materials       = component->GetMaterials();
+                const std::map<uint64_t, Balbino::CMaterial*>& loadedMaterials = m_pContext->GetSystem()->GetResourceManager()->GetAllLoadedMaterials();
+                GUI::DrawText(( "mesh ID: " + std::to_string((uint64_t) meshID )).c_str());
+                for ( int i{}; i < materials.size(); ++i )
+                {
+                    GUI::DrawText(( "material ID: " + std::to_string((uint64_t) materials[i] )).c_str());
+                    if ( const void* payload = GUI::ReceiveDragDrop( ToString( EFileTypes::Material )))
+                    {
+                        component->SetMaterial( i, ((SFile*) payload )->uuid );
+                    }
+                }
+                for ( auto& loadedMaterial : loadedMaterials )
+                {
+                    GUI::Separator();
+                    const auto                                   & mat       = loadedMaterial.second;
+                    const std::vector<BalVulkan::SShaderResource>& resources = mat->GetShaderResourcesVector();
+                    for ( const auto                             & resource : resources )
+                    {
+                        GUI::DrawText( resource.name.c_str());
+                    }
+                }
             }
-            if ( color.r != colorFloat[0] || color.b != colorFloat[1] || color.b != colorFloat[2] )
+    );
+    
+    DrawComponent<CLightComponent>(
+            "Light Component", pEntity, [ & ]( auto component )
             {
-                component->SetColor( glm::vec3{ colorFloat[0], colorFloat[1], colorFloat[2] } );
-            }
-            
-            if ( typeName != typeNameDup )
-            {
-                type = Balbino::ELightType::Enum( typeName );
+                float                     strength{ component->GetStrength() };
+                glm::vec3                 size{ component->GetSize() };
+                glm::vec3                 color{ component->GetColor() };
+                Balbino::ELightType::Enum type{ component->GetType() };
+                
+                float    colorFloat[3]{ color.r, color.g, color.b };
+                uint64_t typeName{ uint64_t( type ) };
+                uint64_t typeNameDup{};
+                typeNameDup = typeName;
+                
+                bool hasChanged{};
+                hasChanged |= GUI::DrawFloat3( "Color", colorFloat, 0.01f );
+                hasChanged |= GUI::DrawFloat( "Strength", strength, 0.01f );
+                hasChanged |= GUI::DrawComboBox( "Light Type", typeName, { "Directional", "Point", "Spot", "Area" } );
+                
                 switch ( type )
                 {
                     case Balbino::ELightType::Directional:
-                        size.g = size.b = 0;
-                        break;
                     case Balbino::ELightType::Point:
-                        size.g = size.b = 0;
+                        hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
                         break;
                     case Balbino::ELightType::Spot:
-                        size.g = 0.01f;
-                        size.b = 10.0f;
+                        hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
+                        hasChanged |= GUI::DrawFloat( "Near Radius", size.g, 0.01f );
+                        hasChanged |= GUI::DrawFloat( "Far Radius", size.b, 0.01f );
                         break;
                     case Balbino::ELightType::Area:
-                        size.g = 1.0f;
+                        hasChanged |= GUI::DrawFloat( "Size", size.r, 0.01f );
+                        hasChanged |= GUI::DrawFloat( "Width", size.g, 0.01f );
+                        hasChanged |= GUI::DrawFloat( "Height", size.b, 0.01f );
                         break;
                     case Balbino::ELightType::Max:
-                        size.b = 1.0f;
                         break;
                 }
-                component->SetSize( size );
-                component->SetType( type );
+                
+                if ( hasChanged )
+                {
+                    /*float size{ component->GetSize() };
+                glm::vec3 strength{ component->GetStrength() };
+                glm::vec3 color{ component->GetColor() };
+                Balbino::ELightType type{ component->GetType() };
+                     "Directional","Point","Spot","Area"*/
+                    if ( size != component->GetSize())
+                    {
+                        component->SetSize( size );
+                    }
+                    if ( strength != component->GetStrength())
+                    {
+                        component->SetStrength( strength );
+                    }
+                    if ( color.r != colorFloat[0] || color.b != colorFloat[1] || color.b != colorFloat[2] )
+                    {
+                        component->SetColor( glm::vec3{ colorFloat[0], colorFloat[1], colorFloat[2] } );
+                    }
+                    
+                    if ( typeName != typeNameDup )
+                    {
+                        type = Balbino::ELightType::Enum( typeName );
+                        switch ( type )
+                        {
+                            case Balbino::ELightType::Directional:
+                                size.g = size.b = 0;
+                                break;
+                            case Balbino::ELightType::Point:
+                                size.g = size.b = 0;
+                                break;
+                            case Balbino::ELightType::Spot:
+                                size.g = 0.01f;
+                                size.b = 10.0f;
+                                break;
+                            case Balbino::ELightType::Area:
+                                size.g = 1.0f;
+                                break;
+                            case Balbino::ELightType::Max:
+                                size.b = 1.0f;
+                                break;
+                        }
+                        component->SetSize( size );
+                        component->SetType( type );
+                    }
+                }
             }
-        }
-    } );
+    );
     
     if ( GUI::DrawButton( "Add Component", { -1, 0 } ))
     {

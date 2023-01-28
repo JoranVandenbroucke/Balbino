@@ -1,3 +1,6 @@
+#ifndef GRADIENT_TEXTURE_GLSL
+#define GRADIENT_TEXTURE_GLSL
+
 #include "default.glsl"
 vec3 gradient(vec3 positoin, vec3 col1, vec3 col2, float type){
 {
@@ -37,3 +40,5 @@ vec3 gradient(vec3 positoin, vec3 col1, vec3 col2, float type){
 
     return mix(col1,col2,clamp(result, 0.0, 1.0));
 }
+
+#endif  // GRADIENT_TEXTURE_GLSL

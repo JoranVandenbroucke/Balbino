@@ -14,7 +14,7 @@ bool BalEditor::ImportFile( const char* pPath, const char* pDestinationDirection
         return false;
     }
     fileChecker.close();
-
+    
     const std::filesystem::path dirPath{ pPath };
     std::string                 extension = dirPath.extension().string();
     for ( char& character : extension )
@@ -78,9 +78,9 @@ SFile BalEditor::GetData( const std::filesystem::path& path )
             uint8_t value;
             BinaryReadWrite::Read( fileStream, file.uuid );
             BinaryReadWrite::Read( fileStream, value );
-    
+            
             file.type = static_cast< EFileTypes >( value );
-
+            
             fileStream.close();
         }
     }

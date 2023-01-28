@@ -6,7 +6,9 @@
 namespace BalVulkan
 {
     class CImageResource;
+    
     class CCommandPool;
+    
     class CQueue;
     
     class CBuffer final : public CDeviceObject
@@ -41,12 +43,12 @@ namespace BalVulkan
         void Map( uint64_t size = VK_WHOLE_SIZE, uint64_t offset = 0 );
         void ReassignCommandPool( const CCommandPool* commandPool );
     private:
-        VkBuffer m_buffer;
+        VkBuffer        m_buffer;
         VkCommandBuffer m_commandBuffer;
-        VkDeviceMemory m_bufferMemory;
+        VkDeviceMemory  m_bufferMemory;
         
         const CCommandPool* m_commandPool;
-        const CQueue* m_queue;
+        const CQueue      * m_queue;
         uint64_t m_currentSize;
         
         void* m_pMappedData;

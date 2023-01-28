@@ -16,9 +16,7 @@
 
 #include "BalMath.h"
 #include "FileParcer.h"
-#include "ISystem.h"
 #include "IResourceManager.h"
-#include "IMesh.h"
 #include "../EditorGUI/EditorGui.h"
 
 
@@ -40,11 +38,19 @@ void BalEditor::CGameView::Draw()
             const auto& cameraCameraComponent    = cameraObject->GetComponent<CCameraComponent>();
             const auto& cameraTransformComponent = cameraObject->GetComponent<CTransformComponent>();
             
-            const auto& cameraView       = glm::inverse( cameraTransformComponent->GetTransform());
-            const auto& cameraProjection = glm::perspective( cameraCameraComponent->GetFov(),
-                                                             m_pSystem->GetWindowWidth() / m_pSystem->GetWindowHeight(),
-                                                             cameraCameraComponent->GetNearClip(),
-                                                             cameraCameraComponent->GetFarClip());
+            const auto& cameraView       = glm::lookAt(
+                    cameraTransformComponent->GetTranslation(),
+                    cameraTransformComponent->GetTranslation() + glm::rotate(
+                            cameraTransformComponent->GetRotation(),
+                            glm::vec3{ 0, 0, 1 }
+                    ),
+                    glm::vec3{ 0, 1, 0 }
+            );
+            const auto& cameraProjection = glm::perspective(
+                    cameraCameraComponent->GetFov(),
+                    m_pSystem->GetWindowWidth() / m_pSystem->GetWindowHeight(),
+                    cameraCameraComponent->GetNearClip(),
+                    cameraCameraComponent->GetFarClip());
             
             const auto transformComponentSelected = selected->GetComponent<CTransformComponent>();
             glm::mat4  transformSelected          = transformComponentSelected->GetTransform();
@@ -58,9 +64,15 @@ void BalEditor::CGameView::Draw()
             
             const float snapValues[3] = { snapValue, snapValue, snapValue };
             
-            Manipulate( value_ptr( cameraView ), value_ptr( cameraProjection ),
-                        static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::LOCAL,
-                        value_ptr( transformSelected ), nullptr, m_snap ? snapValues : nullptr );
+            Manipulate(
+                    value_ptr( cameraView ),
+                    value_ptr( cameraProjection ),
+                    static_cast<ImGuizmo::OPERATION>( m_gizmoType ),
+                    ImGuizmo::LOCAL,
+                    value_ptr( transformSelected ),
+                    nullptr,
+                    m_snap ? snapValues : nullptr
+            );
             
             if ( ImGuizmo::IsUsing())
             {
@@ -81,6 +93,11 @@ void BalEditor::CGameView::Draw()
         const Balbino::IMesh* pModel = m_pSystem->GetResourceManager()->LoadModel( static_cast<SFile*>( pData )->path );
         IEntity             * pEnt   = m_pContext->CreateEntity();
         pEnt->AddComponent<CMeshRenderComponent>( pModel->GetUuid())->SetMaterialCount( pModel->GetMaterialCount());
+    }
+    if ( void* pData = GUI::ReceiveDragDrop( ToString( EFileTypes::Image )))
+    {
+        const Balbino::CTexture* pTexture = m_pSystem->GetResourceManager()->LoadTexture( static_cast<SFile*>( pData )->path );
+        (void*) pTexture;
     }
     GUI::End();
 }

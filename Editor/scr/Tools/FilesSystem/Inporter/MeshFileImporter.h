@@ -36,14 +36,14 @@ namespace BalEditor
         };
         
         float m_importPercentage;
-        bool m_isVisible;
-        bool m_importMeshes;
-        bool m_applyTransforms;
+        bool  m_isVisible;
+        bool  m_importMeshes;
+        bool  m_applyTransforms;
         bool  m_mergeMeshes;
         bool  m_materials;
-        bool m_textures;
-        bool m_importLights;
-        bool m_importCameras;
+        bool  m_textures;
+        bool  m_importLights;
+        bool  m_importCameras;
         
         std::vector<SMesh> m_meshes;
         

@@ -65,7 +65,7 @@ float MathAbsolute(float a)
 {
     return abs(a);
 }
-//Raises Euler’s number to the power of the value.
+//Raises Euler`s number to the power of the value.
 float MathExponent(float a)
 {
     return exp(a);

@@ -8,7 +8,7 @@
 #include "UUID.h"
 #include "Entity.h"
 #include "IScene.h"
-#include "../Camera.h"
+#include "Camera.h"
 #include "../Renderer/VertexBuffer.h"
 #include "../Renderer/UBOStructs.h"
 

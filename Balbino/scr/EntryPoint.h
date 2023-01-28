@@ -1,5 +1,6 @@
 #ifndef ENTRYPOINT_H
 #define ENTRYPOINT_H
+#include <SDL.h>
 
 #ifdef BL_PLATFORM_WINDOWS
 #include <iostream>
@@ -11,7 +12,7 @@ int main( int arc, char* argv[] )
 {
     (void) arc;
     (void) argv;
-
+    
     auto pApp = Balbino::CreateApplication();
     try
     {
@@ -26,7 +27,7 @@ int main( int arc, char* argv[] )
         return -1;
     }
     pApp->Cleanup();
-
+    
     Balbino::DestroyApplication( pApp );
     return 0;
 }

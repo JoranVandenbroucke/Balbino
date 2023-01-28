@@ -85,8 +85,10 @@ bool BalEditor::CMeshFileImporter::IsVisible() const
 bool BalEditor::CMeshFileImporter::LoadMesh()
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile( m_path.string(),
-                                              aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SplitLargeMeshes | aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_SortByPType | aiProcess_FindDegenerates | aiProcess_FindInvalidData );
+    const aiScene* scene = importer.ReadFile(
+            m_path.string(),
+            aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices | aiProcess_RemoveRedundantMaterials | aiProcess_SplitLargeMeshes | aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_SortByPType | aiProcess_FindDegenerates | aiProcess_FindInvalidData
+    );
     
     // If the import failed, report it
     if ( !scene )
@@ -105,10 +107,12 @@ bool BalEditor::CMeshFileImporter::LoadMesh()
         ProcessMeshRecursively( scene->mRootNode, scene );
         if ( m_mergeMeshes )
         {
-            std::sort( m_meshes.begin(), m_meshes.end(), []( const SMesh& p1, const SMesh& p2 )
-            {
-                return p1.meshData.marerialIndex < p2.meshData.marerialIndex;
-            } );
+            std::sort(
+                    m_meshes.begin(), m_meshes.end(), []( const SMesh& p1, const SMesh& p2 )
+                    {
+                        return p1.meshData.marerialIndex < p2.meshData.marerialIndex;
+                    }
+            );
             if ( m_mergeMeshes )
             {
                 std::vector<BalVulkan::SVertex>     vertices;
@@ -120,8 +124,9 @@ bool BalEditor::CMeshFileImporter::LoadMesh()
                     indices.insert( indices.end(), mesh.indices.begin(), mesh.indices.end());
                     meshData.push_back( mesh.meshData );
                 }
-                BalEditor::Exporter::ExportMesh( m_path.filename().string(), m_destinationDirection + "\\", indices,
-                                                 vertices, meshData );
+                BalEditor::Exporter::ExportMesh(
+                        m_path.filename().string(), m_destinationDirection, indices, vertices, meshData
+                );
             }
         }
     }
@@ -206,6 +211,7 @@ void BalEditor::CMeshFileImporter::ProcessMesh( const aiMesh* pMesh, SMesh& mesh
     mesh.meshData.boundingBox.max.z = pMesh->mAABB.mMax.z;
     
     mesh.meshData.boundingSphere.center = ( mesh.meshData.boundingBox.min + mesh.meshData.boundingBox.max ) * 0.5f;
-    mesh.meshData.boundingSphere.radius = glm::distance( mesh.meshData.boundingBox.min,
-                                                         mesh.meshData.boundingBox.max ) * 0.5f;
+    mesh.meshData.boundingSphere.radius = glm::distance(
+            mesh.meshData.boundingBox.min, mesh.meshData.boundingBox.max
+    ) * 0.5f;
 }

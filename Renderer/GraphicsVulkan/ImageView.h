@@ -18,7 +18,7 @@ namespace BalVulkan
         ~CImageView() override;
         
         VkImageView GetImageView() const;
-    
+        
         void Destroy() override;
         static CImageView* CreateNew( const CImageResource& pResource, EImageViewType::Enum type, uint32_t firstMip = 0, uint32_t numMips = VK_REMAINING_MIP_LEVELS, uint32_t firstLayer = 0, uint32_t numLayers = VK_REMAINING_ARRAY_LAYERS);
     private:

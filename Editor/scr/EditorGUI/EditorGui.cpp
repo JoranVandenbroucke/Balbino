@@ -815,11 +815,13 @@ namespace BalEditor::GUI
     {
         bool hasChanged;
         const char* pName{ name.data() };
+        const float w{ ImGui::CalcItemWidth() };
         ImGui::PushID( pName );
-        ImGui::Columns( 2, pName, false );
+        ImGui::BeginColumns( pName, 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", pName );
         ImGui::NextColumn();
+        ImGui::SetNextItemWidth( std::fmax( w - width * 1.15f, 50.f ));
         hasChanged = ImGui::InputText( "##input", text, maxLength, flags );
         ImGui::EndColumns();
         ImGui::PopID();
@@ -847,7 +849,7 @@ namespace BalEditor::GUI
         return ImGui::Button( name, { size.x, size.y } );
     }
     
-    bool GUI::DrawComboBox( const char* name, uint64_t& currentIndex, const std::vector<std::string>& elements, float width, bool inMenuBar )
+    bool GUI::DrawComboBox( const char* name, uint64_t& currentIndex, const std::vector<std::string>& elements, const std::vector<int>& dividers, float width, bool inMenuBar )
     {
         if ( currentIndex >= elements.size())
         {
@@ -855,7 +857,7 @@ namespace BalEditor::GUI
         }
         
         bool hasChanged{};
-        
+        int  divider{};
         if ( inMenuBar )
         {
             ImGui::SetNextItemWidth( width );
@@ -873,20 +875,25 @@ namespace BalEditor::GUI
                     {
                         ImGui::SetItemDefaultFocus();
                     }
+                    if ( dividers[divider] == i )
+                    {
+                        ++divider;
+                        BalEditor::GUI::Separator();
+                    }
                 }
                 ImGui::EndCombo();
             }
         }
         else
         {
+            const float w{ ImGui::CalcItemWidth() };
             ImGui::PushID( name );
             ImGui::BeginColumns( name, 2, ImGuiOldColumnFlags_NoResize );
             ImGui::SetColumnWidth( 0, width );
             ImGui::Text( "%s", name );
             ImGui::NextColumn();
-            
-            ImGui::SetNextItemWidth( width );
-//            ImGui::SetNextItemWidth( ImGui::CalcTextSize( elements[currentIndex].c_str()).x + ImGui::GetStyle().FramePadding.x * 2.0f );
+    
+            ImGui::SetNextItemWidth( std::fmax( w - width * 1.15f, 50.f ));
             if ( ImGui::BeginCombo( "##name", elements[currentIndex].c_str()))
             {
                 for ( uint64_t i{}; i < elements.size(); ++i )
@@ -915,16 +922,119 @@ namespace BalEditor::GUI
         {
             DrawText( name.data());
             Separator();
+
+            std::vector<std::string> parents;
+            std::vector<std::string> parentsCopy;
+
             for ( uint64_t n = 0; n < options.size(); n++ )
             {
-                if ( MenuItem( options[n] ))
+                size_t      idx;
+                std::string currentOption{ options[n] };
+                bool        breakedEarly{};
+
+                parentsCopy.clear();
+                for ( const std::string& str : parents )
                 {
+                    idx = currentOption.find( str );
+                    if ( idx == std::string::npos )
+                    {
+                        EndMenu();
+                    }
+                    else
+                    {
+                        currentOption = currentOption.erase( idx, str.size() + 1 );
+                        parentsCopy.push_back( str );
+                    }
+                }
+                parents      = parentsCopy;
+                while (( idx = currentOption.find( '/' )) != std::string::npos )
+                {
+                    std::string option = currentOption.substr( 0, idx );
+                    currentOption.erase( 0, option.length() + 1 );
+                    if ( !BeginMenu( option.c_str()))
+                    {
+                        breakedEarly = true;
+                        break;
+                    }
+                    parents.push_back( option );
+                }
+                if ( !breakedEarly && MenuItem( currentOption ))
+                {
+                    while ( !parents.empty())
+                    {
+                        parents.pop_back();
+                        EndMenu();
+                    }
                     EndPopup();
                     return n;
                 }
             }
+            while ( !parents.empty())
+            {
+                parents.pop_back();
+                EndMenu();
+            }
             EndPopup();
         }
+//        if ( ImGui::BeginPopupContextWindow(name.data()) )
+//        {
+//            DrawText(name.data());
+//            Separator();
+//
+//            std::vector<std::string> parents;
+//
+//            for ( uint64_t n = 0; n < options.size(); n++ )
+//            {
+//                std::string_view currentOption{ options[n] };
+//
+//                for ( const std::string& str : parents )
+//                {
+//                    auto idx = currentOption.find(str);
+//                    if ( idx == std::string_view::npos )
+//                    {
+//                        EndMenu();
+//                    }
+//                    else
+//                    {
+//                        currentOption = currentOption.substr(idx + str.size() + 1);
+//                    }
+//                }
+//
+//                while ( true )
+//                {
+//                    auto idx = currentOption.find_first_of('/');
+//                    if ( idx == std::string_view::npos )
+//                    {
+//                        break;
+//                    }
+//                    std::string_view option = currentOption.substr(0, idx);
+//                    currentOption = currentOption.substr(idx + 1);
+//                    if ( !BeginMenu(option.data()) )
+//                    {
+//                        break;
+//                    }
+//                    parents.emplace_back(option);
+//                }
+//
+//                if ( MenuItem(std::string{currentOption}) )
+//                {
+//                    while ( !parents.empty() )
+//                    {
+//                        parents.pop_back();
+//                        EndMenu();
+//                    }
+//                    EndPopup();
+//                    return n;
+//                }
+//            }
+//
+//            while ( !parents.empty() )
+//            {
+//                parents.pop_back();
+//                EndMenu();
+//            }
+//            EndPopup();
+//        }
         return std::numeric_limits<unsigned long long>::max();
     }
     
@@ -1155,5 +1265,12 @@ namespace BalEditor::GUI
     {
         ImGui::Selectable(( "##file" + std::to_string( id )).c_str(), &isSelected, 1 << 2, { 0, height } );
         isSelected |= ImGui::IsItemHovered();
+    }
+    void SetTooltip( std::string_view tip )
+    {
+        if ( ImGui::IsItemHovered())
+        {
+            ImGui::SetTooltip( "%s", tip.data());
+        }
     }
 }

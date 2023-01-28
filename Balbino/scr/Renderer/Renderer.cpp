@@ -16,23 +16,25 @@
 #include "ISystem.h"
 
 Balbino::CRenderer::CRenderer()
-        : m_pInstance{ nullptr },
-          m_pDevice{ nullptr },
-          m_pSwapchain{ nullptr },
-          m_pFrameBuffer{ nullptr },
-          m_pQueue{ nullptr },
-          m_pCommandPool{ nullptr },
-          m_pSignalingSemaphore{ nullptr },
-          m_pWaitingSemaphore{ nullptr },
-#ifdef BALBINO_EDITOR
-          m_pInterface{ nullptr },
-#endif // BALBINO_EDITOR
-          m_width{ 0 },
-          m_height{ 0 },
-          m_imageIndex{ 0 },
-          m_aspectRation{ 0 },
-          m_pWindow{ nullptr },
-          m_pScene{ nullptr }
+        : m_pInstance{ nullptr }
+          , m_pDevice{ nullptr }
+          , m_pSwapchain{ nullptr }
+          , m_pFrameBuffer{ nullptr }
+          , m_pQueue{ nullptr }
+          , m_pCommandPool{ nullptr }
+          , m_pSignalingSemaphore{ nullptr }
+          , m_pWaitingSemaphore{ nullptr }
+          ,
+        #ifdef BALBINO_EDITOR
+          m_pInterface{ nullptr }
+          ,
+        #endif // BALBINO_EDITOR
+          m_width{ 0 }
+          , m_height{ 0 }
+          , m_imageIndex{ 0 }
+          , m_aspectRation{ 0 }
+          , m_pWindow{ nullptr }
+          , m_pScene{ nullptr }
 {
 }
 
@@ -47,8 +49,9 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
     g_pQueue       = m_pQueue;
     g_pRenderPass  = m_pRenderPass;
     g_pSwapChain   = m_pSwapchain;
-    pInterface->Initialize( pWindow, m_width, m_height, m_pDevice, m_pQueue, m_pCommandPool, m_pRenderPass,
-                            m_pSwapchain, pSystem );
+    pInterface->Initialize(
+            pWindow, m_width, m_height, m_pDevice, m_pQueue, m_pCommandPool, m_pRenderPass, m_pSwapchain, pSystem
+    );
     m_pInterface = pInterface;
 }
 
@@ -91,7 +94,7 @@ void Balbino::CRenderer::RecreateSwapChain()
     m_pQueue->Initialize();
     m_pCommandPool->Initialize( m_pQueue->GetQueFamily(), m_pSwapchain );
     
-    uint32_t                        imageResourceSize;
+    uint32_t                              imageResourceSize;
     std::vector<BalVulkan::EFormat::Enum> formats;
     m_pSwapchain->GetImages( m_swapchainResources, imageResourceSize );
     m_swapchainViews.reserve( imageResourceSize );
@@ -105,18 +108,27 @@ void Balbino::CRenderer::RecreateSwapChain()
     m_pRenderPass->Initialize( formats, 0u, (uint32_t) m_swapchainViews.size());
     
     m_pDepthImage = BalVulkan::CImageResource::CreateNew( m_pDevice );
-    m_pDepthImage->Initialize( BalVulkan::EImageViewType::View2D, formats.back(), m_pSwapchain->GetExtend().width,
-                               m_pSwapchain->GetExtend().height, 1, 1, 1, 0,
-                               BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
-                               BalVulkan::EImageLayout::Undefined );
-    m_pDepthImageView = BalVulkan::CImageView::CreateNew( *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0,
-                                                          1 );
+    m_pDepthImage->Initialize(
+            BalVulkan::EImageViewType::View2D,
+            formats.back(),
+            m_pSwapchain->GetExtend().width,
+            m_pSwapchain->GetExtend().height,
+            1,
+            1,
+            1,
+            0,
+            BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
+            BalVulkan::EImageLayout::Undefined
+    );
+    m_pDepthImageView = BalVulkan::CImageView::CreateNew(
+            *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0, 1
+    );
     
     m_pFrameBuffer->Initialize( m_pRenderPass, m_width, m_height, m_swapchainViews, m_pDepthImageView );
-
-#ifdef BALBINO_EDITOR
+    
+    #ifdef BALBINO_EDITOR
     m_pInterface->Resize( m_width, m_height );
-#endif
+    #endif
     
     g_pDevice      = m_pDevice;
     g_pCommandPool = m_pCommandPool;
@@ -152,7 +164,7 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
     m_pSwapchain->Initialize( m_width, m_height );
     m_pCommandPool->Initialize( m_pQueue->GetQueFamily(), m_pSwapchain );
     
-    uint32_t                        imageResourceSize;
+    uint32_t                              imageResourceSize;
     std::vector<BalVulkan::EFormat::Enum> formats;
     m_pSwapchain->GetImages( m_swapchainResources, imageResourceSize );
     m_swapchainViews.reserve( imageResourceSize );
@@ -166,12 +178,21 @@ void Balbino::CRenderer::Setup( SDL_Window* pWindow, const char** extensions, ui
     m_pRenderPass->Initialize( formats, 0, (uint32_t) m_swapchainViews.size());
     
     m_pDepthImage = BalVulkan::CImageResource::CreateNew( m_pDevice );
-    m_pDepthImage->Initialize( BalVulkan::EImageViewType::View2D, formats.back(), m_pSwapchain->GetExtend().width,
-                               m_pSwapchain->GetExtend().height, 1, 1, 1, 0,
-                               BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
-                               BalVulkan::EImageLayout::Undefined );
-    m_pDepthImageView = BalVulkan::CImageView::CreateNew( *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0,
-                                                          1 );
+    m_pDepthImage->Initialize(
+            BalVulkan::EImageViewType::View2D,
+            formats.back(),
+            m_pSwapchain->GetExtend().width,
+            m_pSwapchain->GetExtend().height,
+            1,
+            1,
+            1,
+            0,
+            BalVulkan::EImageUsageFlagBits::DepthStencilAttachmentBit,
+            BalVulkan::EImageLayout::Undefined
+    );
+    m_pDepthImageView = BalVulkan::CImageView::CreateNew(
+            *m_pDepthImage, BalVulkan::EImageViewType::View2D, 0, 1, 0, 1
+    );
     
     m_pFrameBuffer->Initialize( m_pRenderPass, m_width, m_height, m_swapchainViews, m_pDepthImageView );
     
@@ -275,9 +296,9 @@ bool Balbino::CRenderer::StartDraw()
 
 bool Balbino::CRenderer::EndDraw()
 {
-#ifdef BALBINO_EDITOR
+    #ifdef BALBINO_EDITOR
     m_pInterface->Draw( m_pCommandPool );
-#endif // BALBINO_EDITOR
+    #endif // BALBINO_EDITOR
     
     if ( m_pInFlightFences[m_imageIndex] != nullptr )
     {
@@ -286,8 +307,9 @@ bool Balbino::CRenderer::EndDraw()
     m_pInFlightFences[m_imageIndex] = m_pFences[m_pCommandPool->GetCurrentIndex()];
     m_pFences[m_pCommandPool->GetCurrentIndex()]->Reset();
     m_pCommandPool->EndRender();
-    m_pQueue->SubmitPass( m_pWaitingSemaphore, m_pSignalingSemaphore, m_pCommandPool,
-                          m_pFences[m_pCommandPool->GetCurrentIndex()] );
+    m_pQueue->SubmitPass(
+            m_pWaitingSemaphore, m_pSignalingSemaphore, m_pCommandPool, m_pFences[m_pCommandPool->GetCurrentIndex()]
+    );
     if ( m_pQueue->PresentToScreen( m_pSwapchain, m_pWaitingSemaphore, m_imageIndex ))
     {
         RecreateSwapChain();

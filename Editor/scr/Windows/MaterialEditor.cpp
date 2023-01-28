@@ -12,13 +12,13 @@
 #include "PropertyPanel.h"
 
 BalEditor::CMaterialEditor::CMaterialEditor()
-        : m_isVisible{},
-          m_currentMaterial{},
-          m_shaderID{},
-          m_shaderPresetNr{},
-          m_pSystem{ nullptr },
-          m_pPropertyPanel{ nullptr },
-          m_defaultShaderNames{ "Default", "Transparent", "Cloth", "Skin", "Hair", "Debug", "Skybox", "Custom" }
+        : m_isVisible{}
+          , m_currentMaterial{}
+          , m_shaderID{}
+          , m_shaderPresetNr{}
+          , m_pSystem{ nullptr }
+          , m_pPropertyPanel{ nullptr }
+          , m_defaultShaderNames{ "Default", "Transparent", "Cloth", "Skin", "Hair", "Debug", "Skybox", "Custom" }
 {
 }
 
@@ -41,7 +41,7 @@ void BalEditor::CMaterialEditor::Draw()
                     SaveMaterial();
                     ReloadMaterial();
                 }
-                if ( GUI::DrawComboBox( "Preset Shader", m_shaderPresetNr, m_defaultShaderNames, 100, true ))
+                if ( GUI::DrawComboBox( "Preset Shader", m_shaderPresetNr, m_defaultShaderNames, {}, 100, true ))
                 {
                     switch ( m_shaderPresetNr )
                     {
@@ -73,7 +73,7 @@ void BalEditor::CMaterialEditor::Draw()
                     LoadShader();
                 }
                 GUI::DrawText( "Current Shader: " );
-                GUI::DrawText( std::to_string(m_shaderID).c_str() );
+                GUI::DrawText( std::to_string( m_shaderID ).c_str());
                 if ( void* pData = GUI::ReceiveDragDrop( ToString( EFileTypes::Shader )))
                 {
                     m_shaderID = ((SFile*) ( pData ))->uuid;
@@ -97,7 +97,10 @@ void BalEditor::CMaterialEditor::Draw()
                             GUI::DrawText( "Image / Image Sampler" );
                             if ( void* pData = GUI::ReceiveDragDrop( ToString( EFileTypes::Image )))
                             {
-                                const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture( static_cast<SFile*>( pData )->uuid, true );
+                                const Balbino::CTexture* pModel = m_pSystem->GetResourceManager()->GetTexture(
+                                        static_cast<SFile*>( pData )->uuid,
+                                        true
+                                );
                                 snd.resourceID = pModel->GetID();
                             }
                             break;
@@ -142,7 +145,7 @@ void BalEditor::CMaterialEditor::LoadEditorFromData()
     
     uint64_t id;
     uint64_t size;
-    uint8_t type;
+    uint8_t  type;
     BinaryReadWrite::Read( file, id );
     BinaryReadWrite::Read( file, type );
     m_currentMaterial.uuid = id;
@@ -169,5 +172,11 @@ void BalEditor::CMaterialEditor::ReloadMaterial() const
 }
 void BalEditor::CMaterialEditor::SaveMaterial() const
 {
-    Exporter::ExportMaterial( m_currentMaterial.fileName, m_currentMaterial.path + "/", m_shaderID, m_shaderResources, m_currentMaterial.uuid );
+    Exporter::ExportMaterial(
+            m_currentMaterial.fileName,
+            m_currentMaterial.path,
+            m_shaderID,
+            m_shaderResources,
+            m_currentMaterial.uuid
+    );
 }

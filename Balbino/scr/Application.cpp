@@ -11,16 +11,16 @@
 #include <ini.h>
 
 Balbino::Application::Application()
-        : m_w{ 0 },
-          m_h{ 0 },
-          m_windowFlags{ 0 },
-          m_pWindow{ nullptr },
-          m_system{ 1920, 1080 }, //todo make the auto populate (from file)
-          m_pRenderer{ nullptr },
-#ifdef BALBINO_EDITOR
-        m_pInterface{ nullptr },
-#endif // BALBINO_EDITOR
-          m_pScene{ nullptr }
+        : m_w{ 0 }
+          , m_h{ 0 }
+          , m_windowFlags{ 0 }
+          , m_pWindow{ nullptr }
+          , m_system{ 1920, 1080 }
+          , m_pRenderer{ nullptr }
+        #ifdef BALBINO_EDITOR
+          , m_pInterface{ nullptr }
+        #endif // BALBINO_EDITOR
+          , m_pScene{ nullptr }
 {
 }
 
@@ -35,14 +35,14 @@ void Balbino::Application::Initialize()
     {
         throw std::runtime_error( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError());
     }
-
+    
     int audioFlags = MIX_INIT_FLAC | /*MIX_INIT_MOD |*/ MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID /*| MIX_INIT_OPUS*/;
     int initOut    = Mix_Init( audioFlags );
     if (( initOut & audioFlags ) != audioFlags )
     {
-        throw std::runtime_error( std::string( "Mix_Init: Failed to init all!\nMix_Init: ") + Mix_GetError());
+        throw std::runtime_error( std::string( "Mix_Init: Failed to init all!\nMix_Init: " ) + Mix_GetError());
     }
-
+    
     m_w           = current.w / 2;
     m_h           = current.h / 2;
     m_windowFlags = SDL_WINDOW_VULKAN;
@@ -54,9 +54,15 @@ void Balbino::Application::Initialize()
         m_h           = std::stoi( ini["WindowsClient"]["WindowedViewportHeight"] );
         m_windowFlags = static_cast<uint32_t>( std::stoi( ini["WindowsClient"]["WindowedFlags"] ));
     }
-
-    m_pWindow = SDL_CreateWindow( "Balbino Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 360, 640,
-                                  SDL_WINDOW_VULKAN | SDL_WINDOW_BORDERLESS );
+    
+    m_pWindow = SDL_CreateWindow(
+            "Balbino Engine",
+            SDL_WINDOWPOS_CENTERED,
+            SDL_WINDOWPOS_CENTERED,
+            360,
+            640,
+            SDL_WINDOW_VULKAN | SDL_WINDOW_BORDERLESS
+    );
     if ( m_pWindow == nullptr )
     {
         throw std::runtime_error( std::string( "SDL_CreateWindow Error: " ) + SDL_GetError());
@@ -81,21 +87,21 @@ void Balbino::Application::LoadGame()
     {
         throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ));
     }
-#ifdef BALBINO_EDITOR
+    #ifdef BALBINO_EDITOR
     m_pInterface = new BalEditor::CInterface{};
     m_pRenderer->Setup( m_pWindow, extensions, extensionCount, m_pInterface, &m_system );
     m_pRenderer->GiveSceneRenderData( m_pScene );
     m_pScene->Initialize( &m_system );
     m_pInterface->SetContext( m_pScene, &m_system );
     delete[] extensions;
-#else
+    #else
     m_pRenderer->Setup( m_pWindow, extensions, extensionCount );
     m_pRenderer->GiveSceneRenderData( m_pScene );
     m_pScene->Initialize( &m_system );
     delete[] extensions;
-#endif
+    #endif
     m_system.SetCurrentScene( m_pScene );
-
+    
     SDL_SetWindowBordered( m_pWindow, SDL_TRUE );
     SDL_SetWindowResizable( m_pWindow, SDL_TRUE );
     if ( m_windowFlags & SDL_WINDOW_MAXIMIZED )
@@ -112,13 +118,13 @@ void Balbino::Application::LoadGame()
 
 void Balbino::Application::Cleanup()
 {
-#ifdef BALBINO_EDITOR
+    #ifdef BALBINO_EDITOR
     m_pInterface->Cleanup();
     delete m_pInterface;
     m_pInterface = nullptr;
-#endif
+    #endif
     m_system.Cleanup();
-
+    
     if ( m_pScene )
     {
         m_pScene->Cleanup();
@@ -131,11 +137,11 @@ void Balbino::Application::Cleanup()
         delete m_pRenderer;
         m_pRenderer = nullptr;
     }
-
+    
     SDL_DestroyWindow( m_pWindow );
     SDL_Quit();
     Mix_Quit();
-
+    
     m_pWindow = nullptr;
 }
 
@@ -149,13 +155,13 @@ void Balbino::Application::Run()
         auto        end{ std::chrono::system_clock::now() };
         const float deltaTime{ std::chrono::duration<float>( end - start ).count() };
         start = end;
-
+        
         SDL_Event e;
         while ( SDL_PollEvent( &e ))
         {
-#ifdef BALBINO_EDITOR
+            #ifdef BALBINO_EDITOR
             m_pInterface->ProcessEvent( e );
-#endif
+            #endif
             switch ( e.type )
             {
                 case SDL_QUIT:
@@ -222,7 +228,7 @@ void Balbino::Application::Run()
             m_system.GetInputHandler()->ProcessEvents( e );
         }
         m_system.GetInputHandler()->Update();
-
+        
         m_pScene->Update( deltaTime );
         if ( m_pRenderer->StartDraw())
         {

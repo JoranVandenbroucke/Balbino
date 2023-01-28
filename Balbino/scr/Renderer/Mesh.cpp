@@ -3,11 +3,11 @@
 #include <utility>
 
 Balbino::CMesh::CMesh( std::vector<BalVulkan::SVertex> vertices, std::vector<uint32_t> indices, std::vector<Balbino::SMeshMetadata> metadatas, const CUuid& uuid )
-        : m_vertices{ std::move( vertices ) },
-          m_indices{ std::move( indices ) },
-          m_metadatas{ std::move( metadatas ) },
-          m_uuid{ uuid },
-          m_materialCount{ 0 }
+        : m_vertices{ std::move( vertices ) }
+          , m_indices{ std::move( indices ) }
+          , m_metadatas{ std::move( metadatas ) }
+          , m_uuid{ uuid }
+          , m_materialCount{ 0 }
 {
     m_materialCount = (int) m_metadatas.size();
 }

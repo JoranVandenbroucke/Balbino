@@ -29,10 +29,12 @@ namespace Balbino
             m_pActive = nullptr;
         }
         
-        const auto ret = std::ranges::remove_if( m_cameras, [ pComponent ]( CCameraComponent* pCamera )
-        {
-            return pComponent == pCamera;
-        } );
+        const auto ret = std::ranges::remove_if(
+                m_cameras, [ pComponent ]( CCameraComponent* pCamera )
+                {
+                    return pComponent == pCamera;
+                }
+        );
         m_cameras.erase( ret.begin(), ret.end());
     }
     bool CCameraManager::IsThisCameraActive( const CCameraComponent* pComponent )

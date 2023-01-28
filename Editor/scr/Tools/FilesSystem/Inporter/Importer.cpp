@@ -15,11 +15,11 @@ bool BalEditor::ImportFont( const std::filesystem::path& path, const char* pDest
     {
         return false;
     }
-
+    
     std::filesystem::path p{ std::string( pDestinationDirection ) + path.filename().string() };
     p.replace_extension( ".basset" );
     std::ofstream file( p.filename(), std::ios::out | std::ios::binary );
-
+    
     if ( !file.is_open())
     {
         return false;
@@ -33,7 +33,7 @@ bool BalEditor::ImportFont( const std::filesystem::path& path, const char* pDest
     BinaryReadWrite::Write( file, TTF_FontAscent( pFont ));
     BinaryReadWrite::Write( file, TTF_FontDescent( pFont ));
     BinaryReadWrite::Write( file, TTF_FontLineSkip( pFont ));
-
+    
     for ( uint16_t i{}; i < 256u; ++i )
     {
         const char c[1]{ static_cast< char >( i ) };
@@ -45,8 +45,11 @@ bool BalEditor::ImportFont( const std::filesystem::path& path, const char* pDest
         BinaryReadWrite::Write( file, pSurface->w );
         BinaryReadWrite::Write( file, pSurface->h );
         BinaryReadWrite::Write( file, pSurface->h * pSurface->pitch );
-        BinaryReadWrite::Write( file, static_cast< uint8_t* >( pSurface->pixels ),
-                                static_cast< uint64_t >( pSurface->h ) * pSurface->pitch );
+        BinaryReadWrite::Write(
+                file,
+                static_cast< uint8_t* >( pSurface->pixels ),
+                static_cast< uint64_t >( pSurface->h ) * pSurface->pitch
+        );
         TTF_CloseFont( pFont );
     }
     file.close();

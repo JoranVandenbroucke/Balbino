@@ -1,3 +1,8 @@
+#ifndef LIGHT_GLSL
+#define LIGHT_GLSL
+
+#define LIGHT_COUNT 8
+
 struct Light {
     int type;//type: Directional, Point, Spot, Area
     float strength;//strength
@@ -36,3 +41,5 @@ float GetSpotAngleAttenuation(vec3 l, vec3 lightDir, float innerAngle, float out
 //    float angle = acos(cosTheta) * (1.0 / PI);
 //    return texture2DLodEXT(lightProfileMap, vec2(angle, 0.0), 0.0).r;
 //}
+
+#endif  // LIGHT_GLSL

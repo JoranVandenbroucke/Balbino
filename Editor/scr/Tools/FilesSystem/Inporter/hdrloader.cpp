@@ -14,10 +14,10 @@
 #include <fstream>
 
 typedef unsigned char RGBE[4];
-constexpr int R{ 0 };
-constexpr int G{ 1 };
-constexpr int B{ 2 };
-constexpr int E{ 3 };
+constexpr int         R{ 0 };
+constexpr int         G{ 1 };
+constexpr int         B{ 2 };
+constexpr int         E{ 3 };
 
 constexpr int MINELEN{ 8 };                // minimum scanline length for encoding
 constexpr int MAXELEN{ 0x7fff };            // maximum scanline length for encoding
@@ -28,8 +28,8 @@ static bool oldDecrunch( RGBE* scanline, int len, std::ifstream& file );
 
 bool HDRLoader::load( const char* fileName, HDRLoaderResult& res )
 {
-    int i;
-    char str[200];
+    int           i;
+    char          str[200];
     std::ifstream file;
     
     file.open( fileName, std::ios::in | std::ios::binary );
@@ -57,7 +57,7 @@ bool HDRLoader::load( const char* fileName, HDRLoaderResult& res )
         {
             break;
         }
-        cmd[ i++ ] = c;
+        cmd[i++] = c;
     }
     
     char reso[200];
@@ -65,7 +65,7 @@ bool HDRLoader::load( const char* fileName, HDRLoaderResult& res )
     while ( true )
     {
         file.get( c );
-        reso[ i++ ] = c;
+        reso[i++] = c;
         if ( c == 0xa )
         {
             break;
@@ -79,7 +79,7 @@ bool HDRLoader::load( const char* fileName, HDRLoaderResult& res )
         return false;
     }
     
-    res.width = w;
+    res.width  = w;
     res.height = h;
     
     if ( !w || !h )
@@ -105,15 +105,14 @@ bool HDRLoader::load( const char* fileName, HDRLoaderResult& res )
     }
     
     delete[] scanline;
-    delete[] cols;
     file.close();
     return true;
 }
 
 float convertComponent( int expo, int val )
 {
-    const float v = (float)val / 256.0f;
-    const float d = powf( 2.0f, (float)expo );
+    const float v = (float) val / 256.0f;
+    const float d = powf( 2.0f, (float) expo );
     return v * d;
 }
 
@@ -121,10 +120,10 @@ void workOnRGBE( RGBE* scan, int len, float* cols )
 {
     while ( len-- > 0 )
     {
-        int expo = scan[ 0 ][ E ] - 128;
-        cols[ 0 ] = convertComponent( expo, scan[ 0 ][ R ] );
-        cols[ 1 ] = convertComponent( expo, scan[ 0 ][ G ] );
-        cols[ 2 ] = convertComponent( expo, scan[ 0 ][ B ] );
+        int expo = scan[0][E] - 128;
+        cols[0] = convertComponent( expo, scan[0][R] );
+        cols[1] = convertComponent( expo, scan[0][G] );
+        cols[2] = convertComponent( expo, scan[0][B] );
         cols += 3;
         scan++;
     }
@@ -142,18 +141,18 @@ bool decrunch( RGBE* scanline, int len, std::ifstream& file )
     file.get( reinterpret_cast<char&>(i));
     if ( i != 2 )
     {
-        file.seekg(-1, std::ios::cur);
+        file.seekg( -1, std::ios::cur );
         return oldDecrunch( scanline, len, file );
     }
     
-    file.get( reinterpret_cast<char&>(scanline[ 0 ][ G ]));
-    file.get( reinterpret_cast<char&>(scanline[ 0 ][ B ]));
+    file.get( reinterpret_cast<char&>(scanline[0][G]));
+    file.get( reinterpret_cast<char&>(scanline[0][B]));
     file.get( reinterpret_cast<char&>(i));
     
-    if ( scanline[ 0 ][ G ] != 2 || scanline[ 0 ][ B ] & 128 )
+    if ( scanline[0][G] != 2 || scanline[0][B] & 128 )
     {
-        scanline[ 0 ][ R ] = 2;
-        scanline[ 0 ][ E ] = (unsigned char)i;
+        scanline[0][R] = 2;
+        scanline[0][E] = (unsigned char) i;
         return oldDecrunch( scanline + 1, len - 1, file );
     }
     
@@ -171,14 +170,14 @@ bool decrunch( RGBE* scanline, int len, std::ifstream& file )
                 file.get( reinterpret_cast<char&>(val));
                 while ( code-- )
                 {
-                    scanline[ j++ ][ i ] = val;
+                    scanline[j++][i] = val;
                 }
             }
             else
             {    // non-run
                 while ( code-- )
                 {
-                    file.get( reinterpret_cast<char&>(scanline[ j++ ][ i ]));
+                    file.get( reinterpret_cast<char&>(scanline[j++][i]));
                 }
             }
         }
@@ -194,20 +193,20 @@ bool oldDecrunch( RGBE* scanline, int len, std::ifstream& file )
     
     while ( len > 0 )
     {
-         file.get( reinterpret_cast<char&>(scanline[ 0 ][ R ]));
-         file.get( reinterpret_cast<char&>(scanline[ 0 ][ G ]));
-         file.get( reinterpret_cast<char&>(scanline[ 0 ][ B ]));
-         file.get( reinterpret_cast<char&>(scanline[ 0 ][ E ]));
+        file.get( reinterpret_cast<char&>(scanline[0][R]));
+        file.get( reinterpret_cast<char&>(scanline[0][G]));
+        file.get( reinterpret_cast<char&>(scanline[0][B]));
+        file.get( reinterpret_cast<char&>(scanline[0][E]));
         if ( file.eof())
         {
             return false;
         }
         
-        if ( scanline[ 0 ][ R ] == 1 && scanline[ 0 ][ G ] == 1 && scanline[ 0 ][ B ] == 1 )
+        if ( scanline[0][R] == 1 && scanline[0][G] == 1 && scanline[0][B] == 1 )
         {
-            for ( i = scanline[ 0 ][ E ] << rshift; i > 0; i-- )
+            for ( i = scanline[0][E] << rshift; i > 0; i-- )
             {
-                memcpy( &scanline[ 0 ][ 0 ], &scanline[ -1 ][ 0 ], 4 );
+                memcpy( &scanline[0][0], &scanline[-1][0], 4 );
                 scanline++;
                 len--;
             }

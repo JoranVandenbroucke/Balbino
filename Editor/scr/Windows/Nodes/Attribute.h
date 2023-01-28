@@ -13,7 +13,7 @@ inline void DrawInputFloatAttribute( float& value, const int id, const bool conn
     ImNodes::BeginInputAttribute( id );
     if ( !connected )
     {
-        ImGui::PushItemWidth( 128 );
+        ImGui::SetNextItemWidth( 128 );
         ImGui::DragFloat( title, &value, speed, min, max );
     }
     else
@@ -32,11 +32,12 @@ inline void DrawInputColorAttribute( std::array<float, 3>& value, int id, bool c
     ImNodes::BeginInputAttribute( id );
     if ( !connected )
     {
-        ImGui::PushItemWidth( 128 );
+        ImGui::SetNextItemWidth( 128 );
         ImGui::PushStyleColor( ImGuiCol_Button, ImVec4{ value[0], value[1], value[2], 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonHovered, ImVec4{ value[0], value[1], value[2], 1.0f } );
         ImGui::PushStyleColor( ImGuiCol_ButtonActive, ImVec4{ value[0], value[1], value[2], 1.0f } );
-        ImGui::ColorEdit3( "##color", value.data(), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel );
+        ImGui::ColorEdit3( title, value.data(), ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel );
+        ImGui::SameLine(); ImGui::Text( "%s", title );
         ImGui::PopStyleColor( 3 );
     }
     else
@@ -60,6 +61,7 @@ inline void DrawInputVectorAttribute( std::array<float, 3>& value, int id, bool 
         ImGui::DragFloat( "X", &value[0] );
         ImGui::DragFloat( "Y", &value[1] );
         ImGui::DragFloat( "Z", &value[2] );
+        ImGui::PopItemWidth();
     }
     ImNodes::EndInputAttribute();
     ImNodes::PopColorStyle();
@@ -140,7 +142,7 @@ inline void EndNode()
 
 inline void StartNode( const char* title, const int id, float startWidth = 100 )
 {
-    ImGui::PushItemWidth( startWidth );
+    ImGui::SetNextItemWidth( startWidth );
     ImNodes::BeginNode( id );
     
     ImNodes::BeginNodeTitleBar();

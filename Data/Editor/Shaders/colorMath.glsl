@@ -1,3 +1,6 @@
+#ifndef COLOR_MATH_GLSL
+#define COLOR_MATH_GLSL
+
 void RgbToHsv(vec3 rgb, out vec3 hsv)
 {
     float k = 0.0f;
@@ -220,3 +223,5 @@ vec3 LinearLight(vec3 col1, vec3 col2, float fac)
 
   return outcol;
 }
+
+#endif  // COLOR_MATH_GLSL

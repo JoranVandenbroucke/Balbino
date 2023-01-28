@@ -23,7 +23,18 @@
 
 enum class EFileTypes : uint8_t
 {
-    Unknown, Folder, Scene, Image, Audio, Font, Model, Shader, Material, Code, Preset, MaxFileTypes
+    Unknown,
+    Folder,
+    Scene,
+    Image,
+    Audio,
+    Font,
+    Model,
+    Shader,
+    Material,
+    Code,
+    Preset,
+    MaxFileTypes
 };
 
 inline const char* ToString( EFileTypes type )
@@ -52,6 +63,8 @@ inline const char* ToString( EFileTypes type )
             return "Shader";
         case EFileTypes::Material:
             return "Material";
+        case EFileTypes::MaxFileTypes:
+            break;
     }
     return "";
 }
@@ -227,7 +240,7 @@ namespace BinaryReadWrite
     
     std::istream& IsAtEnd( std::istream& file, bool& isAtEnd );
     
-    std::istream& MoveCursor( std::istream& file, int value );
+    std::istream& MoveCursor( std::istream& file, int64_t value );
     
     std::istream& MoveCursorTo( std::istream& file, int value );
     
@@ -717,6 +730,21 @@ namespace BinaryReadWrite
     
 }
 
+inline std::string SanitizePath( std::string path )
+{
+    if ( std::filesystem::is_directory( path ))
+    {
+        if ( path.back() != '/' )
+        {
+            path += '/';
+        }
+    }
+    else
+    {
+        path = path.substr( 0, path.find_last_of( '/' ) + 1 );
+    }
+    return path;
+}
 
 inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const std::string& value )
 {
@@ -832,7 +860,7 @@ inline std::istream& BinaryReadWrite::IsAtEnd( std::istream& file, bool& isAtEnd
     return file;
 }
 
-inline std::istream& BinaryReadWrite::MoveCursor( std::istream& file, int value )
+inline std::istream& BinaryReadWrite::MoveCursor( std::istream& file, int64_t value )
 {
     file.seekg( value, std::ios::cur );
     return file;

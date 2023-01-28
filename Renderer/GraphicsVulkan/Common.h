@@ -40,24 +40,24 @@ namespace BalVulkan
             VertexBufferBit        = 0x00000080,
             IndirectBufferBit      = 0x00000100,
             ShaderDeviceAddressBit = 0x00020000,
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeSrcBitKhr = 0x00002000,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeDstBitKhr = 0x00004000,
-#endif
+            #endif
             TransformFeedbackBufferBitExt                 = 0x00000800,
             TransformFeedbackCounterBufferBitExt          = 0x00001000,
             ConditionalRenderingBitExt                    = 0x00000200,
             AccelerationStructureBuildInputReadOnlyBitKhr = 0x00080000,
             AccelerationStructureStorageBitKhr            = 0x00100000,
             ShaderBindingTableBitKhr                      = 0x00000400,
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeDstBitKhr = 0x00008000,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeSrcBitKhr = 0x00010000,
-#endif
+            #endif
             RayTracingBitNv           = ShaderBindingTableBitKhr,
             ShaderDeviceAddressBitExt = ShaderDeviceAddressBit,
             ShaderDeviceAddressBitKhr = ShaderDeviceAddressBit,
@@ -79,18 +79,21 @@ namespace BalVulkan
     {
         enum Enum : uint16_t
         {
-            VertexShader   = 1,
-            GeometryShader = 2,
-            FragmentShader = 4,
-            
-            RaygenShader       = 8,
-            AnyHitShader       = 16,
-            ClosestHitShader   = 32,
-            MissShader         = 64,
-            IntersectionShader = 128,
-            CallableShader     = 512,
-            TaskShader         = 1024,
-            MeshShader         = 2048
+            Vertex = 1,
+            TessellationControl = 2,
+            TessellationEvaluation = 4,
+            Geometry = 8,
+            Fragment = 16,
+            Compute = 32,
+            Raygen = 64,
+            AnyHit = 128,
+            ClosestHit = 256,
+            Miss = 512,
+            Intersection = 1024,
+            Callable = 2048,
+            Task = 4096,
+            Mesh = 8192,
+            max
         };
     };
     struct EImageLayout
@@ -113,27 +116,27 @@ namespace BalVulkan
             StencilAttachmentOptimal              = 1000241002,
             StencilReadOnlyOptimal                = 1000241003,
             PresentSrcKhr                         = 1000001002,
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeDstKhr = 1000024000,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeSrcKhr = 1000024001,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeDpbKhr = 1000024002,
-#endif
+            #endif
             SharedPresentKhr                        = 1000111000,
             FragmentDensityMapOptimalExt            = 1000218000,
             FragmentShadingRateAttachmentOptimalKhr = 1000164003,
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeDstKhr = 1000299000,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeSrcKhr = 1000299001,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeDpbKhr = 1000299002,
-#endif
+            #endif
             ReadOnlyOptimalKhr                       = 1000314000,
             AttachmentOptimalKhr                     = 1000314001,
             DepthReadOnlyStencilAttachmentOptimalKhr = DepthReadOnlyStencilAttachmentOptimal,
@@ -159,26 +162,26 @@ namespace BalVulkan
             DepthStencilAttachmentBit = 0x00000020,
             TransientAttachmentBit    = 0x00000040,
             InputAttachmentBit        = 0x00000080,
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeDstBitKHR = 0x00000400,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeSrcBitKHR = 0x00000800,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoDecodeDpbBit_KHR = 0x00001000,
-#endif
+            #endif
             FragmentDensityMapBitExt            = 0x00000200,
             FragmentShadingRateAttachmentBitKhr = 0x00000100,
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeDstBitKHR = 0x00002000,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeSrcBitKHR = 0x00004000,
-#endif
-#ifdef VK_ENABLE_BETA_EXTENSIONS
+            #endif
+            #ifdef VK_ENABLE_BETA_EXTENSIONS
             VideoEncodeDpbBitKHR = 0x00008000,
-#endif
+            #endif
             InvocationMaskBitHuawei = 0x00040000,
             ShadingRateImageBitNv   = FragmentShadingRateAttachmentBitKhr,
             FlagBitsMaxEnum         = 0x7FFFFFFF
@@ -242,11 +245,9 @@ namespace BalVulkan
     {
         enum Enum
         {
-            Nearest  = 0,
-            Linear   = 1,
-            CubicImg = 1000015000,
-            CubicExt = CubicImg,
-            MaxEnum  = 0x7FFFFFFF
+            Nearest = 0,
+            Linear  = 1,
+            MaxEnum = 0x7FFFFFFF
         };
     };
     
@@ -582,10 +583,10 @@ namespace BalVulkan
         {
             SDescriptorImageInfo  image;
             SDescriptorBufferInfo buffer;
-        }        description;
-        uint32_t set, binding;
+        }           description;
+        uint32_t    set, binding;
         EType::Enum descriptorType;
-    
+        
         SDescriptorSet() = default;
         
         SDescriptorSet( EType::Enum buffer, CBuffer* pModelBuffer, uint32_t set, uint32_t binding );

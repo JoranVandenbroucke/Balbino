@@ -48,9 +48,7 @@ namespace BalVulkan
         explicit SVertex( const glm::vec3& position = glm::vec3{ 0, 0, 0 }, const glm::vec4& color = glm::vec4{
                 1, 1, 1, 1
         }, const glm::vec2& uv = glm::vec2{ 0, 0 }, const glm::vec3& normal = glm::vec3{
-                0,
-                1,
-                0
+                0, 1, 0
         }, const glm::vec4& tangent = glm::vec4{
                 1, 0, 0, 1
         } );

@@ -58,10 +58,10 @@ namespace Balbino
         CRenderer( CRenderer&& ) = delete;
         CRenderer& operator=( const CRenderer& ) = delete;
         CRenderer& operator=( CRenderer&& ) = delete;
-
-#ifdef BALBINO_EDITOR
+        
+        #ifdef BALBINO_EDITOR
         void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount, BalEditor::CInterface* pInterface, ISystem* pSystem );
-#endif // BALBINO_EDITOR
+        #endif // BALBINO_EDITOR
         
         void Setup( SDL_Window* pWindow, const char** extensions, uint32_t extensionsCount );
         void Cleanup();
@@ -88,11 +88,11 @@ namespace Balbino
         std::vector<BalVulkan::CImageView*>     m_swapchainViews;
         BalVulkan::CImageResource* m_pDepthImage;
         BalVulkan::CImageView    * m_pDepthImageView;
-
-#ifdef BALBINO_EDITOR
+        
+        #ifdef BALBINO_EDITOR
         BalEditor::CInterface* m_pInterface;
         bool m_firstFramePassed;
-#endif
+        #endif
         
         int32_t  m_width;
         int32_t  m_height;

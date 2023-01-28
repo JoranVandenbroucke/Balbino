@@ -1,3 +1,5 @@
+#ifndef BUMP_GLSL
+#define BUMP_GLSL
 //Bump Mapping Unparametrized Surfaces on the GPU
 vec3 Bump( bool invert, float strength, float dist, float height, vec3 normal, vec3 position )
 {
@@ -15,3 +17,5 @@ vec3 Bump( bool invert, float strength, float dist, float height, vec3 normal, v
 	vec3 vSurfGrad = sign( det ) * ( dBs * Rx + dBt * Ry ) * dist;
 	return normalize(mix(normal,( abs( det ) * normal - vSurfGrad ), strength));
 }
+
+#endif	// BUMP_GLSL

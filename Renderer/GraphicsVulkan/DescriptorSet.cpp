@@ -6,10 +6,10 @@
 #include "ShaderPipeline.h"
 
 BalVulkan::CDescriptorSet::CDescriptorSet( const CDevice* pDevice )
-        : CDeviceObject{ pDevice },
-          m_descriptorSet{},
-          m_dynamicCount{},
-          m_descriptorPool{ VK_NULL_HANDLE }
+        : CDeviceObject{ pDevice }
+          , m_descriptorSet{}
+          , m_dynamicCount{}
+          , m_descriptorPool{ VK_NULL_HANDLE }
 {
 }
 
@@ -21,11 +21,12 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
     {
         if ( i.descriptorType == SDescriptorSet::EType::Buffer )
         {
-            const auto& it = std::find_if( poolSizes.begin(), poolSizes.end(),
-                                           []( const VkDescriptorPoolSize& poolSize )
-                                           {
-                                               return poolSize.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                                           } );
+            const auto& it = std::find_if(
+                    poolSizes.begin(), poolSizes.end(), []( const VkDescriptorPoolSize& poolSize )
+                    {
+                        return poolSize.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                    }
+            );
             if ( it != poolSizes.cend())
             {
                 it->descriptorCount += 1;
@@ -37,11 +38,12 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
         }
         else if ( i.descriptorType == SDescriptorSet::EType::DynamicBuffer )
         {
-            const auto& it = std::find_if( poolSizes.begin(), poolSizes.end(),
-                                           []( const VkDescriptorPoolSize& poolSize )
-                                           {
-                                               return poolSize.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-                                           } );
+            const auto& it = std::find_if(
+                    poolSizes.begin(), poolSizes.end(), []( const VkDescriptorPoolSize& poolSize )
+                    {
+                        return poolSize.type == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+                    }
+            );
             if ( it != poolSizes.cend())
             {
                 it->descriptorCount += 1;
@@ -53,11 +55,12 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
         }
         else if ( i.descriptorType == SDescriptorSet::EType::Image )
         {
-            const auto& it = std::find_if( poolSizes.begin(), poolSizes.end(),
-                                           []( const VkDescriptorPoolSize& poolSize )
-                                           {
-                                               return poolSize.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                                           } );
+            const auto& it = std::find_if(
+                    poolSizes.begin(), poolSizes.end(), []( const VkDescriptorPoolSize& poolSize )
+                    {
+                        return poolSize.type == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                    }
+            );
             if ( it != poolSizes.cend())
             {
                 it->descriptorCount += 1;
@@ -69,11 +72,12 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
         }
         else if ( i.descriptorType == SDescriptorSet::EType::BufferStorage )
         {
-            const auto& it = std::find_if( poolSizes.begin(), poolSizes.end(),
-                                           []( const VkDescriptorPoolSize& poolSize )
-                                           {
-                                               return poolSize.type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-                                           } );
+            const auto& it = std::find_if(
+                    poolSizes.begin(), poolSizes.end(), []( const VkDescriptorPoolSize& poolSize )
+                    {
+                        return poolSize.type == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+                    }
+            );
             if ( it != poolSizes.cend())
             {
                 it->descriptorCount += 1;
@@ -86,23 +90,23 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
     }
     
     const VkDescriptorPoolCreateInfo poolInfo{
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-            .maxSets = 3,
-            .poolSizeCount = static_cast< uint32_t >( poolSizes.size()),
-            .pPoolSizes = poolSizes.empty()? nullptr : poolSizes.data(),
+            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, .maxSets = 3, .poolSizeCount = static_cast< uint32_t >( poolSizes.size()), .pPoolSizes = poolSizes.empty()
+                                                                                                                                                             ? nullptr
+                                                                                                                                                             : poolSizes.data(),
     };
-    CheckVkResult( vkCreateDescriptorPool( GetDevice()->GetVkDevice(), &poolInfo, nullptr, &m_descriptorPool ),
-                   "failed to create descriptor pool!" );
+    CheckVkResult(
+            vkCreateDescriptorPool( GetDevice()->GetVkDevice(), &poolInfo, nullptr, &m_descriptorPool ),
+            "failed to create descriptor pool!"
+    );
     
     const std::vector           layouts( 1u, pShaderPipeline->GetDescriptorSetLayout());
     VkDescriptorSetAllocateInfo allocInfo{
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-            .descriptorPool = m_descriptorPool,
-            .descriptorSetCount = 1u,
-            .pSetLayouts = layouts.data(),
+            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, .descriptorPool = m_descriptorPool, .descriptorSetCount = 1u, .pSetLayouts = layouts.data(),
     };
-    CheckVkResult( vkAllocateDescriptorSets( GetDevice()->GetVkDevice(), &allocInfo, &m_descriptorSet ),
-                   "failed to allocate descriptor sets!" );
+    CheckVkResult(
+            vkAllocateDescriptorSets( GetDevice()->GetVkDevice(), &allocInfo, &m_descriptorSet ),
+            "failed to allocate descriptor sets!"
+    );
     
     std::vector<VkWriteDescriptorSet>   descriptorWrites( descriptorSetsInfo.size());
     std::vector<VkDescriptorBufferInfo> bufferInfos( descriptorSetsInfo.size());
@@ -167,8 +171,13 @@ void BalVulkan::CDescriptorSet::Initialize( const CShaderPipeline* pShaderPipeli
         }
     }
     
-    vkUpdateDescriptorSets( GetDevice()->GetVkDevice(), static_cast< uint32_t >( descriptorWrites.size()),
-                            descriptorWrites.data(), 0, nullptr );
+    vkUpdateDescriptorSets(
+            GetDevice()->GetVkDevice(),
+            static_cast< uint32_t >( descriptorWrites.size()),
+            descriptorWrites.data(),
+            0,
+            nullptr
+    );
 }
 
 const VkDescriptorSet* BalVulkan::CDescriptorSet::GetDescriptorSets() const

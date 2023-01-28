@@ -19,10 +19,10 @@ namespace BalEditor
         CPropertyPanel( CPropertyPanel&& ) = delete;
         CPropertyPanel& operator=( const CPropertyPanel& ) = delete;
         CPropertyPanel& operator=( CPropertyPanel&& ) = delete;
-    
+        
         void Draw();
         void ShowWindow();
-    
+        
         [[nodiscard]] uint64_t GetDefaultShader() const;
         [[nodiscard]] uint64_t GetDefaultTransparentShader() const;
         [[nodiscard]] uint64_t GetDefaultClothShader() const;
@@ -30,7 +30,7 @@ namespace BalEditor
         [[nodiscard]] uint64_t GetDefaultHairShader() const;
         [[nodiscard]] uint64_t GetDefaultDebugShader() const;
         [[nodiscard]] uint64_t GetDefaultSkyboxShader() const;
-    
+        
         [[nodiscard]] uint64_t GetDefaultMaterial() const;
         [[nodiscard]] uint64_t GetDefaultTransparentMaterial() const;
         [[nodiscard]] uint64_t GetDefaultClothMaterial() const;
@@ -53,9 +53,9 @@ namespace BalEditor
                 MaxItems
             };
         };
-        bool m_isVisible;
+        bool                 m_isVisible;
         EPropertyTypes::Enum m_currentPropertyType;
-#pragma region graphics
+        #pragma region graphics
         uint64_t m_defaultShaderID;
         uint64_t m_defaultTransparentShaderID;
         uint64_t m_defaultClothShaderID;
@@ -73,7 +73,7 @@ namespace BalEditor
         uint64_t m_defaultSkyboxMaterialID;
         
         uint64_t m_defaultTextureID;
-#pragma endregion graphics
+        #pragma endregion graphics
         
         void DrawAudioProperties();
         void DrawGraphicsProperties();

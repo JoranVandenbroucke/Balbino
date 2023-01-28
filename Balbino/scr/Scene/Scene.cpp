@@ -55,25 +55,29 @@ void Balbino::CScene::Initialize( ISystem* pSystem )
     m_pShadingBuffer  = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     
-    m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                        BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
-    m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                  BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                          BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
-    m_pInstanceBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ),
-                                   BalVulkan::EBufferUsageFlagBits::Enum(
-                                           BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit ),
-                                   BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                           BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit ));
+    m_pModelBuffer->Initialize(
+            sizeof( SModelObject ),
+            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
+            BalVulkan::EMemoryPropertyFlagBits::Enum(
+                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            ));
+    m_pShadingBuffer->Initialize(
+            sizeof( SLightObject ),
+            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
+            BalVulkan::EMemoryPropertyFlagBits::Enum(
+                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            ));
+    m_pInstanceBuffer->Initialize(
+            MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ), BalVulkan::EBufferUsageFlagBits::Enum(
+                    BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit
+            ), BalVulkan::EMemoryPropertyFlagBits::Enum(
+                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit
+            ));
     
-    // todo: PhysX bodies
 }
 
 void Balbino::CScene::Cleanup()
 {
-    // todo: Destroy/Stop PhysX
-    
     m_pShadingBuffer->Release();
     m_pModelBuffer->Release();
     m_pInstanceBuffer->Release();
@@ -183,18 +187,25 @@ void Balbino::CScene::RecreateBuffers( BalVulkan::CCommandPool* commandPool, Bal
     m_pShadingBuffer  = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     m_pInstanceBuffer = BalVulkan::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
     
-
-    m_pModelBuffer->Initialize( sizeof( SModelObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                        BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
-    m_pShadingBuffer->Initialize( sizeof( SLightObject ), BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
-                                  BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                          BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit ));
-    m_pInstanceBuffer->Initialize( MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ),
-                                   BalVulkan::EBufferUsageFlagBits::Enum(
-                                           BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit ),
-                                   BalVulkan::EMemoryPropertyFlagBits::Enum(
-                                           BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit ));
+    
+    m_pModelBuffer->Initialize(
+            sizeof( SModelObject ),
+            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
+            BalVulkan::EMemoryPropertyFlagBits::Enum(
+                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            ));
+    m_pShadingBuffer->Initialize(
+            sizeof( SLightObject ),
+            BalVulkan::EBufferUsageFlagBits::UniformBufferBit,
+            BalVulkan::EMemoryPropertyFlagBits::Enum(
+                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::HostCoherentBit
+            ));
+    m_pInstanceBuffer->Initialize(
+            MAX_INSTANCE_COUNT * sizeof( BalVulkan::InstanceBatch ), BalVulkan::EBufferUsageFlagBits::Enum(
+                    BalVulkan::EBufferUsageFlagBits::TransferDstBit | BalVulkan::EBufferUsageFlagBits::VertexBufferBit
+            ), BalVulkan::EMemoryPropertyFlagBits::Enum(
+                    BalVulkan::EMemoryPropertyFlagBits::HostVisibleBit | BalVulkan::EMemoryPropertyFlagBits::DeviceLocalBit
+            ));
 }
 
 void Balbino::CScene::PrepareDraw()
@@ -209,8 +220,12 @@ void Balbino::CScene::PrepareDraw()
             
             if ( cameraManager->IsThisCameraActive( &camera ))
             {
-                m_camera.UpdateFrameBuffer( m_pSystem->GetWindowWidth(), m_pSystem->GetWindowHeight(), camera.GetFov(),
-                                            camera.GetNearClip(), camera.GetFarClip());
+                m_camera.UpdateFrameBuffer(
+                        m_pSystem->GetWindowWidth(),
+                        m_pSystem->GetWindowHeight(),
+                        camera.GetFov(),
+                        camera.GetNearClip(),
+                        camera.GetFarClip());
                 m_camera.UpdateMatrices( transform.GetTranslation(), transform.GetRotation());
                 break;
             }
@@ -278,12 +293,14 @@ void Balbino::CScene::PrepareDraw()
                 {
                     //compare the mesh and material with the end of the vector of draws
                     const CUuid currentMaterial = materials[i];
-                    auto        it              = std::find_if( m_allDrawableObjects.cbegin(),
-                                                                m_allDrawableObjects.cend(),
-                                                                [ meshID, currentMaterial, mat, i ]( const IndirectBatch& obj )
-                                                                {
-                                                                    return meshID == obj.mesh && currentMaterial == obj.material && mat[i].firstIndex == obj.firstIndex;
-                                                                } );
+                    auto        it              = std::find_if(
+                            m_allDrawableObjects.cbegin(),
+                            m_allDrawableObjects.cend(),
+                            [ meshID, currentMaterial, mat, i ]( const IndirectBatch& obj )
+                            {
+                                return meshID == obj.mesh && currentMaterial == obj.material && mat[i].firstIndex == obj.firstIndex;
+                            }
+                    );
                     
                     if ( it != m_allDrawableObjects.cend())
                     {
@@ -320,15 +337,22 @@ void Balbino::CScene::Draw()
 {
     for ( uint32_t i{}; i < m_allDrawableObjects.size(); ++i )
     {
-        m_pInstanceBuffer->UpdateData( m_instanceData[i].data(), ( m_instanceData[i].size() < MAX_INSTANCE_COUNT
-                                                                   ? m_instanceData[i].size()
-                                                                   : MAX_INSTANCE_COUNT ) * sizeof( BalVulkan::InstanceBatch ));
+        m_pInstanceBuffer->UpdateData(
+                m_instanceData[i].data(),
+                ( m_instanceData[i].size() < MAX_INSTANCE_COUNT
+                  ? m_instanceData[i].size()
+                  : MAX_INSTANCE_COUNT ) * sizeof( BalVulkan::InstanceBatch ));
         m_pSystem->GetResourceManager()->GetModel( m_allDrawableObjects[i].mesh )->Bind();
         m_pInstanceBuffer->Bind( false, true );
         if ( m_pSystem->GetResourceManager()->BindMaterial((uint64_t) m_allDrawableObjects[i].material ))
         {
-            BalVulkan::DrawMesh( m_pCommandPool, m_allDrawableObjects[i].indexCount, m_allDrawableObjects[i].firstIndex,
-                                 m_allDrawableObjects[i].firstInstance, m_allDrawableObjects[i].instanceCount );
+            BalVulkan::DrawMesh(
+                    m_pCommandPool,
+                    m_allDrawableObjects[i].indexCount,
+                    m_allDrawableObjects[i].firstIndex,
+                    m_allDrawableObjects[i].firstInstance,
+                    m_allDrawableObjects[i].instanceCount
+            );
         }
     }
 }

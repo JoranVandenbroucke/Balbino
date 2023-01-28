@@ -46,7 +46,7 @@ BalEditor::CAssetBrowser::CAssetBrowser()
           , m_wasContextMenuOpen{}
           , m_openItem{}
           , m_updateCurrentDirectory{ true }
-          , m_itemToBeCreated{ true, EFileTypes::Folder, 0, "", "", {}, 0  }
+          , m_itemToBeCreated{ true, EFileTypes::Folder, 0, "", "", {}, 0 }
 {
 }
 
@@ -67,27 +67,38 @@ void BalEditor::CAssetBrowser::Initialize( const ISystem* pSystem )
     m_pShaderIcon   = pSystem->GetResourceManager()->LoadTexture( "../Data/Editor/Icons/ShaderFile.basset" );
     
     m_pVkDescriptorSetUnknownIcon  = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pUnknownIcon->GetSampler(), m_pUnknownIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pUnknownIcon->GetSampler(), m_pUnknownIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetFolderIcon   = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pFolderIcon->GetSampler(), m_pFolderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pFolderIcon->GetSampler(), m_pFolderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetBalbinoIcon  = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pBalbinoIcon->GetSampler(), m_pBalbinoIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pBalbinoIcon->GetSampler(), m_pBalbinoIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetImageIcon    = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pImageIcon->GetSampler(), m_pImageIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pImageIcon->GetSampler(), m_pImageIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetAudioIcon    = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pAudioIcon->GetSampler(), m_pAudioIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pAudioIcon->GetSampler(), m_pAudioIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetModelIcon    = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pModelIcon->GetSampler(), m_pModelIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pModelIcon->GetSampler(), m_pModelIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetPresetIcon   = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pPresetIcon->GetSampler(), m_pPresetIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pPresetIcon->GetSampler(), m_pPresetIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetCodeIcon     = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pCodeIcon->GetSampler(), m_pCodeIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pCodeIcon->GetSampler(), m_pCodeIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetFontIcon     = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pFontIcon->GetSampler(), m_pFontIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pFontIcon->GetSampler(), m_pFontIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetMaterialIcon = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pMaterialIcon->GetSampler(), m_pMaterialIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pMaterialIcon->GetSampler(), m_pMaterialIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     m_pVkDescriptorSetShaderIcon   = static_cast< VkDescriptorSet >( ImGui_ImplVulkan_AddTexture(
-            m_pShaderIcon->GetSampler(), m_pShaderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ));
+            m_pShaderIcon->GetSampler(), m_pShaderIcon->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+    ));
     
     m_pSystem              = pSystem;
     m_currentDirectoryName = "..\\Data";
@@ -100,14 +111,18 @@ void BalEditor::CAssetBrowser::Draw()
     {
         GetAllFilesInSelectedPath( m_currentDirectoryName, m_currentDirectory );
         m_updateCurrentDirectory = false;
-        std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
-        {
-            return left.fileName < right.fileName;
-        } );
-        std::ranges::sort( m_currentDirectory, []( const SFile& left, const SFile& right )
-        {
-            return left.isFolder > right.isFolder;
-        } );
+        std::ranges::sort(
+                m_currentDirectory, []( const SFile& left, const SFile& right )
+                {
+                    return left.fileName < right.fileName;
+                }
+        );
+        std::ranges::sort(
+                m_currentDirectory, []( const SFile& left, const SFile& right )
+                {
+                    return left.isFolder > right.isFolder;
+                }
+        );
     }
     if ( GUI::Begin( "Asset Browser", m_isVisible, 0 ))
     {
@@ -246,16 +261,19 @@ void BalEditor::CAssetBrowser::FindAllFiles()
     }
     
     for ( auto file = std::filesystem::recursive_directory_iterator(
-            "..\\Data" ); file != std::filesystem::recursive_directory_iterator(); ++file )
+            "..\\Data"
+    ); file != std::filesystem::recursive_directory_iterator(); ++file )
     {
         
         auto currentFileLastWriteTime = std::filesystem::last_write_time( *file );
         
         // File creation
-        auto filetIt = std::ranges::find_if( m_files, [ &file ]( const SFile& filePair ) -> bool
-        {
-            return filePair.path == file->path();
-        } );
+        auto filetIt = std::ranges::find_if(
+                m_files, [ &file ]( const SFile& filePair ) -> bool
+                {
+                    return filePair.path == file->path();
+                }
+        );
         if ( filetIt == m_files.end())
         {
             //CreateNew
@@ -278,10 +296,12 @@ void BalEditor::CAssetBrowser::FindAllFiles()
 
 void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& nodeIdx )
 {
-    const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [ &path ]( const SFile& f ) -> bool
-    {
-        return f.path == path;
-    } );
+    const auto& fileIter = std::ranges::find_if(
+            std::as_const( m_files ), [ &path ]( const SFile& f ) -> bool
+            {
+                return f.path == path;
+            }
+    );
     if ( fileIter == m_files.cend())
     {
         return;
@@ -293,11 +313,13 @@ void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& node
     for ( auto& f : m_files )
     {
         if ( f.path != path && f.path.find(
-                path ) != std::string::npos && f.isFolder && f.depth - fileIter->depth <= 1 && std::ranges::find_if(
+                path
+        ) != std::string::npos && f.isFolder && f.depth - fileIter->depth <= 1 && std::ranges::find_if(
                 files, [ &f ]( const std::string& string )
                 {
                     return string.find( f.path ) != std::string::npos;
-                } ) == files.cend())
+                }
+        ) == files.cend())
         {
             files.push_back( f.path );
         }
@@ -336,10 +358,12 @@ void BalEditor::CAssetBrowser::DrawTree( const std::string& path, uint32_t& node
 
 void BalEditor::CAssetBrowser::GetAllFilesInSelectedPath( std::string path, std::vector<SFile>& filesInDirectory )
 {
-    const auto& fileIter = std::ranges::find_if( std::as_const( m_files ), [ &path ]( const SFile& f ) -> bool
-    {
-        return f.path == path;
-    } );
+    const auto& fileIter = std::ranges::find_if(
+            std::as_const( m_files ), [ &path ]( const SFile& f ) -> bool
+            {
+                return f.path == path;
+            }
+    );
     if ( fileIter == m_files.cend())
     {
         return;
@@ -477,7 +501,7 @@ void BalEditor::CAssetBrowser::DrawContextMenu( bool isSelected )
         (void) rename;
         (void) shouldDelete;
         (void) copyPath;
-        (void) import;
+        ( void ) import;
         (void) reimport;
         (void) reimportAll;
         if ( properties )
@@ -511,10 +535,13 @@ void BalEditor::CAssetBrowser::CreateItem()
         if ( inputChanged )
         {
             m_itemToBeCreated.fileName = "";
-            m_itemToBeCreated.fileName.append( name, std::find_if( name, name + 64, []( char c )
-            {
-                return c == '\0';
-            } ));
+            m_itemToBeCreated.fileName.append(
+                    name, std::find_if(
+                            name, name + 64, []( char c )
+                            {
+                                return c == '\0';
+                            }
+                    ));
         }
         if ( saved && !m_itemToBeCreated.fileName.empty())
         {
@@ -535,22 +562,29 @@ void BalEditor::CAssetBrowser::CreateItem()
         //shader
         case EFileTypes::Shader:
         {
-            Exporter::ExportShader( m_itemToBeCreated.fileName, m_currentDirectoryName + "/", 0,
-                                    {{ std::numeric_limits<uint32_t>().max() }}, CUuid(), "" );
+            Exporter::ExportShader(
+                    m_itemToBeCreated.fileName,
+                    m_currentDirectoryName, {},{},
+                    CUuid(),
+                    ""
+            );
             break;
         }
             //material
         case EFileTypes::Material:
         {
-            Exporter::ExportMaterial( m_itemToBeCreated.fileName, m_currentDirectoryName + "/",
-                                      m_pPropertyPanel->GetDefaultShader(),
-                                      m_pSystem->GetResourceManager()->GetShader( m_pPropertyPanel->GetDefaultShader(),
-                                                                                  true )->GetShaderResources(),
-                                      CUuid());
+            Exporter::ExportMaterial(
+                    m_itemToBeCreated.fileName,
+                    m_currentDirectoryName,
+                    m_pPropertyPanel->GetDefaultShader(),
+                    m_pSystem->GetResourceManager()->GetShader(
+                            m_pPropertyPanel->GetDefaultShader(), true
+                    )->GetShaderResources(),
+                    CUuid());
             break;
         }
         case EFileTypes::Folder:    //todo
-        case EFileTypes::Scene:     //todo
+        case EFileTypes::Scene:
         case EFileTypes::Image:
         case EFileTypes::Audio:
         case EFileTypes::Font:

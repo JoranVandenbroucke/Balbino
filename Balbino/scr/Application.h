@@ -19,10 +19,12 @@ namespace Balbino
     class CScene;
     
     class CRenderer;
-
-#ifdef BALBINO_EDITOR
+    
+    #ifdef BALBINO_EDITOR
+    
     class CInterface;
-#endif
+    
+    #endif
     
     class Application
     {
@@ -33,23 +35,23 @@ namespace Balbino
         Application( Application&& ) = delete;
         Application& operator=( const Application& ) = delete;
         Application& operator=( Application&& ) = delete;
-
+        
         void Initialize();
         BALBINO_API virtual void LoadGame();
         void Cleanup();
         void Run();
-
+    
     private:
         int32_t  m_w;
         int32_t  m_h;
         uint32_t m_windowFlags;
         SDL_Window* m_pWindow;
-
+        
         CSystem m_system;
         CRenderer* m_pRenderer;
-#ifdef BALBINO_EDITOR
+        #ifdef BALBINO_EDITOR
         BalEditor::CInterface* m_pInterface;
-#endif
+        #endif
         CScene* m_pScene;
     };
     

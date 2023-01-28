@@ -5,14 +5,13 @@
 #include "Exporter.h"
 #include <filesystem>
 #include <fstream>
-#include <UUID.h>
 #include <FileParcer.h>
-#include <MeshMetadata.h>
 
-bool BalEditor::Exporter::ExportShader( const std::string& assetName, const std::string& assetPath, uint16_t type, const std::vector<std::vector<uint32_t>>& compiledShaders, CUuid id, const std::string& editorData )
+bool BalEditor::Exporter::ExportShader( const std::string& assetName, const std::string& assetPath, const std::vector<std::vector<uint32_t>>& compiledShaders, const std::vector<uint8_t>& types, CUuid id, const std::string& editorData )
 {
-    std::filesystem::path path{ assetPath + assetName + ".basset" };
-    std::ofstream         file{ path, std::ios::out | std::ios::binary };
+    std::filesystem::path path{ SanitizePath(assetPath) + assetName };
+    path.replace_extension( ".basset" );
+    std::ofstream file{ path, std::ios::out | std::ios::binary };
     
     if ( !file.is_open())
     {
@@ -21,24 +20,27 @@ bool BalEditor::Exporter::ExportShader( const std::string& assetName, const std:
     
     BinaryReadWrite::Write( file, (uint64_t) id );
     BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Shader );
-    BinaryReadWrite::Write( file, type );
+    BinaryReadWrite::Write( file, (uint8_t) compiledShaders.size());
     for ( uint8_t i{}; i < (uint8_t) compiledShaders.size(); ++i )
     {
         BinaryReadWrite::Write( file, (uint64_t) compiledShaders[i].size());
+        BinaryReadWrite::Write( file, types[i] );
     }
     for ( uint8_t i{}; i < (uint8_t) compiledShaders.size(); ++i )
     {
-        BinaryReadWrite::Write( file, compiledShaders[i].data(),
-                                (uint64_t) compiledShaders[i].size() * sizeof( uint32_t ));
+        BinaryReadWrite::Write(
+                file,
+                compiledShaders[i].data(),
+                (uint64_t) compiledShaders[i].size() * sizeof( uint32_t ));
     }
-    BinaryReadWrite::Write(file, editorData);
+    BinaryReadWrite::Write( file, editorData );
     file.close();
     return true;
 }
 
 bool BalEditor::Exporter::ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<BalVulkan::SVertex>& vertices, const std::vector<Balbino::SMeshMetadata>& pMetadata, CUuid id )
 {
-    std::filesystem::path path{ assetPath + assetName };
+    std::filesystem::path path{ SanitizePath(assetPath) + assetName };
     path.replace_extension( ".basset" );
     std::ofstream file{ path, std::ios::out | std::ios::binary };
     
@@ -65,7 +67,7 @@ bool BalEditor::Exporter::ExportMesh( const std::string& assetName, const std::s
 
 bool BalEditor::Exporter::ExportMaterial( const std::string& assetName, const std::string& assetPath, CUuid shaderID, const std::vector<BalVulkan::SShaderResource>& resources, CUuid id )
 {
-    std::filesystem::path path{ assetPath + assetName + ".basset" };
+    std::filesystem::path path{ SanitizePath(assetPath) + assetName + ".basset" };
     std::ofstream         file{ path, std::ios::out | std::ios::binary };
     
     if ( !file.is_open())
@@ -76,16 +78,16 @@ bool BalEditor::Exporter::ExportMaterial( const std::string& assetName, const st
     BinaryReadWrite::Write( file, (uint64_t) id );
     BinaryReadWrite::Write( file, (uint8_t) EFileTypes::Material );
     BinaryReadWrite::Write( file, (uint64_t) shaderID );
-    BinaryReadWrite::Write( file, resources.size() );
-    BinaryReadWrite::Write( file, resources.data(), resources.size() * sizeof(BalVulkan::SShaderResource));
+    BinaryReadWrite::Write( file, resources.size());
+    BinaryReadWrite::Write( file, resources.data(), resources.size() * sizeof( BalVulkan::SShaderResource ));
     
     file.close();
     return true;
 }
 
-bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, const void*const pData, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, int wrapModeU, int wrapModeV, int wrapModeW, CUuid id )
+bool BalEditor::Exporter::ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, const void* const pData, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, int wrapModeU, int wrapModeV, int wrapModeW, CUuid id )
 {
-    std::filesystem::path path{ assetPath + assetName };
+    std::filesystem::path path{ SanitizePath(assetPath) + assetName };
     path.replace_extension( ".basset" );
     std::ofstream file{ path, std::ios::out | std::ios::binary };
     

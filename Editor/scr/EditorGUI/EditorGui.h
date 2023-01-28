@@ -42,7 +42,7 @@ namespace BalEditor::GUI
     bool DrawButton( const char* name, const glm::vec2& size = { 0, 0 } );
     bool DrawInputText( std::string_view name, char* text, int maxLength, float width = 100.f, int flags = 0.f );
     
-    bool DrawComboBox( const char* name, uint64_t& currentIndex, const std::vector<std::string>& elements, float width = 100, bool inMenuBar = false );
+    bool DrawComboBox( const char* name, uint64_t& currentIndex, const std::vector<std::string>& elements, const std::vector<int>& dividers = {}, float width = 100, bool inMenuBar = false );
     uint64_t DrawPopupContextWindow( std::string_view name, const std::vector<std::string>& options );
     
     bool StartPopup( const char* name, bool centered = true, glm::vec2 size = { 0, 0 } );
@@ -94,6 +94,8 @@ namespace BalEditor::GUI
     unsigned int GetID( const char* name );
     unsigned int DockSpace( unsigned int id, const glm::vec2& size, int flags );
     void SetNextWindowDockID( unsigned int id, int flags );
-    void DrawSelectable( int id, bool& isSelected, float height);
+    void DrawSelectable( int id, bool& isSelected, float height );
+    
+    void SetTooltip( std::string_view tip );
 }
 #endif //GAME_EDITORGUI_H

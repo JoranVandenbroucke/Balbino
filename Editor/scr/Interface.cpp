@@ -24,19 +24,19 @@
 #include "Instance.h"
 
 BalEditor::CInterface::CInterface()
-        : m_queueNextResource{ false },
-          m_pMain{ nullptr },
-          m_pGameView{ nullptr },
-          m_pAssetBrowser{ nullptr },
-          m_pSceneHierarchy{ nullptr },
-          m_pShaderGraph{ nullptr },
-          m_pMaterialEditor{ nullptr },
-          m_pMeshImporter{ nullptr },
-          m_pTextureImporter{ nullptr },
-          m_pPropertyPanel{ nullptr },
-          m_descriptorPool{ nullptr },
-          m_pWindow{ nullptr },
-          m_pDevice{ nullptr }
+        : m_queueNextResource{ false }
+          , m_pMain{ nullptr }
+          , m_pGameView{ nullptr }
+          , m_pAssetBrowser{ nullptr }
+          , m_pSceneHierarchy{ nullptr }
+          , m_pShaderGraph{ nullptr }
+          , m_pMaterialEditor{ nullptr }
+          , m_pMeshImporter{ nullptr }
+          , m_pTextureImporter{ nullptr }
+          , m_pPropertyPanel{ nullptr }
+          , m_descriptorPool{ nullptr }
+          , m_pWindow{ nullptr }
+          , m_pDevice{ nullptr }
 {
 }
 
@@ -148,8 +148,12 @@ void BalEditor::CInterface::Draw( BalVulkan::CCommandPool* pCommandPool )
 {
     if ( m_queueNextResource && !m_pendingResources.empty())
     {
-        ImportFile( m_pendingResources.back().c_str(), m_pAssetBrowser->GetCurrentDirectory(), m_pMeshImporter,
-                    m_pTextureImporter );
+        ImportFile(
+                m_pendingResources.back().c_str(),
+                m_pAssetBrowser->GetCurrentDirectory(),
+                m_pMeshImporter,
+                m_pTextureImporter
+        );
         m_pendingResources.pop_back();
         m_queueNextResource = false;
     }
@@ -457,7 +461,7 @@ void BalEditor::CInterface::SetImGuiStyle( ImNodesStyle& imNodesStyle )
     imNodesStyle.Colors[ImNodesCol_MiniMapOutline]           = IM_COL32( 150, 150, 150, 100 );
     imNodesStyle.Colors[ImNodesCol_MiniMapOutlineHovered]    = IM_COL32( 150, 150, 150, 200 );
     
-    imNodesStyle.Colors[ImNodesCol_MiniMapOutlineHovered]    = IM_COL32( 150, 150, 150, 200 );
+    imNodesStyle.Colors[ImNodesCol_MiniMapOutlineHovered] = IM_COL32( 150, 150, 150, 200 );
 }
 void BalEditor::CInterface::Resize( const int32_t w, const int32_t h )
 {

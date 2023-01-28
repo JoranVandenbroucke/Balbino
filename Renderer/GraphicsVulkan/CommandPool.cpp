@@ -10,10 +10,10 @@
 #include "Swapchain.h"
 
 BalVulkan::CCommandPool::CCommandPool( const CDevice* device )
-        : CDeviceObject{ device },
-          m_commandPool{ VK_NULL_HANDLE },
-          m_commandBuffers{},
-          m_currentFrameIndex{ 0 }
+        : CDeviceObject{ device }
+          , m_commandPool{ VK_NULL_HANDLE }
+          , m_commandBuffers{}
+          , m_currentFrameIndex{ 0 }
 {
 }
 
@@ -35,8 +35,10 @@ void BalVulkan::CCommandPool::Initialize( uint32_t queueFamilyIndex, const CSwap
                 .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, .flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, .queueFamilyIndex = queueFamilyIndex,
         };
         VkCommandPool                 cmdAllocator{ VK_NULL_HANDLE };
-        CheckVkResult( vkCreateCommandPool( GetDevice()->GetVkDevice(), &poolInfo, nullptr, &cmdAllocator ),
-                       "failed to create graphics command pool!" );
+        CheckVkResult(
+                vkCreateCommandPool( GetDevice()->GetVkDevice(), &poolInfo, nullptr, &cmdAllocator ),
+                "failed to create graphics command pool!"
+        );
         
         m_commandPool = cmdAllocator;
     }
@@ -50,8 +52,10 @@ void BalVulkan::CCommandPool::Initialize( uint32_t queueFamilyIndex, const CSwap
                 .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, .commandPool = m_commandPool, .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY, .commandBufferCount = size,
         };
         
-        CheckVkResult( vkAllocateCommandBuffers( GetDevice()->GetVkDevice(), &bufferInfo, m_commandBuffers.data()),
-                       "Could not create command list" );
+        CheckVkResult(
+                vkAllocateCommandBuffers( GetDevice()->GetVkDevice(), &bufferInfo, m_commandBuffers.data()),
+                "Could not create command list"
+        );
     }
 }
 
@@ -95,12 +99,11 @@ void BalVulkan::CCommandPool::BeginRender( CRenderPass* pRenderPass, CFrameBuffe
     }
     
     const VkRenderPassBeginInfo renderPassInfo{
-            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .renderPass = pRenderPass->GetRenderPass(),
-            .framebuffer = pFrameBuffer->GetFrameBuffer( m_currentFrameIndex ),
-            .renderArea = {{ 0, 0 }, pSwapchain->GetExtend() },
-            .clearValueCount = (uint32_t) clearColor.size(),
-            .pClearValues = clearColor.data(),
+            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO, .renderPass = pRenderPass->GetRenderPass(), .framebuffer = pFrameBuffer->GetFrameBuffer(
+                    m_currentFrameIndex
+            ), .renderArea = {{ 0, 0 },
+                              pSwapchain->GetExtend()
+            }, .clearValueCount = (uint32_t) clearColor.size(), .pClearValues = clearColor.data(),
     };
     vkBeginCommandBuffer( m_commandBuffers[m_currentFrameIndex], &beginInfo );
     vkCmdBeginRenderPass( m_commandBuffers[m_currentFrameIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE );
@@ -110,11 +113,20 @@ void BalVulkan::CCommandPool::BindShader( CShaderPipeline* pPipeline, CDescripto
 {
     uint32_t offset{};
 //    uint32_t offset{sizeof(glm::mat4) * 3};
-    vkCmdBindPipeline( m_commandBuffers[m_currentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS,
-                       pPipeline->GetPipeline());
-    vkCmdBindDescriptorSets( m_commandBuffers[m_currentFrameIndex], VK_PIPELINE_BIND_POINT_GRAPHICS,
-                             pPipeline->GetPipelineLayout(), 0, pDescriptorSet->GetDescriptorSetCount(),
-                             pDescriptorSet->GetDescriptorSets(), pDescriptorSet->GetDynamicCount(), &offset );
+    vkCmdBindPipeline(
+            m_commandBuffers[m_currentFrameIndex],
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            pPipeline->GetPipeline());
+    vkCmdBindDescriptorSets(
+            m_commandBuffers[m_currentFrameIndex],
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            pPipeline->GetPipelineLayout(),
+            0,
+            pDescriptorSet->GetDescriptorSetCount(),
+            pDescriptorSet->GetDescriptorSets(),
+            pDescriptorSet->GetDynamicCount(),
+            &offset
+    );
 }
 
 BalVulkan::CCommandPool* BalVulkan::CCommandPool::CreateNew( const CDevice* pDevice )

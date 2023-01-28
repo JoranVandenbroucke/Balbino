@@ -19,12 +19,17 @@ namespace BalEditor
         CShaderGraph& operator=( const CShaderGraph& ) = delete;
         CShaderGraph& operator=( CShaderGraph&& ) = delete;
         void Draw();
-        void ShowWindow(const SFile& shader={});
+        void ShowWindow( const SFile& shader = {} );
     private:
         enum class EUiNodeType
         {
             //Shader
-            ShaderNode, VertexOutput, GeometryOutput, FragmentOutput,
+            ShaderNode,
+            VertexOutput,
+            GeometryOutput,
+            TesselationControl,
+            TesselationEvaluation,
+            FragmentOutput,
             
             ////////blender nodes////////
             //Input
@@ -65,10 +70,16 @@ namespace BalEditor
             //todo WhiteNoiseTexture,
             
             //Color
-            BrightContrast, Gamma, HueSaturationValue, Invert, Mix,
+            BrightContrast,
+            Gamma,
+            HueSaturationValue,
+            Invert,
+            Mix,
             
             //Vector,
-            Bump, Displacement, Mapping, //todo Normal,
+            Bump,
+            Displacement,
+            Mapping, //todo Normal,
             NormalMap,
             //todo VectorCurves,
             //todo VectorDisplacement,
@@ -81,12 +92,15 @@ namespace BalEditor
             //todo CombineSeparate,
             //todo FloatCurve,
             //todo MapRange,
-            Math, RGBtoBW, VectorMath, //todo Wavelength,
+            Math,
+            RGBtoBW,
+            VectorMath,
+            //todo Wavelength,
             MaxIndex
             //todo ScreenDoorTransparency
             
             ////////UE4 nodes////////
-            //todo Atmospheric Fog Color
+            
         };
         
         struct SLink
@@ -96,9 +110,9 @@ namespace BalEditor
             int startAttr, endAttr;
         };
         
-        std::vector<std::pair<int,INode*>>      m_nodes;
-        std::vector<SLink>       m_links;
-        std::vector<std::string> m_allNodeNames;
+        std::vector<std::pair<int, INode*>> m_nodes;
+        std::vector<SLink>                  m_links;
+        std::vector<std::string>            m_allNodeNames;
         
         int   m_currentId          = 0;
         int   m_currentAttributeId = 0;
@@ -107,9 +121,11 @@ namespace BalEditor
         SFile m_currentShaderFile;
         
         std::vector<SLink> GetNeighbors( int currentNode );
+        bool HasCycleStartingFrom( const INode* pStartNode);
         void Evaluate();
         void AddNode( EUiNodeType type, const glm::vec2& position, int id = -1 );
-        void LoadEditorFromData(const SFile& shader);
+        void AddLink( SLink& link );
+        void LoadEditorFromData( const SFile& shader );
         void LoadDefaultEditor();
         std::string SaveEditor();
         static const char* ToString( EUiNodeType type );

@@ -3,7 +3,7 @@
 //
 #include "Random.h"
 
-Balbino::CRandom::CRandom(int seed)
+Balbino::CRandom::CRandom( int seed )
         : m_randomEngine( seed )
           , m_uniformIntDistribution( 0.f, 1.f )
 {
@@ -17,7 +17,7 @@ glm::vec2 Balbino::CRandom::InsideUnitCircle()
         point.x = Value();
         point.y = Value();
     }
-    while( point.x * point.x + point.y * point.y > 1.0f );
+    while ( point.x * point.x + point.y * point.y > 1.0f );
     return point;
 }
 
@@ -30,7 +30,7 @@ glm::vec3 Balbino::CRandom::InsideUnitSphere()
         point.y = Value();
         point.z = Value();
     }
-    while( point.x * point.x + point.y * point.y + point.z * point.z > 1.0f );
+    while ( point.x * point.x + point.y * point.y + point.z * point.z > 1.0f );
     return point;
 }
 
@@ -55,14 +55,14 @@ glm::quat Balbino::CRandom::Rotation()
         y = Value() * 2 - 1;
         z = x * x + y * y;
     }
-    while( z > 1 );
+    while ( z > 1 );
     do
     {
         u = Value() * 2 - 1;
         v = Value() * 2 - 1;
         w = u * u + v * v;
     }
-    while( w > 1 );
+    while ( w > 1 );
     s = sqrt(( 1 - z ) / w );
     return glm::quat{ x, y, s * u, s * v };
 }

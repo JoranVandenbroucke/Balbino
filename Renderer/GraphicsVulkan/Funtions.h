@@ -14,10 +14,15 @@ namespace BalVulkan
             return false;
         }
         //std::cout << "[Vulkan] Error: VkResult = " << err << std::endl << failMessage << std::endl;
-        std::cout
-                << std::format( R"({}({}:{})[Vulkan] Error: VkResult = {} {} )", location.file_name(), location.line(),
-                                location.column(), location.function_name(), static_cast<uint32_t>( err ), failMessage )
-                << std::endl;
+        std::cout << std::format(
+                R"({}({}:{})[Vulkan] Error: VkResult = {} {} )",
+                location.file_name(),
+                location.line(),
+                location.column(),
+                location.function_name(),
+                static_cast<uint32_t>( err ),
+                failMessage
+        ) << std::endl;
         if ( err < 0 )
         {
             abort();

@@ -6,10 +6,6 @@
 #include "Instance.h"
 #include "Swapchain.h"
 
-auto operator<=>( uint32_t lhs, BalVulkan::EShaderType::Enum rhs )
-{
-    return lhs <=> static_cast<uint32_t>( rhs );
-}
 
 BalVulkan::CShaderPipeline::~CShaderPipeline()
 {
@@ -18,7 +14,7 @@ BalVulkan::CShaderPipeline::~CShaderPipeline()
     vkDestroyDescriptorSetLayout( GetDevice()->GetVkDevice(), m_descriptorSetLayout, nullptr );
 }
 
-void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CShader*>& shaders, const CRenderPass& renderPass, const std::vector<EVertexComponent::Enum>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode::Enum cullModeFlag )
+void BalVulkan::CShaderPipeline::Initialize( const std::vector<uint8_t>& types, const std::vector<CShader*>& shaders, const CRenderPass& renderPass, const std::vector<EVertexComponent::Enum>& components, uint32_t blendAttachmentSize, const CSwapchain* pSwapchain, ECullMode::Enum cullModeFlag )
 {
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages{};
     std::vector<VkDescriptorSetLayoutBinding>    setLayoutBindings{};
@@ -44,28 +40,71 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
         default:
             break;
     }
-    switch ( type )
+    for(int i{}; i < types.size(); ++i)
     {
-        case 0:
-            shaderStages.emplace_back( VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                                       VK_SHADER_STAGE_VERTEX_BIT, shaders[0]->GetShaderModule(), "main", nullptr );
-            break;
-        case 1:
-            shaderStages.emplace_back( VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                                       VK_SHADER_STAGE_VERTEX_BIT, shaders[0]->GetShaderModule(), "main", nullptr );
-            shaderStages.emplace_back( VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                                       VK_SHADER_STAGE_GEOMETRY_BIT, shaders[1]->GetShaderModule(), "main", nullptr );
-            shaderStages.emplace_back( VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                                       VK_SHADER_STAGE_FRAGMENT_BIT, shaders[2]->GetShaderModule(), "main", nullptr );
-            break;
-        case 2:
-            shaderStages.emplace_back( VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                                       VK_SHADER_STAGE_VERTEX_BIT, shaders[0]->GetShaderModule(), "main", nullptr );
-            shaderStages.emplace_back( VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
-                                       VK_SHADER_STAGE_FRAGMENT_BIT, shaders[1]->GetShaderModule(), "main", nullptr );
-            break;
-        default:
-            break;
+        VkShaderStageFlagBits type;
+        switch ( types[i] )
+        {
+            case 0:
+                type = VK_SHADER_STAGE_VERTEX_BIT;
+                break;
+            case 1:
+                type = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+                break;
+            case 2:
+                type = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+                break;
+            case 3:
+                type = VK_SHADER_STAGE_GEOMETRY_BIT;
+                break;
+            case 4:
+                type = VK_SHADER_STAGE_FRAGMENT_BIT;
+                break;
+            case 5:
+                type = VK_SHADER_STAGE_COMPUTE_BIT;
+                break;
+            case 6:
+                type = VK_SHADER_STAGE_ALL_GRAPHICS;
+                break;
+            case 7:
+                type = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
+                break;
+            case 8:
+                type = VK_SHADER_STAGE_ANY_HIT_BIT_KHR;
+                break;
+            case 9:
+                type = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
+                break;
+            case 10:
+                type = VK_SHADER_STAGE_MISS_BIT_KHR;
+                break;
+            case 11:
+                type = VK_SHADER_STAGE_INTERSECTION_BIT_KHR;
+                break;
+            case 12:
+                type = VK_SHADER_STAGE_CALLABLE_BIT_KHR;
+                break;
+            case 13:
+                type = VK_SHADER_STAGE_TASK_BIT_NV;
+                break;
+            case 14:
+                type = VK_SHADER_STAGE_MESH_BIT_NV;
+                break;
+            case 15:
+                type = VK_SHADER_STAGE_SUBPASS_SHADING_BIT_HUAWEI;
+                break;
+            default:
+                break;
+        }
+        shaderStages.emplace_back(
+                VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+                nullptr,
+                0,
+                type,
+                shaders[i]->GetShaderModule(),
+                "main",
+                nullptr
+        );
     }
     for ( uint32_t i{}; i < shaders.size(); ++i )
     {
@@ -73,17 +112,20 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
         for ( const auto& shaderResource : resources )
         {
             const auto it{
-                    std::find_if( m_shaderResources.begin(), m_shaderResources.end(),
-                                  [ shaderResource ]( const BalVulkan::SShaderResource& resource )
-                                  {
-                                      if (( shaderResource.type == EShaderResourceType::Input && resource.type == EShaderResourceType::Input ) || ( shaderResource.type == EShaderResourceType::Output && resource.type == EShaderResourceType::Output ))
-                                      {
-                                          return false;
-                                      }
-                                      return shaderResource.name == resource.name;
-                                  } )
+                    std::find_if(
+                            m_shaderResources.begin(),
+                            m_shaderResources.end(),
+                            [ shaderResource ]( const BalVulkan::SShaderResource& resource )
+                            {
+                                if (( shaderResource.type == EShaderResourceType::Input && resource.type == EShaderResourceType::Input ) || ( shaderResource.type == EShaderResourceType::Output && resource.type == EShaderResourceType::Output ))
+                                {
+                                    return false;
+                                }
+                                return shaderResource.name == resource.name;
+                            }
+                    )
             };
-    
+            
             if ( it != m_shaderResources.end())
             {
                 // Append stage flags if resource already exists
@@ -128,8 +170,9 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             }
             
             // Convert from EShaderResourceType to VkDescriptorType.
-            const auto descriptorType = FindDescriptorType( resource.type,
-                                                            resource.mode == EShaderResourceMode::Dynamic );
+            const auto descriptorType = FindDescriptorType(
+                    resource.type, resource.mode == EShaderResourceMode::Dynamic
+            );
             
             if ( resource.mode == EShaderResourceMode::UpdateAfterBind )
             {
@@ -143,11 +186,12 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
                 bindingFlags.push_back( 0 );
             }
             
-            auto existing = std::ranges::find_if( setLayoutBindings,
-                                                  [ &resource ]( const VkDescriptorSetLayoutBinding& binding )
-                                                  {
-                                                      return binding.binding == resource.binding;
-                                                  } );
+            auto existing = std::ranges::find_if(
+                    setLayoutBindings, [ &resource ]( const VkDescriptorSetLayoutBinding& binding )
+                    {
+                        return binding.binding == resource.binding;
+                    }
+            );
             if ( existing != setLayoutBindings.end())
             {
                 // Store mapping between binding and the binding point
@@ -179,15 +223,20 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
     const VkDescriptorSetLayoutCreateInfo descriptorLayout{
             .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, .bindingCount = static_cast<uint32_t>( setLayoutBindings.size()), .pBindings = setLayoutBindings.data(),
     };
-    CheckVkResult( vkCreateDescriptorSetLayout( GetDevice()->GetVkDevice(), &descriptorLayout, nullptr,
-                                                &m_descriptorSetLayout ));
+    CheckVkResult(
+            vkCreateDescriptorSetLayout(
+                    GetDevice()->GetVkDevice(), &descriptorLayout, nullptr, &m_descriptorSetLayout
+            ));
     
     // Shared pipeline layout used by all pipelines
     VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo{
             .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, .setLayoutCount = 1, .pSetLayouts = &m_descriptorSetLayout,
     };
-    CheckVkResult( vkCreatePipelineLayout( GetDevice()->GetVkDevice(), &pPipelineLayoutCreateInfo, nullptr,
-                                           &m_pipelineLayout ), "failed to create pipeline layout!" );
+    CheckVkResult(
+            vkCreatePipelineLayout(
+                    GetDevice()->GetVkDevice(), &pPipelineLayoutCreateInfo, nullptr, &m_pipelineLayout
+            ), "failed to create pipeline layout!"
+    );
     
     
     constexpr VkPipelineInputAssemblyStateCreateInfo inputAssemblyState{
@@ -197,8 +246,10 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, .pNext = nullptr, .flags = 0, .depthClampEnable = VK_FALSE, .polygonMode = VK_POLYGON_MODE_FILL, .cullMode = cullmode, .frontFace = VK_FRONT_FACE_CLOCKWISE, .depthBiasEnable = VK_FALSE, .depthBiasConstantFactor = 0, .depthBiasClamp = 0, .depthBiasSlopeFactor = 0, .lineWidth = 1.0f,
     };
     
-    const std::vector                           blendAttachmentStates( blendAttachmentSize,
-                                                                       VkPipelineColorBlendAttachmentState{ .blendEnable = VK_FALSE, .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, } );
+    const std::vector                           blendAttachmentStates(
+            blendAttachmentSize,
+            VkPipelineColorBlendAttachmentState{ .blendEnable = VK_FALSE, .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, }
+    );
     const VkPipelineColorBlendStateCreateInfo   colorBlendState{
             .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, .logicOpEnable = VK_FALSE, .logicOp = VK_LOGIC_OP_COPY, .attachmentCount = static_cast<uint32_t>( blendAttachmentStates.size()), .pAttachments = blendAttachmentStates.data(), .blendConstants = {
                     0.f, 0.f, 0.f, 0.f
@@ -227,9 +278,10 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             SVertex::GetAttributeDescriptions( 0, components )
     };
     std::vector                                        vertexInstanceInputAttributeDescriptions{ InstanceBatch::GetAttributeDescriptions() };
-    vertexInputAttributeDescriptions.insert( vertexInputAttributeDescriptions.end(),
-                                             vertexInstanceInputAttributeDescriptions.begin(),
-                                             vertexInstanceInputAttributeDescriptions.end());
+    vertexInputAttributeDescriptions.insert(
+            vertexInputAttributeDescriptions.end(),
+            vertexInstanceInputAttributeDescriptions.begin(),
+            vertexInstanceInputAttributeDescriptions.end());
     const VkPipelineVertexInputStateCreateInfo inputState{
             .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, .pNext = nullptr, .flags = 0, .vertexBindingDescriptionCount = (uint32_t) vertexInputBindingDescription.size(), .pVertexBindingDescriptions = vertexInputBindingDescription.data(), .vertexAttributeDescriptionCount = static_cast<uint32_t>( vertexInputAttributeDescriptions.size()), .pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data(),
     };
@@ -237,8 +289,11 @@ void BalVulkan::CShaderPipeline::Initialize( uint16_t type, const std::vector<CS
             .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, .pNext = VK_NULL_HANDLE, .flags = 0, .stageCount = static_cast<uint32_t>( shaderStages.size()), .pStages = shaderStages.data(), .pVertexInputState = &inputState, .pInputAssemblyState = &inputAssemblyState, .pViewportState = &viewportState, .pRasterizationState = &rasterizationState, .pMultisampleState = &multisampleState, .pDepthStencilState = &depthStencilState, .pColorBlendState = &colorBlendState, .layout = m_pipelineLayout, .renderPass = renderPass.GetRenderPass(), .subpass = 0, .basePipelineHandle = VK_NULL_HANDLE, .basePipelineIndex = 0,
     };
     
-    CheckVkResult( vkCreateGraphicsPipelines( GetDevice()->GetVkDevice(), m_pipelineCache, 1, &pipelineCI, nullptr,
-                                              &m_pipeline ), "failed to create graphics pipeline!" );
+    CheckVkResult(
+            vkCreateGraphicsPipelines(
+                    GetDevice()->GetVkDevice(), m_pipelineCache, 1, &pipelineCI, nullptr, &m_pipeline
+            ), "failed to create graphics pipeline!"
+    );
 }
 
 VkPipelineLayout BalVulkan::CShaderPipeline::GetPipelineLayout() const
