@@ -2,6 +2,10 @@
 #include "ISystem.h"
 #include "Core.h"
 
+namespace FawnVision
+{
+    class CRenderer;
+}
 namespace Balbino
 {
     class CInputHandler;
@@ -16,7 +20,7 @@ namespace Balbino
         CSystem& operator=( const CSystem& ) = delete;
         CSystem& operator=( CSystem&& ) = delete;
         
-        void Initialize();
+        void Initialize(FawnVision::CRenderer* pRenderer);
         bool Update( bool isPause ) override;
         void Cleanup();
         

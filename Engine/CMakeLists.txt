@@ -2,14 +2,31 @@ set(PROJECT_NAME Balbino)
 
 # get source files
 file(GLOB_RECURSE source
-        *.cpp *.h
-        **/*.cpp **/*.h
+        Core/*.cpp Core/*.h
         )
 
 # project setting
-add_library(${PROJECT_NAME} ${source})
-target_precompile_headers(${PROJECT_NAME}
-        PUBLIC
+add_library(${PROJECT_NAME} STATIC Balbino.h ${source})
+
+set( SDL_TEST OFF CACHE BOOL "" FORCE )
+set( BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE )
+add_subdirectory( ../3rdParty/SDL SDL EXCLUDE_FROM_ALL)
+
+set( BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE )
+add_subdirectory( ../3rdParty/SDL_image SDL_image EXCLUDE_FROM_ALL )
+set( BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE )
+add_subdirectory( ../3rdParty/SDL_mixer SDL_mixer EXCLUDE_FROM_ALL )
+set( BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE )
+add_subdirectory( ../3rdParty/SDL_ttf SDL_ttf EXCLUDE_FROM_ALL )
+
+add_dependencies(${PROJECT_NAME}
+        Common
+        Renderer
+        Editor
+        GraphicsVulkan
+        )
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE
         [["algorithm"]]
         [["array"]]
         [["cmath"]]
@@ -18,53 +35,48 @@ target_precompile_headers(${PROJECT_NAME}
         [["iostream"]]
         [["unordered_map"]]
         [["vector"]]
-        [["SDL.h"]]
-        [["SDL_image.h"]]
-        [["SDL_mixer.h"]]
-        [["SDL_ttf.h"]]
+        [["glm/glm.hpp"]]
         )
 
 set(ROOT_NAMESPACE Balbino)
 
 #include
 target_include_directories(${PROJECT_NAME} PRIVATE
-        ../3rdParty/SDL2/include
-        ../3rdParty/SDL2_image/include
-        ../3rdParty/SDL2_mixer/include
-        ../3rdParty/SDL2_ttf/include
+        Common
+        Renderer
+        Renderer/API/Vulkan
+        "$<$<CONFIG:DebugEditor>:"
+        Editor
+        >
+        "$<$<CONFIG:ReleaseEditor>:"
+        Editor
+        >
         ../3rdParty/EnTT/single_include
-        ../3rdParty/GLM
-        ../3rdParty/mINI/src/mini
-        ../3rdParty/Vulkan/Include
-        ../3rdParty/ASSIMP/include
-        ../Renderer/GraphicsVulkan
-        ../Common
-        $<$<CONFIG:DebugEditor>:
-        ../Editor
-        >
-        $<$<CONFIG:ReleaseEditor>:
-        ../Editor
-        >
+        ../3rdParty/GLM/
+        ../3rdParty/mINI/src
+        ../3rdParty/SDL/include
+        ../3rdParty/Vulkan/include
         )
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         "BL_PLATFORM_WINDOWS;"
         "BL_BUILD_LIB;"
         "$<$<CONFIG:Debug>:"
-        "_DEBUG"
+        "_DEBUG;"
+        "_CONSOLE;"
         ">"
         "$<$<CONFIG:DebugEditor>:"
-        "_DEBUG"
+        "_DEBUG;"
+        "_CONSOLE;"
         "BALBINO_EDITOR;"
         ">"
         "$<$<CONFIG:Release>:"
-        "NDEBUG"
+        "NDEBUG;"
         ">"
         "$<$<CONFIG:ReleaseEditor>:"
-        "NDEBUG"
+        "NDEBUG;"
         "BALBINO_EDITOR;"
         ">"
-        "_CONSOLE;"
         "UNICODE;"
         "_UNICODE;"
         "_LIB"
@@ -108,40 +120,90 @@ if (MSVC)
             ${DEFAULT_CXX_EXCEPTION_HANDLING}
             )
     target_link_options(${PROJECT_NAME} PRIVATE
-            /INCREMENTAL;
             $<$<CONFIG:Debug>:
+            /INCREMENTAL;
             /DEBUG:FULL;
             /SUBSYSTEM:CONSOLE;
             >
             $<$<CONFIG:DebugEditor>:
+            /INCREMENTAL;
             /DEBUG:FULL;
             /SUBSYSTEM:CONSOLE;
             >
             $<$<CONFIG:Release>:
+            /INCREMENTAL:NO;
+            /DEBUG:FULL;
+            /SUBSYSTEM:WINDOWS;
             /OPT:REF;
             /OPT:ICF;
-            /SUBSYSTEM:WINDOWS;
             >
             $<$<CONFIG:ReleaseEditor>:
+            /INCREMENTAL:NO;
+            /DEBUG:FULL;
+            /SUBSYSTEM:WINDOWS;
             /OPT:REF;
             /OPT:ICF;
-            /SUBSYSTEM:WINDOWS;
             >
             )
 else ()
     target_compile_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Debug>:
+            -g;
+            -O0;
+            -fno-inline;
+            -fstack-protector-strong;
+            -D_FORTIFY_SOURCE=2;
+            >
+            $<$<CONFIG:DebugEditor>:
+            -g;
+            -O0;
+            -fno-inline;
+            -fstack-protector-strong;
+            -D_FORTIFY_SOURCE=2;
+            >
+            $<$<CONFIG:Release>:
+            -O3;
+            -flto;
+            -fstack-protector-strong;
+            -D_FORTIFY_SOURCE=2;
+            >
+            $<$<CONFIG:ReleaseEditor>:
+            -O3;
+            -flto;
+            -fstack-protector-strong;
+            -D_FORTIFY_SOURCE=2;
+            >
+            -std=c++20;
+            -fpermissive;
+            -Wformat;
+            -Wformat-security;
             -Wall;
             -Werror;
-            -std=c++2b;
+            -fmax-errors=5;
+            -pthread;
             )
+    target_link_options(${PROJECT_NAME} PRIVATE
+            $<$<CONFIG:Debug>:
+            -Wl,-z,relro,-z,now;
+            -Wl,-z,noexecstack;
+            >
+            $<$<CONFIG:DebugEditor>:
+            -Wl,-z,relro,-z,now;
+            -Wl,-z,noexecstack;
+            >
+            $<$<CONFIG:Release>:
+            -Wl,-z,relro,-z,now;
+            -Wl,-z,noexecstack;
+            >
+            $<$<CONFIG:ReleaseEditor>:
+            -Wl,-z,relro,-z,now;
+            -Wl,-z,noexecstack;
+            >
+            )
+
 endif ()
 
 set(libs
-        "SDL2;"
-        "SDL2main;"
-        "SDL2_image;"
-        "SDL2_mixer;"
-        "SDL2_ttf;"
         "vulkan-1;"
         "shaderc_shared;"
 
@@ -152,6 +214,7 @@ set(libs
         ">"
 
         "$<$<CONFIG:DebugEditor>:"
+        "Editor;"
         "assimp-vc143-mtd;"
         "spirv-cross-cored;"
         "spirv-cross-glsld;"
@@ -165,6 +228,7 @@ set(libs
         ">"
 
         "$<$<CONFIG:ReleaseEditor>:"
+        "Editor;"
         "assimp-vc143-mt;"
         "spirv-cross-core;"
         "spirv-cross-glsl;"
@@ -172,32 +236,31 @@ set(libs
         ">"
         )
 
-# subdirectories
-add_dependencies(${PROJECT_NAME}
-        Editor
-        Common
-        )
-
 # Link with other targets.
 target_link_libraries(${PROJECT_NAME} PRIVATE
-        Editor;
         Common;
+        Editor;
+        Renderer;
+        GraphicsVulkan;
+        SDL3::SDL3;
+        SDL3_image::SDL3_image;
+        SDL3_mixer::SDL3_mixer;
+        SDL3_ttf::SDL3_ttf;
         "${libs}"
         )
 
 target_link_directories(${PROJECT_NAME} PRIVATE
-        "../3rdParty/SDL2/lib/x64/;"
-        "../3rdParty/SDL2_image/lib/x64/;"
-        "../3rdParty/SDL2_mixer/lib/x64/;"
-        "../3rdParty/SDL2_ttf/lib/x64/;"
-        "../3rdParty/SPIRV-Cross/lib/Release;"
-        "../3rdParty/SPIRV-Cross/lib/Debug;"
-        "../3rdParty/Vulkan/lib/;"
+        "$<$<CONFIG:Debug>:"
         "../3rdParty/ASSIMP/build/x64/lib/Debug;"
+        >
+        "$<$<CONFIG:DebugEditor>:"
+        "../3rdParty/ASSIMP/build/x64/lib/Debug;"
+        >
+        "$<$<CONFIG:Release>:"
         "../3rdParty/ASSIMP/build/x64/lib/Release"
+        >
+        "$<$<CONFIG:ReleaseEditor>:"
+        "../3rdParty/ASSIMP/build/x64/lib/Release"
+        >
+        "../3rdParty/Vulkan/lib;"
         )
-message(STATUS "CMAKE_CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
-#add_custom_command(
-#        TARGET Balbino POST_BUILD
-#        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/Balbino.dll ${CMAKE_CURRENT_BINARY_DIR}/../Game/Balbino.dll
-#)

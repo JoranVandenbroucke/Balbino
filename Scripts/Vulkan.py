@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import Utils
 
@@ -6,8 +7,9 @@ import Utils
 class VulkanConfiguration:
     def __init__(self):
         self.requiredVulkanVersion = "1.3."
-        self.installVulkanVersion = "1.3.216.0"
-        self.vulkan_directory = "./Balbino/3rdParty/VulkanSDK"
+        self.installVulkanVersion = "1.3.243.0"
+        self.vulkan_directory = "../3rdParty/Vulkan/"
+        self.vulkan_sdk_directory = ""
 
     def __InstallVulkanSDK(self):
         permissionGranted = False
@@ -47,6 +49,26 @@ class VulkanConfiguration:
             print(f"You don't have the correct Vulkan SDK version! (Engine requires {self.requiredVulkanVersion})")
             self.__InstallVulkanSDK()
             return False
-
+        self.vulkan_sdk_directory = vulkan_sdk
         print(f"Correct Vulkan SDK located at {vulkan_sdk}")
         return True
+
+    def Move(self):
+        if self.vulkan_sdk_directory == "":
+            return
+
+        include_dir = os.path.join(self.vulkan_sdk_directory, "include")
+        include_dest = os.path.join(self.vulkan_directory, "include")
+        shutil.copytree(include_dir, include_dest)
+
+        # Copy the library files
+        library_dir = os.path.join(self.vulkan_sdk_directory, "lib")
+        library_dest = os.path.join(self.vulkan_directory, "lib")
+        shutil.copytree(library_dir, library_dest)
+
+        # Copy the binary files
+        binary_dir = os.path.join(self.vulkan_sdk_directory, "bin")
+        binary_dest = os.path.join(self.vulkan_directory, "bin")
+        shutil.copytree(binary_dir, binary_dest)
+
+        print("Vulkan files copied to", self.vulkan_directory)

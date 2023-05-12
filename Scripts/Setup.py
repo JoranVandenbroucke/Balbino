@@ -1,8 +1,5 @@
 # from https://github.com/TheCherno/Hazel/blob/master/scripts/SetupVulkan.py
-import os
-import shutil
 import subprocess
-import sys
 
 import Vulkan
 
@@ -33,29 +30,30 @@ def GenerateCMake(setup_extra: list[str] = None, debug_extra: list[str] = None, 
 if __name__ == "__main__":
     vk = Vulkan.VulkanConfiguration()
     vk.Validate()
+    vk.Move()
 
-    if sys.platform.startswith('win'):
-        shell = True
-    else:
-        shell = False
-
-    cwd = os.getcwd()
-    os.chdir(cwd + r'\..\3rdParty\assimp')
-    print(os.getcwd())
-
-    GenerateCMake()
-
-    print(os.getcwd())
-    shutil.copyfile(r'build/x64/include/assimp/config.h', r'include/assimp/config.h')
-
-    cwd = os.getcwd()
-    os.chdir(cwd + r'\..\GLM')
-    print(os.getcwd())
-
-    GenerateCMake()
-
-    cwd = os.getcwd()
-    os.chdir(cwd + r'\..\GLI')
-    print(os.getcwd())
-
-    GenerateCMake(['-DGLI_TEST_ENABLE=OFF'])
+    # if sys.platform.startswith('win'):
+    #     shell = True
+    # else:
+    #     shell = False
+    #
+    # cwd = os.getcwd()
+    # os.chdir(cwd + r'\..\3rdParty\assimp')
+    # print(os.getcwd())
+    #
+    # GenerateCMake()
+    #
+    # print(os.getcwd())
+    # shutil.copyfile(r'build/x64/include/assimp/config.h', r'include/assimp/config.h')
+    #
+    # cwd = os.getcwd()
+    # os.chdir(cwd + r'\..\GLM')
+    # print(os.getcwd())
+    #
+    # GenerateCMake()
+    #
+    # cwd = os.getcwd()
+    # os.chdir(cwd + r'\..\GLI')
+    # print(os.getcwd())
+    #
+    # GenerateCMake(['-DGLI_TEST_ENABLE=OFF'])

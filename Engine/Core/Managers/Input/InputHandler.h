@@ -1,6 +1,6 @@
 #pragma once
 #include <map>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <functional>
 #include <glm/glm.hpp>
 #include "InputButtons.h"

@@ -11,22 +11,8 @@ namespace Balbino
     
     class CCamera
     {
-        enum class EClearMode : uint8_t
-        {
-            Inheret,
-            None,
-            Color,
-            Shader,
-            Image
-        };
-        union UClear
-        {
-            float color[4];
-            CMaterial* MaterialId;
-            CTexture * TextureId;
-        };
     public:
-        CCamera();
+        CCamera()=default;
         
         ~CCamera() = default;
         CCamera( const CCamera& other ) = default;
@@ -46,13 +32,13 @@ namespace Balbino
     
     private:
         
-        glm::mat4 m_projMatrix;
-        glm::mat4 m_viewMatrix;
-        glm::vec4 m_viewPosition;
+        glm::mat4 m_projMatrix{1};
+        glm::mat4 m_viewMatrix{1};
+        glm::vec4 m_viewPosition{};
         
-        float m_fov;
-        float m_width;
-        float m_height;
+        float m_fov{};
+        float m_width{};
+        float m_height{};
         
     };
 }

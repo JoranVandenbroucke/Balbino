@@ -29,7 +29,7 @@ namespace Balbino
         void Cleanup() override;
     
     private:
-        std::vector<CCameraComponent*> m_cameras;
+        std::vector<CCameraComponent*> m_cameras{};
         CCameraComponent* m_pActive = nullptr;
     };
 } // Balbino

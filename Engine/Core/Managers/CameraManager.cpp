@@ -8,7 +8,7 @@ namespace Balbino
 {
     void CCameraManager::Initialize()
     {
-    
+        //no special things to do yet.
     }
     void CCameraManager::AddCamera( CCameraComponent* pComponent )
     {
@@ -30,7 +30,7 @@ namespace Balbino
         }
         
         const auto ret = std::ranges::remove_if(
-                m_cameras, [ pComponent ]( CCameraComponent* pCamera )
+                m_cameras, [ pComponent ]( const CCameraComponent* pCamera )
                 {
                     return pComponent == pCamera;
                 }

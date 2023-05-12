@@ -1,43 +1,9 @@
 ﻿#pragma once
+#include <CommandPool.h>
+#include <Queue.h>
+#include <FileParcer.h>
+
 #include "IResourceManager.h"
-
-#include <map>
-
-#include "FileParcer.h"
-
-struct ISystem;
-
-namespace Balbino
-{
-    class CRenderer;
-    
-    class CMaterial;
-    
-    class CTexture;
-    
-    class CMesh;
-}
-
-namespace FawnVision
-{
-    class CShaderPipeline;
-    
-    class CRenderPass;
-    
-    class CQueue;
-    
-    class CCommandPool;
-    
-    class CDevice;
-    
-    class CSwapchain;
-}
-
-inline FawnVision::CDevice     * g_pDevice{ nullptr };
-inline FawnVision::CCommandPool* g_pCommandPool{ nullptr };
-inline FawnVision::CQueue      * g_pQueue{ nullptr };
-inline FawnVision::CRenderPass * g_pRenderPass{ nullptr };
-inline FawnVision::CSwapchain  * g_pSwapChain{ nullptr };
 
 class CResourceManager final : public IResourceManager
 {
@@ -49,31 +15,33 @@ public:
     CResourceManager& operator=( const CResourceManager& ) = delete;
     CResourceManager& operator=( CResourceManager&& ) = delete;
     
-    void Initialize( const ISystem* pRenderer ) override;
+    void Initialize( const ISystem* pSystem, FawnVision::CRenderer* pRenderer ) override;
     void Cleanup() override;
     
-    Balbino::CTexture* LoadTexture( std::string_view assetPath ) override;
+    CTexture* LoadTexture( std::string_view assetPath ) override;
     FawnVision::CShaderPipeline* LoadShader( std::string_view assetPath ) override;
-    Balbino::CMaterial* LoadMaterial( std::string_view assetPath ) override;
-    Balbino::IMesh* LoadModel( std::string_view assetPath ) override;
+    CMaterial* LoadMaterial( std::string_view assetPath ) override;
+    IMesh* LoadModel( std::string_view file ) override;
     
     bool BindMaterial( uint64_t id ) override;
-    Balbino::CTexture* GetTexture( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
-    FawnVision::CShaderPipeline* GetShader( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
-    Balbino::CMaterial* GetMaterial( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
-    Balbino::IMesh* GetModel( CUuid getMeshId, bool tryToCreateWhenNotFound = false ) override;
     
-    [[nodiscard]]const std::map<uint64_t, Balbino::CMaterial*>& GetAllLoadedMaterials() const override;
-    void ReloadAll( FawnVision::CCommandPool* commandPool, FawnVision::CQueue* queue ) override;
+    CTexture* GetTexture( CUuid textureId, bool tryToCreateWhenNotFound ) override;
+    FawnVision::CShaderPipeline* GetShader( CUuid shaderId, bool tryToCreateWhenNotFound ) override;
+    CMaterial* GetMaterial( CUuid materialId, bool tryToCreateWhenNotFound ) override;
+    IMesh* GetModel( CUuid meshId, bool tryToCreateWhenNotFound ) override;
+    
+    [[nodiscard]] const std::map<uint64_t, CMaterial*>& GetAllLoadedMaterials() const override;
+    void ReloadAll( FawnVision::CRenderer* pRenderer ) override;
     void UnloadMaterial( CUuid materialId ) override;
 private:
-    std::map<uint64_t, Balbino::CTexture*>          m_loadedTextureMap;
-    std::map<uint64_t, FawnVision::CShaderPipeline*> m_loadedShaderMap;
-    std::map<uint64_t, Balbino::CMaterial*>         m_loadedMaterialMap;
-    std::map<uint64_t, Balbino::IMesh*>             m_loadedMeshMap;
+    std::map<uint64_t, CTexture*>        m_loadedTextureMap{};
+    std::map<uint64_t, FawnVision::CShaderPipeline*> m_loadedShaderMap{};
+    std::map<uint64_t, CMaterial*>       m_loadedMaterialMap{};
+    std::map<uint64_t, IMesh*>           m_loadedMeshMap{};
     
-    std::vector<SFile> m_files;
-    const ISystem* m_pSystem{};
+    std::vector<SFile> m_files{};
+    const ISystem* m_pSystem{ nullptr };
+    FawnVision::CRenderer* m_pRenderer{ nullptr };
     
     void FindAllFiles();
     [[nodiscard]] static SFile GetData( const std::filesystem::path& path );

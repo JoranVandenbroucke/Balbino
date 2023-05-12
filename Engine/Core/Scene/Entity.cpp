@@ -86,7 +86,7 @@ void Balbino::CEntity::DetachThis()
     transformComponent->ClearParent();
 }
 
-int Balbino::CEntity::GetChildCount() const
+uint32_t Balbino::CEntity::GetChildCount() const
 {
     if ( HasComponent<CTransformComponent>())
     {

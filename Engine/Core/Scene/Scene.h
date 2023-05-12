@@ -1,7 +1,7 @@
 #pragma once
 #define MAX_INSTANCE_COUNT 1024
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 #include <entt/entt.hpp>
 #include <Components/TransformComponent.h>
 #include <Vertex.h>
@@ -9,8 +9,9 @@
 #include "Entity.h"
 #include "IScene.h"
 #include "Camera.h"
-#include "../Renderer/VertexBuffer.h"
-#include "../Renderer/UBOStructs.h"
+#include <VertexBuffer.h>
+#include <UBOStructs.h>
+#include <Renderer.h>
 
 struct ISystem;
 
@@ -40,56 +41,33 @@ namespace Balbino
         void Initialize( ISystem* pSystem ) override;
         
         void Cleanup() override;
-        
-        void PhysicsUpdate( float deltaTime ) override;
-        
         void Update( float deltaTime ) override;
-        
+        void PhysicsUpdate( float deltaTime ) override;
         void PrepareDraw() override;
-        
         void DepthPass() override;
-        
         void Draw() override;
         
-        void SetRenderSettings( const FawnVision::CDevice* pDevice, const FawnVision::CCommandPool* pCommandPool, const FawnVision::CQueue* pQueue )
-        {
-            m_pDevice      = pDevice;
-            m_pCommandPool = pCommandPool;
-            m_pQueue       = pQueue;
-        }
-        
         IEntity* CreateEntity() override;
-        
         IEntity* CreateEntityWithUUID( CUuid uuid ) override;
-        
         void DestroyEntity( IEntity* entity ) override;
-        
         void DuplicateEntity( IEntity* entity ) override;
-        
         IEntity* GetPrimaryCameraEntity() override;
-        
         template<typename... Components>
         auto GetAllEntitiesWith() const
         {
             return GetRegistry().view<Components...>();
         }
-        
         [[nodiscard]] const entt::registry& GetRegistry() const override;
-        
         entt::registry& GetRegistry() override;
-        
         [[nodiscard]] std::vector<IEntity*> GetAllEntities() override;
         
         [[nodiscard]] ISystem* GetSystem() const override;
         
+        void SetRenderer( FawnVision::CRenderer* renderer ) override;
         [[nodiscard]] FawnVision::CBuffer* GetModelBuffer() const override;
-        
         [[nodiscard]] FawnVision::CBuffer* GetShadingBuffer() const override;
-        
         [[nodiscard]] FawnVision::CBuffer* GetInstanceBuffer() const override;
         
-        void RecreateBuffers( FawnVision::CCommandPool* commandPool, FawnVision::CQueue* queue );
-    
     private:
         struct IndirectBatch
         {
@@ -114,12 +92,9 @@ namespace Balbino
         FawnVision::CBuffer* m_pModelBuffer;
         FawnVision::CBuffer* m_pShadingBuffer;
         FawnVision::CBuffer* m_pInstanceBuffer;
+        FawnVision::CRenderer* m_pRenderer;
         
-        const FawnVision::CCommandPool* m_pCommandPool;
-        const FawnVision::CDevice     * m_pDevice;
-        const FawnVision::CQueue      * m_pQueue;
-        
-        std::vector<IndirectBatch>                         m_allDrawableObjects;
+        std::vector<IndirectBatch>                       m_allDrawableObjects;
         std::vector<std::vector<FawnVision::InstanceBatch>> m_instanceData;
     };
 }

@@ -14,15 +14,6 @@
 
 namespace Balbino
 {
-    CCamera::CCamera()
-            : m_projMatrix{ 1 }
-              , m_viewMatrix{ 1 }
-              , m_viewPosition{}
-              , m_fov{ 0 }
-              , m_width{ 0 }
-              , m_height{ 0 }
-    {
-    }
     void CCamera::UpdateFrameBuffer( float width, float height, float fov, float nearPlane, float farPlane )
     {
         m_fov = fov;

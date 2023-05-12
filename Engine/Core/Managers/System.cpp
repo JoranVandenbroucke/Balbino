@@ -14,11 +14,11 @@ Balbino::CSystem::CSystem( float w, float h )
 {
 }
 
-void Balbino::CSystem::Initialize()
+void Balbino::CSystem::Initialize(FawnVision::CRenderer* pRenderer)
 {
     m_pResourceManager = new CResourceManager{};
     m_pCameraManager   = new CCameraManager{};
-    m_pResourceManager->Initialize( this );
+    m_pResourceManager->Initialize( this, pRenderer );
 }
 bool Balbino::CSystem::Update( bool isPause )
 {

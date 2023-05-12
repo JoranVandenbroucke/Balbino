@@ -1,0 +1,120 @@
+//
+// Created by joran on 20/08/2022.
+//
+
+#include "Exporter.h"
+#include <filesystem>
+#include <fstream>
+#include <FileParcer.h>
+
+bool FawnForge::Exporter::ExportShader( const std::string& assetName, const std::string& assetPath, const std::vector<std::vector<uint32_t>>& compiledShaders, int32_t types, int32_t cullmode, CUuid id, const std::string& editorData )
+{
+    std::filesystem::path path{ SanitizePath( assetPath ) + assetName };
+    path.replace_extension( ".basset" );
+    std::ofstream file{ path, std::ios::out | std::ios::binary };
+    
+    if ( !file.is_open())
+    {
+        return false;
+    }
+    
+    BinaryReadWrite::Write( file, (uint64_t) id );
+    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_shader );
+    BinaryReadWrite::Write( file, cullmode );
+    BinaryReadWrite::Write( file, types );
+    BinaryReadWrite::Write( file, (uint8_t) compiledShaders.size());
+    for ( uint8_t i{}; i < (uint8_t) compiledShaders.size(); ++i )
+    {
+        BinaryReadWrite::Write( file, (uint64_t) compiledShaders[i].size());
+    }
+    for ( uint8_t i{}; i < (uint8_t) compiledShaders.size(); ++i )
+    {
+        BinaryReadWrite::Write(
+                file, compiledShaders[i].data(), (uint64_t) compiledShaders[i].size() * sizeof( uint32_t ));
+    }
+    BinaryReadWrite::Write( file, editorData );
+    file.close();
+    return true;
+}
+
+bool FawnForge::Exporter::ExportMesh( const std::string& assetName, const std::string& assetPath, const std::vector<uint32_t>& indices, const std::vector<FawnVision::SVertex>& vertices, const std::vector<SMeshMetadata>& pMetadata, CUuid id )
+{
+    std::filesystem::path path{ SanitizePath( assetPath ) + assetName };
+    path.replace_extension( ".basset" );
+    std::ofstream file{ path, std::ios::out | std::ios::binary };
+    
+    if ( !file.is_open())
+    {
+        return false;
+    }
+    
+    BinaryReadWrite::Write( file, (uint64_t) id );
+    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_model );
+    BinaryReadWrite::Write( file, (uint64_t) indices.size());
+    BinaryReadWrite::Write( file, (uint64_t) vertices.size());
+    BinaryReadWrite::Write( file, (uint64_t) pMetadata.size());
+    BinaryReadWrite::Write( file, indices.data(), sizeof( uint32_t ) * indices.size());
+    BinaryReadWrite::Write( file, vertices.data(), sizeof( FawnVision::SVertex ) * vertices.size());
+    for ( const auto& metadata : pMetadata )
+    {
+        BinaryReadWrite::Write( file, metadata );
+    }
+    
+    file.close();
+    return true;
+}
+
+bool FawnForge::Exporter::ExportMaterial( const std::string& assetName, const std::string& assetPath, CUuid shaderId, const std::vector<FawnVision::SShaderResource>& resources, CUuid id )
+{
+    std::filesystem::path path{ SanitizePath( assetPath ) + assetName };
+    path.replace_extension( ".basset" );
+    std::ofstream file{ path, std::ios::out | std::ios::binary };
+    
+    if ( !file.is_open())
+    {
+        return false;
+    }
+    
+    BinaryReadWrite::Write( file, (uint64_t) id );
+    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_material );
+    BinaryReadWrite::Write( file, (uint64_t) shaderId );
+    BinaryReadWrite::Write( file, resources.size());
+    BinaryReadWrite::Write( file, resources.data(), resources.size() * sizeof( FawnVision::SShaderResource ));
+    
+    file.close();
+    return true;
+}
+
+bool FawnForge::Exporter::ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, const void* const pData, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, int wrapModeU, int wrapModeV, int wrapModeW, CUuid id )
+{
+    std::filesystem::path path{ SanitizePath( assetPath ) + assetName };
+    path.replace_extension( ".basset" );
+    std::ofstream file{ path, std::ios::out | std::ios::binary };
+    
+    if ( !file.is_open())
+    {
+        return false;
+    }
+    
+    BinaryReadWrite::Write( file, (uint64_t) id );
+    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_image );
+    BinaryReadWrite::Write( file, imageType );
+    BinaryReadWrite::Write( file, imageFormat );
+    BinaryReadWrite::Write( file, mips );
+    BinaryReadWrite::Write( file, layers );
+    BinaryReadWrite::Write( file, anisotropy );
+    BinaryReadWrite::Write( file, sampleLevel );
+    BinaryReadWrite::Write( file, mipmapMode );
+    BinaryReadWrite::Write( file, filterMode );
+    BinaryReadWrite::Write( file, wrapModeU );
+    BinaryReadWrite::Write( file, wrapModeV );
+    BinaryReadWrite::Write( file, wrapModeW );
+    BinaryReadWrite::Write( file, width );
+    BinaryReadWrite::Write( file, height );
+    BinaryReadWrite::Write( file, depth );
+    BinaryReadWrite::Write( file, pitch );
+    BinaryReadWrite::Write( file, pData, width * height * depth * pitch );
+    
+    file.close();
+    return true;
+}

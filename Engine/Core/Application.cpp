@@ -1,54 +1,48 @@
 #include "Application.h"
 
-#include <SDL_vulkan.h>
+#include <SDL3/SDL_vulkan.h>
 
 #include "Managers/Input/InputHandler.h"
-#include "Renderer/Renderer.h"
 #include "Scene/Scene.h"
+#include <Renderer.h>
 
-//#include <chrono>
-//#include <thread>
-#include <ini.h>
+#include <mini/ini.h>
+#include <SDL_mixer.h>
 
-Balbino::Application::Application()
-        : m_w{ 0 }
-          , m_h{ 0 }
-          , m_windowFlags{ 0 }
-          , m_pWindow{ nullptr }
-          , m_system{ 1920, 1080 }
-          , m_pRenderer{ nullptr }
-        #ifdef BALBINO_EDITOR
-          , m_pInterface{ nullptr }
-        #endif // BALBINO_EDITOR
-          , m_pScene{ nullptr }
-{
-}
+#ifdef BALBINO_EDITOR
+#include <src/Interface.h>
 
+#endif
 void Balbino::Application::Initialize()
 {
     if ( SDL_Init(SDL_INIT_EVERYTHING) != 0 )
     {
-        throw std::runtime_error( std::string( "SDL_Init Error: " ) + SDL_GetError());
+        throw std::invalid_argument( std::string( "SDL_Init Error: " ) + SDL_GetError());
     }
-    SDL_DisplayMode current;
-    if ( SDL_GetDesktopDisplayMode( 0, &current ) != 0 )
+    int screenCount{};
+    SDL_GetDisplays( &screenCount );
+    const SDL_DisplayMode* current = SDL_GetDesktopDisplayMode( 1 );
+    if ( !current )
     {
-        throw std::runtime_error( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError());
+        std::cerr << "Could not get display mode for video display 0: " << SDL_GetError() << std::endl;
+        current = SDL_GetCurrentDisplayMode( 1 );
+        if ( !current )
+        {
+            throw std::invalid_argument( std::string( "Could not get display mode for video display 0: " ) + SDL_GetError());
+        }
     }
-    
-    int audioFlags = MIX_INIT_FLAC | /*MIX_INIT_MOD |*/ MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID /*| MIX_INIT_OPUS*/;
+    int audioFlags = MIX_INIT_FLAC /*| MIX_INIT_MOD */| MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_MID /*| MIX_INIT_OPUS*/;
     int initOut    = Mix_Init( audioFlags );
     if (( initOut & audioFlags ) != audioFlags )
     {
-        throw std::runtime_error( std::string( "Mix_Init: Failed to init all!\nMix_Init: " ) + Mix_GetError());
+        throw std::invalid_argument( std::string( "Mix_Init: Failed to init all!\nMix_Init: " ) + Mix_GetError());
     }
     
-    m_w           = current.w / 2;
-    m_h           = current.h / 2;
+    m_w           = current->screen_w / 2;
+    m_h           = current->screen_h / 2;
     m_windowFlags = SDL_WINDOW_VULKAN;
-    const mINI::INIFile file( "DisplaySettings.ini" );
-    mINI::INIStructure  ini;
-    if ( file.read( ini ))
+    const mINI::INIFile     file( "DisplaySettings.ini" );
+    if ( mINI::INIStructure ini; file.read( ini ))
     {
         m_w           = std::stoi( ini["WindowsClient"]["WindowedViewportWidth"] );
         m_h           = std::stoi( ini["WindowsClient"]["WindowedViewportHeight"] );
@@ -56,36 +50,33 @@ void Balbino::Application::Initialize()
     }
     
     m_pWindow = SDL_CreateWindow(
-            "Balbino Engine",
-            SDL_WINDOWPOS_CENTERED,
-            SDL_WINDOWPOS_CENTERED,
-            360,
-            640,
-            SDL_WINDOW_VULKAN | SDL_WINDOW_BORDERLESS
+            "Balbino Engine", 360, 640, SDL_WINDOW_VULKAN | SDL_WINDOW_BORDERLESS
     );
     if ( m_pWindow == nullptr )
     {
-        throw std::runtime_error( std::string( "SDL_CreateWindow Error: " ) + SDL_GetError());
+        throw std::invalid_argument( std::string( "SDL_CreateWindow Error: " ) + SDL_GetError());
     }
-    m_system.Initialize();
+    m_pRenderer = new FawnVision::CRenderer{};
+    
+    m_system.Initialize(m_pRenderer);
     m_system.SetInputHandler( new CInputHandler{} );
     m_system.GetInputHandler()->Initialize();
-    m_pRenderer = new CRenderer{};
-    m_pScene    = new CScene{};
+    
+    m_pScene = new CScene{};
 }
 
 void Balbino::Application::LoadGame()
 {
     unsigned int extensionCount;
-    if ( !SDL_Vulkan_GetInstanceExtensions( m_pWindow, &extensionCount, nullptr ))
+    if ( !SDL_Vulkan_GetInstanceExtensions( &extensionCount, nullptr ))
     {
-        throw std::runtime_error(
+        throw std::invalid_argument(
                 std::string( "Could not get the number of required m_Instance extensions from SDL." ));
     }
     const auto extensions{ new const char* [extensionCount] };
-    if ( !SDL_Vulkan_GetInstanceExtensions( m_pWindow, &extensionCount, extensions ))
+    if ( !SDL_Vulkan_GetInstanceExtensions( &extensionCount, extensions ))
     {
-        throw std::runtime_error( std::string( "Could not get the names of required m_Instance extensions from SDL." ));
+        throw std::invalid_argument( std::string( "Could not get the names of required m_Instance extensions from SDL." ));
     }
     #ifdef BALBINO_EDITOR
     m_pInterface = new FawnForge::CInterface{};
@@ -119,7 +110,10 @@ void Balbino::Application::LoadGame()
 void Balbino::Application::Cleanup()
 {
     #ifdef BALBINO_EDITOR
-    m_pInterface->Cleanup();
+    if ( m_pInterface )
+    {
+        m_pInterface->Cleanup();
+    }
     delete m_pInterface;
     m_pInterface = nullptr;
     #endif
@@ -155,78 +149,7 @@ void Balbino::Application::Run()
         auto        end{ std::chrono::system_clock::now() };
         const float deltaTime{ std::chrono::duration<float>( end - start ).count() };
         start = end;
-        
-        SDL_Event e;
-        while ( SDL_PollEvent( &e ))
-        {
-            #ifdef BALBINO_EDITOR
-            m_pInterface->ProcessEvent( e );
-            #endif
-            switch ( e.type )
-            {
-                case SDL_QUIT:
-                {
-                    isRunning = false;
-                    break;
-                }
-                case SDL_WINDOWEVENT:
-                {
-                    switch ( e.window.event )
-                    {
-                        case SDL_WINDOWEVENT_MINIMIZED:
-                        {
-                            SDL_Event minEvent;
-                            bool      isMin{ true };
-                            while ( isMin && isRunning && SDL_WaitEvent( &minEvent ))
-                            {
-                                switch ( minEvent.window.event )
-                                {
-                                    case SDL_WINDOWEVENT_SIZE_CHANGED:
-                                    case SDL_WINDOWEVENT_MAXIMIZED:
-                                    case SDL_WINDOWEVENT_MINIMIZED:
-                                    case SDL_WINDOWEVENT_RESIZED:
-                                    {
-                                        isMin = false;
-                                        break;
-                                    }
-                                    case SDL_WINDOWEVENT_CLOSE:
-                                    {
-                                        isRunning = false;
-                                        break;
-                                    }
-                                    default:
-                                        break;
-                                }
-                            }
-                            break;
-                        }
-                        case SDL_WINDOWEVENT_SIZE_CHANGED:
-                        case SDL_WINDOWEVENT_MAXIMIZED:
-                        case SDL_WINDOWEVENT_RESIZED:
-                        {
-                            int w, h;
-                            SDL_GetWindowSize( m_pWindow, &w, &h );
-                            m_windowFlags = SDL_GetWindowFlags( m_pWindow );
-                            const mINI::INIFile file( "DisplaySettings.ini" );
-                            mINI::INIStructure  ini;
-                            ini["WindowsClient"]["WindowedViewportWidth"]  = std::to_string( w );
-                            ini["WindowsClient"]["WindowedViewportHeight"] = std::to_string( h );
-                            ini["WindowsClient"]["WindowedFlags"]          = std::to_string( m_windowFlags );
-                            (void) file.generate( ini, true );
-                            m_system.SetWidth( w );
-                            m_system.SetHeight( h );
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
-            m_system.GetInputHandler()->ProcessEvents( e );
-        }
+        HandleEvents( isRunning );
         m_system.GetInputHandler()->Update();
         
         m_pScene->Update( deltaTime );
@@ -235,12 +158,107 @@ void Balbino::Application::Run()
             continue;
         }
         m_pScene->PrepareDraw();
-//        m_pScene->DepthPass();
-//        m_pRenderer->NextSubPass();
         m_pScene->Draw();
         if ( m_pRenderer->EndDraw())
         {
             continue;
         }
+    }
+}
+
+void Balbino::Application::HandleEvents( bool& isRunning )
+{
+    SDL_Event e;
+    while ( SDL_PollEvent( &e ))
+    {
+        #ifdef BALBINO_EDITOR
+        m_pInterface->ProcessEvent( e );
+        #endif
+        switch ( e.type )
+        {
+            case SDL_EVENT_QUIT:
+            {
+                isRunning = false;
+                break;
+            }
+            case SDL_EVENT_WINDOW_SHOWN:
+            case SDL_EVENT_WINDOW_HIDDEN:
+            case SDL_EVENT_WINDOW_EXPOSED:
+            case SDL_EVENT_WINDOW_MOVED:
+            case SDL_EVENT_WINDOW_RESIZED:
+            case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+            case SDL_EVENT_WINDOW_MINIMIZED:
+            case SDL_EVENT_WINDOW_MAXIMIZED:
+            case SDL_EVENT_WINDOW_RESTORED:
+            case SDL_EVENT_WINDOW_MOUSE_ENTER:
+            case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+            case SDL_EVENT_WINDOW_FOCUS_GAINED:
+            case SDL_EVENT_WINDOW_FOCUS_LOST:
+            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+            case SDL_EVENT_WINDOW_TAKE_FOCUS:
+            case SDL_EVENT_WINDOW_HIT_TEST:
+            case SDL_EVENT_WINDOW_ICCPROF_CHANGED:
+            case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+            {
+                HandleWindowEvents( isRunning, e.type );
+                break;
+            }
+            default:
+                break;
+        }
+        m_system.GetInputHandler()->ProcessEvents( e );
+    }
+}
+void Balbino::Application::HandleWindowEvents( bool& isRunning, uint32_t type )
+{
+    switch ( type )
+    {
+        case SDL_EVENT_WINDOW_MINIMIZED:
+        {
+            SDL_Event minEvent;
+            bool      isMin{ true };
+            while ( isMin && isRunning && SDL_WaitEvent( &minEvent ))
+            {
+                switch ( minEvent.type )
+                {
+                    case SDL_EVENT_WINDOW_RESTORED:
+                    case SDL_EVENT_WINDOW_MAXIMIZED:
+                    case SDL_EVENT_WINDOW_MINIMIZED:
+                    case SDL_EVENT_WINDOW_RESIZED:
+                    {
+                        isMin = false;
+                        break;
+                    }
+                    case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+                    {
+                        isRunning = false;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            break;
+        }
+        case SDL_EVENT_WINDOW_RESTORED:
+        case SDL_EVENT_WINDOW_MAXIMIZED:
+        case SDL_EVENT_WINDOW_RESIZED:
+        {
+            int w;
+            int h;
+            SDL_GetWindowSize( m_pWindow, &w, &h );
+            m_windowFlags = SDL_GetWindowFlags( m_pWindow );
+            const mINI::INIFile file( "DisplaySettings.ini" );
+            mINI::INIStructure  ini;
+            ini["WindowsClient"]["WindowedViewportWidth"]  = std::to_string( w );
+            ini["WindowsClient"]["WindowedViewportHeight"] = std::to_string( h );
+            ini["WindowsClient"]["WindowedFlags"]          = std::to_string( m_windowFlags );
+            (void) file.generate( ini, true );
+            m_system.SetWidth( w );
+            m_system.SetHeight( h );
+            break;
+        }
+        default:
+            break;
     }
 }

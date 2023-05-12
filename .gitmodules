@@ -22,11 +22,19 @@
     path = 3rdParty/PhysX
     url = ../../NVIDIA-Omniverse/PhysX.git
     branch = release/104.0
-[submodule "3rdParty/NvCloth"]
-    path = 3rdParty/NvCloth
-    url = ../../NVIDIAGameWorks/NvCloth.git
-    branch = master
-[submodule "3rdParty/Flow"]
-    path = 3rdParty/Flow
-    url = ../../NVIDIAGameWorks/Flow.git
-    branch = master
+[submodule "3rdParty/SDL"]
+    path = 3rdParty/SDL
+    url = ../../libsdl-org/SDL.git
+    branch = main
+[submodule "3rdParty/SDL_image"]
+    path = 3rdParty/SDL_image
+    url = ../../libsdl-org/SDL_image.git
+    branch = main
+[submodule "3rdParty/SDL_mixer"]
+    path = 3rdParty/SDL_mixer
+    url = ../../libsdl-org/SDL_mixer.git
+    branch = main
+[submodule "3rdParty/SDL_ttf"]
+    path = 3rdParty/SDL_ttf
+    url = ../../libsdl-org/SDL_ttf.git
+    branch = main

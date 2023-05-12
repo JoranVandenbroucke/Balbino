@@ -1,0 +1,35 @@
+#pragma once
+#include <vector>
+
+#include "MeshMetadata.h"
+#include "UUID.h"
+
+namespace FawnVision
+{
+    class CQueue;
+    
+    class CCommandPool;
+    
+    class CDevice;
+}
+
+struct SMeshMetadata;
+
+struct IMesh
+{
+public:
+    IMesh() = default;
+    virtual ~IMesh() = default;
+    IMesh( const IMesh& ) = delete;
+    IMesh( IMesh&& ) = delete;
+    IMesh& operator=( const IMesh& ) = delete;
+    IMesh& operator=( IMesh&& ) = delete;
+    
+    virtual void Initialize( const FawnVision::CDevice* pDevice, FawnVision::CCommandPool* pCommandPool, FawnVision::CQueue* pQueue ) = 0;
+    virtual void Cleanup() = 0;
+    virtual void Bind() const = 0;
+    
+    [[nodiscard]] virtual CUuid GetUuid() const = 0;
+    [[nodiscard]] virtual const std::vector<SMeshMetadata>& GetMetaData() const = 0;
+    [[nodiscard]] virtual uint32_t GetMaterialCount() const = 0;
+};

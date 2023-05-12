@@ -1,0 +1,466 @@
+//
+// Created by joran on 25/02/2023.
+//
+
+
+#include "ShaderNode.h"
+#include "Attribute.h"
+
+void CShaderInput::Disconnect()
+{
+    if ( m_pLink )
+    {
+        m_pLink->Disconnect( this );
+    }
+    m_pLink = nullptr;
+}
+void CShaderInput::Disconnect( CShaderOutput* pOut )
+{
+    if ( pOut == m_pLink )
+    {
+        m_pLink = nullptr;
+    }
+}
+
+void CShaderInput::Connect( CShaderOutput* pOutput )
+{
+    m_pLink = pOutput;
+}
+void CShaderInput::SetSocketType( const SSocketType& type )
+{
+    m_socketType = type;
+}
+void CShaderOutput::Disconnect()
+{
+    for ( CShaderInput* sock : m_links )
+    {
+        sock->Disconnect( this );
+    }
+    
+    m_links.clear();
+}
+void CShaderOutput::Disconnect( CShaderInput* pIn )
+{
+    m_links.erase( std::remove( m_links.begin(), m_links.end(), pIn ), m_links.end());
+}
+void CShaderOutput::Connect( CShaderInput* pInput )
+{
+    m_links.emplace_back( pInput );
+}
+
+CShaderNode::CShaderNode( int& id, const std::vector<SSocketType>& inputs, const std::vector<SSocketType>& outputs )
+        : m_id{ id }
+{
+    for ( const SSocketType& type : inputs )
+    {
+        m_inputs.emplace_back( new CShaderInput( type, this ));
+    }
+    for ( const SSocketType& type : outputs )
+    {
+        m_outputs.emplace_back( new CShaderOutput( type, this ));
+    }
+    id += (int) inputs.size() + (int) outputs.size();
+}
+CShaderInput* CShaderNode::GetInput( const char* name )const
+{
+    for ( CShaderInput* pInput : m_inputs )
+    {
+        if ( std::strcmp( name, pInput->GetName().c_str()) != 0 )
+        {
+            return pInput;
+        }
+    }
+    return nullptr;
+}
+CShaderOutput* CShaderNode::GetOutput( const char* name )const
+{
+    for ( CShaderOutput* pOut : m_outputs )
+    {
+        if ( std::strcmp( name, pOut->GetName().c_str()) != 0 )
+        {
+            return pOut;
+        }
+    }
+    return nullptr;
+}
+CShaderInput* CShaderNode::GetInput( std::string_view name )const
+{
+    return GetInput( name.data());
+}
+CShaderOutput* CShaderNode::GetOutput( std::string_view name )const
+{
+    return GetOutput( name.data());
+}
+void CShaderNode::Draw()
+{
+    int id{ m_id };
+    for ( CShaderInput* in : m_inputs )
+    {
+        std::array<float, 3> val{ in->GetValue() };
+        DrawInput( in->GetType(), in->GetName(), val, in->IsConnected(), in->HasEditorValues(), id++ );
+        in->SetValue( val );
+    }
+    for ( const CShaderOutput* out : m_outputs )
+    {
+        DrawOutput( out->GetType(), out->GetName(), id++ );
+    }
+}
+CShaderInput* CShaderNode::GetInput( int id )const
+{
+    if ( id - m_id < 0 || id - m_id >= m_inputs.size())
+    {
+        return nullptr;
+    }
+    return m_inputs[id - m_id];
+}
+CShaderOutput* CShaderNode::GetOutput( int id )const
+{
+    if ( id - m_id - m_inputs.size() < 0 || id - m_id - m_inputs.size() >= m_outputs.size())
+    {
+        return nullptr;
+    }
+    return m_outputs[id - m_id - m_inputs.size()];
+}
+void CShaderNode::AddInputNode( const SSocketType& type )
+{
+    m_inputs.emplace_back( new CShaderInput( type, this ));
+}
+void CShaderNode::RemoveInputNode()
+{
+    m_inputs.pop_back();
+}
+void CShaderNode::SetBindings( const std::vector<SShaderBinding>& bindings )
+{
+    (void) bindings;
+}
+
+const char* SShaderBinding::ToString( SShaderBinding::layout type )
+{
+    switch ( type )
+    {
+        case layout_input:
+			return "layout input";
+        case layout_subpass_input:
+			return "layout subpass input";
+        case layout_output:
+			return "layout output";
+        case layout_subpass_output:
+			return "layout subpass output";
+        case layout_image:
+			return "layout image";
+        case layout_image_sampler:
+			return "layout image sampler";
+        case layout_image_storage:
+			return "layout image storage";
+        case layout_sampler:
+			return "layout sampler";
+        case layout_uniform:
+			return "layout uniform";
+        case layout_storage:
+			return "layout storage";
+        default:
+            break;
+    }
+    return nullptr;
+}
+const char* SShaderBinding::ToString( SShaderBinding::value_type type )
+{
+    switch ( type )
+    {
+        case value_type_bool:
+			return "bool";
+        case value_type_int:
+			return "int";
+        case value_type_u_int:
+			return "uint";
+        case value_type_float:
+			return "float";
+        case value_type_double:
+			return "double";
+        case value_type_vec_2:
+			return "vec2";
+        case value_type_vec_3:
+			return "vec3";
+        case value_type_vec_4:
+			return "vec4";
+        case value_type_d_vec_2:
+			return "dvec2";
+        case value_type_d_vec_3:
+			return "dvec3";
+        case value_type_d_vec_4:
+			return "dvec4";
+        case value_type_b_vec_2:
+			return "bvec2";
+        case value_type_b_vec_3:
+			return "bvec3";
+        case value_type_b_vec_4:
+			return "bvec4";
+        case value_type_i_vec_2:
+			return "ivec2";
+        case value_type_i_vec_3:
+			return "ivec3";
+        case value_type_i_vec_4:
+			return "ivec4";
+        case value_type_u_vec_2:
+			return "uvec2";
+        case value_type_u_vec_3:
+			return "uvec3";
+        case value_type_u_vec_4:
+			return "uvec4";
+        case value_type_mat_2:
+			return "mat2";
+        case value_type_mat_3:
+			return "mat3";
+        case value_type_mat_4:
+			return "mat4";
+        case value_type_mat_2_x_3:
+			return "mat2x3";
+        case value_type_mat_2_x_4:
+			return "mat2x4";
+        case value_type_mat_3_x_2:
+			return "mat3x2";
+        case value_type_mat_3_x_4:
+			return "mat3x4";
+        case value_type_mat_4_x_2:
+			return "mat4x2";
+        case value_type_mat_4_x_3:
+			return "mat4x3";
+        case value_type_d_mat_2:
+			return "dmat2";
+        case value_type_d_mat_3:
+			return "dmat3";
+        case value_type_d_mat_4:
+			return "dmat4";
+        case value_type_d_mat_2_x_3:
+			return "dmat2x3";
+        case value_type_d_mat_2_x_4:
+			return "dmat2x4";
+        case value_type_d_mat_3_x_2:
+			return "dmat3x2";
+        case value_type_d_mat_3_x_4:
+			return "dmat3x4";
+        case value_type_d_mat_4_x_2:
+			return "dmat4x2";
+        case value_type_d_mat_4_x_3:
+			return "dmat4x3";
+        case value_type_sampler_1_d:
+			return "sampler1D";
+        case value_type_sampler_2_d:
+			return "sampler2D";
+        case value_type_sampler_3_d:
+			return "sampler3D";
+        case value_type_sampler_cube:
+			return "samplerCube";
+        case value_type_sampler_2_d_rect:
+			return "sampler2DRect";
+        case value_type_sampler_1_d_array:
+			return "sampler1DArray";
+        case value_type_sampler_2_d_array:
+			return "sampler2DArray";
+        case value_type_sampler_cube_array:
+			return "samplerCubeArray";
+        case value_type_sampler_1_d_shadow:
+			return "sampler1DShadow";
+        case value_type_sampler_2_d_shadow:
+			return "sampler2DShadow";
+        case value_type_sampler_cube_shadow:
+			return "samplerCubeShadow";
+        case value_type_sampler_2_d_rect_shadow:
+			return "sampler2DRectShadow";
+        case value_type_sampler_1_d_array_shadow:
+			return "sampler1DArrayShadow";
+        case value_type_sampler_2_d_array_shadow:
+			return "sampler2DArrayShadow";
+        case value_type_sampler_cube_array_shadow:
+			return "samplerCubeArrayShadow";
+        case value_type_struct:
+			return "struct";
+        default:
+            break;
+    }
+    return nullptr;
+}
+
+const char* ToString( shader_stage type )
+{
+    switch ( type )
+    {
+        case shader_stage_vertex:
+            return "vertex_shader";
+        case shader_stage_tessellation_control:
+            return "tesselation_control_shader";
+        case shader_stage_tessellation_evaluation:
+            return "tesselation_evaluation_shader";
+        case shader_stage_geometry:
+            return "geometry_shader";
+        case shader_stage_fragment:
+            return "fragment_shader";
+        case shader_stage_compute:
+            return "compute_shader";
+        case shader_stage_raygen:
+            return "raygen_shader";
+        case shader_stage_any_hit:
+            return "any_hit_shader";
+        case shader_stage_closest_hit:
+            return "closest_hit_shader";
+        case shader_stage_miss:
+            return "miss_shader";
+        case shader_stage_intersection:
+            return "intersection_shader";
+        case shader_stage_callable:
+            return "callable_shader";
+        case shader_stage_task:
+            return "task_shader";
+        case shader_stage_mesh:
+            return "mesh_shader";
+        case shader_stage_all:
+        case shader_stage_max:
+            break;
+    }
+    return nullptr;
+}
+const char* ToStringUI( shader_stage type )
+{
+    switch ( type )
+    {
+        case shader_stage_vertex:
+            return "Vertex Shader";
+        case shader_stage_tessellation_control:
+            return "Tesselation Control Shader";
+        case shader_stage_tessellation_evaluation:
+            return "Tesselation Evaluation Shader";
+        case shader_stage_geometry:
+            return "Geometry Shader";
+        case shader_stage_fragment:
+            return "Fragment Shader";
+        case shader_stage_compute:
+            return "Compute Shader";
+        case shader_stage_raygen:
+            return "Vertex Shader";
+        case shader_stage_any_hit:
+            return "Any Hit Shader";
+        case shader_stage_closest_hit:
+            return "Closest Hit Shader";
+        case shader_stage_miss:
+            return "Miss Shader";
+        case shader_stage_intersection:
+            return "Intersection Shader";
+        case shader_stage_callable:
+            return "Callable Shader";
+        case shader_stage_task:
+            return "Task Shader";
+        case shader_stage_mesh:
+            return "Mesh Shader";
+        case shader_stage_all:
+        case shader_stage_max:
+            break;
+    }
+    return nullptr;
+}
+const char* ToDefine( shader_stage type)
+{
+    switch ( type )
+    {
+        case shader_stage_vertex:
+            return "VERTEX_SHADER";
+        case shader_stage_tessellation_control:
+            return "TESSELLATION_CONTROL_SHADER";
+        case shader_stage_tessellation_evaluation:
+            return "TESSELLATION_EVALUATION_SHADER";
+        case shader_stage_geometry:
+            return "GEOMETRY_SHADER";
+        case shader_stage_fragment:
+            return "FRAGMENT_SHADER";
+        case shader_stage_compute:
+            return "COMPUTE_SHADER";
+        case shader_stage_raygen:
+            return "RAYGEN_SHADER";
+        case shader_stage_any_hit:
+            return "ANY_HIT_SHADER";
+        case shader_stage_closest_hit:
+            return "CLOSEST_HIT_SHADER";
+        case shader_stage_miss:
+            return "MISS_SHADER";
+        case shader_stage_intersection:
+            return "INTERSECTION_SHADER";
+        case shader_stage_callable:
+            return "CALLABLE_SHADER";
+        case shader_stage_task:
+            return "TASK_SHADER";
+        case shader_stage_mesh:
+            return "MESH_SHADER";
+        case shader_stage_all:
+        case shader_stage_max:
+            break;
+    }
+    return nullptr;
+}
+const char* ToDefine( SSocketType::compiler_define type )
+{
+    switch ( type )
+    {
+        case SSocketType::compiler_define_uses_model_view:
+			return "USES_MODEL_VIEW";
+        case SSocketType::compiler_define_uses_word_position:
+			return "USES_WORD_POSITION";
+        case SSocketType::compiler_define_uses_normal:
+			return "USES_NORMAL";
+        case SSocketType::compiler_define_uses_tangent:
+			return "USES_TANGENT";
+        case SSocketType::compiler_define_uses_colour:
+			return "USES_COLOUR";
+        case SSocketType::compiler_define_uses_uv:
+			return "USES_UV";
+        case SSocketType::compiler_define_uses_position_offset:
+			return "USES_POSITION_OFFSET";
+        case SSocketType::compiler_define_diffuse_lambert:
+			return "DIFFUSE_LAMBERT";
+        case SSocketType::compiler_define_diffuse_burley:
+			return "DIFFUSE_BURLEY";
+        case SSocketType::compiler_define_diffuse_oren_nayar:
+			return "DIFFUSE_OREN_NAYAR";
+        case SSocketType::compiler_define_specular_blin_phong:
+			return "SPECULAR_BLIN_PHONG";
+        case SSocketType::compiler_define_specular_beckmann:
+			return "SPECULAR_BECKMANN";
+        case SSocketType::compiler_define_specular_ggx:
+			return "SPECULAR_GGX";
+        case SSocketType::compiler_define_specular_implicit:
+			return "SPECULAR_IMPLICIT";
+        case SSocketType::compiler_define_specular_neumann:
+			return "SPECULAR_NEUMANN";
+        case SSocketType::compiler_define_specular_cooktorrance:
+			return "SPECULAR_COOKTORRANCE";
+        case SSocketType::compiler_define_specular_kelemen:
+			return "SPECULAR_KELEMEN";
+        case SSocketType::compiler_define_specular_ggx_correlated:
+			return "SPECULAR_GGX_CORRELATED";
+        case SSocketType::compiler_define_specular_ggx_correlated_fast:
+			return "SPECULAR_GGX_CORRELATED_FAST";
+        case SSocketType::compiler_define_specular_kelemen_two:
+			return "SPECULAR_KELEMEN_TWO";
+        case SSocketType::compiler_define_specular_neubelt:
+			return "SPECULAR_NEUBELT";
+        case SSocketType::compiler_define_fresnel_cook_torrance:
+			return "FRESNEL_COOK_TORRANCE";
+        case SSocketType::compiler_define_fresnel_schlick:
+			return "FRESNEL_SCHLICK";
+    }
+    return nullptr;
+}
+
+bool SShaderBinding::IsBindingSimularEnough( const SShaderBinding& b1, const SShaderBinding& b2 )
+{
+    uint8_t identicalCounter{};
+    identicalCounter += uint8_t( b1.layoutType == b2.layoutType );
+    identicalCounter += uint8_t( b1.valueType == b2.valueType );
+    identicalCounter += uint8_t( b1.set == b2.set );
+    identicalCounter += uint8_t( b1.binding == b2.binding );
+    identicalCounter += uint8_t( b1.arraySize == b2.arraySize );
+    identicalCounter += uint8_t( std::strcmp(b1.name, b2.name) == 0 );
+    identicalCounter += uint8_t( std::strcmp(b1.instanceName, b2.instanceName) == 0 );
+    identicalCounter += uint8_t( std::strcmp(b1.arraySizeString, b2.arraySizeString) == 0 );
+    identicalCounter += uint8_t( b1.members.size() == b2.members.size() );
+
+    return identicalCounter >= 9u;
+}

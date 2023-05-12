@@ -31,7 +31,7 @@ namespace Balbino
         void DetachAll() override;
         void DetachThis() override;
         
-        [[nodiscard]] int GetChildCount() const override;
+        [[nodiscard]] uint32_t GetChildCount() const override;
         [[nodiscard]] IEntity* GetChild( int index ) const override;
         [[nodiscard]] IEntity* GetParent() const override;
         [[nodiscard]] IEntity* GetLocalSimParent() const override;

@@ -1,19 +1,21 @@
 ﻿#include "ResourceManager.h"
 
 #include "FileParcer.h"
-#include "Material.h"
-#include "Texture.h"
-#include "../Renderer/Mesh.h"
-#include "../Renderer/Renderer.h"
-#include "../Renderer/UBOStructs.h"
+#include <Texture.h>
+
+#include <Mesh.h>
+#include <Material.h>
+#include <Renderer.h>
+#include <UBOStructs.h>
 
 #include <fstream>
 
 #include "IScene.h"
 
-void CResourceManager::Initialize( const ISystem* pRenderer )
+void CResourceManager::Initialize( const ISystem* pSystem, FawnVision::CRenderer* pRenderer )
 {
-    m_pSystem = pRenderer;
+    m_pSystem   = pSystem;
+    m_pRenderer = pRenderer;
 }
 
 void CResourceManager::Cleanup()
@@ -44,7 +46,7 @@ void CResourceManager::Cleanup()
     m_loadedTextureMap.clear();
 }
 
-Balbino::CTexture* CResourceManager::LoadTexture( const std::string_view assetPath )
+CTexture* CResourceManager::LoadTexture( std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
     if ( !file.is_open())
@@ -60,9 +62,9 @@ Balbino::CTexture* CResourceManager::LoadTexture( const std::string_view assetPa
     }
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    if ( static_cast< EFileTypes >( type ) == EFileTypes::Image )
+    if ( static_cast< file_type >( type ) == file_type::file_type_image )
     {
-        const auto pTextureComponent = new Balbino::CTexture{ g_pDevice, uuid };
+        const auto pTextureComponent = new CTexture{ m_pRenderer->GetDevice(), uuid };
         uint8_t    imageType{};
         uint32_t   imageFormat{};
         uint8_t    mips{};
@@ -113,9 +115,8 @@ Balbino::CTexture* CResourceManager::LoadTexture( const std::string_view assetPa
                                       depth,
                                       pitch,
                                       pImageData,
-                                      g_pCommandPool,
-                                      g_pQueue
-        );
+                                      m_pRenderer->GetCommandPool(),
+                                      m_pRenderer->GetQueue());
         free( pImageData );
         m_loadedTextureMap[uuid] = pTextureComponent;
         file.close();
@@ -132,6 +133,7 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
     {
         return nullptr;
     }
+    fprintf_s(stdout, "Start loading shader %s", (char*) assetPath.data());
     
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
@@ -142,27 +144,28 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
     
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    if ( type != (uint8_t) EFileTypes::Shader )
+    if ( type != (uint8_t) file_type::file_type_shader )
     {
         file.close();
         return nullptr;
     }
     
+    int32_t               cullmode;
+    int32_t               shaderType;    //eg. vertex
     uint8_t               shaderCount;   //eg. 2 shaders
-    uint8_t               shaderType;    //eg. vertex
     uint64_t              shaderSize;    //eg. 965 char long
-    std::vector<uint8_t>  shaderTypes;
     std::vector<uint64_t> shadersSizes;
+    std::vector<FawnVision::CShader*> shaderVector;
+    BinaryReadWrite::Read( file, cullmode );
+    BinaryReadWrite::Read( file, shaderType );
     BinaryReadWrite::Read( file, shaderCount );
-    std::vector<FawnVision::CShader*> shaderVector( shaderCount, nullptr );
     shadersSizes.reserve( shaderCount );
-    shaderTypes.reserve( shaderCount );
+    shaderVector.reserve( shaderCount );
     for ( uint8_t i{}; i < shaderCount; ++i )
     {
         BinaryReadWrite::Read( file, shaderSize );
-        BinaryReadWrite::Read( file, shaderType );
         shadersSizes.push_back( shaderSize );
-        shaderTypes.push_back( shaderType );
+        shaderVector.resize( shaderSize );
     }
     for ( uint8_t i{}; i < shaderCount; ++i )
     {
@@ -174,28 +177,32 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
         
         free( pData );
         
-        shaderVector[i] = FawnVision::CShader::CreateNew( g_pDevice );
+        shaderVector[i] = new FawnVision::CShader{ m_pRenderer->GetDevice() };
         shaderVector[i]->Initialize(
-                shaderData.data(),
-                shaderData.size(),
-                FawnVision::EShaderStage::Enum( 1 << shaderTypes[i] ));
+                shaderData.data(), shaderData.size(), FawnVision::shader_stage( shaderType & i ));
     }
     
-    FawnVision::CShaderPipeline* pPipeline = FawnVision::CShaderPipeline::CreateNew( g_pDevice );
+    FawnVision::CShaderPipeline* pPipeline = new FawnVision::CShaderPipeline{ m_pRenderer->GetDevice() };
     
     pPipeline->Initialize(
-            shaderTypes, shaderVector, *g_pRenderPass, shaderVector[0]->GetVertexComponents(), 1, g_pSwapChain
-    );
+            shaderType,
+            shaderVector,
+            *m_pRenderer->GetRenderPass(),
+            shaderVector[0]->GetVertexComponents(),
+            1,
+            m_pRenderer->GetSwatChain(),
+            FawnVision::ECullMode::Enum( cullmode ));
     for ( uint64_t i{}; i < shaderVector.size(); ++i )
     {
         shaderVector[i]->Release();
     }
     m_loadedShaderMap[uuid] = pPipeline;
     file.close();
+    fprintf_s(stdout, "End loading Shader %s", (char*) assetPath.data());
     return pPipeline;
 }
 
-Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
+CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
     if ( !file.is_open())
@@ -203,19 +210,22 @@ Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
         return nullptr;
     }
     
+    fprintf_s(stdout, "Start loading material with id %s", (char*) assetPath.data());
+    
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
     if ( m_loadedMaterialMap.contains( uuid ))
     {
+        fprintf_s(stdout, "End loading material with id %s", (char*) assetPath.data());
         return m_loadedMaterialMap.at( uuid );
     }
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    if ( static_cast< EFileTypes >( type ) == EFileTypes::Material )
+    if ( static_cast< file_type >( type ) == file_type::file_type_material )
     {
-        uint64_t                                shaderId;
-        uint64_t                                size;
-        bool                                    hasOnlyShaderResources;
+        uint64_t                                 shaderId;
+        uint64_t                                 size;
+        bool                                     hasOnlyShaderResources;
         std::vector<FawnVision::SShaderResource> shaderResources;
         std::vector<FawnVision::SDescriptorSet>  descriptorSets;
         BinaryReadWrite::Read( file, shaderId );
@@ -226,7 +236,6 @@ Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
         shaderResources.assign((FawnVision::SShaderResource*) pData, (FawnVision::SShaderResource*) pData + size );
         free( pData );
         
-        BinaryReadWrite::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
         BinaryReadWrite::IsAtEnd( file, hasOnlyShaderResources );
         
         for ( const auto& resource : shaderResources )
@@ -235,13 +244,15 @@ Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
             {
                 if ( resource.binding == 0 )
                 {
-                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-                    descriptorSets.emplace_back( FawnVision::SDescriptorSet::EType::Buffer, pUBO, 0, 0 );
+                    FawnVision::CBuffer* pUbo = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
+                    pUbo->AddRef();
+                    descriptorSets.emplace_back( FawnVision::SDescriptorSet::EType::Buffer, pUbo, 0, 0 );
                 }
                 else if ( resource.binding == 1 )
                 {
-                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-                    descriptorSets.emplace_back( FawnVision::SDescriptorSet::EType::Buffer, pUBO, 0, 1 );
+                    FawnVision::CBuffer* pUbo = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
+                    pUbo->AddRef();
+                    descriptorSets.emplace_back( FawnVision::SDescriptorSet::EType::Buffer, pUbo, 0, 1 );
                 }
             }
             else if ( resource.type == FawnVision::EShaderResourceType::Image || resource.type == FawnVision::EShaderResourceType::ImageSampler )
@@ -261,16 +272,17 @@ Balbino::CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
         }
         
         file.close();
-        Balbino::CMaterial* pMaterial = Balbino::CMaterial::CreateNew( uuid, shaderId, g_pCommandPool );
-        pMaterial->Initialize( GetShader( shaderId, true ), descriptorSets, g_pDevice );
+        CMaterial* pMaterial{ new CMaterial{ uuid, shaderId, m_pRenderer->GetCommandPool() }};
+        pMaterial->Initialize( GetShader( shaderId, true ), descriptorSets, m_pRenderer->GetDevice());
         m_loadedMaterialMap[uuid] = pMaterial;
         return pMaterial;
     }
     file.close();
+    fprintf_s(stdout, "End loading material with id %s", (char*) assetPath.data());
     return nullptr;
 }
 
-Balbino::IMesh* CResourceManager::LoadModel( std::string_view assetPath )
+IMesh* CResourceManager::LoadModel( std::string_view assetPath )
 {
     std::ifstream file( assetPath.data(), std::ios::in | std::ios::binary );
     if ( !file.is_open())
@@ -286,14 +298,14 @@ Balbino::IMesh* CResourceManager::LoadModel( std::string_view assetPath )
     }
     uint8_t type;
     BinaryReadWrite::Read( file, type );
-    if ( static_cast< EFileTypes >( type ) == EFileTypes::Model )
+    if ( static_cast< file_type >( type ) == file_type::file_type_model )
     {
-        uint64_t                            indicesSize;
-        uint64_t                            verticesSize;
-        uint64_t                            metadataSize;
-        std::vector<uint32_t>               indices;
-        std::vector<FawnVision::SVertex>     vertices;
-        std::vector<Balbino::SMeshMetadata> metadata;
+        uint64_t                         indicesSize;
+        uint64_t                         verticesSize;
+        uint64_t                         metadataSize;
+        std::vector<uint32_t>            indices;
+        std::vector<FawnVision::SVertex> vertices;
+        std::vector<SMeshMetadata>       metadata;
         
         BinaryReadWrite::Read( file, indicesSize );
         BinaryReadWrite::Read( file, verticesSize );
@@ -315,8 +327,8 @@ Balbino::IMesh* CResourceManager::LoadModel( std::string_view assetPath )
             BinaryReadWrite::Read( file, meta );
         }
         
-        Balbino::CMesh* pMesh = Balbino::CMesh::CreateNew( vertices, indices, metadata, uuid );
-        pMesh->Initialize( g_pDevice, g_pCommandPool, g_pQueue );
+        FawnVision::CMesh* pMesh{ new FawnVision::CMesh{ vertices, indices, metadata, uuid }};
+        pMesh->Initialize( m_pRenderer->GetDevice(), m_pRenderer->GetCommandPool(), m_pRenderer->GetQueue());
         return m_loadedMeshMap[uuid] = pMesh;
     }
     file.close();
@@ -339,7 +351,7 @@ bool CResourceManager::BindMaterial( uint64_t id )
     return false;
 }
 
-Balbino::CTexture* CResourceManager::GetTexture( CUuid getMeshId, bool tryToCreateWhenNotFound )
+CTexture* CResourceManager::GetTexture( CUuid getMeshId, bool tryToCreateWhenNotFound )
 {
     if ( m_loadedTextureMap.contains((uint64_t) getMeshId ))
     {
@@ -375,16 +387,16 @@ FawnVision::CShaderPipeline* CResourceManager::GetShader( CUuid getMeshId, bool 
     return nullptr;
 }
 
-Balbino::CMaterial* CResourceManager::GetMaterial( CUuid getMeshId, bool tryToCreateWhenNotFound )
+CMaterial* CResourceManager::GetMaterial( CUuid materialId, bool tryToCreateWhenNotFound )
 {
-    if ( m_loadedMaterialMap.contains((uint64_t) getMeshId ))
+    if ( m_loadedMaterialMap.contains((uint64_t) materialId ))
     {
-        return m_loadedMaterialMap[(uint64_t) getMeshId];
+        return m_loadedMaterialMap[(uint64_t) materialId];
     }
     if ( tryToCreateWhenNotFound )
     {
         FindAllFiles();
-        auto material{ std::find( m_files.begin(), m_files.end(), getMeshId ) };
+        auto material{ std::find( m_files.begin(), m_files.end(), materialId ) };
         if ( material != m_files.end())
         {
             return LoadMaterial( material->path );
@@ -393,7 +405,7 @@ Balbino::CMaterial* CResourceManager::GetMaterial( CUuid getMeshId, bool tryToCr
     return nullptr;
 }
 
-Balbino::IMesh* CResourceManager::GetModel( CUuid getMeshId, bool tryToCreateWhenNotFound )
+IMesh* CResourceManager::GetModel( CUuid getMeshId, bool tryToCreateWhenNotFound )
 {
     if ( m_loadedMeshMap.contains((uint64_t) getMeshId ))
     {
@@ -411,19 +423,18 @@ Balbino::IMesh* CResourceManager::GetModel( CUuid getMeshId, bool tryToCreateWhe
     return nullptr;
 }
 
-const std::map<uint64_t, Balbino::CMaterial*>& CResourceManager::GetAllLoadedMaterials() const
+const std::map<uint64_t, CMaterial*>& CResourceManager::GetAllLoadedMaterials() const
 {
     return m_loadedMaterialMap;
 }
 
-void CResourceManager::ReloadAll( FawnVision::CCommandPool* commandPool, FawnVision::CQueue* queue )
+void CResourceManager::ReloadAll( FawnVision::CRenderer* pRenderer )
 {
-    g_pCommandPool = commandPool;
-    g_pQueue       = queue;
+    m_pRenderer = pRenderer;
     for ( const auto& mesh : m_loadedMeshMap )
     {
         mesh.second->Cleanup();
-        mesh.second->Initialize( g_pDevice, commandPool, queue );
+        mesh.second->Initialize( m_pRenderer->GetDevice(), pRenderer->GetCommandPool(), pRenderer->GetQueue());
     }
     for ( const auto& shader : m_loadedShaderMap )
     {
@@ -439,10 +450,10 @@ void CResourceManager::ReloadAll( FawnVision::CCommandPool* commandPool, FawnVis
         {
             continue;
         }
-        uint64_t                                uuid;
-        uint8_t                                 type;
-        uint64_t                                shaderId;
-        bool                                    hasOnlyShaderResources;
+        uint64_t                                 uuid;
+        uint8_t                                  type;
+        uint64_t                                 shaderId;
+        bool                                     hasOnlyShaderResources;
         std::vector<FawnVision::SShaderResource> shaderResources;
         std::vector<FawnVision::SDescriptorSet>  descriptorSets;
         BinaryReadWrite::Read( file, uuid );
@@ -457,28 +468,28 @@ void CResourceManager::ReloadAll( FawnVision::CCommandPool* commandPool, FawnVis
             {
                 if ( resource.set == 0 && resource.binding == 0 )
                 {
-                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
-                    pUBO->Initialize(
+                    FawnVision::CBuffer* pUbo = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
+                    pUbo->Initialize(
                             sizeof( SModelObject ),
                             FawnVision::EBufferUsageFlagBits::UniformBufferBit,
                             FawnVision::EMemoryPropertyFlagBits::Enum(
                                     FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
                             ));
                     descriptorSets.emplace_back(
-                            FawnVision::SDescriptorSet::EType::Buffer, pUBO, resource.set, resource.binding
+                            FawnVision::SDescriptorSet::EType::Buffer, pUbo, resource.set, resource.binding
                     );
                 }
                 else if ( resource.set == 0 && resource.binding == 1 )
                 {
-                    FawnVision::CBuffer* pUBO = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
-                    pUBO->Initialize(
+                    FawnVision::CBuffer* pUbo = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
+                    pUbo->Initialize(
                             sizeof( SLightObject ),
                             FawnVision::EBufferUsageFlagBits::UniformBufferBit,
                             FawnVision::EMemoryPropertyFlagBits::Enum(
                                     FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
                             ));
                     descriptorSets.emplace_back(
-                            FawnVision::SDescriptorSet::EType::DynamicBuffer, pUBO, resource.set, resource.binding
+                            FawnVision::SDescriptorSet::EType::DynamicBuffer, pUbo, resource.set, resource.binding
                     );
                 }
             }
@@ -500,8 +511,8 @@ void CResourceManager::ReloadAll( FawnVision::CCommandPool* commandPool, FawnVis
         file.close();
         material.second->Cleanup();
         delete material.second;
-        m_loadedMaterialMap[uuid] = new Balbino::CMaterial{ uuid, shaderId, g_pCommandPool };
-        m_loadedMaterialMap[uuid]->Initialize( GetShader( shaderId, true ), descriptorSets, g_pDevice );
+        m_loadedMaterialMap[uuid] = new CMaterial{ uuid, shaderId, m_pRenderer->GetCommandPool() };
+        m_loadedMaterialMap[uuid]->Initialize( GetShader( shaderId, true ), descriptorSets, m_pRenderer->GetDevice());
     }
 }
 
@@ -568,20 +579,17 @@ SFile CResourceManager::GetData( const std::filesystem::path& path )
         BinaryReadWrite::Read( fileStream, file.uuid );
         BinaryReadWrite::Read( fileStream, value );
         
-        file.type     = static_cast< EFileTypes > ( value );
+        file.type     = static_cast< file_type > ( value );
         file.path     = path.string();
         file.fileName = path.filename().string();
         fileStream.close();
     }
     return file;
 }
-
 void CResourceManager::UnloadMaterial( CUuid materialId )
 {
     if ( m_loadedMaterialMap.contains((uint64_t) materialId ))
     {
-        Balbino::CMaterial* mat = m_loadedMaterialMap.at((uint64_t) materialId );
-        mat->Cleanup();
-        m_loadedMaterialMap.erase((uint64_t) materialId );
+        m_loadedMaterialMap[(uint64_t) materialId]->Cleanup();
     }
 }

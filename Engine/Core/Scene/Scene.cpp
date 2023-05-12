@@ -1,9 +1,8 @@
 #include "Scene.h"
-#include "../Renderer/Mesh.h"
-#include "Buffer.h"
+#include <Renderer.h>
+#include <Buffer.h>
 
-#include "../Managers/System.h"
-#include "../Managers/ResourceManager.h"
+#include <Mesh.h>
 
 #include "Components/CameraComponent.h"
 #include "Components/IDComponent.h"
@@ -11,19 +10,20 @@
 #include "Components/MeshRendererComponent.h"
 #include "Components/TransformComponent.h"
 
+#include "../Managers/ResourceManager.h"
+#include "../Managers/System.h"
+
 Balbino::CScene::CScene()
         : m_registry{}
-          , m_camera{}
-          , m_entityMap{}
-          , m_pSystem{}
-          , m_lightObject{}
-          , m_modelUbo{}
-          , m_pModelBuffer{}
-          , m_pShadingBuffer{}
-          , m_pInstanceBuffer{}
-          , m_pCommandPool{}
-          , m_pDevice{}
-          , m_pQueue{}
+        , m_camera{}
+        , m_entityMap{}
+        , m_pSystem{}
+        , m_lightObject{}
+        , m_modelUbo{}
+        , m_pModelBuffer{ nullptr }
+        , m_pShadingBuffer{ nullptr }
+        , m_pInstanceBuffer{ nullptr }
+        , m_pRenderer{ nullptr }
 {
 }
 
@@ -51,29 +51,24 @@ void Balbino::CScene::Initialize( ISystem* pSystem )
 {
     m_pSystem = pSystem;
     CreateEntity()->AddComponent<CCameraComponent>( m_pSystem );
-    m_pModelBuffer    = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pShadingBuffer  = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pInstanceBuffer = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    
-    m_pModelBuffer->Initialize(
+    m_pModelBuffer    = m_pRenderer->CreateBuffer(
             sizeof( SModelObject ),
             FawnVision::EBufferUsageFlagBits::UniformBufferBit,
             FawnVision::EMemoryPropertyFlagBits::Enum(
                     FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
             ));
-    m_pShadingBuffer->Initialize(
+    m_pShadingBuffer  = m_pRenderer->CreateBuffer(
             sizeof( SLightObject ),
             FawnVision::EBufferUsageFlagBits::UniformBufferBit,
             FawnVision::EMemoryPropertyFlagBits::Enum(
                     FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
             ));
-    m_pInstanceBuffer->Initialize(
+    m_pInstanceBuffer = m_pRenderer->CreateBuffer(
             MAX_INSTANCE_COUNT * sizeof( FawnVision::InstanceBatch ), FawnVision::EBufferUsageFlagBits::Enum(
                     FawnVision::EBufferUsageFlagBits::TransferDstBit | FawnVision::EBufferUsageFlagBits::VertexBufferBit
             ), FawnVision::EMemoryPropertyFlagBits::Enum(
                     FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::DeviceLocalBit
             ));
-    
 }
 
 void Balbino::CScene::Cleanup()
@@ -175,39 +170,6 @@ FawnVision::CBuffer* Balbino::CScene::GetShadingBuffer() const
     return m_pShadingBuffer;
 }
 
-void Balbino::CScene::RecreateBuffers( FawnVision::CCommandPool* commandPool, FawnVision::CQueue* queue )
-{
-    m_pCommandPool = commandPool;
-    m_pQueue       = queue;
-    m_pShadingBuffer->Release();
-    m_pModelBuffer->Release();
-    m_pInstanceBuffer->Release();
-    
-    m_pModelBuffer    = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pShadingBuffer  = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    m_pInstanceBuffer = FawnVision::CBuffer::CreateNew( m_pDevice, m_pCommandPool, m_pQueue );
-    
-    
-    m_pModelBuffer->Initialize(
-            sizeof( SModelObject ),
-            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
-            FawnVision::EMemoryPropertyFlagBits::Enum(
-                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
-            ));
-    m_pShadingBuffer->Initialize(
-            sizeof( SLightObject ),
-            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
-            FawnVision::EMemoryPropertyFlagBits::Enum(
-                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
-            ));
-    m_pInstanceBuffer->Initialize(
-            MAX_INSTANCE_COUNT * sizeof( FawnVision::InstanceBatch ), FawnVision::EBufferUsageFlagBits::Enum(
-                    FawnVision::EBufferUsageFlagBits::TransferDstBit | FawnVision::EBufferUsageFlagBits::VertexBufferBit
-            ), FawnVision::EMemoryPropertyFlagBits::Enum(
-                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::DeviceLocalBit
-            ));
-}
-
 void Balbino::CScene::PrepareDraw()
 {
     {
@@ -272,22 +234,12 @@ void Balbino::CScene::PrepareDraw()
             for ( auto entity : objectGroup )
             {
                 auto [ transform, mesh ] = objectGroup.get<CTransformComponent, CMeshRenderComponent>( entity );
-                const CMesh* pModel    = dynamic_cast<CMesh*>( m_pSystem->GetResourceManager()->GetModel(
+                const IMesh* pModel    = dynamic_cast<IMesh*>( m_pSystem->GetResourceManager()->GetModel(
                         mesh.GetMeshId()));
                 const auto & materials = mesh.GetMaterials();
                 const auto & mat       = pModel->GetMetaData();
-                const CUuid meshID = mesh.GetMeshId();
-
-//                IndirectBatch firstDraw{
-//                        .mesh = mesh.GetMeshId(),
-//                        .material = materials[0],
-//                        .firstInstance = count,
-//                        .instanceCount = 1,
-//                        .firstIndex = mat->firstIndex,
-//                        .indexCount = mat->indexCount
-//                };
-//                m_allDrawableObjects.push_back( firstDraw );
-//                m_instanceData.push_back( {{ transform.GetTransform() }} );
+                const CUuid meshId = mesh.GetMeshId();
+                
                 const uint32_t size{ (uint32_t) materials.size() };
                 for ( uint32_t i{}; i < size; i++ )
                 {
@@ -296,9 +248,9 @@ void Balbino::CScene::PrepareDraw()
                     auto        it              = std::find_if(
                             m_allDrawableObjects.cbegin(),
                             m_allDrawableObjects.cend(),
-                            [ meshID, currentMaterial, mat, i ]( const IndirectBatch& obj )
+                            [ meshId, currentMaterial, mat, i ]( const IndirectBatch& obj )
                             {
-                                return meshID == obj.mesh && currentMaterial == obj.material && mat[i].firstIndex == obj.firstIndex;
+                                return meshId == obj.mesh && currentMaterial == obj.material && mat[i].firstIndex == obj.firstIndex;
                             }
                     );
                     
@@ -313,7 +265,7 @@ void Balbino::CScene::PrepareDraw()
                     {
                         //add new draw
                         IndirectBatch newDraw{
-                                .mesh = meshID, .material = currentMaterial, .firstInstance = 0, .instanceCount = 1, .firstIndex = mat[i].firstIndex, .indexCount = mat[i].indexCount
+                                .mesh = meshId, .material = currentMaterial, .firstInstance = 0, .instanceCount = 1, .firstIndex = mat[i].firstIndex, .indexCount = mat[i].indexCount
                         };
                         m_allDrawableObjects.push_back( newDraw );
                         m_instanceData.push_back( { FawnVision::InstanceBatch{ transform.GetTransform() }} );
@@ -347,7 +299,7 @@ void Balbino::CScene::Draw()
         if ( m_pSystem->GetResourceManager()->BindMaterial((uint64_t) m_allDrawableObjects[i].material ))
         {
             FawnVision::DrawMesh(
-                    m_pCommandPool,
+                    m_pRenderer->GetCommandPool(),
                     m_allDrawableObjects[i].indexCount,
                     m_allDrawableObjects[i].firstIndex,
                     m_allDrawableObjects[i].firstInstance,
@@ -360,4 +312,32 @@ void Balbino::CScene::Draw()
 FawnVision::CBuffer* Balbino::CScene::GetInstanceBuffer() const
 {
     return m_pInstanceBuffer;
+}
+void Balbino::CScene::SetRenderer( FawnVision::CRenderer* renderer )
+{
+    m_pRenderer = renderer;
+    if(!m_pShadingBuffer)
+        return;
+    m_pShadingBuffer->Release();
+    m_pModelBuffer->Release();
+    m_pInstanceBuffer->Release();
+    
+    m_pModelBuffer    = m_pRenderer->CreateBuffer(
+            sizeof( SModelObject ),
+            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+            FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
+            ));
+    m_pShadingBuffer  = m_pRenderer->CreateBuffer(
+            sizeof( SLightObject ),
+            FawnVision::EBufferUsageFlagBits::UniformBufferBit,
+            FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::HostCoherentBit
+            ));
+    m_pInstanceBuffer = m_pRenderer->CreateBuffer(
+            MAX_INSTANCE_COUNT * sizeof( FawnVision::InstanceBatch ), FawnVision::EBufferUsageFlagBits::Enum(
+                    FawnVision::EBufferUsageFlagBits::TransferDstBit | FawnVision::EBufferUsageFlagBits::VertexBufferBit
+            ), FawnVision::EMemoryPropertyFlagBits::Enum(
+                    FawnVision::EMemoryPropertyFlagBits::HostVisibleBit | FawnVision::EMemoryPropertyFlagBits::DeviceLocalBit
+            ));
 }

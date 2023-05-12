@@ -1,12 +1,17 @@
-#ifndef ENTRYPOINT_H
-#define ENTRYPOINT_H
-#include <SDL.h>
+#ifndef BALBINO_ENTRYPOINT_H
+#define BALBINO_ENTRYPOINT_H
+
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+#endif
+
+#include <SDL3/SDL.h>
 
 #ifdef BL_PLATFORM_WINDOWS
 #include <iostream>
-
-extern Balbino::Application* Balbino::CreateApplication();
-extern void Balbino::DestroyApplication( Balbino::Application* pApplication );
+#include "Application.h"
 
 int main( int arc, char* argv[] )
 {
@@ -14,6 +19,10 @@ int main( int arc, char* argv[] )
     (void) argv;
     
     auto pApp = Balbino::CreateApplication();
+    
+    #ifdef _DEBUG
+    _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+    #endif
     try
     {
         pApp->Initialize();
@@ -24,13 +33,19 @@ int main( int arc, char* argv[] )
         std::cout << e.what();
         pApp->Cleanup();
         Balbino::DestroyApplication( pApp );
+        #ifdef _DEBUG
+        _CrtDumpMemoryLeaks();
+        #endif
         return -1;
     }
     pApp->Cleanup();
     
     Balbino::DestroyApplication( pApp );
+    #ifdef _DEBUG
+    _CrtDumpMemoryLeaks();
+    #endif
     return 0;
 }
 
 #endif // BL_PLATFORM_WINDOWS
-#endif // ENTRYPOINT_H
+#endif // BALBINO_ENTRYPOINT_H
