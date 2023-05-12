@@ -38,3 +38,7 @@
     path = 3rdParty/SDL_ttf
     url = ../../libsdl-org/SDL_ttf.git
     branch = main
+[submodule "blink"]
+    path = blink
+    url = ../../crosire/blink.git
+    branch = main
