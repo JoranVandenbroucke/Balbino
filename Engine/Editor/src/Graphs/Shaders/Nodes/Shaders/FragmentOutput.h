@@ -71,8 +71,8 @@ private:
     static const char* ToString(specular type);
     static const char* ToString(fresnel type);
     
-    static const char* ToDefine(diffuse type);
-    static const char* ToDefine(distribution type);
-    static const char* ToDefine(specular type);
-    static const char* ToDefine(fresnel type);
+    static SSocketType::compiler_define ToCompilerDefine(diffuse type);
+    static SSocketType::compiler_define ToCompilerDefine(distribution type);
+    static SSocketType::compiler_define ToCompilerDefine(specular type);
+    static SSocketType::compiler_define ToCompilerDefine(fresnel type);
 };

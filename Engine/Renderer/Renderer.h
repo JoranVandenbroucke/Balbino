@@ -71,7 +71,7 @@ namespace FawnVision
         {
             return m_pQueue;
         }
-        [[nodiscard]] inline constexpr FawnVision::CSwapchain* GetSwatChain()
+        [[nodiscard]] inline constexpr FawnVision::CSwapchain* GetSwapChain()
         {
             return m_pSwapchain;
         }

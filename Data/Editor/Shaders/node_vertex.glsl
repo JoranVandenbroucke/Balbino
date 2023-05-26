@@ -5,12 +5,12 @@ void vertex(
 vec3 inPos,
 mat4 proj,
 
-#if defined(USED_MODEL_VIEW)
+#if defined(USES_MODEL_VIEW)
 mat4 view,
 mat4 model,
 #endif
 
-#if defined(USES_WORD_POSITION)
+#if defined(USES_WORLD_POSITION)
 out vec4 worldPos,
 #endif
 
@@ -41,13 +41,17 @@ vec3 offset,
 out vec4 position
 )
 {
-    #if defined(USED_MODEL_VIEW)
-    position = proj * view * model * vec4(inPos+offset, 1.0);
+    #if defined(USES_MODEL_VIEW)
+    position = proj * view * model * vec4(inPos
+    #if defined(USES_POSITION_OFFSET)
+    +offset
+    #endif
+    , 1.0);
     #else
     position = proj * vec4(inPos, 1.0);
     #endif
     
-    #if defined(USES_WORD_POSITION)
+    #if defined(USES_WORLD_POSITION)
     worldPos = model * vec4(inPos, 1.0f);
     #endif
     

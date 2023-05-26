@@ -72,13 +72,21 @@ inline const char* ToString( file_type type )
 
 struct SFile
 {
-    bool      isFolder;
-    file_type type;
-    uint64_t  uuid;
-    std::string                     fileName;
-    std::string                     path;
-    std::filesystem::file_time_type lastWrittenTime;
-    int                             depth;
+    SFile()=default;
+    SFile( std::string p, std::string n )
+            : isFolder{ true }
+            , type{ file_type_folder }
+            , fileName{ std::move( n ) }
+            , path{ std::move( p ) }
+    {
+    }
+    bool                            isFolder{};
+    file_type                       type{};
+    uint64_t                        uuid{};
+    std::string                     fileName{};
+    std::string                     path{};
+    std::filesystem::file_time_type lastWrittenTime{};
+    int                             depth{};
     
     bool operator==( const uint64_t& id ) const
     {
@@ -733,7 +741,7 @@ namespace BinaryReadWrite
 
 inline std::string SanitizePath( std::string path )
 {
-    std::replace(path.begin(), path.end(), '\\', '/');
+    std::replace( path.begin(), path.end(), '\\', '/' );
     if ( std::filesystem::is_directory( path ))
     {
         if ( path.back() != '/' )
@@ -808,8 +816,8 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, std::string& val
 
 inline std::istream& BinaryReadWrite::Read( std::istream& file, FawnVision::SShaderResource& value )
 {
-    uint8_t resourceType;
-    uint8_t resourceMode;
+    uint8_t  resourceType;
+    uint8_t  resourceMode;
     uint16_t shaderStage;
     Read( file, shaderStage );
     Read( file, resourceType );

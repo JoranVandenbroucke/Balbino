@@ -22,7 +22,7 @@ namespace FawnForge
         CShaderEditor& operator=( CShaderEditor&& ) = delete;
 
         void Draw();
-        void ShowWindow( const SFile& shader = {} );
+        void ShowWindow( const SFile& shader );
 
     private:
         enum class ui_node_type
@@ -37,13 +37,11 @@ namespace FawnForge
 //            UnlitFragmentOutput,
             
             ////////blender nodes////////
-            //todo Input
+            //Input
             //todo AmbientOcclusion,
             //todo Attribute,
             //todo Bevel,
-            //todo ViewDirection,
-            //todo ViewZ,
-            //todo ViewDepth,
+            //todo CameraData,
             //todo Fresnel,
             //todo HairInfo,
             //todo ObjectInfo,

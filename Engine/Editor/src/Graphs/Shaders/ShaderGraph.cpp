@@ -51,7 +51,7 @@ void CShaderGraph::Connect( int fromNode, int fromAttr, int toNode, int toAttr )
             }
     );
     
-    Connect(( *from )->GetOutput( fromAttr ), ( *to )->GetInput( toAttr ));
+    Connect(( *from )->GetOutput( fromAttr - ( *from )->GetId() - (int)(*from)->GetInputNodes().size()), ( *to )->GetInput( toAttr- ( *to )->GetId() ));
 }
 void CShaderGraph::Connect( CShaderOutput* from, CShaderInput* to )
 {
@@ -88,8 +88,8 @@ void CShaderGraph::Disconnect( int fromNode, int fromAttr, int toNode, int toAtt
             }
     );
     
-    Disconnect(( *from )->GetOutput( fromAttr ));
-    Disconnect(( *to )->GetInput( toAttr ));
+    Disconnect(( *from )->GetOutput( fromAttr - ( *from )->GetId() - (int)(*from)->GetInputNodes().size() ));
+    Disconnect(( *to )->GetInput( toAttr - ( *to )->GetId() ));
 }
 void CShaderGraph::Disconnect( CShaderOutput* from )
 {
@@ -117,32 +117,30 @@ void CShaderGraph::DrawNodes()
 
 bool CShaderGraph::Compile( const SFile& file, int cullMode )
 {
+    // Define local variables
     std::vector<const CShaderNode*>      evaluatedNodes;
+    std::vector<std::vector<uint32_t>>   compiledShaders;
     std::unordered_map<std::string, int> outputVarCount;
     SShaderInfo                          shaderInfo;
-    std::string                          shader{
+    const shaderc::Compiler              compiler;
+    
+    std::string shader{
             Compile(
                     m_nodes.front(), evaluatedNodes, outputVarCount, shaderInfo
             )
     };
     
-    // Short bindings, includes and defines
+    // Sort bindings
     std::sort(
-            shaderInfo.defines.begin(), shaderInfo.defines.end(), []( SDefine& a, SDefine& b )
+            shaderInfo.bindings.begin(), shaderInfo.bindings.end(), []( SShaderBinding& a, SShaderBinding& b )
             {
-                return a.priority < b.priority;
-            }
-    );
-    std::sort(
-            shaderInfo.includes.begin(), shaderInfo.includes.end(), []( SInclude& a, SInclude& b )
-            {
-                return a.priority < b.priority;
+                return a.binding > b.binding;
             }
     );
     std::sort(
             shaderInfo.bindings.begin(), shaderInfo.bindings.end(), []( SShaderBinding& a, SShaderBinding& b )
             {
-                return a.priority < b.priority;
+                return a.set > b.set;
             }
     );
     std::sort(
@@ -152,15 +150,13 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
             }
     );
     
-    std::vector<std::vector<uint32_t>> compiledShaders;
-    const shaderc::Compiler            compiler;
-    
     // Get all used shader types
-    int32_t       shaders{ ((COutputNode*) m_nodes.front())->GetShaderTypes() };
-    // for each used shader type
-    // convert includes and bindings into string and append it to the glsl code
+    int32_t shaders{ ((COutputNode*) m_nodes.front())->GetShaderTypes() };
+    
+    // For each used shader type...
     for ( int32_t i{ shader_stage_vertex }, j{}; i < shader_stage_max; i <<= 1, ++j )
     {
+        // Skip if the shader type is not used
         if (( shaders & i ) == 0 )
         {
             continue;
@@ -169,6 +165,7 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
         std::unordered_map<uint32_t, uint32_t>       setBindings;
         uint32_t                                     inputAttachmentIndex{};
         std::vector<std::pair<int32_t, std::string>> glsCode;
+        // Convert includes into string and append it to the GLSL code
         std::for_each(
                 shaderInfo.includes.cbegin(), shaderInfo.includes.cend(), [ &glsCode, i ]( const SInclude& include )
                 {
@@ -180,14 +177,16 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
                 }
         );
         
+        // Convert bindings into string and append it to the GLSL code
         for ( const auto& binding : shaderInfo.bindings )
         {
-            std::string bindingString;
+            // Skip if the binding is not used by this shader type
             if (( binding.shaderTypes & i ) == 0 )
             {
                 continue;
             }
             
+            // Get set and binding number
             uint32_t setNr{
                     ( binding.set == SShaderBinding::autoConfig )
                     ? (uint32_t) binding.layoutType
@@ -198,7 +197,9 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
                     ? setBindings[(uint32_t) binding.layoutType]++
                     : binding.binding
             };
-            bindingString += "layout(";
+            
+            // Create binding string
+            std::string bindingString{ "layout(" };
             switch ( binding.layoutType )
             {
                 case SShaderBinding::layout_input:
@@ -227,8 +228,9 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
                     break;
             }
             bindingString += ConvertToGlslUniform( binding );
-            glsCode.emplace_back( binding.priority,bindingString);
+            glsCode.emplace_back( binding.priority, bindingString );
         }
+        // sort all on priority
         std::sort(
                 glsCode.begin(),
                 glsCode.end(),
@@ -237,6 +239,7 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
                     return a.first > b.first;
                 }
         );
+        // append each string to the shader code
         std::for_each(
                 glsCode.cbegin(), glsCode.cend(), [ &shader, define ]( const std::pair<int32_t, std::string>& a )
                 {
@@ -244,11 +247,11 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
                 }
         );
     }
+    std::cout << shader << std::endl;
     // for each used shader type
-    // set compiler settings and definitions
-    // compile shader and report error
     for ( int     i{ shader_stage_vertex }; i < shader_stage_max; i <<= 1 )
     {
+        // Skip if the shader type is not used
         if (( shaders & i ) == 0 )
         {
             continue;
@@ -259,9 +262,10 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
         shaderc::CompileOptions options;
         
         options.SetTargetEnvironment( shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3 );
+//        options.SetOptimizationLevel( shaderc_optimization_level_zero );
         options.SetOptimizationLevel( shaderc_optimization_level_performance );
         options.SetWarningsAsErrors();
-        options.SetTargetSpirv( shaderc_spirv_version_1_6 );
+        options.SetTargetSpirv( shaderc_spirv_version_1_5 );
         options.SetIncluder( std::make_unique<FawnVision::CFileIncluder>());
         options.AddMacroDefinition( define );
         for ( const auto& def : shaderInfo.defines )
@@ -310,7 +314,6 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
         if ( result.GetCompilationStatus() != shaderc_compilation_status_success )
         {
             //handle errors
-            std::cout << shader << std::endl;
             std::cout << result.GetErrorMessage() << std::endl;
             assert( false );
         }
@@ -318,7 +321,9 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
         compiledShaders.push_back( sprv );
     }
     
-    return FawnForge::Exporter::ExportShader(file.fileName, file.path, compiledShaders, shaders, cullMode, file.uuid );
+    return FawnForge::Exporter::ExportShader(
+            file.fileName, file.path, compiledShaders, shaders, cullMode, file.uuid == 0 ? CUuid{} : file.uuid
+    );
 }
 std::string CShaderGraph::Compile( const CShaderNode* pNode, std::vector<const CShaderNode*>& evaluatedNodes, std::unordered_map<std::string, int>& outputVarCount, SShaderInfo& shaderInfo )
 {
@@ -342,7 +347,6 @@ std::string CShaderGraph::Compile( const CShaderNode* pNode, std::vector<const C
             std::string valueStr{};
             if ( pIn->IsConnected())
             {
-                // todo: this has a flaw, output parameter doesn't exist as a variable. detect what can be reused?
                 valueStr = pIn->GetLink()->GetShaderName();
                 if ( pIn->GetLink()->GetType() == SSocketType::var_type_shader )
                 {

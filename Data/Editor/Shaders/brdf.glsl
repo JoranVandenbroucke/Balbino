@@ -31,10 +31,10 @@
 #define SPECULAR_F_COOK_TORRANCE_FRESNEL    0
 #define SPECULAR_F_SCHLICK                  1
 
-//#define BRDF_DIFFUSE                DIFFUSE_LAMBERT
-//#define BRDF_SPECULAR_D             SPECULAR_D_GGX
-//#define BRDF_SPECULAR_V             SPECULAR_S_GGX_CORRELATED_FAST
-//#define BRDF_SPECULAR_F             SPECULAR_F_SCHLICK
+#define BRDF_DIFFUSE                DIFFUSE_LAMBERT
+#define BRDF_SPECULAR_D             SPECULAR_D_GGX
+#define BRDF_SPECULAR_V             SPECULAR_S_GGX_CORRELATED_FAST
+#define BRDF_SPECULAR_F             SPECULAR_F_SCHLICK
 
 #define MEDIUM_MAX 65504.0
 //////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ float difuse(float NdotV, float NdotL, float LoH, float roughness)
     return Lambert();
     #elif BRDF_DIFFUSE == DIFFUSE_BURLEY
     return Burley(NdotV, NdotL, LoH, roughness);
-    #elif BRDF_DIFFUSE == DIFFUSE_BURLEY
+    #elif BRDF_DIFFUSE == DIFFUSE_OREN_NAYAR
     return OrenNayar(NdotV, NdotL,roughness );
     #endif
 }
@@ -256,7 +256,7 @@ float shadow(float NdotL, float NdotV, float NdotH, float VdotH, float roughness
 }
 vec3 fresnel(float cosTheta, vec3 f0, float VdotH)
 {
-    #if BRDF_SPECULAR_F == SPECULAR_F_SCHLICK
+    #if BRDF_SPECULAR_F == SPECULAR_F_COOK_TORRANCE_FRESNEL
     return f_cook_torrance(cosTheta, f0, VdotH);
     #elif BRDF_SPECULAR_F == SPECULAR_F_SCHLICK
     return f_schlick(cosTheta, f0);

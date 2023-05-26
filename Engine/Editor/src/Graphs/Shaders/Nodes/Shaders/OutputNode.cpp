@@ -11,7 +11,7 @@ COutputNode::COutputNode( int& id )
         : CShaderNode{
         id, {
                 SSocketType{
-                        .type=SSocketType::var_type_shader, .name=ToString( shader_stage_vertex ), .uiName=ToStringUI(
+                        .type=SSocketType::var_type_shader, .name=ToString( shader_stage_vertex ), .uiName=ToStringUi(
                                 shader_stage_vertex
                         )
                 }}, {}}
@@ -20,7 +20,7 @@ COutputNode::COutputNode( int& id )
     m_allShaderNames.reserve( shader_stage_max );
     for ( uint16_t i{ shader_stage_vertex }; i < shader_stage_max; i <<= 1 )
     {
-        m_allShaderNames.emplace_back( ToStringUI((shader_stage) i ));
+        m_allShaderNames.emplace_back( ToStringUi((shader_stage) i ));
     }
 }
 void COutputNode::Draw()
@@ -62,7 +62,7 @@ void COutputNode::Draw()
         m_shaders.emplace_back( shader_stage_vertex );
         AddInputNode(
                 SSocketType{
-                        .type=SSocketType::var_type_shader, .name=ToString( shader_stage_vertex ), .uiName=ToStringUI(
+                        .type=SSocketType::var_type_shader, .name=ToString( shader_stage_vertex ), .uiName=ToStringUi(
                                 shader_stage_vertex
                         )
                 }
@@ -144,6 +144,6 @@ void COutputNode::GetShaderInfo( SShaderInfo& shaderInfo ) const
             1,
             "displayDebugTarget"
     );
-    shaderInfo.AddBinding( binding, 0, true );
+    shaderInfo.AddBinding( binding, -99, true );
     shaderInfo.AddInclude( "default.glsl", -1000000, true );
 }

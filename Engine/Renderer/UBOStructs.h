@@ -33,12 +33,12 @@ struct SLight
     {
     }
     
-    int                    type{};              //type: Directional, Point, Spot, Area
-    float                  strength{};          //strength
-    alignas( 16 )glm::vec3 position{};          //position
-    alignas( 16 )glm::vec3 direction{};         //direction
-    alignas( 16 )glm::vec3 color{};             //color
-    alignas( 16 )glm::vec3 size{};              //Point: size,0,0; Spot: size, front, back; area: width, height, 0
+    int                    type{1};              //type: Directional, Point, Spot, Area
+    float                  strength{1};          //strength
+    alignas( 16 )glm::vec3 position{0,0,0};          //position
+    alignas( 16 )glm::vec3 direction{0,0,0};         //direction
+    alignas( 16 )glm::vec3 color{1,1,1};             //color
+    alignas( 16 )glm::vec3 size{100,0,0};              //Point: size,0,0; Spot: size, front, back; area: width, height, 0
     
 };
 

@@ -41,7 +41,8 @@ void FawnVision::CShaderPipeline::Initialize( uint32_t types, const std::vector<
         default:
             break;
     }
-    for ( int32_t  i{ shader_stage_vertex }, j{}; i < shader_stage_max; i <<= 1, ++j )
+    int j{};
+    for ( int32_t  i{ shader_stage_vertex }; i < shader_stage_max; i <<= 1)
     {
         if (( types & i ) == 0 )
         {
@@ -100,7 +101,7 @@ void FawnVision::CShaderPipeline::Initialize( uint32_t types, const std::vector<
                 nullptr,
                 0,
                 type,
-                shaders[i]->GetShaderModule(),
+                shaders[j++]->GetShaderModule(),
                 "main",
                 nullptr
         );
@@ -195,7 +196,7 @@ void FawnVision::CShaderPipeline::Initialize( uint32_t types, const std::vector<
             {
                 // Store mapping between binding and the binding point
                 bindingsLookup.emplace( resource.binding, *existing );
-                existing->stageFlags |= static_cast<VkShaderStageFlags>( resource.stages );
+                existing->stageFlags |= resource.stages;
             }
             else
             {
@@ -205,7 +206,7 @@ void FawnVision::CShaderPipeline::Initialize( uint32_t types, const std::vector<
                 layoutBinding.binding         = resource.binding;
                 layoutBinding.descriptorCount = resource.arraySize;
                 layoutBinding.descriptorType  = descriptorType;
-                layoutBinding.stageFlags      = static_cast<VkShaderStageFlags>( resource.stages );
+                layoutBinding.stageFlags      = resource.stages;
                 
                 setLayoutBindings.push_back( layoutBinding );
                 
@@ -220,58 +221,111 @@ void FawnVision::CShaderPipeline::Initialize( uint32_t types, const std::vector<
     }
     
     const VkDescriptorSetLayoutCreateInfo descriptorLayout{
-            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, .bindingCount = static_cast<uint32_t>( setLayoutBindings.size()), .pBindings = setLayoutBindings.data(),
+            .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
+            .bindingCount = static_cast<uint32_t>( setLayoutBindings.size()),
+            .pBindings = setLayoutBindings.data(),
     };
     CheckVkResult(
             vkCreateDescriptorSetLayout(
-                    GetDevice()->GetVkDevice(), &descriptorLayout, nullptr, &m_descriptorSetLayout
+                    GetDevice()->GetVkDevice(),
+                    &descriptorLayout,
+                    nullptr,
+                    &m_descriptorSetLayout
             ));
     
     // Shared pipeline layout used by all pipelines
     VkPipelineLayoutCreateInfo pPipelineLayoutCreateInfo{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, .setLayoutCount = 1, .pSetLayouts = &m_descriptorSetLayout,
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+            .setLayoutCount = 1,
+            .pSetLayouts = &m_descriptorSetLayout,
     };
     CheckVkResult(
             vkCreatePipelineLayout(
-                    GetDevice()->GetVkDevice(), &pPipelineLayoutCreateInfo, nullptr, &m_pipelineLayout
+                    GetDevice()->GetVkDevice(),
+                    &pPipelineLayoutCreateInfo,
+                    nullptr,
+                    &m_pipelineLayout
             ), "failed to create pipeline layout!"
     );
     
     
     constexpr VkPipelineInputAssemblyStateCreateInfo inputAssemblyState{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO, .pNext = VK_NULL_HANDLE, .flags = 0, .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, .primitiveRestartEnable = VK_FALSE,
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+            .pNext = VK_NULL_HANDLE,
+            .flags = 0,
+            .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+            .primitiveRestartEnable = VK_FALSE,
     };
     const VkPipelineRasterizationStateCreateInfo     rasterizationState{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO, .pNext = nullptr, .flags = 0, .depthClampEnable = VK_FALSE, .polygonMode = VK_POLYGON_MODE_FILL, .cullMode = cullmode, .frontFace = VK_FRONT_FACE_CLOCKWISE, .depthBiasEnable = VK_FALSE, .depthBiasConstantFactor = 0, .depthBiasClamp = 0, .depthBiasSlopeFactor = 0, .lineWidth = 1.0f,
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .depthClampEnable = VK_FALSE,
+            .polygonMode = VK_POLYGON_MODE_FILL,
+            .cullMode = cullmode,
+            .frontFace = VK_FRONT_FACE_CLOCKWISE,
+            .depthBiasEnable = VK_FALSE,
+            .depthBiasConstantFactor = 0,
+            .depthBiasClamp = 0,
+            .depthBiasSlopeFactor = 0,
+            .lineWidth = 1.0f,
     };
     
     const std::vector                           blendAttachmentStates(
             blendAttachmentSize,
-            VkPipelineColorBlendAttachmentState{ .blendEnable = VK_FALSE, .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, }
+            VkPipelineColorBlendAttachmentState{
+                .blendEnable = VK_FALSE,
+                .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+                }
     );
     const VkPipelineColorBlendStateCreateInfo   colorBlendState{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO, .logicOpEnable = VK_FALSE, .logicOp = VK_LOGIC_OP_COPY, .attachmentCount = static_cast<uint32_t>( blendAttachmentStates.size()), .pAttachments = blendAttachmentStates.data(), .blendConstants = {
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+            .logicOpEnable = VK_FALSE,
+            .logicOp = VK_LOGIC_OP_COPY,
+            .attachmentCount = static_cast<uint32_t>( blendAttachmentStates.size()),
+            .pAttachments = blendAttachmentStates.data(),
+            .blendConstants = {
                     0.f, 0.f, 0.f, 0.f
             },
     };
     const VkPipelineDepthStencilStateCreateInfo depthStencilState{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO, .depthTestEnable = VK_TRUE, .depthWriteEnable = VK_TRUE, .depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL, .depthBoundsTestEnable = VK_FALSE, .stencilTestEnable = VK_FALSE,
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+            .depthTestEnable = VK_TRUE,
+            .depthWriteEnable = VK_TRUE,
+            .depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL,
+            .depthBoundsTestEnable = VK_FALSE,
+            .stencilTestEnable = VK_FALSE,
     };
     VkViewport                                  viewport{
-            .x = 0.0f, .y = 0.0f, .width = static_cast<float>( pSwapchain->GetExtend().width ), .height = static_cast<float>( pSwapchain->GetExtend().height ), .minDepth = 0.0f, .maxDepth = 1.0f,
+            .x = 0.0f,
+            .y = 0.0f,
+            .width = static_cast<float>( pSwapchain->GetExtend().width ),
+            .height = static_cast<float>( pSwapchain->GetExtend().height ),
+            .minDepth = 0.0f,
+            .maxDepth = 1.0f,
     };
     VkRect2D                                    scissor{
-            .offset = { 0, 0 }, .extent = pSwapchain->GetExtend(),
+            .offset = { 0, 0 },
+            .extent = pSwapchain->GetExtend(),
     };
     const VkPipelineViewportStateCreateInfo     viewportState{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, .flags = 0, .viewportCount = 1, .pViewports = &viewport, .scissorCount = 1, .pScissors = &scissor,
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+            .flags = 0,
+            .viewportCount = 1,
+            .pViewports = &viewport,
+            .scissorCount = 1,
+            .pScissors = &scissor,
     };
     
     const VkPipelineMultisampleStateCreateInfo         multisampleState{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO, .flags = 0, .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT, .sampleShadingEnable = VK_FALSE,
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+            .flags = 0,
+            .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+            .sampleShadingEnable = VK_FALSE,
     };
     const std::vector<VkVertexInputBindingDescription> vertexInputBindingDescription{
-            SVertex::GetBindingDescription(), InstanceBatch::GetBindingDescription()
+            SVertex::GetBindingDescription(),
+            InstanceBatch::GetBindingDescription()
     };
     std::vector                                        vertexInputAttributeDescriptions{
             SVertex::GetAttributeDescriptions( 0, components )
@@ -282,10 +336,32 @@ void FawnVision::CShaderPipeline::Initialize( uint32_t types, const std::vector<
             vertexInstanceInputAttributeDescriptions.begin(),
             vertexInstanceInputAttributeDescriptions.end());
     const VkPipelineVertexInputStateCreateInfo inputState{
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO, .pNext = nullptr, .flags = 0, .vertexBindingDescriptionCount = (uint32_t) vertexInputBindingDescription.size(), .pVertexBindingDescriptions = vertexInputBindingDescription.data(), .vertexAttributeDescriptionCount = static_cast<uint32_t>( vertexInputAttributeDescriptions.size()), .pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data(),
+            .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+            .pNext = nullptr,
+            .flags = 0,
+            .vertexBindingDescriptionCount = (uint32_t) vertexInputBindingDescription.size(),
+            .pVertexBindingDescriptions = vertexInputBindingDescription.data(),
+            .vertexAttributeDescriptionCount = static_cast<uint32_t>( vertexInputAttributeDescriptions.size()),
+            .pVertexAttributeDescriptions = vertexInputAttributeDescriptions.data(),
     };
     const VkGraphicsPipelineCreateInfo         pipelineCi{
-            .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO, .pNext = VK_NULL_HANDLE, .flags = 0, .stageCount = static_cast<uint32_t>( shaderStages.size()), .pStages = shaderStages.data(), .pVertexInputState = &inputState, .pInputAssemblyState = &inputAssemblyState, .pViewportState = &viewportState, .pRasterizationState = &rasterizationState, .pMultisampleState = &multisampleState, .pDepthStencilState = &depthStencilState, .pColorBlendState = &colorBlendState, .layout = m_pipelineLayout, .renderPass = renderPass.GetHandle(), .subpass = 0, .basePipelineHandle = VK_NULL_HANDLE, .basePipelineIndex = 0,
+            .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+            .pNext = VK_NULL_HANDLE,
+            .flags = 0,
+            .stageCount = static_cast<uint32_t>( shaderStages.size()),
+            .pStages = shaderStages.data(),
+            .pVertexInputState = &inputState,
+            .pInputAssemblyState = &inputAssemblyState,
+            .pViewportState = &viewportState,
+            .pRasterizationState = &rasterizationState,
+            .pMultisampleState = &multisampleState,
+            .pDepthStencilState = &depthStencilState,
+            .pColorBlendState = &colorBlendState,
+            .layout = m_pipelineLayout,
+            .renderPass = renderPass.GetHandle(),
+            .subpass = 0,
+            .basePipelineHandle = VK_NULL_HANDLE,
+            .basePipelineIndex = 0,
     };
     
     CheckVkResult(
@@ -293,7 +369,7 @@ void FawnVision::CShaderPipeline::Initialize( uint32_t types, const std::vector<
                     GetDevice()->GetVkDevice(), m_pipelineCache, 1, &pipelineCi, nullptr, &m_pipeline
             ), "failed to create graphics pipeline!"
     );
-    pSwapchain->AddRef();
+    pSwapchain->Release();
 }
 
 VkPipelineLayout FawnVision::CShaderPipeline::GetPipelineLayout() const

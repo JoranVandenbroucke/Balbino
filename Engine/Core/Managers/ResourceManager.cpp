@@ -27,6 +27,22 @@ void CResourceManager::Cleanup()
     }
     for ( const auto& [ fst, snd ] : m_loadedMaterialMap )
     {
+        for ( const auto& resource : snd->GetShaderResourcesVector() )
+        {
+            if ( resource.type == FawnVision::EShaderResourceType::BufferUniform )
+            {
+                if ( resource.binding == 0 )
+                {
+                    FawnVision::CBuffer* pUbo = m_pSystem->GetCurrentActiveScene()->GetModelBuffer();
+                    pUbo->Release();
+                }
+                else if ( resource.binding == 1 )
+                {
+                    FawnVision::CBuffer* pUbo = m_pSystem->GetCurrentActiveScene()->GetShadingBuffer();
+                    pUbo->Release();
+                }
+            }
+        }
         snd->Cleanup();
         delete snd;
     }
@@ -133,7 +149,7 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
     {
         return nullptr;
     }
-    fprintf_s(stdout, "Start loading shader %s", (char*) assetPath.data());
+    std::cout << "Start loading shader " << assetPath.data() << std::endl;
     
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
@@ -150,14 +166,14 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
         return nullptr;
     }
     
-    int32_t               cullmode;
-    int32_t               shaderType;    //eg. vertex
-    uint8_t               shaderCount;   //eg. 2 shaders
-    uint64_t              shaderSize;    //eg. 965 char long
-    std::vector<uint64_t> shadersSizes;
+    int32_t                           cullmode;
+    int32_t                           shaderTypes;    //eg. vertex
+    uint8_t                           shaderCount;   //eg. 2 shaders
+    uint64_t                          shaderSize;    //eg. 965 char long
+    std::vector<uint64_t>             shadersSizes;
     std::vector<FawnVision::CShader*> shaderVector;
     BinaryReadWrite::Read( file, cullmode );
-    BinaryReadWrite::Read( file, shaderType );
+    BinaryReadWrite::Read( file, shaderTypes );
     BinaryReadWrite::Read( file, shaderCount );
     shadersSizes.reserve( shaderCount );
     shaderVector.reserve( shaderCount );
@@ -165,7 +181,6 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
     {
         BinaryReadWrite::Read( file, shaderSize );
         shadersSizes.push_back( shaderSize );
-        shaderVector.resize( shaderSize );
     }
     for ( uint8_t i{}; i < shaderCount; ++i )
     {
@@ -177,20 +192,26 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
         
         free( pData );
         
-        shaderVector[i] = new FawnVision::CShader{ m_pRenderer->GetDevice() };
-        shaderVector[i]->Initialize(
-                shaderData.data(), shaderData.size(), FawnVision::shader_stage( shaderType & i ));
+        shaderVector.emplace_back( new FawnVision::CShader{ m_pRenderer->GetDevice() });
+        uint16_t j {FawnVision::shader_stage_vertex};
+        
+        for(int k{}; (k != (i+1)) && j < FawnVision::shader_stage_max; j *= 2 )
+        {
+            if(shaderTypes&j)
+                ++k;
+        }
+        shaderVector.back()->Initialize(
+                shaderData.data(), shaderData.size(), FawnVision::shader_stage( j / 2 ));
     }
     
     FawnVision::CShaderPipeline* pPipeline = new FawnVision::CShaderPipeline{ m_pRenderer->GetDevice() };
     
     pPipeline->Initialize(
-            shaderType,
+            shaderTypes,
             shaderVector,
             *m_pRenderer->GetRenderPass(),
             shaderVector[0]->GetVertexComponents(),
-            1,
-            m_pRenderer->GetSwatChain(),
+            1, m_pRenderer->GetSwapChain(),
             FawnVision::ECullMode::Enum( cullmode ));
     for ( uint64_t i{}; i < shaderVector.size(); ++i )
     {
@@ -198,7 +219,7 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
     }
     m_loadedShaderMap[uuid] = pPipeline;
     file.close();
-    fprintf_s(stdout, "End loading Shader %s", (char*) assetPath.data());
+    std::cout << "End loading Shader " << assetPath.data() << std::endl;
     return pPipeline;
 }
 
@@ -210,13 +231,13 @@ CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
         return nullptr;
     }
     
-    fprintf_s(stdout, "Start loading material with id %s", (char*) assetPath.data());
+    std::cout <<  "Start loading material with id " << assetPath.data() << std::endl;
     
     uint64_t uuid;
     BinaryReadWrite::Read( file, uuid );
     if ( m_loadedMaterialMap.contains( uuid ))
     {
-        fprintf_s(stdout, "End loading material with id %s", (char*) assetPath.data());
+        std::cout << "End loading material with id " << assetPath.data() << std::endl;
         return m_loadedMaterialMap.at( uuid );
     }
     uint8_t type;
@@ -278,7 +299,7 @@ CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
         return pMaterial;
     }
     file.close();
-    fprintf_s(stdout, "End loading material with id %s", (char*) assetPath.data());
+    std::cout << "End loading material with id " << assetPath.data() << std::endl;
     return nullptr;
 }
 

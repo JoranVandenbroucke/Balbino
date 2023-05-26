@@ -16,7 +16,7 @@ void FawnForge::CMainScreen::Draw()
 {
     const int           flags       = 1 << 0 | 1 << 1 | 1 << 2 | 1 << 5 | 1 << 7 | 1 << 10 | 1 << 13;
     bool                open{ true };
-    static unsigned int dockspaceID = 0;
+    static unsigned int dockspaceId = 0;
     Gui::MaxNextWindow();
     Gui::Begin( "MainWindow", open, flags );
     if ( Gui::BeginMenuBar())
@@ -70,7 +70,7 @@ void FawnForge::CMainScreen::Draw()
             }
             if ( Gui::MenuItem( "Shader Graph" ))
             {
-                m_pShaderGraph->ShowWindow();
+                m_pShaderGraph->ShowWindow(SFile{ std::string(m_pAssetBrowser->GetCurrentDirectory()), "" });
             }
             if ( Gui::MenuItem( "Properties..." ))
             {
@@ -80,11 +80,11 @@ void FawnForge::CMainScreen::Draw()
         }
         Gui::EndMenuBar();
         static constexpr int dockspaceFlags = 1 << 6;
-        dockspaceID = Gui::GetId( "MainWindowDockspace" );
-        Gui::DockSpace( dockspaceID, { 0.0f, 0.0f }, dockspaceFlags );
+        dockspaceId = Gui::GetId( "MainWindowDockspace" );
+        Gui::DockSpace( dockspaceId, { 0.0f, 0.0f }, dockspaceFlags );
     }
     Gui::End();
-    Gui::SetNextWindowDockId( dockspaceID, 1 << 2 );
+    Gui::SetNextWindowDockId( dockspaceId, 1 << 2 );
 }
 
 void FawnForge::CMainScreen::SetContext( IScene* pScene, CAssetBrowser* pAssetBrowser, CSceneHierarchy* pHierarchy, CShaderEditor* pGraph, CPropertyPanel* pPropertyPanel )

@@ -16,7 +16,7 @@ FawnVision::CDescriptorSet::CDescriptorSet( const CDevice* pDevice )
 
 FawnVision::CDescriptorSet::~CDescriptorSet()
 {
-    vkFreeDescriptorSets(GetDevice()->GetVkDevice(), m_descriptorPool, 1, &m_descriptorSet);
+//    vkFreeDescriptorSets(GetDevice()->GetVkDevice(), m_descriptorPool, 1, &m_descriptorSet);
     vkDestroyDescriptorPool(GetDevice()->GetVkDevice(), m_descriptorPool, nullptr);
 }
 

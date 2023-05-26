@@ -73,7 +73,7 @@ namespace FawnForge
         bool m_isItemSelected{};
         bool m_openItem{};
         
-        SFile              m_itemToBeCreated{ true, file_type::file_type_folder, 0, "", "", {}, 0 };
+        SFile              m_itemToBeCreated{"",""};
         std::vector<SFile> m_currentDirectory;
         std::vector<SFile> m_files;
         std::string        m_currentDirectoryName;

@@ -222,7 +222,7 @@ void Balbino::CScene::PrepareDraw()
             m_lightObject.lights[id] = SLight{
                     -1, -1, { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 }, { -1, -1, -1 }};
         }
-        m_pShadingBuffer->UpdateData( &m_lightObject, sizeof( SLightObject ) * id );
+        m_pShadingBuffer->UpdateData( &m_lightObject, sizeof( SLight ) * LIGHT_COUNT );
         
         // TODO CPU voxel Frustum culling
         // TODO GPU Frustum/Occlusion culling

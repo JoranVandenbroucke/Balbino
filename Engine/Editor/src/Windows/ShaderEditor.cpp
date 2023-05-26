@@ -144,11 +144,11 @@ void FawnForge::CShaderEditor::ShowWindow( const SFile& shader )
     
     m_links.clear();
     m_currentShaderFile.uuid = 0;
-    m_currentShaderFile.fileName = "";
     m_currentShaderFile.isFolder = true;
+    m_currentShaderFile.fileName = shader.fileName;
+    m_currentShaderFile.path = shader.path;
     m_wantsToSave = false;
     m_cullMode    = 0;
-    (void) shader;
     
     m_shaderGraph.Cleanup();
     m_shaderGraph.Initialize();
@@ -174,7 +174,7 @@ std::vector<FawnForge::CShaderEditor::SLink> FawnForge::CShaderEditor::GetNeighb
 void FawnForge::CShaderEditor::Evaluate()
 {
     // find connected node order
-    if(m_shaderGraph.Compile(m_currentShaderFile, m_cullMode))
+    if(m_shaderGraph.Compile(m_currentShaderFile, m_cullMode+1))
     {
         std::cout << "Compilation successful" << std::endl;
     }
@@ -265,7 +265,7 @@ const char* FawnForge::CShaderEditor::ToString( const ui_node_type type )
         case ui_node_type::mix:
             return "Colour/Mix";
         case ui_node_type::bump:
-            return "Vector/Mix";
+            return "Vector/Bump";
         case ui_node_type::displacement:
             return "Vector/Displacement";
         case ui_node_type::mapping:

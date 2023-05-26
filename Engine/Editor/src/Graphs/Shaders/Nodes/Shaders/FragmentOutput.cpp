@@ -2,8 +2,6 @@
 // Created by joran on 02/03/2023.
 //
 
-
-#include <format>
 #include "FragmentOutput.h"
 #include "../Attribute.h"
 
@@ -18,11 +16,8 @@ CFragmentOutputNode::CFragmentOutputNode( int& id )
                 SSocketType{ .hasEditorValues=false, .type=SSocketType::var_type_vector_3, .name="normal", .uiName="Normal" }},
         { SSocketType{ .type=SSocketType::var_type_shader, .name="shader", .uiName="Fragment Shader" }}}
 {
-    m_flags = SSocketType::compiler_define_uses_normal | SSocketType::compiler_define_uses_word_position;
-    m_flags |= 1u << ( m_diffuse + 6u );
-    m_flags |= 1u << ( m_distribution + (uint8_t) diffuse_max + 6u );
-    m_flags |= 1u << ( m_specular + (uint8_t) distribution_max + diffuse_max + 6u );
-    m_flags |= 1u << ( m_fresnel + (uint8_t) specular_max + distribution_max + diffuse_max + 6u );
+    m_flags = SSocketType::compiler_define_uses_world_position | SSocketType::compiler_define_uses_normal;
+    m_flags |= ToCompilerDefine( m_diffuse ) | ToCompilerDefine( m_distribution ) | ToCompilerDefine( m_specular ) | ToCompilerDefine( m_fresnel );
     
     for ( int i{}; i < specular_max; ++i )
     {
@@ -52,7 +47,7 @@ std::string CFragmentOutputNode::GetCode() const
 {
     return "fragment_specular(\n"
            "colour,\n"
-           "normal,\n"
+           "fragNormal,\n"
            "metallic,\n"
            "roughness,\n"
            "occlusion,\n"
@@ -65,43 +60,48 @@ void CFragmentOutputNode::GetShaderInfo( SShaderInfo& shaderInfo ) const
     shaderInfo.AddInclude( "node_fragment.glsl" );
     shaderInfo.AddInclude( "light.glsl", -100 );
     shaderInfo.AddInclude( "brdf.glsl", -100 );
-    shaderInfo.AddDefine( "BRDF_DIFFUSE", ToDefine( m_diffuse ));
-    shaderInfo.AddDefine( "BRDF_SPECULAR_D", ToDefine( m_distribution ));
-    shaderInfo.AddDefine( "BRDF_SPECULAR_V", ToDefine( m_specular ));
-    shaderInfo.AddDefine( "BRDF_SPECULAR_F", ToDefine( m_fresnel ));
+//    shaderInfo.AddDefine( "BRDF_DIFFUSE",    ToDefine( ToCompilerDefine(m_diffuse) ));
+//    shaderInfo.AddDefine( "BRDF_SPECULAR_D", ToDefine( ToCompilerDefine(m_distribution) ));
+//    shaderInfo.AddDefine( "BRDF_SPECULAR_V", ToDefine( ToCompilerDefine(m_specular) ));
+//    shaderInfo.AddDefine( "BRDF_SPECULAR_F", ToDefine( ToCompilerDefine(m_fresnel) ));
     
     if ( m_flags & SSocketType::compiler_define_uses_colour )
     {
         shaderInfo.AddBinding(
-                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 0, 1, "fragColor" }
+                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 0, 1, "fragColor" }, -99
         );
     }
     if ( m_flags & SSocketType::compiler_define_uses_uv )
     {
         shaderInfo.AddBinding(
-                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 1, 1, "fragTexCoord" }
+                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 1, 1, "fragTexCoord" }, -99
         );
     }
     if ( m_flags & SSocketType::compiler_define_uses_normal )
     {
         shaderInfo.AddBinding(
-                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_3, 0, 2, 1, "fragNormal" }
+                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_3, 0, 2, 1, "fragNormal" }, -99
         );
+        shaderInfo.AddDefine( ToDefine( SSocketType::compiler_define_uses_normal ), "", true );
     }
     if ( m_flags & SSocketType::compiler_define_uses_tangent )
     {
         shaderInfo.AddBinding(
-                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 3, 1, "fragTangent" }
+                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 3, 1, "fragTangent" }, -99
         );
     }
-    if ( m_flags & SSocketType::compiler_define_uses_word_position )
+    if ( m_flags & SSocketType::compiler_define_uses_world_position )
     {
         shaderInfo.AddBinding(
-                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 4, 1, "fragWorldPos" }
+                { SShaderBinding::layout_input, SShaderBinding::value_type_vec_4, 0, 4, 1, "fragWorldPos" }, -99
         );
+        shaderInfo.AddDefine( ToDefine( SSocketType::compiler_define_uses_world_position ), "", true );
     }
     
-    shaderInfo.AddBinding( { SShaderBinding::layout_output, SShaderBinding::value_type_vec_4, 0, 0, 0, "outFragcolor" } );
+    shaderInfo.AddBinding(
+            { SShaderBinding::layout_output, SShaderBinding::value_type_vec_4, 0, 0, 0, "outFragcolor" },
+            -99
+    );
     SShaderBinding binding{ SShaderBinding::layout_uniform, SShaderBinding::value_type_struct, 0, 1, 1, "LightData" };
     binding.members.emplace_back(
             SShaderBinding::layout_max,
@@ -117,10 +117,8 @@ void CFragmentOutputNode::GetShaderInfo( SShaderInfo& shaderInfo ) const
 void CFragmentOutputNode::SetFlag( SSocketType::compiler_define flags )
 {
     m_flags = flags;
-    m_flags |= 1u << ( m_diffuse + 6u );
-    m_flags |= 1u << ( m_distribution + (uint8_t) diffuse_max + 6u );
-    m_flags |= 1u << ( m_specular + (uint8_t) distribution_max + diffuse_max + 6u );
-    m_flags |= 1u << ( m_fresnel + (uint8_t) specular_max + distribution_max + diffuse_max + 6u );
+    m_flags |= SSocketType::compiler_define_uses_world_position | SSocketType::compiler_define_uses_normal;
+    m_flags |= ToCompilerDefine( m_diffuse ) | ToCompilerDefine( m_distribution ) | ToCompilerDefine( m_specular ) | ToCompilerDefine( m_fresnel );
 }
 
 const char* CFragmentOutputNode::ToString( CFragmentOutputNode::diffuse type )
@@ -191,71 +189,71 @@ const char* CFragmentOutputNode::ToString( CFragmentOutputNode::fresnel type )
     }
     return nullptr;
 }
-const char* CFragmentOutputNode::ToDefine( CFragmentOutputNode::diffuse type )
+SSocketType::compiler_define CFragmentOutputNode::ToCompilerDefine( CFragmentOutputNode::diffuse type )
 {
     switch ( type )
     {
         case diffuse_lambert:
-            return "DIFFUSE_LAMBERT";
+            return SSocketType::compiler_define_diffuse_lambert;
         case diffuse_burley:
-            return "DIFFUSE_BURLEY";
+            return SSocketType::compiler_define_diffuse_burley;
         case diffuse_oren_nayar:
-            return "DIFFUSE_OREN_NAYAR";
+            return SSocketType::compiler_define_diffuse_oren_nayar;
         default:
             break;
     }
-    return nullptr;
+    return SSocketType::compiler_define_diffuse_lambert;
 }
-const char* CFragmentOutputNode::ToDefine( CFragmentOutputNode::distribution type )
+SSocketType::compiler_define CFragmentOutputNode::ToCompilerDefine( CFragmentOutputNode::distribution type )
 {
     switch ( type )
     {
         case distribution_blin_phong:
-            return "SPECULAR_D_BLIN_PHONG";
+            return SSocketType::compiler_define_specular_blin_phong;
         case distribution_beckmann:
-            return "SPECULAR_D_BECKMANN";
+            return SSocketType::compiler_define_specular_beckmann;
         case distribution_ggx:
-            return "SPECULAR_D_GGX";
+            return SSocketType::compiler_define_specular_ggx;
         default:
             break;
     }
-    return nullptr;
+    return SSocketType::compiler_define_specular_ggx;
 }
-const char* CFragmentOutputNode::ToDefine( CFragmentOutputNode::specular type )
+SSocketType::compiler_define CFragmentOutputNode::ToCompilerDefine( CFragmentOutputNode::specular type )
 {
     switch ( type )
     {
         case specular_implicit:
-            return "SPECULAR_S_IMPLICIT";
+            return SSocketType::compiler_define_specular_implicit;
         case specular_neumann:
-            return "SPECULAR_S_NEUMANN";
+            return SSocketType::compiler_define_specular_neumann;
         case specular_cooktorrance:
-            return "SPECULAR_S_COOKTORRANCE";
+            return SSocketType::compiler_define_specular_cook_torrance;
         case specular_kelemen:
-            return "SPECULAR_S_KELEMEN";
+            return SSocketType::compiler_define_specular_kelemen;
         case specular_ggx_correlated:
-            return "SPECULAR_S_GGX_CORRELATED";
+            return SSocketType::compiler_define_specular_ggx_correlated;
         case specular_ggx_correlated_fast:
-            return "SPECULAR_S_GGX_CORRELATED_FAST";
+            return SSocketType::compiler_define_specular_ggx_correlated_fast;
         case specular_kelemen_two:
-            return "SPECULAR_S_KELEMEN_TWO";
+            return SSocketType::compiler_define_specular_kelemen_two;
         case specular_neubelt:
-            return "SPECULAR_S_NEUBELT";
+            return SSocketType::compiler_define_specular_neubelt;
         default:
             break;
     }
-    return nullptr;
+    return SSocketType::compiler_define_specular_beckmann;
 }
-const char* CFragmentOutputNode::ToDefine( CFragmentOutputNode::fresnel type )
+SSocketType::compiler_define CFragmentOutputNode::ToCompilerDefine( CFragmentOutputNode::fresnel type )
 {
     switch ( type )
     {
         case fresnel_cook_torrance:
-            return "SPECULAR_F_COOK_TORRANCE_FRESNEL";
+            return SSocketType::compiler_define_fresnel_cook_torrance;
         case fresnel_schlick:
-            return "SPECULAR_F_SCHLICK";
+            return SSocketType::compiler_define_fresnel_schlick;
         default:
             break;
     }
-    return nullptr;
+    return SSocketType::compiler_define_fresnel_cook_torrance;
 }

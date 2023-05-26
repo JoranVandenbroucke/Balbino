@@ -53,9 +53,9 @@ public:
     
     void Cleanup() const
     {
+        m_command->Release();
         m_descriptorSet->Release();
         m_shaderPipeline->Release();
-        m_command->Release();
     }
     
     void Bind() const

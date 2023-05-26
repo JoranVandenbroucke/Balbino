@@ -68,7 +68,11 @@ void FawnVision::CShader::Initialize( const void* pShaderCode, size_t shaderCode
             stageBits = VK_SHADER_STAGE_MESH_BIT_NV;
             break;
         case shader_stage_tessellation_control:
+            stageBits = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+            break;
         case shader_stage_tessellation_evaluation:
+            stageBits = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+            break;
         case shader_stage_compute:
         case shader_stage_max:
             break;
@@ -406,6 +410,11 @@ VkShaderModule FawnVision::CShader::CreateShaderModule( const std::vector<uint32
     return shaderModule;
 }
 
+const std::vector<FawnVision::EVertexComponent::Enum>& FawnVision::CShader::GetVertexComponents() const
+{
+    return m_vertexComponents;
+}
+
 shaderc_include_result* FawnVision::CFileIncluder::GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth )
 {
     (void) includeDepth;
@@ -448,8 +457,4 @@ void FawnVision::CFileIncluder::ReleaseInclude( shaderc_include_result* includeR
 const std::unordered_set<std::string>& FawnVision::CFileIncluder::FilePathTrace() const
 {
     return m_includedFiles;
-}
-const std::vector<FawnVision::EVertexComponent::Enum>& FawnVision::CShader::GetVertexComponents() const
-{
-    return m_vertexComponents;
 }

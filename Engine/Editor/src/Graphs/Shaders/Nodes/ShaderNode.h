@@ -31,7 +31,7 @@ enum shader_stage : uint16_t
     shader_stage_all                     = shader_stage_max - 1
 };
 
-const char* ToStringUI( shader_stage type );
+const char* ToStringUi( shader_stage type );
 const char* ToString( shader_stage type );
 const char* ToDefine( shader_stage type );
 
@@ -50,7 +50,7 @@ struct SSocketType
     {
         // Vertex flags
         compiler_define_uses_model_view      = ( 1 << 0 ),
-        compiler_define_uses_word_position   = ( 1 << 1 ),
+        compiler_define_uses_world_position  = ( 1 << 1 ),
         compiler_define_uses_normal          = ( 1 << 2 ),
         compiler_define_uses_tangent         = ( 1 << 3 ),
         compiler_define_uses_colour          = ( 1 << 4 ),
@@ -68,7 +68,7 @@ struct SSocketType
         // Visibility flags
         compiler_define_specular_implicit            = ( 1 << 13 ),
         compiler_define_specular_neumann             = ( 1 << 14 ),
-        compiler_define_specular_cooktorrance        = ( 1 << 15 ),
+        compiler_define_specular_cook_torrance       = ( 1 << 15 ),
         compiler_define_specular_kelemen             = ( 1 << 16 ),
         compiler_define_specular_ggx_correlated      = ( 1 << 17 ),
         compiler_define_specular_ggx_correlated_fast = ( 1 << 18 ),
