@@ -1,7 +1,7 @@
 #ifndef BRICK_TEXTURE_GLSL
 #define BRICK_TEXTURE_GLSL
 //  https://thebookofshaders.com/09/
-vec3 BrickTile(vec3 point, float size, float offset, float offsetFrequency, float squash, float squashFrequecy){
+vec3 brick_tile(vec3 point, float size, float offset, float offsetFrequency, float squash, float squashFrequecy){
     point *= size;
 
 //  Here is where the offset is happening
@@ -13,7 +13,7 @@ vec3 BrickTile(vec3 point, float size, float offset, float offsetFrequency, floa
     return fract(point);
 }
 
-float Box(vec3 point, vec3 size){
+float box(vec3 point, vec3 size){
     size = vec3( thickness ) - size * thickness;
 
     vec3 uv = smoothstep( size, size + vec3( 1e-4 ), point);
@@ -22,7 +22,7 @@ float Box(vec3 point, vec3 size){
     return uv.x * uv.y * uv.z;
 }
 
-vec3 Brick(vec3 point, vec3 color1, vec3 color2, float morterSize, float size, float offset, float offsetFrequency, float squash, float squashFrequecy)
+vec3 brick(vec3 point, vec3 color1, vec3 color2, float morterSize, float size, float offset, float offsetFrequency, float squash, float squashFrequecy)
 {
     point = brickTile(point, size, offset, offsetFrequency, squash, squashFrequecy);
     return mix( color1, color2, box( st, vec3(1 - morterSize) ));

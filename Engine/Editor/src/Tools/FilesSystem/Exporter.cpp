@@ -18,21 +18,21 @@ bool FawnForge::Exporter::ExportShader( const std::string& assetName, const std:
         return false;
     }
     
-    BinaryReadWrite::Write( file, (uint64_t) id );
-    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_shader );
-    BinaryReadWrite::Write( file, cullmode );
-    BinaryReadWrite::Write( file, types );
-    BinaryReadWrite::Write( file, (uint8_t) compiledShaders.size());
+    Serialization::Write( file, (uint64_t) id );
+    Serialization::Write( file, (uint8_t) file_type::file_type_shader );
+    Serialization::Write( file, cullmode );
+    Serialization::Write( file, types );
+    Serialization::Write( file, (uint8_t) compiledShaders.size());
     for ( uint8_t i{}; i < (uint8_t) compiledShaders.size(); ++i )
     {
-        BinaryReadWrite::Write( file, (uint64_t) compiledShaders[i].size());
+        Serialization::Write( file, (uint64_t) compiledShaders[i].size());
     }
     for ( uint8_t i{}; i < (uint8_t) compiledShaders.size(); ++i )
     {
-        BinaryReadWrite::Write(
+        Serialization::Write(
                 file, compiledShaders[i].data(), (uint64_t) compiledShaders[i].size() * sizeof( uint32_t ));
     }
-    BinaryReadWrite::Write( file, editorData );
+    Serialization::Write( file, editorData );
     file.close();
     return true;
 }
@@ -48,16 +48,16 @@ bool FawnForge::Exporter::ExportMesh( const std::string& assetName, const std::s
         return false;
     }
     
-    BinaryReadWrite::Write( file, (uint64_t) id );
-    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_model );
-    BinaryReadWrite::Write( file, (uint64_t) indices.size());
-    BinaryReadWrite::Write( file, (uint64_t) vertices.size());
-    BinaryReadWrite::Write( file, (uint64_t) pMetadata.size());
-    BinaryReadWrite::Write( file, indices.data(), sizeof( uint32_t ) * indices.size());
-    BinaryReadWrite::Write( file, vertices.data(), sizeof( FawnVision::SVertex ) * vertices.size());
+    Serialization::Write( file, (uint64_t) id );
+    Serialization::Write( file, (uint8_t) file_type::file_type_model );
+    Serialization::Write( file, (uint64_t) indices.size());
+    Serialization::Write( file, (uint64_t) vertices.size());
+    Serialization::Write( file, (uint64_t) pMetadata.size());
+    Serialization::Write( file, indices.data(), sizeof( uint32_t ) * indices.size());
+    Serialization::Write( file, vertices.data(), sizeof( FawnVision::SVertex ) * vertices.size());
     for ( const auto& metadata : pMetadata )
     {
-        BinaryReadWrite::Write( file, metadata );
+        Serialization::Write( file, metadata );
     }
     
     file.close();
@@ -75,11 +75,11 @@ bool FawnForge::Exporter::ExportMaterial( const std::string& assetName, const st
         return false;
     }
     
-    BinaryReadWrite::Write( file, (uint64_t) id );
-    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_material );
-    BinaryReadWrite::Write( file, (uint64_t) shaderId );
-    BinaryReadWrite::Write( file, resources.size());
-    BinaryReadWrite::Write( file, resources.data(), resources.size() * sizeof( FawnVision::SShaderResource ));
+    Serialization::Write( file, (uint64_t) id );
+    Serialization::Write( file, (uint8_t) file_type::file_type_material );
+    Serialization::Write( file, (uint64_t) shaderId );
+    Serialization::Write( file, resources.size());
+    Serialization::Write( file, resources.data(), resources.size() * sizeof( FawnVision::SShaderResource ));
     
     file.close();
     return true;
@@ -96,24 +96,24 @@ bool FawnForge::Exporter::ExportImage( const std::string& assetName, const std::
         return false;
     }
     
-    BinaryReadWrite::Write( file, (uint64_t) id );
-    BinaryReadWrite::Write( file, (uint8_t) file_type::file_type_image );
-    BinaryReadWrite::Write( file, imageType );
-    BinaryReadWrite::Write( file, imageFormat );
-    BinaryReadWrite::Write( file, mips );
-    BinaryReadWrite::Write( file, layers );
-    BinaryReadWrite::Write( file, anisotropy );
-    BinaryReadWrite::Write( file, sampleLevel );
-    BinaryReadWrite::Write( file, mipmapMode );
-    BinaryReadWrite::Write( file, filterMode );
-    BinaryReadWrite::Write( file, wrapModeU );
-    BinaryReadWrite::Write( file, wrapModeV );
-    BinaryReadWrite::Write( file, wrapModeW );
-    BinaryReadWrite::Write( file, width );
-    BinaryReadWrite::Write( file, height );
-    BinaryReadWrite::Write( file, depth );
-    BinaryReadWrite::Write( file, pitch );
-    BinaryReadWrite::Write( file, pData, width * height * depth * pitch );
+    Serialization::Write( file, (uint64_t) id );
+    Serialization::Write( file, (uint8_t) file_type::file_type_image );
+    Serialization::Write( file, imageType );
+    Serialization::Write( file, imageFormat );
+    Serialization::Write( file, mips );
+    Serialization::Write( file, layers );
+    Serialization::Write( file, anisotropy );
+    Serialization::Write( file, sampleLevel );
+    Serialization::Write( file, mipmapMode );
+    Serialization::Write( file, filterMode );
+    Serialization::Write( file, wrapModeU );
+    Serialization::Write( file, wrapModeV );
+    Serialization::Write( file, wrapModeW );
+    Serialization::Write( file, width );
+    Serialization::Write( file, height );
+    Serialization::Write( file, depth );
+    Serialization::Write( file, pitch );
+    Serialization::Write( file, pData, width * height * depth * pitch );
     
     file.close();
     return true;

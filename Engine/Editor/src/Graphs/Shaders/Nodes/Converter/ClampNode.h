@@ -2,8 +2,7 @@
 // Created by joran on 12/03/2023.
 //
 
-#ifndef ENGINE_CLAMPNODE_H
-#define ENGINE_CLAMPNODE_H
+#pragma once
 #include <set>
 #include "../ShaderNode.h"
 
@@ -21,4 +20,3 @@ public:
     [[nodiscard]] std::string GetCode() const override;
     void GetShaderInfo( SShaderInfo& shaderInfo ) const override;
 };
-#endif //ENGINE_CLAMPNODE_H

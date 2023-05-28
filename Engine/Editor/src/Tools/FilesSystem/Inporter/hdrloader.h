@@ -6,9 +6,7 @@
 	Info:		Load HDR image and Convert to a set of float32 RGB triplet.
 ************************************************************************************/
 
-#ifndef FOLDER_PNG_HDRLOADER_H
-#define FOLDER_PNG_HDRLOADER_H
-
+#pragma once
 class HDRLoaderResult
 {
 public:
@@ -23,4 +21,4 @@ public:
     static bool load( const char* fileName, HDRLoaderResult& res );
 };
 
-#endif //FOLDER_PNG_HDRLOADER_H
+

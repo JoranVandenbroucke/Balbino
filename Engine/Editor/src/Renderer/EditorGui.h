@@ -2,9 +2,7 @@
 // Created by Joran on 10/06/2022.
 //
 
-#ifndef BALBINO_EDITORGUI_H
-#define BALBINO_EDITORGUI_H
-
+#pragma once
 #include <vector>
 #include <string>
 #include <glm/vec2.hpp>
@@ -102,4 +100,4 @@ namespace FawnForge::Gui
     void Disable();
     void Enable();
 }
-#endif //BALBINO_EDITORGUI_H
+

@@ -2,9 +2,7 @@
 // Created by Joran Vandenbroucke on 27/05/2022.
 //
 
-#ifndef GAME_IMAGETEXTURE_H
-#define GAME_IMAGETEXTURE_H
-
+#pragma once
 #include <set>
 #include "../ShaderNode.h"
 
@@ -52,4 +50,4 @@ private:
 };
 
 
-#endif //GAME_IMAGETEXTURE_H
+

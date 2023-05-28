@@ -2,9 +2,7 @@
 // Created by joran on 23/10/2022.
 //
 
-#ifndef GAME_PROPERTYPANEL_H
-#define GAME_PROPERTYPANEL_H
-
+#pragma once
 #include <cstdint>
 #include <UUID.h>
 
@@ -87,4 +85,3 @@ namespace FawnForge
     };
 } // FawnForge
 
-#endif //GAME_PROPERTYPANEL_H

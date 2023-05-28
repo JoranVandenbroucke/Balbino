@@ -2,9 +2,7 @@
 // Created by joran on 13/06/2022.
 //
 
-#ifndef GAME_MESHFILEIMPORTER_H
-#define GAME_MESHFILEIMPORTER_H
-
+#pragma once
 #include <filesystem>
 #include <MeshMetadata.h>
 #include <Vertex.h>
@@ -58,4 +56,4 @@ namespace FawnForge
     };
 }
 
-#endif //GAME_MESHFILEIMPORTER_H
+

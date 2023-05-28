@@ -2,8 +2,7 @@
 // Created by joran on 12/03/2023.
 //
 
-#ifndef ENGINE_COLORINVERTNODE_H
-#define ENGINE_COLORINVERTNODE_H
+#pragma once
 #include <unordered_set>
 #include <set>
 #include "../ShaderNode.h"
@@ -25,4 +24,3 @@ public:
 };
 
 
-#endif //ENGINE_COLORINVERTNODE_H

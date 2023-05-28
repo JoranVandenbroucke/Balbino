@@ -9,28 +9,10 @@
 CBrightContrastNode::CBrightContrastNode( int& id )
         : CShaderNode{
         id, {
-                SSocketType{ true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "colour", "Colour" },
-                SSocketType{
-                        true,
-                        SSocketType::var_type_float,
-                        SSocketType::compiler_define( 0 ),
-                        "brightness",
-                        "Brightness"
-                },
-                SSocketType{
-                        true,
-                        SSocketType::var_type_float,
-                        SSocketType::compiler_define( 0 ),
-                        "contrast",
-                        "Contrast"
-                }}, {
-                SSocketType{
-                        true,
-                        SSocketType::var_type_color,
-                        SSocketType::compiler_define( 0 ),
-                        "out_colour",
-                        "Out Colour"
-                }}}
+                SSocketType{ .type=SSocketType::var_type_color, .name="colour", .uiName="Colour" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="brightness", .uiName="Brightness"},
+                SSocketType{ .type=SSocketType::var_type_float, .name="contrast", .uiName="Contrast"}}, {
+                SSocketType{ .type=SSocketType::var_type_color, .name="out_colour", .uiName="Out Colour"}}}
 {
 }
 void CBrightContrastNode::Draw()

@@ -30,28 +30,23 @@ namespace FawnForge
             //Shader
             shader_node,
             vertex_output,
-//            GeometryOutput,
-//            TesselationControl,
-//            TesselationEvaluation,
+            //todo geometry_output,
+            //todo tesselation_control,
+            //todo tesselation_evaluation,
             fragment_output,
-//            UnlitFragmentOutput,
+            fragment_unlit_output,
             
-            ////////blender nodes////////
             //Input
-            //todo AmbientOcclusion,
-            //todo Attribute,
-            //todo Bevel,
-            //todo CameraData,
-            //todo Fresnel,
-            //todo HairInfo,
-            //todo ObjectInfo,
-            //todo ParticleInfo,
-            //todo RGB,
-            //todo Tangent,
-            //todo UVMap,
-            //todo Value,
-            //todo VertexColor,
-            //todo Wireframe,
+            camera_data,
+            //todo bevel,
+            //todo fresnel,
+            //todo rgb,
+            //todo value,
+            //todo normal,
+            //todo tangent,
+            //todo uv_map,
+            //todo vertex_color,
+            //todo wireframe,
             
             //Texture
             //todo BrickTexture,
@@ -73,36 +68,36 @@ namespace FawnForge
             hue_saturation_value,
             invert,
             mix,
-            //todo Replace,
-            //todo WhiteBalance,
-            //todo ColorMask,
+            //todo replace,
+            //todo white_balance,
+            //todo color_mask,
+            //todo colorspace_conversion,
             
             //Vector,
             bump,
             displacement,
             mapping,
             normal_map,
-            //todo NormalBlend,
-            //todo VectorCurves,
-            //todo VectorDisplacement,
-            //todo VectorRotate,
-            //todo VectorTransform,
+            //todo normal_blend,
+            //todo vector_curves,
+            //todo vector_displacement,
+            //todo vector_rotate,
+            //todo vector_transform,
             
             //Converter
-            //todo Blackbody,
+            //todo blackbody,
             clamp,
-            //todo CombineXYZ,
-            //todo CombineRGB,
-            //todo SeparateXYZ,
-            //todo SeparateRGB,
-            //todo FloatCurve,
-            //todo MapRange,
+            combine_xyz,
+            combine_rgb,
+            separate_xyz,
+            separate_rgb,
+            //todo float_curve,
+            //todo map_range,
             math,
             rgb_to_bw,
             vector_math,
-            //todo Wavelength,
-            //todo Dither,
-            //todo ColorspaceConversion,
+            //todo wavelength,
+            //todo dither,
             
             max
         };
@@ -127,6 +122,10 @@ namespace FawnForge
         CShaderGraph m_shaderGraph;
         
         std::vector<SLink> GetNeighbors( int currentNode );
+        
+        std::unordered_map<ui_node_type, CShaderNode*(*)(CShaderGraph&)> m_nodeCreationMap;
+        static std::unordered_map<ui_node_type, const char*> m_nodeNameMap;
+        
         void EnterFileName();
         void Evaluate();
         void AddNode( ui_node_type type, const glm::vec2& position );

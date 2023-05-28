@@ -2,8 +2,7 @@
 // Created by joran on 09/03/2023.
 //
 
-#ifndef ENGINE_MATHNODE_H
-#define ENGINE_MATHNODE_H
+#pragma once
 #include <unordered_set>
 #include <set>
 #include "../ShaderNode.h"
@@ -76,4 +75,3 @@ private:
 };
 
 
-#endif //ENGINE_MATHNODE_H

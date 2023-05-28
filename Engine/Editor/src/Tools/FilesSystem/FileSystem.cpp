@@ -76,8 +76,8 @@ SFile FawnForge::GetData( const std::filesystem::path& path )
         if ( fileStream.is_open())
         {
             uint8_t value;
-            BinaryReadWrite::Read( fileStream, file.uuid );
-            BinaryReadWrite::Read( fileStream, value );
+            Serialization::Read( fileStream, file.uuid );
+            Serialization::Read( fileStream, value );
             
             file.type = static_cast< file_type >( value );
             

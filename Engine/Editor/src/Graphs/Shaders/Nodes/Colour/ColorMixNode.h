@@ -2,8 +2,7 @@
 // Created by joran on 12/03/2023.
 //
 
-#ifndef ENGINE_COLORMIX_H
-#define ENGINE_COLORMIX_H
+#pragma once
 #include <unordered_set>
 #include <set>
 #include "../ShaderNode.h"
@@ -51,4 +50,4 @@ private:
     const char* ToString( CColorMixNode::MixMode type );
 };
 
-#endif //ENGINE_COLORINVERTNODE_H
+

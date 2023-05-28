@@ -30,9 +30,9 @@ out vec4 outColor
         vec3 l = normalize(lightVector);
         if(light.type != 0)
         {
-            lightColor *= GetSquareFalloffAttenuation(lightVector,1/light.size.x);
+            lightColor *= get_square_falloff_attenuation(lightVector,1/light.size.x);
             if(light.type == 2)
-            lightColor *= GetSpotAngleAttenuation(l, light.direction,light.size.y, light.size.z);
+            lightColor *= get_spot_angle_attenuation(l, light.direction,light.size.y, light.size.z);
         }
         else
         {

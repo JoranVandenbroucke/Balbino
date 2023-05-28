@@ -52,13 +52,26 @@ out vec4 position
     #endif
     
     #if defined(USES_WORLD_POSITION)
+    #if defined(USES_MODEL_VIEW)
     worldPos = model * vec4(inPos, 1.0f);
+    #else
+    worldPos = vec4(inPos, 1.0f);
+    #endif
     #endif
     
     #if defined(USES_NORMAL)
+    #if defined(USES_MODEL_VIEW)
     normal = normalize(mat3(model) * inNormal);
+    #else
+    normal = normalize(inNormal);
+    #endif
+    
     #if defined(USES_TANGENT)
+    #if defined(USES_MODEL_VIEW)
     tangent = vec4(normalize(mat3(model) * inTangent.xyz), inTangent.w);
+    #else
+    tangent = inTangent;
+    #endif
     #endif
     #endif
     

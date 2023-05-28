@@ -2,9 +2,7 @@
 // Created by joran on 20/08/2022.
 //
 
-#ifndef BALBINO_EXPORTER_H
-#define BALBINO_EXPORTER_H
-
+#pragma once
 #include <string>
 #include <unordered_map>
 #include <Vertex.h>
@@ -76,4 +74,4 @@ namespace FawnForge::Exporter
         */
         bool ExportImage( const std::string& assetName, const std::string& assetPath, uint8_t imageType, uint32_t imageFormat, uint8_t mips, uint8_t layers, uint32_t width, uint32_t height, uint32_t depth, uint8_t pitch, const void* pData, int anisotropy, int sampleLevel, int mipmapMode, int filterMode, int wrapModeU, int wrapModeV, int wrapModeW, CUuid id = CUuid{} );
     }
-#endif //BALBINO_EXPORTER_H
+

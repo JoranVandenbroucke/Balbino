@@ -2,8 +2,7 @@
 // Created by joran on 09/10/2022.
 //
 
-#ifndef GAME_RENDERPASS_H
-#define GAME_RENDERPASS_H
+#pragma once
 #include "Base.h"
 #include "Common.h"
 
@@ -33,4 +32,3 @@ namespace FawnVision
     };
 } // FawnVision
 
-#endif //GAME_RENDERPASS_H

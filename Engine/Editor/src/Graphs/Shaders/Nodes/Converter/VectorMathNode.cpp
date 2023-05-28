@@ -5,12 +5,12 @@
 CVectorMathNode::CVectorMathNode( int& id )
         : CShaderNode{
         id, {
-                SSocketType{ false, SSocketType::var_type_vector_3, SSocketType::compiler_define( 0 ), "v1", "Vector" },
-                SSocketType{ false, SSocketType::var_type_vector_3, SSocketType::compiler_define( 0 ), "v2", "Vector" },
-                SSocketType{ false, SSocketType::var_type_vector_3, SSocketType::compiler_define( 0 ), "v2", "Vector" },
-                SSocketType{ false, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "eta", "val" }}, {
-                SSocketType{ false, SSocketType::var_type_vector_3, SSocketType::compiler_define( 0 ), "v4", "Vector" },
-                SSocketType{ false, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "f4", "Vector" }}}
+                SSocketType{ .type=SSocketType::var_type_vector_3, .name="v1", .uiName="Vector" },
+                SSocketType{ .type=SSocketType::var_type_vector_3, .name="v2", .uiName="Vector" },
+                SSocketType{ .type=SSocketType::var_type_vector_3, .name="v2", .uiName="Vector" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="eta", .uiName="val" }}, {
+                SSocketType{ .type=SSocketType::var_type_vector_3, .name="v4", .uiName="Vector" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="f4", .uiName="Vector" }}}
 {
     m_allModeNames.reserve( math_mode::math_mode_max );
     for ( int n = 0; n < math_mode::math_mode_max; ++n )

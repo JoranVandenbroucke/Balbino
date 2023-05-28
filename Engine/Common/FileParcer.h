@@ -114,7 +114,7 @@ struct SFile
     }
 };
 
-namespace BinaryReadWrite
+namespace Serialization
 {
     //write
     template<typename T>
@@ -756,7 +756,7 @@ inline std::string SanitizePath( std::string path )
     return path;
 }
 
-inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const std::string& value )
+inline std::ostream& Serialization::Write( std::ostream& file, const std::string& value )
 {
     const char* pText = value.c_str();
     const int size = static_cast< int >( value.size());
@@ -765,7 +765,7 @@ inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const std::stri
     return file.write( pText, size );
 }
 
-inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const FawnVision::SShaderResource& value )
+inline std::ostream& Serialization::Write( std::ostream& file, const FawnVision::SShaderResource& value )
 {
     if ( value.stages == VK_SHADER_STAGE_VERTEX_BIT )
     {
@@ -798,7 +798,7 @@ inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const FawnVisio
     return file;
 }
 
-inline std::istream& BinaryReadWrite::Read( std::istream& file, std::string& value )
+inline std::istream& Serialization::Read( std::istream& file, std::string& value )
 {
     value.clear();
     int size{};
@@ -814,7 +814,7 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, std::string& val
     return file;
 }
 
-inline std::istream& BinaryReadWrite::Read( std::istream& file, FawnVision::SShaderResource& value )
+inline std::istream& Serialization::Read( std::istream& file, FawnVision::SShaderResource& value )
 {
     uint8_t  resourceType;
     uint8_t  resourceMode;
@@ -854,13 +854,13 @@ inline std::istream& BinaryReadWrite::Read( std::istream& file, FawnVision::SSha
     return file;
 }
 
-inline std::istream& BinaryReadWrite::IsAtStart( std::istream& file, bool& isAtStart )
+inline std::istream& Serialization::IsAtStart( std::istream& file, bool& isAtStart )
 {
     isAtStart = (uint32_t) file.tellg() <= (uint32_t) std::istream::beg;
     return file;
 }
 
-inline std::istream& BinaryReadWrite::IsAtEnd( std::istream& file, bool& isAtEnd )
+inline std::istream& Serialization::IsAtEnd( std::istream& file, bool& isAtEnd )
 {
     auto current = (int) file.tellg();
     MoveCursorToEnd( file );
@@ -871,70 +871,70 @@ inline std::istream& BinaryReadWrite::IsAtEnd( std::istream& file, bool& isAtEnd
     return file;
 }
 
-inline std::istream& BinaryReadWrite::MoveCursor( std::istream& file, int64_t value )
+inline std::istream& Serialization::MoveCursor( std::istream& file, int64_t value )
 {
     file.seekg( value, std::ios::cur );
     return file;
 }
 
-inline std::istream& BinaryReadWrite::MoveCursorTo( std::istream& file, int value )
+inline std::istream& Serialization::MoveCursorTo( std::istream& file, int value )
 {
     file.seekg( value );
     return file;
 }
 
-inline std::istream& BinaryReadWrite::MoveCursorToStart( std::istream& file )
+inline std::istream& Serialization::MoveCursorToStart( std::istream& file )
 {
     file.seekg( 0, std::ios::beg );
     return file;
 }
 
-inline std::istream& BinaryReadWrite::MoveCursorToEnd( std::istream& file )
+inline std::istream& Serialization::MoveCursorToEnd( std::istream& file )
 {
     file.seekg( 0, std::ios::end );
     return file;
 }
 
-inline std::istream& BinaryReadWrite::GetCursorPosition( std::istream& file, uint64_t& size )
+inline std::istream& Serialization::GetCursorPosition( std::istream& file, uint64_t& size )
 {
     size = file.tellg();
     return file;
 }
 
-inline std::istream& BinaryReadWrite::GetData( std::istream& file, char* pData, const int64_t size )
+inline std::istream& Serialization::GetData( std::istream& file, char* pData, const int64_t size )
 {
     file.read( pData, size );
     return file;
 }
-inline std::ostream& BinaryReadWrite::Write( std::ostream& file, const SMeshMetadata& value )
+inline std::ostream& Serialization::Write( std::ostream& file, const SMeshMetadata& value )
 {
-    BinaryReadWrite::Write( file, value.boundingBox.min.x );
-    BinaryReadWrite::Write( file, value.boundingBox.min.y );
-    BinaryReadWrite::Write( file, value.boundingBox.min.z );
-    BinaryReadWrite::Write( file, value.boundingBox.max.x );
-    BinaryReadWrite::Write( file, value.boundingBox.max.y );
-    BinaryReadWrite::Write( file, value.boundingBox.max.z );
-    BinaryReadWrite::Write( file, value.boundingSphere.center.x );
-    BinaryReadWrite::Write( file, value.boundingSphere.center.y );
-    BinaryReadWrite::Write( file, value.boundingSphere.center.z );
-    BinaryReadWrite::Write( file, value.boundingSphere.radius );
-    BinaryReadWrite::Write( file, value.firstIndex );
-    BinaryReadWrite::Write( file, value.indexCount );
+    Serialization::Write( file, value.boundingBox.min.x );
+    Serialization::Write( file, value.boundingBox.min.y );
+    Serialization::Write( file, value.boundingBox.min.z );
+    Serialization::Write( file, value.boundingBox.max.x );
+    Serialization::Write( file, value.boundingBox.max.y );
+    Serialization::Write( file, value.boundingBox.max.z );
+    Serialization::Write( file, value.boundingSphere.center.x );
+    Serialization::Write( file, value.boundingSphere.center.y );
+    Serialization::Write( file, value.boundingSphere.center.z );
+    Serialization::Write( file, value.boundingSphere.radius );
+    Serialization::Write( file, value.firstIndex );
+    Serialization::Write( file, value.indexCount );
     return file;
 }
-inline std::istream& BinaryReadWrite::Read( std::istream& file, SMeshMetadata& value )
+inline std::istream& Serialization::Read( std::istream& file, SMeshMetadata& value )
 {
-    BinaryReadWrite::Read( file, value.boundingBox.min.x );
-    BinaryReadWrite::Read( file, value.boundingBox.min.y );
-    BinaryReadWrite::Read( file, value.boundingBox.min.z );
-    BinaryReadWrite::Read( file, value.boundingBox.max.x );
-    BinaryReadWrite::Read( file, value.boundingBox.max.y );
-    BinaryReadWrite::Read( file, value.boundingBox.max.z );
-    BinaryReadWrite::Read( file, value.boundingSphere.center.x );
-    BinaryReadWrite::Read( file, value.boundingSphere.center.y );
-    BinaryReadWrite::Read( file, value.boundingSphere.center.z );
-    BinaryReadWrite::Read( file, value.boundingSphere.radius );
-    BinaryReadWrite::Read( file, value.firstIndex );
-    BinaryReadWrite::Read( file, value.indexCount );
+    Serialization::Read( file, value.boundingBox.min.x );
+    Serialization::Read( file, value.boundingBox.min.y );
+    Serialization::Read( file, value.boundingBox.min.z );
+    Serialization::Read( file, value.boundingBox.max.x );
+    Serialization::Read( file, value.boundingBox.max.y );
+    Serialization::Read( file, value.boundingBox.max.z );
+    Serialization::Read( file, value.boundingSphere.center.x );
+    Serialization::Read( file, value.boundingSphere.center.y );
+    Serialization::Read( file, value.boundingSphere.center.z );
+    Serialization::Read( file, value.boundingSphere.radius );
+    Serialization::Read( file, value.firstIndex );
+    Serialization::Read( file, value.indexCount );
     return file;
 }

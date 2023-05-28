@@ -25,14 +25,14 @@ bool FawnForge::ImportFont( const std::filesystem::path& path, const char* pDest
         return false;
     }
     TTF_SetFontKerning( pFont, 0 );
-    BinaryReadWrite::Write( file, CUuid());
-    BinaryReadWrite::Write( file, static_cast< uint8_t >( file_type::file_type_font ));
-    BinaryReadWrite::Write( file, TTF_FontLineSkip( pFont ));
-    BinaryReadWrite::Write( file, TTF_GetFontHinting( pFont ));
-    BinaryReadWrite::Write( file, TTF_FontHeight( pFont ));
-    BinaryReadWrite::Write( file, TTF_FontAscent( pFont ));
-    BinaryReadWrite::Write( file, TTF_FontDescent( pFont ));
-    BinaryReadWrite::Write( file, TTF_FontLineSkip( pFont ));
+    Serialization::Write( file, CUuid());
+    Serialization::Write( file, static_cast< uint8_t >( file_type::file_type_font ));
+    Serialization::Write( file, TTF_FontLineSkip( pFont ));
+    Serialization::Write( file, TTF_GetFontHinting( pFont ));
+    Serialization::Write( file, TTF_FontHeight( pFont ));
+    Serialization::Write( file, TTF_FontAscent( pFont ));
+    Serialization::Write( file, TTF_FontDescent( pFont ));
+    Serialization::Write( file, TTF_FontLineSkip( pFont ));
     
     for ( uint16_t i{}; i < 256u; ++i )
     {
@@ -42,10 +42,10 @@ bool FawnForge::ImportFont( const std::filesystem::path& path, const char* pDest
         {
             return false;
         }
-        BinaryReadWrite::Write( file, pSurface->w );
-        BinaryReadWrite::Write( file, pSurface->h );
-        BinaryReadWrite::Write( file, pSurface->h * pSurface->pitch );
-        BinaryReadWrite::Write(
+        Serialization::Write( file, pSurface->w );
+        Serialization::Write( file, pSurface->h );
+        Serialization::Write( file, pSurface->h * pSurface->pitch );
+        Serialization::Write(
                 file,
                 static_cast< uint8_t* >( pSurface->pixels ),
                 static_cast< uint64_t >( pSurface->h ) * pSurface->pitch

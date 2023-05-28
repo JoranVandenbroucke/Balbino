@@ -2,8 +2,7 @@
 // Created by joran on 02/03/2023.
 //
 
-#ifndef BALBINO_OUTPUTNODE_H
-#define BALBINO_OUTPUTNODE_H
+#pragma once
 #include <set>
 #include <unordered_set>
 #include "../ShaderNode.h"
@@ -29,4 +28,3 @@ private:
 };
 
 
-#endif //BALBINO_OUTPUTNODE_H

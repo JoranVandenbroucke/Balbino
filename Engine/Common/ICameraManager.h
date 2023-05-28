@@ -2,9 +2,7 @@
 // Created by joran on 22/10/2022.
 //
 
-#ifndef GAME_ICAMERAMANAGER_H
-#define GAME_ICAMERAMANAGER_H
-
+#pragma once
 class CCameraComponent;
 
 class ICameraManager
@@ -28,4 +26,3 @@ public:
 };
 
 
-#endif //GAME_ICAMERAMANAGER_H

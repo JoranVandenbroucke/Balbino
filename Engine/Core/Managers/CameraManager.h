@@ -2,9 +2,7 @@
 // Created by joran on 22/10/2022.
 //
 
-#ifndef GAME_CAMERAMANAGER_H
-#define GAME_CAMERAMANAGER_H
-
+#pragma once
 #include <ICameraManager.h>
 
 namespace Balbino
@@ -34,4 +32,3 @@ namespace Balbino
     };
 } // Balbino
 
-#endif //GAME_CAMERAMANAGER_H

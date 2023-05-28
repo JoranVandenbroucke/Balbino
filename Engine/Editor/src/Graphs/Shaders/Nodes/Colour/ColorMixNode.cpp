@@ -5,12 +5,10 @@
 CColorMixNode::CColorMixNode( int& id )
         : CShaderNode{
         id, {
-                SSocketType{ true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "col1", "color_colour" },
-                SSocketType{ true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "col2", "color_colour" },
-                SSocketType{ true, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "fac", "color_factor" }}, {
-                SSocketType{
-                        true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "out_colour", "color_out Colour"
-                }}}
+                SSocketType{ .type=SSocketType::var_type_color, .name="col1", .uiName="color_colour" },
+                SSocketType{ .type=SSocketType::var_type_color, .name="col2", .uiName="color_colour" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="fac", .uiName="color_factor" }}, {
+                SSocketType{ .type=SSocketType::var_type_color, .name="out_colour", .uiName="color_out Colour" }}}
 {
     m_allModeNames.reserve( MixMode::max );
     for ( int n = 0; n < MixMode::max; ++n )

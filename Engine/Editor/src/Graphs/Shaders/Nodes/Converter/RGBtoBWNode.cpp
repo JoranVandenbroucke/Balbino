@@ -4,8 +4,8 @@
 CRGBtoBWNode::CRGBtoBWNode( int& id )
         : CShaderNode{
         id, {
-                SSocketType{ true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "colour", "Colour" }}, {
-                SSocketType{ true, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "bw", "Black/White" }}}
+                SSocketType{ .type=SSocketType::var_type_color, .name="colour", .uiName="Colour" }}, {
+                SSocketType{ .type=SSocketType::var_type_float, .name="bw", .uiName="Black/White" }}}
 {
 }
 void CRGBtoBWNode::Draw()

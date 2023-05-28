@@ -2,8 +2,7 @@
 // Created by joran on 25/02/2023.
 //
 
-#ifndef BALBINO_SHADERNODE_H
-#define BALBINO_SHADERNODE_H
+#pragma once
 #include <array>
 #include <utility>
 #include <vector>
@@ -558,4 +557,3 @@ private:
 };
 
 
-#endif //BALBINO_SHADERNODE_H

@@ -5,10 +5,10 @@
 CClampNode::CClampNode( int& id )
         : CShaderNode{
         id, {
-                SSocketType{ true, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "val", "value" },
-                SSocketType{ true, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "min", "Min" },
-                SSocketType{ false, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "max", "Max" }}, {
-                SSocketType{ true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "result", "Result" }}}
+                SSocketType{ .type=SSocketType::var_type_float, .name="val", .uiName="value" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="min", .uiName="Min" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="max", .uiName="Max" }}, {
+                SSocketType{ .type=SSocketType::var_type_color, .name="result", .uiName="Result" }}}
 {
 }
 void CClampNode::Draw()

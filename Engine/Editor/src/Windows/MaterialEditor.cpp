@@ -146,8 +146,8 @@ void FawnForge::CMaterialEditor::LoadEditorFromData()
     uint64_t id;
     uint64_t size;
     uint8_t  type;
-    BinaryReadWrite::Read( file, id );
-    BinaryReadWrite::Read( file, type );
+    Serialization::Read( file, id );
+    Serialization::Read( file, type );
     m_currentMaterial.uuid = id;
     if ( type != (uint8_t) file_type::file_type_material )
     {
@@ -157,10 +157,10 @@ void FawnForge::CMaterialEditor::LoadEditorFromData()
     m_currentMaterial.type = (file_type) type;
     
     m_shaderResources.clear();
-    BinaryReadWrite::Read( file, m_shaderId );
-    BinaryReadWrite::Read( file, size );
+    Serialization::Read( file, m_shaderId );
+    Serialization::Read( file, size );
     void* pData = malloc( size * sizeof( FawnVision::SShaderResource ));
-    BinaryReadWrite::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
+    Serialization::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
     m_shaderResources.assign((FawnVision::SShaderResource*) pData, (FawnVision::SShaderResource*) pData + size );
     free( pData );
 }

@@ -2,8 +2,7 @@
 // Created by joran on 25/02/2023.
 //
 
-#ifndef BALBINO_SHADERGRAPH_H
-#define BALBINO_SHADERGRAPH_H
+#pragma once
 #include <list>
 #include <set>
 #include "Nodes/ShaderNode.h"
@@ -23,25 +22,42 @@ public:
     void Initialize();
     void Cleanup();
     
-    CShaderNode *Add( CShaderNode *node);
+    CShaderNode* Add( CShaderNode* node );
     
-    template<typename T, typename... Args> T *CreateNode(Args &&...args)
+    template<typename T, typename... Args>
+    T* CreateNode( Args&& ...args )
     {
-        return new T(m_nodeId, args...);
+        return new T( m_nodeId, args... );
     }
-    template<typename T> void DeleteNode(T *node)
+    template<typename T>
+    void DeleteNode( T* node )
     {
         delete node;
     }
     
-    void Connect(int fromNode, int fromAttr,int toNode, int toAttr);
-    void Connect(CShaderOutput *from, CShaderInput *to);
-    void Disconnect(int fromNode, int fromAttr,int toNode, int toAttr);
-    void Disconnect(CShaderOutput *from);
-    void Disconnect(CShaderInput *to);
+    void Connect( int fromNode, int fromAttr, int toNode, int toAttr );
+    void Connect( CShaderOutput* from, CShaderInput* to );
+    void Disconnect( int fromNode, int fromAttr, int toNode, int toAttr );
+    void Disconnect( CShaderOutput* from );
+    void Disconnect( CShaderInput* to );
     
-    void Serialize(const char* filename);
-    void Deserialize(const char* filename);
+    CShaderNode* GetNode( int id )
+    {
+        auto it = std::find_if(
+                m_nodes.cbegin(), m_nodes.cend(), [ id ]( const CShaderNode* pNode )
+                {
+                    return pNode->GetId() == id;
+                }
+        );
+        if ( it == m_nodes.cend())
+        {
+            return nullptr;
+        }
+        return *it;
+    }
+    
+    void Serialize( const char* filename );
+    void Deserialize( const char* filename );
     
     void DrawNodes();
     bool Compile( const SFile& file, int cullMode );
@@ -54,9 +70,8 @@ private:
     int m_nodeId{};
     
     void PullNodeData();
-    shaderc_shader_kind Convert( shader_stage stage);
+    shaderc_shader_kind Convert( shader_stage stage );
     std::string Compile( const CShaderNode* pNode, std::vector<const CShaderNode*>& evaluatedNodes, std::unordered_map<std::string, int>& outputVarCount, SShaderInfo& shaderInfo );
-    std::string ConvertToGlslUniform( const SShaderBinding& binding);
+    std::string ConvertToGlslUniform( const SShaderBinding& binding );
 };
 
-#endif //BALBINO_SHADERGRAPH_H

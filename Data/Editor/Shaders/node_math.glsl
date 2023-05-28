@@ -22,7 +22,7 @@ void math_multiply(float a, float b, out float c)
 //The division of the first value by the second value.
 void math_divide(float a, float b, out float c)
 {
-    c = SafeDivide(a, b);
+    c = safe_divide(a, b);
 }
 //The sum of the product of the two values with Addend.
 void math_multiply_add(float a, float b, float c)
@@ -34,14 +34,14 @@ void math_power(float a, float b, out float c)
 {
     if (a >= 0.0)
     {
-        c = CompatiblePow(a, b);
+        c = compatible_pow(a, b);
     }
     else
     {
         float fraction = mod(abs(b), 1.0);
         if (fraction > 0.999 || fraction < 0.001)
         {
-            c = CompatiblePow(a, floor(b + 0.5));
+            c = compatible_pow(a, floor(b + 0.5));
         }
         else
         {
@@ -155,17 +155,18 @@ void math_fraction(float a, out float b)
 //Outputs the remainder once the first value is divided by the second value.
 void math_modulo(float a, float b, out float c)
 {
-    c = CompatibleFmod(a, b);
+    c = compatible_fmod(a, b);
 }
 //Outputs a value between Min and Max based on the absolute difference between the input value and the nearest integer multiple of Max less than the value.
 void math_wrap(float a, float b, float c, out float d)
 {
-    d = Wrap(a, b, c);
+    d = wrap(a, b, c);
 }
 void math_snap(float a, float b, out float c)
 {
-    c = floor(SafeDivide(a, b)) * b;
-}//Rounds the input value down to the nearest integer multiple of Increment.
+    c = floor(safe_divide(a, b)) * b;
+}
+//Rounds the input value down to the nearest integer multiple of Increment.
 //The output value is moved between 0.0 and the Scale based on the input value.
 void math_ping_pong(float a, float b, out float c)
 {

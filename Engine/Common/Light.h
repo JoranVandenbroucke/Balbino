@@ -2,9 +2,7 @@
 // Created by joran on 17/06/2022.
 //
 
-#ifndef GAME_LIGHT_H
-#define GAME_LIGHT_H
-
+#pragma once
 enum light_type : uint8_t
 {
     light_type_directional,
@@ -14,4 +12,4 @@ enum light_type : uint8_t
     light_type_max
 };
 
-#endif //GAME_LIGHT_H
+

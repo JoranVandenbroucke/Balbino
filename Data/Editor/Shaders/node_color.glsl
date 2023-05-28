@@ -1,5 +1,6 @@
 #ifndef COLOR_MATH_GLSL
 #define COLOR_MATH_GLSL
+
 void color_rgb_to_bw(vec3 col, out float bw)
 {
     bw = (col.r + col.g + col.b)/3.f;
@@ -61,7 +62,7 @@ void color_hue_sat_val(vec3 color, float hue, float sat, float value, float fac,
 {
     vec3 hsv;
     
-    rgb_to_hsv(color, hsv);
+    color_rgb_to_hsv(color, hsv);
     
     hsv[0] = fract(hsv[0] + hue + 0.5);
     hsv[1] = clamp(hsv[1] * sat, 0.0, 1.0);
@@ -138,14 +139,14 @@ void color_hue(vec3 col1, vec3 col2, float fac, out vec3 outColor)
 {
     vec3 outCol = col1;
     vec3 hsv2;
-    RgbToHsv(col2, hsv2);
+    color_rgb_to_hsv(col2, hsv2);
     
     if (hsv2.y != 0.0) {
         vec3 hsv;
-        RgbToHsv(outCol, hsv);
+        color_rgb_to_hsv(outCol, hsv);
         hsv.x = hsv2.x;
         vec3 tmp;
-        HsvToRgb(hsv, tmp);
+        color_hsv_to_rgb(hsv, tmp);
         
         outCol = mix(outCol, tmp, fac);
     }
@@ -159,14 +160,14 @@ void color_saturation(vec3 col1, vec3 col2, float fac, out vec3 outColor)
     vec3 outCol = col1;
     
     vec3 hsv;
-    RgbToHsv(outCol, hsv);
+    color_rgb_to_hsv(outCol, hsv);
     
     if (hsv[1] != 0.0) {
         vec3 hsv2;
-        RgbToHsv(col2, hsv2);
+        color_rgb_to_hsv(col2, hsv2);
         
         hsv[1] = tm * hsv[1] + fac * hsv2[1];
-        HsvToRgb(hsv, outCol);
+        hsv_to_rgb(hsv, outCol);
     }
     
     outColor = outCol;
@@ -177,28 +178,28 @@ void color_value(vec3 col1, vec3 col2, float fac, out vec3 outColor)
     
     vec3 hsv;
     vec3 hsv2;
-    RgbToHsv(col1, hsv);
-    RgbToHsv(col2, hsv2);
+    color_rgb_to_hsv(col1, hsv);
+    color_rgb_to_hsv(col2, hsv2);
     
     hsv[2] = tm * hsv[2] + fac * hsv2[2];
     vec3 outCol;
-    HsvToRgb(hsv, outCol);
+    hsv_to_rgb(hsv, outCol);
     outColor = outCol;
 }
-void color_colorMix(vec3 col1, vec3 col2, float fac, out vec3 outColor)
+void color_color_mix(vec3 col1, vec3 col2, float fac, out vec3 outColor)
 {
     vec3 outCol;
     vec3 hsv2;
-    RgbToHsv(col2, hsv2);
+    color_rgb_to_hsv(col2, hsv2);
     if (col2.x > 0.5f)
     {
         vec3 hsv;
-        RgbToHsv(col1, hsv);
+        color_rgb_to_hsv(col1, hsv);
         
         hsv[2] = hsv2[2];
         hsv[2] = hsv2[2];
         vec3 tmp;
-        HsvToRgb(hsv, tmp);
+        hsv_to_rgb(hsv, tmp);
         outCol = mix(outCol, tmp, fac);
     }
     outColor = outCol;

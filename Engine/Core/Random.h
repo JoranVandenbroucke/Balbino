@@ -2,9 +2,7 @@
 // Created by Joran Vandenbroucke on 01/06/2022.
 //
 
-#ifndef GAME_RANDOM_H
-#define GAME_RANDOM_H
-
+#pragma once
 #include <random>
 
 #pragma warning(push)
@@ -36,6 +34,6 @@ namespace Balbino
     };
 } // Balbino
 
-#endif //GAME_RANDOM_H
+
 
 #pragma warning(pop)

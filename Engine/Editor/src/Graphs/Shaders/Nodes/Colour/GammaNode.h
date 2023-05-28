@@ -2,8 +2,7 @@
 // Created by joran on 12/03/2023.
 //
 
-#ifndef ENGINE_GAMMANODE_H
-#define ENGINE_GAMMANODE_H
+#pragma once
 #include "../ShaderNode.h"
 
 
@@ -23,4 +22,3 @@ public:
 };
 
 
-#endif //ENGINE_GAMMANODE_H

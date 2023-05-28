@@ -2,8 +2,7 @@
 // Created by joran on 12/03/2023.
 //
 
-#ifndef ENGINE_VECTORMATHNODE_H
-#define ENGINE_VECTORMATHNODE_H
+#pragma once
 #include <set>
 #include "../ShaderNode.h"
 
@@ -57,4 +56,3 @@ private:
 
 	static const char* ToString( math_mode type );
 };
-#endif //ENGINE_VECTORMATHNODE_H

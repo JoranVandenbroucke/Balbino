@@ -2,8 +2,7 @@
 // Created by joran on 11/03/2023.
 //
 
-#ifndef ENGINE_BRIGHTCONTRASTNODE_H
-#define ENGINE_BRIGHTCONTRASTNODE_H
+#pragma once
 #include <unordered_set>
 #include <set>
 #include "../ShaderNode.h"
@@ -25,4 +24,3 @@ public:
 };
 
 
-#endif //ENGINE_BRIGHTCONTRASTNODE_H

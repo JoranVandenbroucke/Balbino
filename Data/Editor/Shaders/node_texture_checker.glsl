@@ -1,7 +1,7 @@
 #ifndef CHECKER_TEXTURE_GLSL
 #define CHECKER_TEXTURE_GLSL
 
-vec3 Checker(vec3 positoin, vec3 col1, vec3 col2, float scale){
+vec3 checker(vec3 positoin, vec3 col1, vec3 col2, float scale){
     positoin *= scale;
     
     int xi = int(abs(floor(p[0])));

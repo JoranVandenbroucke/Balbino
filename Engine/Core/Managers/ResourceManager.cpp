@@ -71,13 +71,13 @@ CTexture* CResourceManager::LoadTexture( std::string_view assetPath )
     }
     
     uint64_t uuid;
-    BinaryReadWrite::Read( file, uuid );
+    Serialization::Read( file, uuid );
     if ( m_loadedTextureMap.contains( uuid ))
     {
         return m_loadedTextureMap.at( uuid );
     }
     uint8_t type;
-    BinaryReadWrite::Read( file, type );
+    Serialization::Read( file, type );
     if ( static_cast< file_type >( type ) == file_type::file_type_image )
     {
         const auto pTextureComponent = new CTexture{ m_pRenderer->GetDevice(), uuid };
@@ -97,24 +97,24 @@ CTexture* CResourceManager::LoadTexture( std::string_view assetPath )
         uint32_t   depth{};
         uint8_t    pitch{};
         
-        BinaryReadWrite::Read( file, imageType );
-        BinaryReadWrite::Read( file, imageFormat );
-        BinaryReadWrite::Read( file, mips );
-        BinaryReadWrite::Read( file, layers );
-        BinaryReadWrite::Read( file, anisotropy );
-        BinaryReadWrite::Read( file, sampleLevel );
-        BinaryReadWrite::Read( file, mipmapMode );
-        BinaryReadWrite::Read( file, filterMode );
-        BinaryReadWrite::Read( file, wrapModeU );
-        BinaryReadWrite::Read( file, wrapModeV );
-        BinaryReadWrite::Read( file, wrapModeW );
-        BinaryReadWrite::Read( file, width );
-        BinaryReadWrite::Read( file, height );
-        BinaryReadWrite::Read( file, depth );
-        BinaryReadWrite::Read( file, pitch );
+        Serialization::Read( file, imageType );
+        Serialization::Read( file, imageFormat );
+        Serialization::Read( file, mips );
+        Serialization::Read( file, layers );
+        Serialization::Read( file, anisotropy );
+        Serialization::Read( file, sampleLevel );
+        Serialization::Read( file, mipmapMode );
+        Serialization::Read( file, filterMode );
+        Serialization::Read( file, wrapModeU );
+        Serialization::Read( file, wrapModeV );
+        Serialization::Read( file, wrapModeW );
+        Serialization::Read( file, width );
+        Serialization::Read( file, height );
+        Serialization::Read( file, depth );
+        Serialization::Read( file, pitch );
         uint32_t size{ width * height * depth * pitch };
         void* pImageData = malloc( size );
-        BinaryReadWrite::Read( file, pImageData, size );
+        Serialization::Read( file, pImageData, size );
         pTextureComponent->Initialize((FawnVision::EImageViewType::Enum) imageType,
                                       (FawnVision::EFormat::Enum) imageFormat,
                                       mips,
@@ -152,14 +152,14 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
     std::cout << "Start loading shader " << assetPath.data() << std::endl;
     
     uint64_t uuid;
-    BinaryReadWrite::Read( file, uuid );
+    Serialization::Read( file, uuid );
     if ( m_loadedShaderMap.contains( uuid ))
     {
         return m_loadedShaderMap.at( uuid );
     }
     
     uint8_t type;
-    BinaryReadWrite::Read( file, type );
+    Serialization::Read( file, type );
     if ( type != (uint8_t) file_type::file_type_shader )
     {
         file.close();
@@ -172,21 +172,21 @@ FawnVision::CShaderPipeline* CResourceManager::LoadShader( std::string_view asse
     uint64_t                          shaderSize;    //eg. 965 char long
     std::vector<uint64_t>             shadersSizes;
     std::vector<FawnVision::CShader*> shaderVector;
-    BinaryReadWrite::Read( file, cullmode );
-    BinaryReadWrite::Read( file, shaderTypes );
-    BinaryReadWrite::Read( file, shaderCount );
+    Serialization::Read( file, cullmode );
+    Serialization::Read( file, shaderTypes );
+    Serialization::Read( file, shaderCount );
     shadersSizes.reserve( shaderCount );
     shaderVector.reserve( shaderCount );
     for ( uint8_t i{}; i < shaderCount; ++i )
     {
-        BinaryReadWrite::Read( file, shaderSize );
+        Serialization::Read( file, shaderSize );
         shadersSizes.push_back( shaderSize );
     }
     for ( uint8_t i{}; i < shaderCount; ++i )
     {
         void* pData = malloc( sizeof( uint32_t ) * shadersSizes[i] );
         
-        BinaryReadWrite::Read( file, pData, shadersSizes[i] * sizeof( uint32_t ));
+        Serialization::Read( file, pData, shadersSizes[i] * sizeof( uint32_t ));
         std::vector<uint32_t> shaderData( shadersSizes[i], 0 );
         shaderData.assign((uint32_t*) pData, (uint32_t*) pData + shadersSizes[i] );
         
@@ -234,14 +234,14 @@ CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
     std::cout <<  "Start loading material with id " << assetPath.data() << std::endl;
     
     uint64_t uuid;
-    BinaryReadWrite::Read( file, uuid );
+    Serialization::Read( file, uuid );
     if ( m_loadedMaterialMap.contains( uuid ))
     {
         std::cout << "End loading material with id " << assetPath.data() << std::endl;
         return m_loadedMaterialMap.at( uuid );
     }
     uint8_t type;
-    BinaryReadWrite::Read( file, type );
+    Serialization::Read( file, type );
     if ( static_cast< file_type >( type ) == file_type::file_type_material )
     {
         uint64_t                                 shaderId;
@@ -249,15 +249,15 @@ CMaterial* CResourceManager::LoadMaterial( std::string_view assetPath )
         bool                                     hasOnlyShaderResources;
         std::vector<FawnVision::SShaderResource> shaderResources;
         std::vector<FawnVision::SDescriptorSet>  descriptorSets;
-        BinaryReadWrite::Read( file, shaderId );
-        BinaryReadWrite::Read( file, size );
+        Serialization::Read( file, shaderId );
+        Serialization::Read( file, size );
         
         void* pData = malloc( size * sizeof( FawnVision::SShaderResource ));
-        BinaryReadWrite::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
+        Serialization::Read( file, pData, size * sizeof( FawnVision::SShaderResource ));
         shaderResources.assign((FawnVision::SShaderResource*) pData, (FawnVision::SShaderResource*) pData + size );
         free( pData );
         
-        BinaryReadWrite::IsAtEnd( file, hasOnlyShaderResources );
+        Serialization::IsAtEnd( file, hasOnlyShaderResources );
         
         for ( const auto& resource : shaderResources )
         {
@@ -312,13 +312,13 @@ IMesh* CResourceManager::LoadModel( std::string_view assetPath )
     }
     
     uint64_t uuid;
-    BinaryReadWrite::Read( file, uuid );
+    Serialization::Read( file, uuid );
     if ( m_loadedMeshMap.contains( uuid ))
     {
         return m_loadedMeshMap.at( uuid );
     }
     uint8_t type;
-    BinaryReadWrite::Read( file, type );
+    Serialization::Read( file, type );
     if ( static_cast< file_type >( type ) == file_type::file_type_model )
     {
         uint64_t                         indicesSize;
@@ -328,24 +328,24 @@ IMesh* CResourceManager::LoadModel( std::string_view assetPath )
         std::vector<FawnVision::SVertex> vertices;
         std::vector<SMeshMetadata>       metadata;
         
-        BinaryReadWrite::Read( file, indicesSize );
-        BinaryReadWrite::Read( file, verticesSize );
-        BinaryReadWrite::Read( file, metadataSize );
+        Serialization::Read( file, indicesSize );
+        Serialization::Read( file, verticesSize );
+        Serialization::Read( file, metadataSize );
         
         void* pData = malloc( indicesSize * sizeof( uint32_t ));
-        BinaryReadWrite::Read( file, pData, indicesSize * sizeof( uint32_t ));
+        Serialization::Read( file, pData, indicesSize * sizeof( uint32_t ));
         indices.assign((uint32_t*) pData, (uint32_t*) pData + indicesSize );
         free( pData );
         
         pData = malloc( verticesSize * sizeof( FawnVision::SVertex ));
-        BinaryReadWrite::Read( file, pData, verticesSize * sizeof( FawnVision::SVertex ));
+        Serialization::Read( file, pData, verticesSize * sizeof( FawnVision::SVertex ));
         vertices.assign((FawnVision::SVertex*) pData, (FawnVision::SVertex*) pData + verticesSize );
         free( pData );
         
         metadata.resize( metadataSize );
         for ( auto& meta : metadata )
         {
-            BinaryReadWrite::Read( file, meta );
+            Serialization::Read( file, meta );
         }
         
         FawnVision::CMesh* pMesh{ new FawnVision::CMesh{ vertices, indices, metadata, uuid }};
@@ -477,11 +477,11 @@ void CResourceManager::ReloadAll( FawnVision::CRenderer* pRenderer )
         bool                                     hasOnlyShaderResources;
         std::vector<FawnVision::SShaderResource> shaderResources;
         std::vector<FawnVision::SDescriptorSet>  descriptorSets;
-        BinaryReadWrite::Read( file, uuid );
-        BinaryReadWrite::Read( file, type );
-        BinaryReadWrite::Read( file, shaderId );
-        BinaryReadWrite::Read( file, shaderResources );
-        BinaryReadWrite::IsAtEnd( file, hasOnlyShaderResources );
+        Serialization::Read( file, uuid );
+        Serialization::Read( file, type );
+        Serialization::Read( file, shaderId );
+        Serialization::Read( file, shaderResources );
+        Serialization::IsAtEnd( file, hasOnlyShaderResources );
         
         for ( const auto& resource : shaderResources )
         {
@@ -597,8 +597,8 @@ SFile CResourceManager::GetData( const std::filesystem::path& path )
     if ( fileStream.is_open())
     {
         uint8_t value;
-        BinaryReadWrite::Read( fileStream, file.uuid );
-        BinaryReadWrite::Read( fileStream, value );
+        Serialization::Read( fileStream, file.uuid );
+        Serialization::Read( fileStream, value );
         
         file.type     = static_cast< file_type > ( value );
         file.path     = path.string();

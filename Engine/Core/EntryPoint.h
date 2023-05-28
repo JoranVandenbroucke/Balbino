@@ -1,6 +1,4 @@
-#ifndef BALBINO_ENTRYPOINT_H
-#define BALBINO_ENTRYPOINT_H
-
+#pragma once
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
 #include <cstdlib>
@@ -48,4 +46,4 @@ int main( int arc, char* argv[] )
 }
 
 #endif // BL_PLATFORM_WINDOWS
-#endif // BALBINO_ENTRYPOINT_H
+

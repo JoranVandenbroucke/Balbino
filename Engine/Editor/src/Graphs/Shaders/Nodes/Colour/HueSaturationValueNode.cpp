@@ -11,12 +11,12 @@
 CHueSaturationValueNode::CHueSaturationValueNode( int& id )
         : CShaderNode{
         id, {
-                SSocketType{ true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "colour", "Colour" },
-                SSocketType{ true, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "hue", "Hue" },
-                SSocketType{ true, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "saturation", "Saturation" },
-                SSocketType{ true, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "value", "Value" },
-                SSocketType{ false, SSocketType::var_type_float, SSocketType::compiler_define( 0 ), "fac", "Factor" }}, {
-                SSocketType{ true, SSocketType::var_type_color, SSocketType::compiler_define( 0 ), "out_colour", "Out Colour" }}}
+                SSocketType{ .type=SSocketType::var_type_color, .name="colour", .uiName="Colour" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="hue", .uiName="Hue" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="saturation", .uiName="Saturation" },
+                SSocketType{ .type=SSocketType::var_type_float, .name="value", .uiName="Value" },
+                SSocketType{ .hasEditorValues=false, .type=SSocketType::var_type_float, .name="fac", .uiName="Factor" }}, {
+                SSocketType{ .type=SSocketType::var_type_color, .name="out_colour", .uiName="Out Colour" }}}
 {
 }
 void CHueSaturationValueNode::Draw()

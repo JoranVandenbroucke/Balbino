@@ -2,9 +2,7 @@
 // Created by joran on 10/09/2022.
 //
 
-#ifndef BALBINO_TEXTUREFILEIMPORTER_H
-#define BALBINO_TEXTUREFILEIMPORTER_H
-
+#pragma once
 #include <filesystem>
 #include <Common.h>
 #include "glm/glm.hpp"
@@ -88,4 +86,4 @@ namespace FawnForge
     };
 } // FawnForge
 
-#endif //BALBINO_TEXTUREFILEIMPORTER_H
+
