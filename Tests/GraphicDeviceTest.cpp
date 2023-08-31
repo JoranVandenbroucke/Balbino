@@ -80,7 +80,7 @@ TEST_CASE( "CreateInstance returns a valid instance" )
 
 TEST_CASE( "FindSupportedFormat returns correct format" )
 {
-    const FawnVision::SPhysicalDeviceInfo& info { g_device->GetPhysicalDeviceInfo() };
+    const DeerVulkan::SPhysicalDeviceInfo& info { g_device->GetPhysicalDeviceInfo() };
 
     // Candidates and features for the test
     std::vector<FawnVision::image_format> candidates = { FawnVision::image_format::d32_sfloat_s8_uint, FawnVision::image_format::d32_sfloat };
@@ -93,7 +93,7 @@ TEST_CASE( "FindSupportedFormat returns correct format" )
 
 TEST_CASE( "GetDepthFormat returns a valid format", "[GetDepthFormat]" )
 {
-    const FawnVision::SPhysicalDeviceInfo& info { g_device->GetPhysicalDeviceInfo() };
+    const DeerVulkan::SPhysicalDeviceInfo& info { g_device->GetPhysicalDeviceInfo() };
 
     // Call the function and check the result
     VkFormat result = info.GetDepthFormat();
@@ -103,7 +103,7 @@ TEST_CASE( "GetDepthFormat returns a valid format", "[GetDepthFormat]" )
 
 TEST_CASE( "GetMaxUsableSampleCount returns a valid sample count" )
 {
-    const FawnVision::SPhysicalDeviceInfo& info { g_device->GetPhysicalDeviceInfo() };
+    const DeerVulkan::SPhysicalDeviceInfo& info { g_device->GetPhysicalDeviceInfo() };
 
     // Call the function and check the result
     VkSampleCountFlagBits result = info.GetMaxUsableSampleCount();

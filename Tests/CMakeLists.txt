@@ -40,4 +40,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         FawnVision
         DeerVulkan
         BambiMath
+
+        vulkan-1
+)
+
+target_link_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_SOURCE_DIR}/3rdParty/Vulkan/lib
 )
