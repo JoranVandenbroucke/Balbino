@@ -22,6 +22,9 @@
 [submodule "3rdParty/imnodes"]
 	path = 3rdParty/imnodes
 	url = https://github.com/JoranVandenbroucke/imnodes.git
+[submodule "3rdParty/mINI"]
+	path = 3rdParty/mINI
+	url = https://github.com/pulzed/mINI.git
 [submodule "3rdParty/SDL"]
 	path = 3rdParty/SDL
 	url = https://github.com/libsdl-org/SDL.git
@@ -43,6 +46,3 @@
 [submodule "blink"]
 	path = blink
 	url = https://github.com/crosire/blink.git
-[submodule "3rdParty/mINI"]
-	path = 3rdParty/mINI
-	url = https://github.com/pulzed/mINI.git
