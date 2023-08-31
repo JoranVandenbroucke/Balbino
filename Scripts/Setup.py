@@ -1,59 +1,27 @@
-# from https://github.com/TheCherno/Hazel/blob/master/scripts/SetupVulkan.py
-import subprocess
+import os
+import pathlib
+import shutil
 
 import Vulkan
 
-
-def HandleError(err):
-    if err.returncode != 0:
-        print(f'something went wrong while running {err.args}.\nError code was {err.returncode}')
-        quit()
-
-
-def GenerateCMake(setup_extra: list[str] = None, debug_extra: list[str] = None, release_extra: list[str] = None):
-    cmake_arg = ['-A', 'x64', '-B', './build/x64']
-    debug_arg = ['--config', 'debug']
-    relea_arg = ['--config', 'release']
-    if setup_extra:
-        cmake_arg = cmake_arg + setup_extra
-    if debug_extra:
-        debug_arg = debug_arg + debug_extra
-    if release_extra:
-        relea_arg = relea_arg + release_extra
-
-    # cmake_cmd = ['cmake.exe', '-G', 'Visual Studio 17 2022', '-A', 'x64', '-S', '.', '-B', './build/x64']
-    HandleError(subprocess.run(['cmake.exe', '-S', '.', '-G', 'Visual Studio 17 2022'] + cmake_arg, stderr=subprocess.STDOUT, shell=shell))
-    HandleError(subprocess.run(['cmake.exe', '--build', './build/x64'] + debug_arg, stderr=subprocess.STDOUT, shell=shell))
-    HandleError(subprocess.run(['cmake.exe', '--build', './build/x64'] + relea_arg, stderr=subprocess.STDOUT, shell=shell))
-
+source_directory = "..\\3rdParty"
+file_names = ["license.txt", "copyright.txt", "license", "copyright"]
+destination_directory = pathlib.Path("../3rdParty/Copyright_and_Licence")
 
 if __name__ == "__main__":
     vk = Vulkan.VulkanConfiguration()
-    vk.Validate()
-    vk.Move()
+    vk.validate()
+    vk.move()
+    for root, dirs, files in os.walk(source_directory):
+        for file_name in file_names:
+            for file in files:
+                if file_name.lower() == file.lower():
+                    source_file_path = os.path.join(root, file)
+                    folder_name = os.path.basename(root)
+                    destination_file_name = folder_name + "_" + file
+                    destination_file_path = os.path.join(destination_directory, destination_file_name)
 
-    # if sys.platform.startswith('win'):
-    #     shell = True
-    # else:
-    #     shell = False
-    #
-    # cwd = os.getcwd()
-    # os.chdir(cwd + r'\..\3rdParty\assimp')
-    # print(os.getcwd())
-    #
-    # GenerateCMake()
-    #
-    # print(os.getcwd())
-    # shutil.copyfile(r'build/x64/include/assimp/config.h', r'include/assimp/config.h')
-    #
-    # cwd = os.getcwd()
-    # os.chdir(cwd + r'\..\GLM')
-    # print(os.getcwd())
-    #
-    # GenerateCMake()
-    #
-    # cwd = os.getcwd()
-    # os.chdir(cwd + r'\..\GLI')
-    # print(os.getcwd())
-    #
-    # GenerateCMake(['-DGLI_TEST_ENABLE=OFF'])
+                    if not os.path.exists(destination_directory):
+                        os.makedirs(destination_directory)
+
+                    shutil.copyfile(source_file_path, destination_file_path)

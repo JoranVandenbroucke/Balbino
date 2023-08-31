@@ -11,49 +11,49 @@ class VulkanConfiguration:
         self.vulkan_directory = "../3rdParty/Vulkan/"
         self.vulkan_sdk_directory = ""
 
-    def __InstallVulkanSDK(self):
-        permissionGranted = False
-        while not permissionGranted:
+    def __install_vulkan_sdk(self):
+        permission_granted = False
+        while not permission_granted:
             reply = str(input(
                 "Would you like to install VulkanSDK {0:s}? [Y/N]: ".format(
                     self.installVulkanVersion))).lower().strip()[
                     :1]
             if reply == 'n':
                 return
-            permissionGranted = (reply == 'y')
+            permission_granted = (reply == 'y')
 
-        vulkanInstallURL = f"https://sdk.lunarg.com/sdk/download/{self.installVulkanVersion}/windows/VulkanSDK-{self.installVulkanVersion}-Installer.exe "
-        vulkanPath = f"{self.vulkan_directory}/VulkanSDK-{self.installVulkanVersion}-Installer.exe"
-        print("Downloading {0:s} to {1:s}".format(vulkanInstallURL, vulkanPath))
-        Utils.DownloadFile(vulkanInstallURL, vulkanPath)
+        vulkan_install_url = f"https://sdk.lunarg.com/sdk/download/{self.installVulkanVersion}/windows/VulkanSDK-{self.installVulkanVersion}-Installer.exe"
+        vulkan_path = f"{self.vulkan_directory}/VulkanSDK-{self.installVulkanVersion}-Installer.exe"
+        print("Downloading {0:s} to {1:s}".format(vulkan_install_url, vulkan_path))
+        Utils.download_file(vulkan_install_url, vulkan_path)
         print("Running Vulkan SDK installer...")
-        os.startfile(os.path.abspath(vulkanPath))
+        os.startfile(os.path.abspath(vulkan_path))
         print("Re-run this script after installation!")
         quit()
 
-    def Validate(self):
-        if not self.CheckVulkanSDK():
+    def validate(self):
+        if not self.check_vulkan_sdk():
             print("Vulkan SDK not installed correctly.")
             return
 
-    def CheckVulkanSDK(self):
+    def check_vulkan_sdk(self):
         vulkan_sdk = os.environ.get("VULKAN_SDK")
         if vulkan_sdk is None:
-            print("\nYou don't have the Vulkan SDK installed!")
-            self.__InstallVulkanSDK()
+            print("You don't have the Vulkan SDK installed!")
+            self.__install_vulkan_sdk()
             return False
         else:
-            print(f"\nLocated Vulkan SDK at {vulkan_sdk}")
+            print(f"Located Vulkan SDK at {vulkan_sdk}")
 
         if self.requiredVulkanVersion not in vulkan_sdk:
             print(f"You don't have the correct Vulkan SDK version! (Engine requires {self.requiredVulkanVersion})")
-            self.__InstallVulkanSDK()
+            self.__install_vulkan_sdk()
             return False
         self.vulkan_sdk_directory = vulkan_sdk
         print(f"Correct Vulkan SDK located at {vulkan_sdk}")
         return True
 
-    def Move(self):
+    def move(self):
         if self.vulkan_sdk_directory == "":
             return
 

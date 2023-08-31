@@ -7,7 +7,7 @@ from zipfile import ZipFile
 import requests
 
 
-def DownloadFile(url, filepath):
+def download_file(url, filepath):
     filepath = os.path.abspath(filepath)
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
@@ -15,7 +15,7 @@ def DownloadFile(url, filepath):
         for url_option in url:
             print("Downloading", url_option)
             try:
-                DownloadFile(url_option, filepath)
+                download_file(url_option, filepath)
                 return
             except urllib.error.URLError as e:
                 print(f"URL Error encountered: {e.reason}. Proceeding with backup...\n\n")

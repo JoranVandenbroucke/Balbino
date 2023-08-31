@@ -1,0 +1,50 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 26,
+    "patch": 4
+  },
+  "configurePresets": [
+    {
+      "name": "Debug",
+      "displayName": "Debug Config",
+      "description": "Debug configuration",
+      "generator": "Ninja",
+      "hidden": false
+    },
+    {
+      "name": "DebugEditor",
+      "displayName": "Debug Editor Config",
+      "description": "Debug Editor configuration",
+      "generator": "Ninja",
+      "hidden": false,
+      "inherits": [
+        "Debug"
+      ],
+      "cacheVariables": {
+        "BALBINO_EDITOR": "1"
+      }
+    },
+    {
+      "name": "Release",
+      "displayName": "Release Config",
+      "description": "Release configuration",
+      "generator": "Ninja",
+      "hidden": false
+    },
+    {
+      "name": "ReleaseEditor",
+      "displayName": "Release Editor Config",
+      "description": "Release Editor configuration",
+      "generator": "Ninja",
+      "hidden": false,
+      "inherits": [
+        "Debug"
+      ],
+      "cacheVariables": {
+        "BALBINO_EDITOR": "1"
+      }
+    }
+  ]
+}

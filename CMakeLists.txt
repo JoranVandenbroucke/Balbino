@@ -1,44 +1,44 @@
-cmake_minimum_required(VERSION 3.22.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.26.4 FATAL_ERROR)
 
-project(Balbino C CXX)
+project(Balbino LANGUAGES C CXX VERSION "0.1.0")
 
-set(CMAKE_CONFIGURATION_TYPES
-        "Debug"
-        "DebugEditor"
-        "Release"
-        "ReleaseEditor"
-        CACHE STRING "" FORCE
-        )
-if(MSVC)
-    # remove default flags provided with CMake for MSVC
-    set(CMAKE_EXE_LINKER_FLAGS "")
-    set(CMAKE_MODULE_LINKER_FLAGS "")
-    set(CMAKE_SHARED_LINKER_FLAGS "")
-    set(CMAKE_STATIC_LINKER_FLAGS "")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS}")
-    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS}")
-    set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${CMAKE_STATIC_LINKER_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUGEDITOR "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
-    set(CMAKE_MODULE_LINKER_FLAGS_DEBUGEDITOR "${CMAKE_MODULE_LINKER_FLAGS_DEBUG}")
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUGEDITOR "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
-    set(CMAKE_STATIC_LINKER_FLAGS_DEBUGEDITOR "${CMAKE_STATIC_LINKER_FLAGS_DEBUG}")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS}")
-    set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS}")
-    set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${CMAKE_STATIC_LINKER_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASEEDITOR "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
-    set(CMAKE_MODULE_LINKER_FLAGS_RELEASEEDITOR "${CMAKE_MODULE_LINKER_FLAGS_RELEASE}")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASEEDITOR "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
-    set(CMAKE_STATIC_LINKER_FLAGS_RELEASEEDITOR "${CMAKE_STATIC_LINKER_FLAGS_RELEASE}")
-endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-add_subdirectory(Game)
-add_subdirectory(Engine)
-add_subdirectory(Engine/Common)
-add_subdirectory(Engine/Editor)
-add_subdirectory(Engine/Renderer)
-add_subdirectory(Engine/Renderer/API/Vulkan)
+add_subdirectory(3rdParty/GLM)
+add_subdirectory(3rdParty/imgui)
+
+set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suite for Assimp is built in addition to the library." FORCE)
+set(GLI_TEST_ENABLE OFF CACHE BOOL "Build unit tests" FORCE)
+set(SDL_TEST_LIBRARY OFF CACHE BOOL "Build the SDL3_test library" FORCE)
+
+add_subdirectory(3rdParty/SDL)
+add_subdirectory(3rdParty/SDL_mixer)
+
+if (BALBINO_EDITOR)
+    set(ASSIMP_BUILD_ZLIB ON)
+    add_subdirectory(3rdParty/Assimp)
+    add_subdirectory(3rdParty/GLI)
+    add_subdirectory(3rdParty/hdrloader)
+    add_subdirectory(3rdParty/ImGuizmo)
+    add_subdirectory(3rdParty/imnodes)
+    add_subdirectory(3rdParty/SDL_image)
+    add_subdirectory(3rdParty/SDL_ttf)
+
+    add_subdirectory(Source/Editor)
+endif ()
+
+add_subdirectory(Source/Utilities)
+add_subdirectory(Source/Memory)
+add_subdirectory(Source/Engine/Math)
+add_subdirectory(Source/Engine/Debugging)
+add_subdirectory(Source/Engine/Renderer/API/Vulkan)
+add_subdirectory(Source/Engine/Components)
+add_subdirectory(Source/Engine/Scene)
+add_subdirectory(Source/Engine/Renderer)
+add_subdirectory(Source/Serializer)
+add_subdirectory(Source/Engine/Managers)
+add_subdirectory(Source/Application)
+add_subdirectory(Source/Game)
+add_subdirectory(Tests)
 add_subdirectory(blink)
