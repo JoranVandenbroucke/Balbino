@@ -46,8 +46,5 @@
 [submodule "3rdParty/mINI"]
 	path = 3rdParty/mINI
 	url = https://github.com/pulzed/mINI.git
-[submodule "3rdParty/mikktspace"]
-	path = 3rdParty/mikktspace
-	url = https://github.com/mmikk/MikkTSpace.git
 [submodule "https://github.com/JoranVandenbroucke/imgui.git"]
 	url = 3rdParty/imgui
