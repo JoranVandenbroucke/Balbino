@@ -72,6 +72,10 @@ void FawnVision::CRenderer::SetupEditorFont()
     m_device->WaitIdle();
     ImGui_ImplVulkan_DestroyFontUploadObjects();
 }
+void FawnVision::CRenderer::DrawEditor()
+{
+    ImGui_ImplVulkan_RenderDrawData( ImGui::GetDrawData(), m_commandPool->GetCommandBuffer() );
+}
 void FawnVision::CRenderer::CleanupEditor()
 {
     vkDestroyDescriptorPool( m_device->GetVkDevice(), m_editorPool, VK_NULL_HANDLE );
@@ -460,8 +464,4 @@ FawnVision::Shader FawnVision::CRenderer::CreateShader( const FawnVision::SShade
 FawnVision::ShaderPipeline FawnVision::CRenderer::CreateShaderPipeline( FawnVision::SShaderPassCreateInfo createInfo, const std::vector<FawnVision::Shader>& shaders )
 {
     return FawnVision::CreateShaderPipeline( m_device, createInfo, shaders, m_renderPass, m_swapchain );
-}
-void FawnVision::CRenderer::DrawEditor()
-{
-    ImGui_ImplVulkan_RenderDrawData( ImGui::GetDrawData(), m_commandPool->GetCommandBuffer() );
 }

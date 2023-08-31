@@ -54,6 +54,7 @@ namespace FawnVision
 #ifdef BALBINO_EDITOR
         void SetupEditor();
         void SetupEditorFont();
+        void DrawEditor();
         void CleanupEditor();
 #endif// BALBINO_EDITOR
 
@@ -165,7 +166,6 @@ namespace FawnVision
                 return (T*)( m_assetMap.at( type ).at( id ) );
             return nullptr;
         }
-        void DrawEditor();
 
     private:
         FawnVision::CommandPool m_commandPool { BALBINO_NULL };

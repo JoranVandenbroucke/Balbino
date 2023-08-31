@@ -1,3 +1,6 @@
+[submodule "3rdParty/ASSIMP"]
+	path = 3rdParty/ASSIMP
+	url = https://github.com/assimp/assimp.git
 [submodule "3rdParty/Catch2"]
 	path = 3rdParty/Catch2
 	url = https://github.com/catchorg/Catch2.git
@@ -43,9 +46,3 @@
 [submodule "3rdParty/mINI"]
 	path = 3rdParty/mINI
 	url = https://github.com/pulzed/mINI.git
-[submodule "3rdParty/ASSIMP"]
-	path = 3rdParty/ASSIMP
-	url = https://github.com/assimp/assimp.git
-[submodule "3rdParty/MikkTSpace"]
-	path = 3rdParty/MikkTSpace
-	url = https://github.com/mmikk/MikkTSpace.git
