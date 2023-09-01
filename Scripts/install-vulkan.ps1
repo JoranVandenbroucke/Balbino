@@ -9,6 +9,11 @@ function Test-VulkanSDKInstallation
         [string]$directory
     )
 
+    if (!(Test-Path -Path $Folder))
+    {
+        return $false
+    }
+
     $vulkanFiles = Get-ChildItem -Path $directory -File -Recurse | Select-Object -ExpandProperty Name
     $requiredFiles = @("vulkan-1.lib", "vulkan-1.dll", "vulkan.hpp")
 
@@ -87,7 +92,7 @@ function Move-Vulkan-Files
     $include_dest = Join-Path $vulkan_directory "include"
     if (!(Test-Path $include_dest) -or ((Get-ChildItem $include_dest | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime -lt (Get-ChildItem $include_dir | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime))
     {
-        Copy-FilesWithProgressBar -source $include_dir -destination $include_dest
+        Copy-Item $include_dir $include_dest -Recurse
     }
 
     # Copy the library files
@@ -95,7 +100,7 @@ function Move-Vulkan-Files
     $library_dest = Join-Path $vulkan_directory "lib"
     if (!(Test-Path $library_dest) -or ((Get-ChildItem $library_dest | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime -lt (Get-ChildItem $library_dir | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime))
     {
-        Copy-FilesWithProgressBar -source $library_dir -destination $library_dest
+        Copy-Item $library_dir $library_dest -Recurse
     }
 
     # Copy the binary files
@@ -103,7 +108,7 @@ function Move-Vulkan-Files
     $binary_dest = Join-Path $vulkan_directory "bin"
     if (!(Test-Path $binary_dest) -or ((Get-ChildItem $binary_dest | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime -lt (Get-ChildItem $binary_dir | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime))
     {
-        Copy-FilesWithProgressBar -source $binary_dir -destination $library_dest
+        Copy-Item $binary_dir $binary_dest -Recurse
     }
 
     Write-Host "Vulkan files copied to $vulkan_directory"

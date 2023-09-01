@@ -6,16 +6,25 @@ vulkan_directory="../3rdParty/Vulkan/"
 
 # Function to check if Vulkan SDK is installed in a directory
 testVulkanSDKInstallation() {
-    directory="$1"
+    directory=$1
+    if [ ! -d $directory ]
+     then
+       return 1
+     fi
 
-    vulkanFiles=$(find "$directory" -type f -name "vulkan-1.lib" -o -name "vulkan-1.dll" -o -name "vulkan.hpp")
+    vulkanFiles=$(find $directory -type f)
 
-    if [ -n "$vulkanFiles" ]; then
-        return 0
-    else
-        return 1
-    fi
+    requiredFiles=("vulkan-1.lib" "vulkan-1.dll" "vulkan.hpp")
+
+    for file in "${requiredFiles[@]}"; do
+        if echo $vulkanFiles | grep -q $file; then
+            return 1    # return 1 when file is found
+        fi
+    done
+
+    return 0   # return 0 when no required file is found
 }
+
 
 installVulkanSDK() {
     permissionGranted=false
@@ -27,9 +36,9 @@ installVulkanSDK() {
                 echo "Downloading and installing Vulkan SDK..."
                 # Insert installation steps here.
                 echo "Vulkan SDK installed successfully."
-                return;;
+                exit 0;;
             [Nn]* )
-                return;;
+                exit 1;;
             * )
                 echo "Please answer Y or N.";;
         esac
@@ -52,9 +61,12 @@ searchVulkanSDK() {
 
 validateVulkan() {
     vulkan_sdk="$VULKAN_SDK"
-    if [ -z "$vulkan_sdk" ]; then
-        if testVulkanSDKInstallation "$(pwd)/VULKAN_SDK"; then
-            global_vulkan_sdk_directory="$(pwd)/VULKAN_SDK"
+    currentDirectory=$(pwd)
+    if [ -z "$vulkan_sdk" ]
+     then
+        if testVulkanSDKInstallation "$currentDirectory/VULKAN_SDK"
+         then
+            global_vulkan_sdk_directory="$currentDirectory/VULKAN_SDK"
             echo "Correct Vulkan SDK located at $global_vulkan_sdk_directory"
             return 0
         fi
