@@ -61,7 +61,7 @@ function Validate-Vulkan
     $vulkan_sdk = $env:VULKAN_SDK
     if ($null -eq $vulkan_sdk)
     {
-        Write-Host "vulkan not found via Enviroment Variabls."
+        Write-Host "vulkan not found via Environment Variables."
         if (Test-VulkanSDKInstallation Join-Path $currentDirectory "VULKAN_SDK")
         {
             $global:vulkan_sdk_directory = Join-Path $currentDirectory "VULKAN_SDK"
@@ -74,7 +74,8 @@ function Validate-Vulkan
     }
     else
     {
-        if ($vulkan_sdk -notlike "*$requiredVulkanVersion*")
+        Write-Host "found vulkan at $vulkan_sdk"
+        if (-not($vulkan_sdk.Containd($requiredVulkanVersion)))
         {
             Write-Host "You don't have the correct Vulkan SDK version! (Engine requires $requiredVulkanVersion)" -ForegroundColor Red
             InstallVulkanSDK
