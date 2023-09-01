@@ -1,5 +1,3 @@
-$VerbosePreference = 'Continue'
-
 $requiredVulkanVersion = "1.3."
 $installVulkanVersion = "1.3.243.0"
 $vulkan_directory = "../3rdParty/Vulkan/"
@@ -12,13 +10,6 @@ function Test-VulkanSDKInstallation
     )
 
     Write-Host $directory
-
-    if (!(Test-Path -Path $Folder))
-    {
-        return $false
-    }
-
-    Write-Host $directory " is found"
 
     $vulkanFiles = Get-ChildItem -Path $directory -File -Recurse | Select-Object -ExpandProperty Name
     $requiredFiles = @("vulkan-1.lib", "vulkan-1.dll", "vulkan.hpp")
@@ -59,22 +50,31 @@ function InstallVulkanSDK
 function Validate-Vulkan
 {
     $vulkan_sdk = $env:VULKAN_SDK
+    $testDirecotry = Join-Path $currentDirectory "VULKAN_SDK"
     if ($null -eq $vulkan_sdk)
     {
         Write-Host "vulkan not found via Environment Variables."
-        if (Test-VulkanSDKInstallation Join-Path $currentDirectory "VULKAN_SDK")
+        if (!(Test-Path -Path $Folder))
         {
-            $global:vulkan_sdk_directory = Join-Path $currentDirectory "VULKAN_SDK"
-            Write-Host "Correct Vulkan SDK located at $vulkan_sdk"
-            return $true
+            if (Test-VulkanSDKInstallation $testDirecotry)
+            {
+                $global:vulkan_sdk_directory = $testDirecotry
+                Write-Host "Correct Vulkan SDK located at $testDirecotry"
+                return $true
+            }
         }
+        else
+        {
+            Write-Host "$testDirecotry does not exist!"
+        }
+
         Write-Host "You don't have Vulkan SDK!" -ForegroundColor Red
         InstallVulkanSDK
         return $false
     }
     else
     {
-        Write-Host "found vulkan at $vulkan_sdk"
+        Write-Host "Found vulkan at $vulkan_sdk"
         if (-not($vulkan_sdk.Contains($requiredVulkanVersion)))
         {
             Write-Host "You don't have the correct Vulkan SDK version! (Engine requires $requiredVulkanVersion)" -ForegroundColor Red
