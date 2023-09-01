@@ -1,6 +1,6 @@
 $requiredVulkanVersion = "1.3*"
 $installVulkanVersion = "1.3.243.0"
-$vulkan_directory = "../3rdParty/Vulkan/"
+$vulkan_directory = Join-Path $PSScriptRoot "../3rdParty/Vulkan/"
 
 # Function to check if Vulkan SDK is installed in a directory
 function Test-VulkanSDKInstallation
@@ -128,6 +128,7 @@ function Move-Vulkan-Files
     # Copy the include files
     $include_dir = Join-Path $global:vulkan_sdk_directory "include"
     $include_dest = Join-Path $vulkan_directory "include"
+    Write-Host "Copying $include_dir to $include_dest"
     if (!(Test-Path $include_dest) -or ((Get-ChildItem $include_dest | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime -lt (Get-ChildItem $include_dir | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime))
     {
         Copy-Item $include_dir $include_dest -Recurse
@@ -136,6 +137,7 @@ function Move-Vulkan-Files
     # Copy the library files
     $library_dir = Join-Path $global:vulkan_sdk_directory "lib"
     $library_dest = Join-Path $vulkan_directory "lib"
+    Write-Host "Copying $library_dir to $library_dest"
     if (!(Test-Path $library_dest) -or ((Get-ChildItem $library_dest | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime -lt (Get-ChildItem $library_dir | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime))
     {
         Copy-Item $library_dir $library_dest -Recurse
@@ -144,6 +146,7 @@ function Move-Vulkan-Files
     # Copy the binary files
     $binary_dir = Join-Path $global:vulkan_sdk_directory "bin"
     $binary_dest = Join-Path $vulkan_directory "bin"
+    Write-Host "Copying $binary_dir to $binary_dest"
     if (!(Test-Path $binary_dest) -or ((Get-ChildItem $binary_dest | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime -lt (Get-ChildItem $binary_dir | Sort-Object LastWriteTime | Select-Object -Last 1).LastWriteTime))
     {
         Copy-Item $binary_dir $binary_dest -Recurse
