@@ -9,7 +9,6 @@ add_subdirectory(3rdParty/GLM)
 add_subdirectory(3rdParty/imgui)
 
 set(ASSIMP_BUILD_TESTS OFF CACHE BOOL "If the test suite for Assimp is built in addition to the library." FORCE)
-set(SDL3MIXER_VENDORED ON CACHE BOOL "Use vendored third-party libraries" FORCE)
 set(GLI_TEST_ENABLE OFF CACHE BOOL "Build unit tests" FORCE)
 set(SDL_TEST_LIBRARY OFF CACHE BOOL "Build the SDL3_test library" FORCE)
 
@@ -18,8 +17,6 @@ add_subdirectory(3rdParty/SDL_mixer)
 
 if (BALBINO_EDITOR)
     set(ASSIMP_BUILD_ZLIB ON)
-    set(SDL3IMAGE_VENDORED ON CACHE BOOL "Use vendored third-party libraries" FORCE)
-    set(SDL3TTF_VENDORED ON CACHE BOOL "Use vendored third-party libraries" FORCE)
     add_subdirectory(3rdParty/Assimp)
     add_subdirectory(3rdParty/GLI)
     add_subdirectory(3rdParty/hdrloader)

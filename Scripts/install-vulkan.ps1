@@ -76,7 +76,7 @@ function Validate-Vulkan
     {
         Write-Host "Found vulkan at $vulkan_sdk"
 
-        $vulkan_version = &(Join-Path $vulkan_sdk "Bin\vulkaninfo") --summary | `
+        $vulkan_version = &(Join-Path $vulkan_sdk "Bin\vulkaninfo.exe") --summary | `
                     Select-String 'Vulkan API Version' | `
                     % { $_.ToString().Split()[-1].Split('.')[0, 1] -join '.' }
 
