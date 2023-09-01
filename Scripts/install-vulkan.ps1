@@ -50,7 +50,7 @@ function InstallVulkanSDK
 function Validate-Vulkan
 {
     $vulkan_sdk = $env:VULKAN_SDK
-    $testDirecotry = Join-Path $currentDirectory "VULKAN_SDK"
+    $testDirecotry = Join-Path $PSScriptRoot "VULKAN_SDK"
     if ($null -eq $vulkan_sdk)
     {
         Write-Host "vulkan not found via Environment Variables."
@@ -75,6 +75,13 @@ function Validate-Vulkan
     else
     {
         Write-Host "Found vulkan at $vulkan_sdk"
+
+        $vulkan_version = &(Join-Path $vulkan_sdk "Bin\vulkaninfo") --summary | `
+                    Select-String 'Vulkan API Version' | `
+                    % { $_.ToString().Split()[-1].Split('.')[0, 1] -join '.' }
+
+        Write-Output ("Installed Vulkan Version: " + $vulkan_version)
+
         if (-not($vulkan_sdk.Contains($requiredVulkanVersion)))
         {
             Write-Host "You don't have the correct Vulkan SDK version! (Engine requires $requiredVulkanVersion)" -ForegroundColor Red

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-requiredVulkanVersion="1.3."
-installVulkanVersion="1.3.243.0"
+required_vulkan_version="1.3."
+install_vulkan_version="1.3.243.0"
 vulkan_directory="../3rdParty/Vulkan/"
 
 # Function to check if Vulkan SDK is installed in a directory
@@ -26,7 +26,7 @@ testVulkanSDKInstallation() {
 installVulkanSDK() {
     permissionGranted=false
     while [ "$permissionGranted" = false ]; do
-        read -p "Would you like to install VulkanSDK $installVulkanVersion? [Y/N]: " reply
+        read -p "Would you like to install VulkanSDK $install_vulkan_version? [Y/N]: " reply
         case $reply in
             [Yy]* )
                 # Download and install Vulkan SDK here (Linux-specific steps).
@@ -46,7 +46,7 @@ validateVulkan() {
     vulkan_sdk="$VULKAN_SDK"
     currentDirectory=$(pwd)
     if [ -z "$vulkan_sdk" ]; then
-        echo "vulkan not found via Environment Variables."
+        echo "Vulkan not found via Environment Variables."
         if [ -d "$currentDirectory/VULKAN_SDK" ]; then
           if testVulkanSDKInstallation "$currentDirectory/VULKAN_SDK"; then
             global_vulkan_sdk_directory="$currentDirectory/VULKAN_SDK"
@@ -62,8 +62,10 @@ validateVulkan() {
         return 1
     else
         echo "Found Vulkan at $vulkan_sdk"
-        if [[ ${vulkan_sdk} != *"$requiredVulkanVersion"* ]]; then
-            echo "You don't have the correct Vulkan SDK version! (Engine requires $requiredVulkanVersion)"
+        vulkan_version = $("$vulkan_sdk/Bin/vulkaninfo" --summary | grep 'Vulkan API Version' | awk '{print $NF}' | cut -d"." -f1,2)
+        echo "Installed Vulkan Version: $vulkan_version"
+        if [[ ${$vulkan_version} != *"$required_vulkan_version"* ]]; then
+            echo "You don't have the correct Vulkan SDK version! (Engine requires $required_vulkan_version)"
             installVulkanSDK
             return 1
         fi
