@@ -1,4 +1,4 @@
-$requiredVulkanVersion = "1.3."
+$requiredVulkanVersion = "1.3*"
 $installVulkanVersion = "1.3.243.0"
 $vulkan_directory = "../3rdParty/Vulkan/"
 
@@ -76,17 +76,40 @@ function Validate-Vulkan
     {
         Write-Host "Found vulkan at $vulkan_sdk"
 
-        $vulkan_version = &(Join-Path $vulkan_sdk "Bin\vulkaninfo.exe") --summary | `
-                    Select-String 'Vulkan API Version' | `
-                    % { $_.ToString().Split()[-1].Split('.')[0, 1] -join '.' }
-
-        Write-Output ("Installed Vulkan Version: " + $vulkan_version)
-
-        if (-not($vulkan_sdk.Contains($requiredVulkanVersion)))
+        $vulkaninfo_exe = Join-Path -Path $vulkan_sdk -ChildPath "Bin\vulkaninfo.exe"
+        if (-not(Test-Path -Path $vulkaninfo_exe))
         {
-            Write-Host "You don't have the correct Vulkan SDK version! (Engine requires $requiredVulkanVersion)" -ForegroundColor Red
-            InstallVulkanSDK
-            return $false
+            $vulkaninfo_exe = Join-Path -Path $vulkan_sdk -ChildPath "Bin32\vulkaninfo.exe"
+        }
+        if (-not(Test-Path -Path $vulkaninfo_exe))
+        {
+            $vulkaninfo_exe = Join-Path -Path $vulkan_sdk -ChildPath "Bin64\vulkaninfo.exe"
+        }
+
+        if (Test-Path -Path $vulkaninfo_exe)
+        {
+            $vulkan_version = & $vulkaninfo_exe --summary |`
+                        Select-String 'Vulkan API Version' |`
+                        % { $_.ToString().Split()[-1].Split('.')[0, 1] -join '.' }
+            Write-Output ("Installed Vulkan Version: " + $vulkan_version)
+            if ($vulkan_version -like $requiredVulkanVersion)
+            {
+                Write-Output "Vulkan version is correct."
+                if (-not($vulkan_sdk.Contains($requiredVulkanVersion)))
+                {
+                    Write-Host "You don't have the correct Vulkan SDK version! (Engine requires $requiredVulkanVersion)" -ForegroundColor Red
+                    InstallVulkanSDK
+                    return $false
+                }
+            }
+            else
+            {
+                Write-Output "Vulkan version is incorrect. Engine requires version starting with 1.3"
+            }
+        }
+        else
+        {
+            Write-Output "Cannot find vulkaninfo.exe in the Vulkan SDK directory"
         }
         $global:vulkan_sdk_directory = $vulkan_sdk
     }
