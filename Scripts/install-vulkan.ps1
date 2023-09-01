@@ -75,7 +75,7 @@ function Validate-Vulkan
     else
     {
         Write-Host "found vulkan at $vulkan_sdk"
-        if (-not($vulkan_sdk.Containd($requiredVulkanVersion)))
+        if (-not($vulkan_sdk.Contains($requiredVulkanVersion)))
         {
             Write-Host "You don't have the correct Vulkan SDK version! (Engine requires $requiredVulkanVersion)" -ForegroundColor Red
             InstallVulkanSDK
