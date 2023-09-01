@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <cstddef>
 namespace FawnMemAlloc
 {
 #if defined __clang__ || defined __GNUC__
