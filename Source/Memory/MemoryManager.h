@@ -1,7 +1,7 @@
 //
 // Created by joran on 15/08/2023.
 //
-
+#ifdef USE_MEMORY_MANAGER
 #pragma once
 #include "MemoryManagerCore.h"
 
@@ -123,12 +123,17 @@ namespace FawnMemAlloc
 
 }// namespace FawnMemAlloc
 
+#ifdef _DEBUG
 [[nodiscard]] void* operator new( std::size_t count, std::source_location location = std::source_location::current() );
 [[nodiscard]] void* operator new[]( std::size_t count, std::source_location location = std::source_location::current() );
-
+#else
 [[nodiscard]] void* operator new( std::size_t count );
 [[nodiscard]] void* operator new[]( std::size_t count );
+#endif
+
 void operator delete( void* ptr );
 void operator delete[]( void* ptr );
+
 void operator delete( void* ptr, std::size_t size );
 void operator delete[]( void* ptr, std::size_t size );
+#endif
