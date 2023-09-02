@@ -3,12 +3,12 @@
 
 #if defined( _DEBUG ) && !defined( BL_EDITOR )
 
-inline static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData )
+inline static VKAPI_ATTR VkBool32 VKAPI_CALL DebugReport( VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objectType, uint64_t object, std::size_t location, int32_t messageCode, const char* pLayerPrefix, const char* pMessage, void* pUserData )
 {
-    (void) objectType;
-    (void) object;
-    (void) location;
-    (void) pUserData;
+    (void)objectType;
+    (void)object;
+    (void)location;
+    (void)pUserData;
     const char* debugType { ( flags & VK_DEBUG_REPORT_ERROR_BIT_EXT )                     ? "ERROR"
                                 : ( flags & VK_DEBUG_REPORT_WARNING_BIT_EXT )             ? "WARNING"
                                 : ( flags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT )         ? "INFO"
@@ -42,8 +42,9 @@ VkFormat DeerVulkan::SPhysicalDeviceInfo::FindSupportedFormat( const std::vector
 }
 VkFormat DeerVulkan::SPhysicalDeviceInfo::GetDepthFormat() const
 {
-    return FindSupportedFormat( std::vector { FawnVision::image_format::d32_sfloat_s8_uint, FawnVision::image_format::d32_sfloat, FawnVision::image_format::d24_unorm_s8_uint, FawnVision::image_format::d16_unorm_s8_uint, FawnVision::image_format::d16_unorm }, VK_IMAGE_TILING_OPTIMAL,
-                                VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
+    return FindSupportedFormat(
+        std::vector { FawnVision::image_format::d32_sfloat_s8_uint, FawnVision::image_format::d32_sfloat, FawnVision::image_format::d24_unorm_s8_uint, FawnVision::image_format::d16_unorm_s8_uint, FawnVision::image_format::d16_unorm },
+        VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT );
 }
 VkSampleCountFlagBits DeerVulkan::SPhysicalDeviceInfo::GetMaxUsableSampleCount() const
 {

@@ -321,9 +321,9 @@ namespace std
 {
     template<>
     struct hash<SShaderBinding> {
-        size_t operator()( const SShaderBinding& binding ) const noexcept
+        std::size_t operator()( const SShaderBinding& binding ) const noexcept
         {
-            size_t seed = 0;
+            std::size_t seed = 0;
 
             // Hash the members of the struct
             HashCombine( seed, binding.layoutType );
@@ -356,9 +356,9 @@ namespace std
     };
     template<>
     struct hash<SDefine> {
-        size_t operator()( const SDefine& define ) const noexcept
+        std::size_t operator()( const SDefine& define ) const noexcept
         {
-            size_t seed = 0;
+            std::size_t seed = 0;
             // constexpr Hash the members of the struct
             for ( int i { 0 }; i < 64; ++i )
             {
@@ -382,9 +382,9 @@ namespace std
     };
     template<>
     struct hash<SInclude> {
-        size_t operator()( const SInclude& include ) const noexcept
+        std::size_t operator()( const SInclude& include ) const noexcept
         {
-            size_t seed = 0;
+            std::size_t seed = 0;
             // constexpr Hash the members of the struct
             for ( int i { 0 }; i < 64; ++i )
             {

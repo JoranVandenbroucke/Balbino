@@ -981,7 +981,7 @@ namespace FawnForge::Gui
 
         for ( uint64_t n = 0; n < options.size(); n++ )
         {
-            size_t idx;
+            std::size_t idx;
             std::string currentOption { options[ n ] };
             bool breakedEarly {};
 

@@ -28,7 +28,7 @@
 //// Layered on top of any memory hunk
 //// 1 bit/block solve overhead (!)
 //// Multithreading tenuous (needs full interlocking for > 1 block)
-//template<class A, size_t blockSize>
+//template<class A, std::size_t blockSize>
 //class BitmappedBlock;
 //
 //// Keep a list of allocators, grow lazily
@@ -41,12 +41,12 @@
 //
 //// Size <= threshold goes to SmallAllocator
 //// All else goes to LargeAllocator
-//template<size_t threshold, class SmallAllocator, class LargeAllocator>
+//template<std::size_t  threshold, class SmallAllocator, class LargeAllocator>
 //struct Segragator;
 //
 ////typedef Segragator<4096,Segragator<128, FreeListAllocator<Mallocator, 0, 128>, MediumAllocator> Mallocator> Allocator;
 //
-//template<class Allocator, size_t min, size_t max, size_t step>
+//template<class Allocator, std::size_t min, std::size_t max, std::size_t step>
 //struct Bucketizer;
 
 namespace FawnMemAlloc
@@ -79,8 +79,12 @@ namespace FawnMemAlloc
         template<typename T>
         void Free( T* ptr );
 
-        void* Allocate( size_t n, std::source_location location = std::source_location::current() );
-        void Free( void* ptr );
+#ifdef _DEBUG
+        void* Allocate( std::size_t n, std::source_location location = std::source_location::current() );
+#else
+        void* Allocate( std::size_t n );
+#endif
+        void Free( void* ptr, std::size_t size = 0 );
 
     private:
         std::map<uint32_t, std::shared_ptr<void>> m_assetMap {};
@@ -121,9 +125,10 @@ namespace FawnMemAlloc
 
 [[nodiscard]] void* operator new( std::size_t count, std::source_location location = std::source_location::current() );
 [[nodiscard]] void* operator new[]( std::size_t count, std::source_location location = std::source_location::current() );
+
+[[nodiscard]] void* operator new( std::size_t count );
+[[nodiscard]] void* operator new[]( std::size_t count );
 void operator delete( void* ptr );
 void operator delete[]( void* ptr );
-
-#define IMPLEMENT_NEW( obj )                                                                                                                                                                                                                                   \
-    [[nodiscard]] void* obj## ::operator new( std::size_t count );                                                                                                                                                                                             \
-    [[nodiscard]] void* obj## ::operator new[]( std::size_t count );
+void operator delete( void* ptr, std::size_t size );
+void operator delete[]( void* ptr, std::size_t size );

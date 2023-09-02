@@ -10,8 +10,8 @@ namespace FawnMemAlloc
     class Mallocator
     {
     public:
-        Blk Alloc( size_t n );
+        Blk Alloc( std::size_t n );
         void Free( Blk b );
         bool Owns( Blk b );
     };
-}
+}// namespace FawnMemAlloc

@@ -18,7 +18,7 @@ namespace FawnMemAlloc
     public:
         AllocatorWithStats() = default;
         ~AllocatorWithStats();
-        Blk Alloc( size_t s, const std::source_location& location = std::source_location::current() );
+        Blk Alloc( std::size_t s, const std::source_location& location = std::source_location::current() );
         void Free( Blk b );
         bool Owns( Blk b );
 
@@ -26,7 +26,7 @@ namespace FawnMemAlloc
         struct AllocationInfo {
             std::source_location location;
             std::time_t timestamp {};
-            size_t size {};
+            std::size_t size {};
         };
 
         A m_allocator;
@@ -43,7 +43,7 @@ namespace FawnMemAlloc
         }
     }
     template<class A, uint64_t flags>
-    Blk AllocatorWithStats<A, flags>::Alloc( size_t s, const std::source_location& location )
+    Blk AllocatorWithStats<A, flags>::Alloc( std::size_t s, const std::source_location& location )
     {
         Blk b = m_allocator.Alloc( s );
         if ( b.ptr )
@@ -72,4 +72,4 @@ namespace FawnMemAlloc
     {
         return m_allocator.Owns( b );
     }
-}
+}// namespace FawnMemAlloc

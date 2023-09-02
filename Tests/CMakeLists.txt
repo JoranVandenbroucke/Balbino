@@ -4,6 +4,8 @@ add_executable(${PROJECT_NAME} test_main.cpp AntlerTestCore.h GraphicDeviceTest.
 
 set(ROOT_NAMESPACE ${PROJECT_NAME})
 
+set(CATCH_INSTALL_DOCS OFF CACHE BOOL "Install documentation alongside library" FORCE)
+set(CATCH_INSTALL_EXTRAS OFF CACHE BOOL "Install extras (CMake scripts, debugger helpers) alongside library" FORCE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/Catch2 Catch2)
 
 add_dependencies(${PROJECT_NAME}

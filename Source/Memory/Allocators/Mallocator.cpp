@@ -6,7 +6,7 @@
 
 namespace FawnMemAlloc
 {
-    Blk Mallocator::Alloc( size_t n )
+    Blk Mallocator::Alloc( std::size_t n )
     {
         return { malloc( n ), n };
     }
@@ -19,4 +19,4 @@ namespace FawnMemAlloc
         (void)b;
         return true;
     }
-}
+}// namespace FawnMemAlloc

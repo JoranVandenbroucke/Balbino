@@ -24,7 +24,7 @@ public:
     explicit CUuid( const std::string& uuid )
         : m_uuid {}
     {
-        if(uuid.size() >= 16)
+        if ( uuid.size() >= 16 )
             std::memcpy( m_uuid, uuid.data(), 16 );
     }
 
@@ -34,9 +34,9 @@ public:
     CUuid& operator=( const CUuid& ) = default;
     constexpr ~CUuid()               = default;
 
-    inline CUuid& operator=(const std::string& uuid)
+    inline CUuid& operator=( const std::string& uuid )
     {
-        return *this=CUuid{uuid};
+        return *this = CUuid { uuid };
     }
     constexpr explicit operator const char8_t*() const
     {
@@ -72,10 +72,10 @@ public:
         return m_uuid[ idx ];
     }
 
-    constexpr std::string Data()const
+    constexpr std::string Data() const
     {
-        std::u8string_view v(m_uuid);
-        return {v.cbegin(), v.cend()};
+        std::u8string_view v( m_uuid );
+        return { v.cbegin(), v.cend() };
     }
 
 private:
@@ -102,22 +102,22 @@ namespace std
     struct hash<CUuid> {
         constexpr std::size_t operator()( const CUuid& uuid ) const noexcept
         {
-            size_t hash = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 0 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 1 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 2 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 3 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 4 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 5 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 6 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 7 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 8 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 9 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 10 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 11 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 12 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 13 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 14 ] );
-            hash        = ( hash * 31 ) ^ static_cast<size_t>( uuid[ 15 ] );
+            std::size_t hash = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 0 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 1 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 2 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 3 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 4 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 5 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 6 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 7 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 8 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 9 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 10 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 11 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 12 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 13 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 14 ] );
+            hash             = ( hash * 31 ) ^ static_cast<std::size_t>( uuid[ 15 ] );
             return hash;
         }
     };

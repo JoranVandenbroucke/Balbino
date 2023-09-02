@@ -269,7 +269,7 @@ bool CShaderGraph::Compile( const SFile& file, int cullMode )
         const std::vector sprv( result.cbegin(), result.cend() );
         createInfo.emplace_back( uint32_t( shaders & i ), (uint64_t)sprv.size(), (uint32_t*)sprv.data() );
     }
-    return FawnForge::Exporter::ExportShader( file.fileName, file.path, createInfo, cullMode, file.uuid  );
+    return FawnForge::Exporter::ExportShader( file.fileName, file.path, createInfo, cullMode, file.uuid );
 }
 std::string CShaderGraph::Compile( const CShaderNode* pNode, std::vector<const CShaderNode*>& evaluatedNodes, std::unordered_map<std::string_view, int>& outputVarCount, SShaderInfo& shaderInfo )
 {
@@ -439,7 +439,7 @@ void CShaderGraph::Remove( CShaderNode* node )
     m_nodes.remove( node );
 }
 
-shaderc_include_result* CShaderFileIncluder::GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth )
+shaderc_include_result* CShaderFileIncluder::GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, std::size_t includeDepth )
 {
     (void)includeDepth;
     std::filesystem::path src { requestingSource };

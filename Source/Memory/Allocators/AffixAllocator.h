@@ -15,18 +15,18 @@ namespace FawnMemAlloc
     class AffixAllocator
     {
     public:
-        Blk Alloc( size_t n );
+        Blk Alloc( std::size_t n );
         void Free( Blk b );
         bool Owns( Blk b );
 
     private:
         A m_allocator;
 
-        size_t ActualAllocationSize( size_t n );
-        size_t roundUpToMultipleOf( size_t a, size_t b );
+        std::size_t ActualAllocationSize( std::size_t n );
+        std::size_t roundUpToMultipleOf( std::size_t a, std::size_t b );
     };
     template<class A, class Prefix, class Suffix>
-    size_t AffixAllocator<A, Prefix, Suffix>::roundUpToMultipleOf( size_t a, size_t b )
+    std::size_t AffixAllocator<A, Prefix, Suffix>::roundUpToMultipleOf( std::size_t a, std::size_t b )
     {
         if ( b == 0 )
             return a;
@@ -38,19 +38,19 @@ namespace FawnMemAlloc
         return a + b - remainder;
     }
     template<class A, class Prefix, class Suffix>
-    size_t AffixAllocator<A, Prefix, Suffix>::ActualAllocationSize( size_t n )
+    std::size_t AffixAllocator<A, Prefix, Suffix>::ActualAllocationSize( std::size_t n )
     {
         return ( n + sizeof( Prefix ), std::alignment_of<Suffix>::value );
     }
     template<class A, class Prefix, class Suffix>
-    Blk AffixAllocator<A, Prefix, Suffix>::Alloc( size_t n )
+    Blk AffixAllocator<A, Prefix, Suffix>::Alloc( std::size_t n )
     {
         if ( !n )
             return { nullptr, 0 };
 
-        size_t prefixSize = sizeof( Prefix );
-        size_t suffixSize = sizeof( Suffix );
-        size_t dataSize   = n - prefixSize - suffixSize;
+        std::size_t prefixSize = sizeof( Prefix );
+        std::size_t suffixSize = sizeof( Suffix );
+        std::size_t dataSize   = n - prefixSize - suffixSize;
 
         Blk rawData = m_allocator.Allocate( n );
 
@@ -79,4 +79,4 @@ namespace FawnMemAlloc
         char* originalStart = static_cast<char*>( b.ptr ) - sizeof( Prefix );
         return m_allocator.Owns( { originalStart, b.size + sizeof( Prefix ) + sizeof( Suffix ) } );
     }
-}
+}// namespace FawnMemAlloc

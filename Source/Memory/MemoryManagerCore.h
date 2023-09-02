@@ -18,6 +18,6 @@ namespace FawnMemAlloc
 
     struct Blk {
         void* ptr;
-        size_t size;
+        std::size_t size;
     };
 }// namespace FawnMemAlloc

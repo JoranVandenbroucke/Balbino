@@ -11,12 +11,12 @@ namespace FawnMemAlloc
     class FallbackAllocator : private Primary, private Fallback
     {
     public:
-        Blk Alloc( size_t n );
+        Blk Alloc( std::size_t n );
         void Free( Blk b );
         bool Owns( Blk b );
     };
     template<class Primary, class Fallback>
-    Blk FallbackAllocator<Primary, Fallback>::Alloc( size_t n )
+    Blk FallbackAllocator<Primary, Fallback>::Alloc( std::size_t n )
     {
         Blk r = Primary::Alloc( n );
         if ( r.ptr )
@@ -36,4 +36,4 @@ namespace FawnMemAlloc
     {
         return Primary::Owns( b ) || Fallback::Owns( b );
     }
-}
+}// namespace FawnMemAlloc

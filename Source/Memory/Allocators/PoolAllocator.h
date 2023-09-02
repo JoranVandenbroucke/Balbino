@@ -5,6 +5,7 @@
 #pragma once
 #include "../MemoryManagerCore.h"
 #include <cstdint>
+#include <cstring>
 #include <numeric>
 #include <vector>
 
@@ -14,7 +15,7 @@ namespace FawnMemAlloc
     class PoolAllocator
     {
     public:
-        explicit PoolAllocator( size_t firstBlockCapacity );
+        explicit PoolAllocator( std::size_t firstBlockCapacity );
         ~PoolAllocator();
 
         template<typename... Args>
@@ -50,14 +51,14 @@ namespace FawnMemAlloc
         }
     };
     template<typename T>
-    PoolAllocator<T>::PoolAllocator( size_t firstBlockCapacity )
+    PoolAllocator<T>::PoolAllocator( std::size_t firstBlockCapacity )
         : m_firstBlockCapacity( firstBlockCapacity )
     {
     }
     template<typename T>
     PoolAllocator<T>::~PoolAllocator()
     {
-        for ( size_t i {}; i < m_blocks.size(); ++i )
+        for ( std::size_t i {}; i < m_blocks.size(); ++i )
         {
             delete[] m_blocks[ i ].pItems->value;
         }
@@ -67,7 +68,7 @@ namespace FawnMemAlloc
     template<typename... Args>
     T* PoolAllocator<T>::Alloc( Args&&... args )
     {
-        for ( size_t i { m_blocks.size() }; --i; )
+        for ( std::size_t i { m_blocks.size() }; --i; )
         {
             Block& block = m_blocks;
             if ( block.firstFreeIndex != UINT32_MAX )
@@ -90,7 +91,7 @@ namespace FawnMemAlloc
     template<typename T>
     void PoolAllocator<T>::Free( T* ptr )
     {
-        for ( size_t i { m_blocks.size() }; --i; )
+        for ( std::size_t i { m_blocks.size() }; --i; )
         {
             Block& block { m_blocks[ i ] };
             Item* pItem;
@@ -105,4 +106,4 @@ namespace FawnMemAlloc
             }
         }
     }
-}
+}// namespace FawnMemAlloc

@@ -18,7 +18,7 @@ public:
     // Resolves a requested source file of a given type from a requesting
     // source into a shaderc_include_result whose contents will remain valid
     // until it's released.
-    shaderc_include_result* GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, size_t includeDepth ) override;
+    shaderc_include_result* GetInclude( const char* requestedSource, shaderc_include_type type, const char* requestingSource, std::size_t includeDepth ) override;
     // Releases an include result.
     void ReleaseInclude( shaderc_include_result* includeResult ) override;
 

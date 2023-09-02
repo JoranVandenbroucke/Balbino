@@ -27,7 +27,7 @@ namespace FawnVision
 #define PRETTY_FUNCTION_SUFFIX '>'
 #endif
         template<typename T>
-        size_t Hash()
+        std::size_t Hash()
         {
             std::string_view functionName { PRETTY_FUNCTION };
             uint64_t first         = functionName.find_first_not_of( ' ', functionName.find_first_of( PRETTY_FUNCTION_PREFIX ) + 1 );
@@ -126,8 +126,8 @@ namespace FawnVision
         [[nodiscard]] FawnVision::CMesh* CreateMesh( const CUuid& id, const FawnVision::SMeshCreateInfo& createInfo, uint32_t type = Hash<CTexture>() );
 
         void DrawMesh( uint32_t indexCount, uint32_t firstIndex, uint32_t instanceCount, uint32_t firstInstance );
-        void UpdateModelBuffer( SModelObject object, size_t size );
-        void UpdateLightObject( SLightObject object, size_t size );
+        void UpdateModelBuffer( SModelObject object, std::size_t size );
+        void UpdateLightObject( SLightObject object, std::size_t size );
 
         [[nodiscard]] inline const FawnVision::Buffer GetModelBuffer() const noexcept
         {
@@ -188,7 +188,7 @@ namespace FawnVision
         std::vector<SIndirectBatch> m_allDrawableObjects {};
         std::vector<std::vector<FawnVision::SInstanceBatch>> m_instanceData {};
 
-        std::unordered_map<size_t, std::unordered_map<CUuid, void*>> m_assetMap;
+        std::unordered_map<std::size_t, std::unordered_map<CUuid, void*>> m_assetMap;
 
         SLightObject m_lightObject {};
         BalbinoScene::CCamera m_camera {};

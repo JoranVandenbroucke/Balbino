@@ -316,11 +316,11 @@ FawnVision::CMesh* FawnVision::CRenderer::CreateMesh( const CUuid& id, const Faw
     return (FawnVision::CMesh*)( m_assetMap[ type ][ id ] = (void*)pMesh );
 }
 
-void FawnVision::CRenderer::UpdateModelBuffer( SModelObject object, size_t size )
+void FawnVision::CRenderer::UpdateModelBuffer( SModelObject object, std::size_t size )
 {
     m_pModelBuffer->UpdateData( &object, size );
 }
-void FawnVision::CRenderer::UpdateLightObject( SLightObject object, size_t size )
+void FawnVision::CRenderer::UpdateLightObject( SLightObject object, std::size_t size )
 {
     m_pLightBuffer->UpdateData( &object, size );
 }
