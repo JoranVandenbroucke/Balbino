@@ -17,10 +17,12 @@ function(set_compile_options target type)
             $<$<CONFIG:Release,ReleaseEditor>:/SUBSYSTEM:WINDOWS >
             >
             $<$<CXX_COMPILER_ID:GNU>:
+            -fms-extension
             $<$<CONFIG:Debug,DebugEditor>:-Wl,--incremental -g -Wl,--subsystem,console>
             $<$<CONFIG:Release,ReleaseEditor>:-Wl,--no-incremental -g -Wl,--subsystem,windows -Wl,--gc-sections -Wl,--icf=all>
             >
             $<$<CXX_COMPILER_ID:Clang>:
+            -fms-extension
             $<$<CONFIG:Debug,DebugEditor>:-Wl,--incremental -g -Wl,--subsystem,console>
             $<$<CONFIG:Release,ReleaseEditor>:-Wl,--no-incremental -g -Wl,--subsystem,windows -Wl,--gc-sections -Wl,--icf=all>
             >

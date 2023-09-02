@@ -16,6 +16,8 @@ add_dependencies(${PROJECT_NAME}
 set(ROOT_NAMESPACE ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CMAKE_SOURCE_DIR}/Source/Utilities
+
         ${CMAKE_SOURCE_DIR}/3rdParty/GLM
         ${CMAKE_SOURCE_DIR}/3rdParty/imgui
 )

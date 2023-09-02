@@ -1,17 +1,23 @@
 //
 // Created by joran on 05/08/2023.
 //
-
 #pragma once
+#include <Core.h>
+#if defined( BL_PLATFORM_WINDOWS )
 #pragma warning( push )
 #pragma warning( disable : 4201 )
 #pragma warning( disable : 4723 )
+#elif defined( BL_PLATFORM_LINUX )
+#pragma GCC diagnostic push
+#pragma GCC disable "-Wdiv-by-zero"
+#endif
+
 #include <glm/detail/type_quat.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/quaternion.hpp>
+
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui.h>
-
 namespace BambiMath
 {
     using Vector1    = glm::vec1;
@@ -89,5 +95,10 @@ namespace BambiMath
     {
         return glm::eulerAngles( q );
     }
-#pragma warning( pop )
 }// namespace BambiMath
+
+#if defined( BL_PLATFORM_WINDOWS )
+#pragma warning( pop )
+#elif defined( BL_PLATFORM_LINUX )
+#pragma GCC diagnostic pop
+#endif

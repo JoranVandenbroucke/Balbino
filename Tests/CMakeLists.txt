@@ -33,7 +33,6 @@ include(${CMAKE_SOURCE_DIR}/CMake/CommonUtils.cmake)
 set_precompiled_header(${PROJECT_NAME})
 set_compile_options(${PROJECT_NAME} PRIVATE)
 set_definitions(${PROJECT_NAME} PRIVATE)
-target_compile_definitions(${PROJECT_NAME} PRIVATE "_LIB")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         Catch2::Catch2
