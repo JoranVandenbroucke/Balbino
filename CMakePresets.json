@@ -8,43 +8,326 @@
   "configurePresets": [
     {
       "name": "Debug",
-      "displayName": "Debug Config",
-      "description": "Debug configuration",
-      "generator": "Ninja",
-      "hidden": false
+      "hidden": true,
+      "binaryDir": "${sourceDir}/Build-Debug",
+      "environment": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
     },
     {
       "name": "DebugEditor",
-      "displayName": "Debug Editor Config",
-      "description": "Debug Editor configuration",
-      "generator": "Ninja",
-      "hidden": false,
+      "hidden": true,
       "inherits": [
         "Debug"
       ],
+      "binaryDir": "${sourceDir}/Build-DebugEditor",
       "cacheVariables": {
         "BALBINO_EDITOR": "1"
       }
     },
     {
       "name": "Release",
-      "displayName": "Release Config",
-      "description": "Release configuration",
-      "generator": "Ninja",
-      "hidden": false
+      "hidden": true,
+      "binaryDir": "${sourceDir}/Build-Release",
+      "environment": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+      }
     },
     {
       "name": "ReleaseEditor",
-      "displayName": "Release Editor Config",
-      "description": "Release Editor configuration",
-      "generator": "Ninja",
-      "hidden": false,
+      "hidden": true,
       "inherits": [
-        "Debug"
+        "Release"
       ],
+      "binaryDir": "${sourceDir}/Build-ReleaseEditor",
       "cacheVariables": {
         "BALBINO_EDITOR": "1"
       }
+    },
+    {
+      "name": "VisualStudio-VS",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "toolset": "Toolset",
+      "hidden": true,
+      "environment": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      }
+    },
+    {
+      "name": "VisualStudio-LLVM",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "toolset": "Toolset",
+      "hidden": true,
+      "environment": {
+        "CMAKE_C_COMPILER": "clang-cl.exe",
+        "CMAKE_CXX_COMPILER": "clang-cl.exe"
+      }
+    },
+    {
+      "name": "NinjaMulti-VS",
+      "generator": "Ninja Multi-Config",
+      "hidden": true,
+      "environment": {
+        "CMAKE_GENERATOR_PLATFORM": "x64",
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      }
+    },
+    {
+      "name": "NinjaMulti-LLVM",
+      "generator": "Ninja Multi-Config",
+      "hidden": true,
+      "environment": {
+        "CMAKE_GENERATOR_PLATFORM": "x64",
+        "CMAKE_C_COMPILER": "clang-cl.exe",
+        "CMAKE_CXX_COMPILER": "clang-cl.exe"
+      }
+    },
+    {
+      "name": "Windows",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "environment": {
+        "CMAKE_SYSTEM_NAME": "Windows"
+      }
+    },
+    {
+      "name": "Linux-NinjaMulti",
+      "hidden": true,
+      "inherits": [
+        "NinjaMulti-LLVM"
+      ],
+      "environment": {
+        "CMAKE_SYSTEM_NAME": "Linux"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "Debug-Windows-VS-VS",
+      "hidden": false,
+      "inherits": [
+        "Debug",
+        "Windows",
+        "VisualStudio-VS"
+      ],
+      "displayName": "Debug Windows VisualStudio Config",
+      "description": "Debug configuration on Windows with Visual Studio"
+    },
+    {
+      "name": "Debug-Windows-VS-LLVM",
+      "hidden": false,
+      "inherits": [
+        "Debug",
+        "Windows",
+        "VisualStudio-LLVM"
+      ],
+      "displayName": "Debug Windows VisualStudio LLVM Config",
+      "description": "Debug configuration on Windows with Visual Studio LLVM"
+    },
+    {
+      "name": "Debug-Windows-NJ-VS",
+      "hidden": false,
+      "inherits": [
+        "Debug",
+        "Windows",
+        "NinjaMulti-VS"
+      ],
+      "displayName": "Debug Windows NinjaMulti VS Config",
+      "description": "Debug configuration on Windows with Ninja Multi-Config Visual Studio"
+    },
+    {
+      "name": "Debug-Windows-NJ-LLVM",
+      "hidden": false,
+      "inherits": [
+        "Debug",
+        "Windows",
+        "NinjaMulti-LLVM"
+      ],
+      "displayName": "Debug Windows NinjaMulti LLVM Config",
+      "description": "Debug configuration on Windows with Ninja Multi-Config LLVM"
+    },
+    {
+      "name": "Debug-Linux-NinjaMulti",
+      "hidden": false,
+      "inherits": [
+        "Debug",
+        "Linux-NinjaMulti"
+      ],
+      "displayName": "Debug Linux NinjaMulti Config",
+      "description": "Debug configuration on Linux with NinjaMulti"
+    },
+    {
+      "name": "DebugEditor-Windows-VS-VS",
+      "hidden": false,
+      "inherits": [
+        "DebugEditor",
+        "Windows",
+        "VisualStudio-VS"
+      ],
+      "displayName": "Debug Editor Windows VisualStudio Config",
+      "description": "Debug Editor configuration on Windows with Visual Studio"
+    },
+    {
+      "name": "DebugEditor-Windows-VS-LLVM",
+      "hidden": false,
+      "inherits": [
+        "DebugEditor",
+        "Windows",
+        "VisualStudio-LLVM"
+      ],
+      "displayName": "Debug Editor Windows VisualStudio LLVM Config",
+      "description": "Debug Editor configuration on Windows with Visual Studio LLVM"
+    },
+    {
+      "name": "DebugEditor-Windows-NJ-VS",
+      "hidden": false,
+      "inherits": [
+        "DebugEditor",
+        "Windows",
+        "NinjaMulti-VS"
+      ],
+      "displayName": "Debug Editor Windows NinjaMulti VS Config",
+      "description": "Debug Editor configuration on Windows with Ninja Multi-Config Visual Studio"
+    },
+    {
+      "name": "DebugEditor-Windows-NJ-LLVM",
+      "hidden": false,
+      "inherits": [
+        "DebugEditor",
+        "Windows",
+        "NinjaMulti-LLVM"
+      ],
+      "displayName": "Debug Editor Windows NinjaMulti LLVM Config",
+      "description": "Debug Editor configuration on Windows with Ninja Multi-Config LLVM"
+    },
+    {
+      "name": "DebugEditor-Linux-NinjaMulti",
+      "hidden": false,
+      "inherits": [
+        "DebugEditor",
+        "Linux-NinjaMulti"
+      ],
+      "displayName": "Debug Editor Linux NinjaMulti Config",
+      "description": "Debug Editor configuration on Linux with NinjaMulti"
+    },
+    {
+      "name": "Release-Windows-VS-VS",
+      "hidden": false,
+      "inherits": [
+        "Release",
+        "Windows",
+        "VisualStudio-VS"
+      ],
+      "displayName": "Release Windows VisualStudio Config",
+      "description": "Release configuration on Windows with Visual Studio"
+    },
+    {
+      "name": "Release-Windows-VS-LLVM",
+      "hidden": false,
+      "inherits": [
+        "Release",
+        "Windows",
+        "VisualStudio-LLVM"
+      ],
+      "displayName": "Release Windows VisualStudio LLVM Config",
+      "description": "Release configuration on Windows with Visual Studio LLVM"
+    },
+    {
+      "name": "Release-Windows-NJ-VS",
+      "hidden": false,
+      "inherits": [
+        "Release",
+        "Windows",
+        "NinjaMulti-VS"
+      ],
+      "displayName": "Release Windows NinjaMulti VS Config",
+      "description": "Release configuration on Windows with Ninja Multi-Config Visual Studio"
+    },
+    {
+      "name": "Release-Windows-NJ-LLVM",
+      "hidden": false,
+      "inherits": [
+        "Release",
+        "Windows",
+        "NinjaMulti-LLVM"
+      ],
+      "displayName": "Release Windows NinjaMulti LLVM Config",
+      "description": "Release configuration on Windows with Ninja Multi-Config LLVM"
+    },
+    {
+      "name": "Release-Linux-NinjaMulti",
+      "hidden": false,
+      "inherits": [
+        "Release",
+        "Linux-NinjaMulti"
+      ],
+      "displayName": "Release Linux NinjaMulti Config",
+      "description": "Release configuration on Linux with NinjaMulti"
+    },
+    {
+      "name": "ReleaseEditor-Windows-VS-VS",
+      "hidden": false,
+      "inherits": [
+        "ReleaseEditor",
+        "Windows",
+        "VisualStudio-VS"
+      ],
+      "displayName": "Release Editor Windows VisualStudio Config",
+      "description": "Release Editor configuration on Windows with Visual Studio"
+    },
+    {
+      "name": "ReleaseEditor-Windows-VS-LLVM",
+      "hidden": false,
+      "inherits": [
+        "ReleaseEditor",
+        "Windows",
+        "VisualStudio-LLVM"
+      ],
+      "displayName": "Release Editor Windows VisualStudio LLVM Config",
+      "description": "Release Editor configuration on Windows with Visual Studio LLVM"
+    },
+    {
+      "name": "ReleaseEditor-Windows-NJ-VS",
+      "hidden": false,
+      "inherits": [
+        "ReleaseEditor",
+        "Windows",
+        "NinjaMulti-VS"
+      ],
+      "displayName": "Release Editor Windows NinjaMulti VS Config",
+      "description": "Release Editor configuration on Windows with Ninja Multi-Config Visual Studio"
+    },
+    {
+      "name": "ReleaseEditor-Windows-NJ-LLVM",
+      "hidden": false,
+      "inherits": [
+        "ReleaseEditor",
+        "Windows",
+        "NinjaMulti-LLVM"
+      ],
+      "displayName": "Release Editor Windows NinjaMulti LLVM Config",
+      "description": "Release Editor configuration on Windows with Ninja Multi-Config LLVM"
+    },
+    {
+      "name": "ReleaseEditor-Linux-NinjaMulti",
+      "hidden": false,
+      "inherits": [
+        "ReleaseEditor",
+        "Linux-NinjaMulti"
+      ],
+      "displayName": "Release Editor Linux NinjaMulti Config",
+      "description": "Release Editor configuration on Linux with NinjaMulti"
     }
   ]
 }

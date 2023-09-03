@@ -9,7 +9,6 @@
 #pragma warning( disable : 4723 )
 #elif defined( BL_PLATFORM_LINUX )
 #pragma GCC diagnostic push
-#pragma GCC disable "-Wdiv-by-zero"
 #endif
 
 #include <glm/detail/type_quat.hpp>

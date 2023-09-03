@@ -5,6 +5,7 @@ add_library(${PROJECT_NAME} STATIC
         Application.h
         Application.cpp
         Balbino.h
+        Balbino_main.h
 )
 add_dependencies(${PROJECT_NAME}
         BalbinoControl

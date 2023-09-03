@@ -20,7 +20,7 @@ add_dependencies(${PROJECT_NAME}
         AntlerSerialize
 
         assimp::assimp
-#        EnTT::EnTT
+        #        EnTT::EnTT
         glm::glm
         gli
         hdrloader
@@ -77,15 +77,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         BalbinoScene
         BalbinoControl
 
-        glslang$<$<CONFIG:Debug,DebugEditor>:d>
-        glslang-default-resource-limits$<$<CONFIG:Debug,DebugEditor>:d>
-        shaderc_util$<$<CONFIG:Debug,DebugEditor>:d>
-        shaderc_combined$<$<CONFIG:Debug,DebugEditor>:d>
-        shaderc$<$<CONFIG:Debug,DebugEditor>:d>
-        spirv-cross-glsl$<$<CONFIG:Debug,DebugEditor>:d>
-        SPIRV-Tools$<$<CONFIG:Debug,DebugEditor>:d>
-        SPIRV-Tools-opt$<$<CONFIG:Debug,DebugEditor>:d>
-        SPIRV$<$<CONFIG:Debug,DebugEditor>:d>
+        glslang$<$<CONFIG:Debug>:d>
+        glslang-default-resource-limits$<$<CONFIG:Debug>:d>
+        shaderc_util$<$<CONFIG:Debug>:d>
+        shaderc_combined$<$<CONFIG:Debug>:d>
+        shaderc$<$<CONFIG:Debug>:d>
+        spirv-cross-glsl$<$<CONFIG:Debug>:d>
+        SPIRV-Tools$<$<CONFIG:Debug>:d>
+        SPIRV-Tools-opt$<$<CONFIG:Debug>:d>
+        SPIRV$<$<CONFIG:Debug>:d>
 
         assimp::assimp
         glm::glm

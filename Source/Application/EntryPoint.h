@@ -1,26 +1,18 @@
 #pragma once
+#include "Balbino_main.h"
 #include <Core.h>
-
 #include <SDL3/SDL.h>
 #include <iostream>
 
-#ifdef BL_PLATFORM_WINDOWS
 #include "Application.h"
 
-#ifdef _DEBUG
-int main( int arc, char* argv[] )
-#else
-int WinMain( int arc, char* argv[] )
-#endif
+int BL_MAIN( int argc, char* argv[] )
 {
-    (void)arc;
+    (void)argc;
     (void)argv;
 
     auto pApp = BalbinoApp::CreateApplication();
-
-#ifdef _DEBUG
-    _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_DEBUG );
-#endif
+    INIT_MEMORY
     try
     {
         pApp->Initialize();
@@ -31,18 +23,14 @@ int WinMain( int arc, char* argv[] )
         std::cout << e.what();
         pApp->Cleanup();
         BalbinoApp::DestroyApplication( pApp );
-#ifdef _DEBUG
-        _CrtDumpMemoryLeaks();
-#endif
+        DUMP_MEMORY_LEAKS
+
         return -1;
     }
     pApp->Cleanup();
 
     BalbinoApp::DestroyApplication( pApp );
-#ifdef _DEBUG
-    _CrtDumpMemoryLeaks();
-#endif
+    DUMP_MEMORY_LEAKS
+
     return 0;
 }
-
-#endif// BL_PLATFORM_WINDOWS

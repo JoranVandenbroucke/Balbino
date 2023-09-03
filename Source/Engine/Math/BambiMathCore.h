@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <bit>
 #include <cmath>
 #include <numbers>
 
@@ -90,7 +91,7 @@ namespace BambiMath
     {
         static_assert( std::numeric_limits<float>::is_iec559 );// (enable only on IEEE 754)
 
-        auto const y = std::bit_cast<float>( 0x5f3759df - ( std::bit_cast<std::uint32_t>( a ) >> 1 ) );
+        const auto y = std::bit_cast<float>( 0x5f3759df - ( std::bit_cast<std::uint32_t>( a ) >> 1 ) );
         return y * ( 1.5f - ( a * 0.5f * y * y ) );
     }
 

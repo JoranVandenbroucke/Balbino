@@ -1,7 +1,7 @@
 function(set_compile_options target type)
     target_compile_options(${target} ${type}
             $<$<CXX_COMPILER_ID:MSVC>:
-            /Zi /W4 /WX /MP $<$<CONFIG:Debug,DebugEditor>:${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT} ${DEFAULT_CXX_EXCEPTION_HANDLING}>
+            /Zi /W4 /WX /MP $<$<CONFIG:Debug>:${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT} ${DEFAULT_CXX_EXCEPTION_HANDLING}>
             >
             $<$<CXX_COMPILER_ID:GNU>:
             -Wall -Wextra -Werror
@@ -12,19 +12,19 @@ function(set_compile_options target type)
     )
     target_link_options(${target} ${type}
             $<$<CXX_COMPILER_ID:MSVC>:
-            /INCREMENTAL:NO /DEBUG:FULL /OPT:ICF
-            $<$<CONFIG:Debug,DebugEditor>:/SUBSYSTEM:CONSOLE>
-            $<$<CONFIG:Release,ReleaseEditor>:/SUBSYSTEM:WINDOWS >
+            /INCREMENTAL:NO /DEBUG:FULL /OPT:ICF /std:c++23 /std:c17
+            $<$<BOOL:${BALBINO_EDITOR}>:/SUBSYSTEM:CONSOLE>
+            $<$<NOT:$<BOOL:${BALBINO_EDITOR}>>:/SUBSYSTEM:WINDOWS>
             >
             $<$<CXX_COMPILER_ID:GNU>:
-            -fms-extension
+            -fms-extension -std=c++23 -std=c17
             $<$<CONFIG:Debug,DebugEditor>:-Wl,--incremental -g -Wl,--subsystem,console>
-            $<$<CONFIG:Release,ReleaseEditor>:-Wl,--no-incremental -g -Wl,--subsystem,windows -Wl,--gc-sections -Wl,--icf=all>
+            $<$<CONFIG:Release,RelWitDebInfo>:-Wl,--no-incremental -g -Wl,--subsystem,windows -Wl,--gc-sections -Wl,--icf=all>
             >
             $<$<CXX_COMPILER_ID:Clang>:
-            -fms-extension
+            -fms-extension -std=c++23 -std=c17
             $<$<CONFIG:Debug,DebugEditor>:-Wl,--incremental -g -Wl,--subsystem,console>
-            $<$<CONFIG:Release,ReleaseEditor>:-Wl,--no-incremental -g -Wl,--subsystem,windows -Wl,--gc-sections -Wl,--icf=all>
+            $<$<CONFIG:Release,RelWitDebInfo>:-Wl,--no-incremental -g -Wl,--subsystem,windows -Wl,--gc-sections -Wl,--icf=all>
             >
     )
 
@@ -73,8 +73,9 @@ endfunction()
 
 function(set_definitions target type)
     target_compile_definitions(${target} ${type}
+            $<$<CONFIG:Debug>:_DEBUG>
+            $<$<CONFIG:Release,RelWitDebInfo>:NDEBUG>
             $<$<BOOL:${BALBINO_EDITOR}>:BALBINO_EDITOR>
-
             BL_BUILD_LIB
             _CONSOLE
             UNICODE

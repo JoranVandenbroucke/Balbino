@@ -66,11 +66,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
         vulkan-1
 
-        spirv-cross-core$<$<CONFIG:Debug,DebugEditor>:d>
-        spirv-cross-glsl$<$<CONFIG:Debug,DebugEditor>:d>
-        spirv-cross-reflect$<$<CONFIG:Debug,DebugEditor>:d>
+        spirv-cross-core$<$<CONFIG:Debug>:d>
+        spirv-cross-glsl$<$<CONFIG:Debug>:d>
+        spirv-cross-reflect$<$<CONFIG:Debug>:d>
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE
-    ${CMAKE_SOURCE_DIR}/3rdParty/Vulkan/lib
+        ${CMAKE_SOURCE_DIR}/3rdParty/Vulkan/lib
 )

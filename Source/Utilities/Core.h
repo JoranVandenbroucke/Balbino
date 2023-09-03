@@ -2,20 +2,20 @@
 
 #include <cstdint>
 #if defined( __MINGW32__ ) || defined( _WIN32 )// Check if compiling for Windows
-    #ifndef BL_PLATFORM_WINDOWS
-        #define BL_PLATFORM_WINDOWS
-    #endif
-    #ifndef NOMINMAX
-        #define NOMINMAX// Prevent Windows from defining min and max macros
-    #endif
-    #define BALBINO_WINDOWS_INCLUDE
-    #ifdef BL_BUILD_DLL
-        #define BALBINO_API __declspec( dllexport )
-    #elif BL_BUILD_LIB
-        #define BALBINO_API
-    #else
-        #define BALBINO_API __declspec( dllimport )
-    #endif                    // BL_BUILD_DLL
+#ifndef BL_PLATFORM_WINDOWS
+#define BL_PLATFORM_WINDOWS
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX// Prevent Windows from defining min and max macros
+#endif
+#define BALBINO_WINDOWS_INCLUDE
+#ifdef BL_BUILD_DLL
+#define BALBINO_API __declspec( dllexport )
+#elif BL_BUILD_LIB
+#define BALBINO_API
+#else
+#define BALBINO_API __declspec( dllimport )
+#endif                    // BL_BUILD_DLL
 #elif defined( __linux__ )// Check if compiling for Linux
 #define BL_PLATFORM_LINUX
 #define BALBINO_LINUX_INCLUDE
@@ -31,15 +31,15 @@
 #endif
 
 // Include platform-specific headers
-#if defined(BALBINO_WINDOWS_INCLUDE)
+#if defined( BALBINO_WINDOWS_INCLUDE )
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
 #include <crtdbg.h>
+#include <cstdlib>
 #endif
 #endif
 
-#if defined(BALBINO_LINUX_INCLUDE)
+#if defined( BALBINO_LINUX_INCLUDE )
 // Include Linux-specific headers here
 #endif
 
@@ -47,8 +47,8 @@
 #define BALBINO_NULL nullptr
 #endif
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <string_view>
 
