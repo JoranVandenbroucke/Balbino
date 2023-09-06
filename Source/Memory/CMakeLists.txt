@@ -6,13 +6,13 @@ add_library(${PROJECT_NAME} STATIC
         Allocators/FallbackAllocator.h
         Allocators/FreelistAllocator.h
         Allocators/Mallocator.h
+        Allocators/Mallocator.cpp
         Allocators/PoolAllocator.h
         Allocators/StackAllocator.h
-        MemoryManager.cpp
         MemoryManager.h
+        MemoryManager.cpp
         MemoryManagerCore.h
         Allocators/AllocatorWithStats.h
-        Allocators/Mallocator.cpp
 )
 
 include(${CMAKE_SOURCE_DIR}/CMake/CommonUtils.cmake)

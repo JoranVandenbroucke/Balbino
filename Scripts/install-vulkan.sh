@@ -96,7 +96,42 @@ moveVulkanFiles() {
     binary_dest="$vulkan_directory/bin"
     rsync -av --progress "$binary_dir" "$binary_dest"
 
+    # The file layout might look like this, don't know really
+    # Copy the include files
+    include_dir="$global_vulkan_sdk_directory/x86_64/include"
+    include_dest="$vulkan_directory/x86_64/include"
+    rsync -av --progress "$include_dir" "$include_dest"
+
+    # Copy the library files
+    library_dir="$global_vulkan_sdk_directory/x86_64/lib"
+    library_dest="$vulkan_directory/x86_64/lib"
+    rsync -av --progress "$library_dir" "$library_dest"
+
+    # Copy the binary files
+    binary_dir="$global_vulkan_sdk_directory/x86_64/bin"
+    binary_dest="$vulkan_directory/x86_64/bin"
+    rsync -av --progress "$binary_dir" "$binary_dest"
+
+    # If things still didn't copy, this should do it
+    # Copy the include files
+    include_dir="$global_vulkan_sdk_directory/$install_vulkan_version/x86_64/include"
+    include_dest="$vulkan_directory/$install_vulkan_version/x86_64/include"
+    rsync -av --progress "$include_dir" "$include_dest"
+
+    # Copy the library files
+    library_dir="$global_vulkan_sdk_directory/$install_vulkan_version/x86_64/lib"
+    library_dest="$vulkan_directory/$install_vulkan_version/x86_64/lib"
+    rsync -av --progress "$library_dir" "$library_dest"
+
+    # Copy the binary files
+    binary_dir="$global_vulkan_sdk_directory/$install_vulkan_version/x86_64/bin"
+    binary_dest="$vulkan_directory/$install_vulkan_version/x86_64/bin"
+    rsync -av --progress "$binary_dir" "$binary_dest"
+
+
+
     echo "Vulkan files copied to $vulkan_directory"
+    echo "If things went wrong, manually copy the folders \"include\", \"bin\", and \"lib\" to "./3rdParty/Vulkan""."
 }
 
 if ! validateVulkan; then

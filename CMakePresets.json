@@ -329,5 +329,107 @@
       "displayName": "Release Editor Linux NinjaMulti Config",
       "description": "Release Editor configuration on Linux with NinjaMulti"
     }
+  ],
+  "buildPresets": [
+    {
+      "name": "Debug-Windows-VS-VS",
+      "configurePreset": "Debug-Windows-VS-VS",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Debug-Windows-VS-LLVM",
+      "configurePreset": "Debug-Windows-VS-LLVM",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Debug-Windows-NJ-VS",
+      "configurePreset": "Debug-Windows-NJ-VS",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Debug-Windows-NJ-LLVM",
+      "configurePreset": "Debug-Windows-NJ-LLVM",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Debug-Linux-NinjaMulti",
+      "configurePreset": "Debug-Linux-NinjaMulti",
+      "configuration": "Debug"
+    },
+    {
+      "name": "DebugEditor-Windows-VS-VS",
+      "configurePreset": "DebugEditor-Windows-VS-VS",
+      "configuration": "Debug"
+    },
+    {
+      "name": "DebugEditor-Windows-VS-LLVM",
+      "configurePreset": "DebugEditor-Windows-VS-LLVM",
+      "configuration": "Debug"
+    },
+    {
+      "name": "DebugEditor-Windows-NJ-VS",
+      "configurePreset": "DebugEditor-Windows-NJ-VS",
+      "configuration": "Debug"
+    },
+    {
+      "name": "DebugEditor-Windows-NJ-LLVM",
+      "configurePreset": "DebugEditor-Windows-NJ-LLVM",
+      "configuration": "Debug"
+    },
+    {
+      "name": "DebugEditor-Linux-NinjaMulti",
+      "configurePreset": "DebugEditor-Linux-NinjaMulti",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Release-Windows-VS-VS",
+      "configurePreset": "Release-Windows-VS-VS",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Release-Windows-VS-LLVM",
+      "configurePreset": "Release-Windows-VS-LLVM",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Release-Windows-NJ-VS",
+      "configurePreset": "Release-Windows-NJ-VS",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Release-Windows-NJ-LLVM",
+      "configurePreset": "Release-Windows-NJ-LLVM",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Release-Linux-NinjaMulti",
+      "configurePreset": "Release-Linux-NinjaMulti",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ReleaseEditor-Windows-VS-VS",
+      "configurePreset": "ReleaseEditor-Windows-VS-VS",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ReleaseEditor-Windows-VS-LLVM",
+      "configurePreset": "ReleaseEditor-Windows-VS-LLVM",
+      "configuration": "RelWithDebInfo-Windows-VS-LLV"
+    },
+    {
+      "name": "ReleaseEditor-Windows-NJ-VS",
+      "configurePreset": "ReleaseEditor-Windows-NJ-VS",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ReleaseEditor-Windows-NJ-LLVM",
+      "configurePreset": "ReleaseEditor-Windows-NJ-LLVM",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ReleaseEditor-Linux-NinjaMulti",
+      "configurePreset": "ReleaseEditor-Linux-NinjaMulti",
+      "configuration": "RelWithDebInfo"
+    }
   ]
 }

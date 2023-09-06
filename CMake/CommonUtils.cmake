@@ -12,7 +12,7 @@ function(set_compile_options target type)
     )
     target_link_options(${target} ${type}
             $<$<CXX_COMPILER_ID:MSVC>:
-            /INCREMENTAL:NO /DEBUG:FULL /OPT:ICF /std:c++23 /std:c17
+            /INCREMENTAL:NO /DEBUG:FULL /OPT:ICF
             $<$<BOOL:${BALBINO_EDITOR}>:/SUBSYSTEM:CONSOLE>
             $<$<NOT:$<BOOL:${BALBINO_EDITOR}>>:/SUBSYSTEM:WINDOWS>
             >

@@ -4,26 +4,25 @@
 
 #include "TextureFileImporter.h"
 
-#include <hdrloader.h>
 #include "../../../Renderer/EditorGui.h"
 #include "../Exporter.h"
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
+#include <hdrloader.h>
 
 #include <algorithm>
 #include <array>
 
+#if defined( __MINGW32__ ) || defined( _WIN32 )// Check if compiling for Windows
 #pragma warning( push )
+#pragma warning( disable : 4189 )
 #pragma warning( disable : 4100 )
-#pragma warning( disable : 4201 )
 #pragma warning( disable : 4244 )
 #pragma warning( disable : 4458 )
-#pragma warning( disable : 4723 )
 #pragma warning( disable : 5054 )
-
 #include <gli/gli.hpp>
-
 #pragma warning( pop )
+#endif
 
 namespace FawnForge
 {
@@ -418,14 +417,14 @@ namespace FawnForge
     //  based on https://wickedengine.net/2019/09/22/improved-normal-reconstruction-from-depth/
     bool CTextureFileImporter::GenerateNormalMapFromRed( const char* pIn, char*& pOut, int w, int h )
     {
-        pOut                                    = new char[ w * h * 2 ] {};
+        pOut                                             = new char[ w * h * 2 ] {};
         const BambiMath::Matrix4x4 inverseViewProjection = BambiMath::Transpose( BambiMath::OrthographicMatrix( 1.0f, -1.0f, 1.0f, 1.0f ) );
         for ( int y {}; y < h; ++y )
         {
             for ( int x {}; x < h; ++x )
             {
-                BambiMath::IVector2 uv { x, y };                    // center
-                BambiMath::IVector2 uv0 { uv };                     // center
+                BambiMath::IVector2 uv { x, y };                             // center
+                BambiMath::IVector2 uv0 { uv };                              // center
                 BambiMath::IVector2 uv1 { uv + BambiMath::IVector2( 1, 0 ) };// right
                 BambiMath::IVector2 uv2 { uv + BambiMath::IVector2( 0, 1 ) };// constexpr top
 
@@ -541,10 +540,10 @@ namespace FawnForge
                 float depth0              = (float)pIn[ uv0.x * 4 + uv0.y * w ] / 255.f;
                 float depth1              = (float)pIn[ uv1.x * 4 + uv1.y * w ] / 255.f;
                 float depth2              = (float)pIn[ uv2.x * 4 + uv2.y * w ] / 255.f;
-                BambiMath::Vector3 p0              = ReconstructPosition( uv0, depth0, inverseViewProjection );
-                BambiMath::Vector3 p1              = ReconstructPosition( uv1, depth1, inverseViewProjection );
-                BambiMath::Vector3 p2              = ReconstructPosition( uv2, depth2, inverseViewProjection );
-                BambiMath::Vector3 normal          = normalize( cross( p2 - p0, p1 - p0 ) );
+                BambiMath::Vector3 p0     = ReconstructPosition( uv0, depth0, inverseViewProjection );
+                BambiMath::Vector3 p1     = ReconstructPosition( uv1, depth1, inverseViewProjection );
+                BambiMath::Vector3 p2     = ReconstructPosition( uv2, depth2, inverseViewProjection );
+                BambiMath::Vector3 normal = normalize( cross( p2 - p0, p1 - p0 ) );
                 pOut[ x * 2 + y * w ]     = char( normal.x * 255.f );
                 pOut[ x * 2 + y * w + 1 ] = char( normal.y * 255.f );
             }
