@@ -131,7 +131,7 @@ moveVulkanFiles() {
 
 
     echo "Vulkan files copied to $vulkan_directory"
-    echo "If things went wrong, manually copy the folders \"include\", \"bin\", and \"lib\" to "./3rdParty/Vulkan""."
+    echo "If things went wrong, manually copy the folders \"include\", \"bin\", and \"lib\" to \"./3rdParty/Vulkan\"."
 }
 
 if ! validateVulkan; then

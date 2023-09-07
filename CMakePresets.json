@@ -48,7 +48,7 @@
       "name": "VisualStudio-VS",
       "generator": "Visual Studio 17 2022",
       "architecture": "x64",
-      "toolset": "Toolset",
+      "toolset": "host=x64",
       "hidden": true,
       "environment": {
         "CMAKE_C_COMPILER": "cl.exe",
@@ -59,7 +59,7 @@
       "name": "VisualStudio-LLVM",
       "generator": "Visual Studio 17 2022",
       "architecture": "x64",
-      "toolset": "Toolset",
+      "toolset": "host=x64",
       "hidden": true,
       "environment": {
         "CMAKE_C_COMPILER": "clang-cl.exe",
