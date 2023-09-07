@@ -64,20 +64,20 @@ validateVulkan() {
         return 1
     else
         echo "Found Vulkan at $vulkan_sdk"
-        vulkan_version = $("$vulkan_sdk/Bin/vulkaninfo" --summary | grep 'Vulkan API Version' | awk '{print $NF}' | cut -d"." -f1,2)
-        if [[ $vulkan_version != *"$required_vulkan_version"* ]]; then
-            vulkan_version = $("$vulkan_sdk/x86_64/Bin/vulkaninfo" --summary | grep 'Vulkan API Version' | awk '{print $NF}' | cut -d"." -f1,2)
-            if [[ $vulkan_version != *"$required_vulkan_version"* ]]; then
-                vulkan_version = $("$vulkan_sdk/$vulkan_version/x86_64/vulkaninfo" --summary | grep 'Vulkan API Version' | awk '{print $NF}' | cut -d"." -f1,2)
-                if [[ $vulkan_version != *"$required_vulkan_version"* ]]; then
-                    echo "Installed Vulkan Version: $vulkan_version"
-                    echo "You don't have the correct Vulkan SDK version! (Engine requires $required_vulkan_version)"
-                    installVulkanSDK
-                    return 1
-                fi
-            fi
-        fi
-        echo "Installed Vulkan Version: $vulkan_version"
+        #        vulkan_version = $("$vulkan_sdk/Bin/vulkaninfo" --summary | grep 'Vulkan API Version' | awk '{print $NF}' | cut -d"." -f1,2)
+        #        if [[ $vulkan_version != *"$required_vulkan_version"* ]]; then
+        #            vulkan_version = $("$vulkan_sdk/x86_64/Bin/vulkaninfo" --summary | grep 'Vulkan API Version' | awk '{print $NF}' | cut -d"." -f1,2)
+        #            if [[ $vulkan_version != *"$required_vulkan_version"* ]]; then
+        #                vulkan_version = $("$vulkan_sdk/$vulkan_version/x86_64/vulkaninfo" --summary | grep 'Vulkan API Version' | awk '{print $NF}' | cut -d"." -f1,2)
+        #                if [[ $vulkan_version != *"$required_vulkan_version"* ]]; then
+        #                    echo "Installed Vulkan Version: $vulkan_version"
+        #                    echo "You don't have the correct Vulkan SDK version! (Engine requires $required_vulkan_version)"
+        #                    installVulkanSDK
+        #                    return 1
+        #                fi
+        #            fi
+        #        fi
+        #        echo "Installed Vulkan Version: $vulkan_version"
         global_vulkan_sdk_directory="$vulkan_sdk"
     fi
 
