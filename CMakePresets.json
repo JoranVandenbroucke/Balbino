@@ -87,6 +87,17 @@
       }
     },
     {
+      "name": "GreenHills",
+      "generator": "Green Hills MULTI",
+      "hidden": true,
+      "architecture": "64",
+      "environment": {
+        "CMAKE_GENERATOR_PLATFORM": "x64",
+        "CMAKE_C_COMPILER": "clang-cl.exe",
+        "CMAKE_CXX_COMPILER": "clang-cl.exe"
+      }
+    },
+    {
       "name": "Windows",
       "hidden": true,
       "condition": {
@@ -99,7 +110,7 @@
       }
     },
     {
-      "name": "Linux-NinjaMulti",
+      "name": "Linux-GreenHill",
       "hidden": true,
       "inherits": [
         "NinjaMulti-LLVM"
@@ -158,11 +169,11 @@
       "description": "Debug configuration on Windows with Ninja Multi-Config LLVM"
     },
     {
-      "name": "Debug-Linux-NinjaMulti",
+      "name": "Debug-Linux-GreenHill",
       "hidden": false,
       "inherits": [
         "Debug",
-        "Linux-NinjaMulti"
+        "Linux-GreenHill"
       ],
       "displayName": "Debug Linux NinjaMulti Config",
       "description": "Debug configuration on Linux with NinjaMulti"
@@ -212,11 +223,11 @@
       "description": "Debug Editor configuration on Windows with Ninja Multi-Config LLVM"
     },
     {
-      "name": "DebugEditor-Linux-NinjaMulti",
+      "name": "DebugEditor-Linux-GreenHill",
       "hidden": false,
       "inherits": [
         "DebugEditor",
-        "Linux-NinjaMulti"
+        "Linux-GreenHill"
       ],
       "displayName": "Debug Editor Linux NinjaMulti Config",
       "description": "Debug Editor configuration on Linux with NinjaMulti"
@@ -266,11 +277,11 @@
       "description": "Release configuration on Windows with Ninja Multi-Config LLVM"
     },
     {
-      "name": "Release-Linux-NinjaMulti",
+      "name": "Release-Linux-GreenHill",
       "hidden": false,
       "inherits": [
         "Release",
-        "Linux-NinjaMulti"
+        "Linux-GreenHill"
       ],
       "displayName": "Release Linux NinjaMulti Config",
       "description": "Release configuration on Linux with NinjaMulti"
@@ -320,11 +331,11 @@
       "description": "Release Editor configuration on Windows with Ninja Multi-Config LLVM"
     },
     {
-      "name": "ReleaseEditor-Linux-NinjaMulti",
+      "name": "ReleaseEditor-Linux-GreenHill",
       "hidden": false,
       "inherits": [
         "ReleaseEditor",
-        "Linux-NinjaMulti"
+        "Linux-GreenHill"
       ],
       "displayName": "Release Editor Linux NinjaMulti Config",
       "description": "Release Editor configuration on Linux with NinjaMulti"
@@ -352,8 +363,8 @@
       "configuration": "Debug"
     },
     {
-      "name": "Debug-Linux-NinjaMulti",
-      "configurePreset": "Debug-Linux-NinjaMulti",
+      "name": "Debug-Linux-GreenHill",
+      "configurePreset": "Debug-Linux-GreenHill",
       "configuration": "Debug"
     },
     {
@@ -377,8 +388,8 @@
       "configuration": "Debug"
     },
     {
-      "name": "DebugEditor-Linux-NinjaMulti",
-      "configurePreset": "DebugEditor-Linux-NinjaMulti",
+      "name": "DebugEditor-Linux-GreenHill",
+      "configurePreset": "DebugEditor-Linux-GreenHill",
       "configuration": "Debug"
     },
     {
@@ -402,8 +413,8 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "Release-Linux-NinjaMulti",
-      "configurePreset": "Release-Linux-NinjaMulti",
+      "name": "Release-Linux-GreenHill",
+      "configurePreset": "Release-Linux-GreenHill",
       "configuration": "RelWithDebInfo"
     },
     {
@@ -427,8 +438,8 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "ReleaseEditor-Linux-NinjaMulti",
-      "configurePreset": "ReleaseEditor-Linux-NinjaMulti",
+      "name": "ReleaseEditor-Linux-GreenHill",
+      "configurePreset": "ReleaseEditor-Linux-GreenHill",
       "configuration": "RelWithDebInfo"
     }
   ]

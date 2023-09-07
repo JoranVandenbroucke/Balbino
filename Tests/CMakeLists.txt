@@ -33,7 +33,9 @@ include(${CMAKE_SOURCE_DIR}/CMake/CommonUtils.cmake)
 set_precompiled_header(${PROJECT_NAME})
 set_compile_options(${PROJECT_NAME} PRIVATE)
 set_definitions(${PROJECT_NAME} PRIVATE)
-
+target_link_options(${PROJECT_NAME} PRIVATE
+        $<$<CXX_COMPILER_ID:MSVC>:/SUBSYSTEM:CONSOLE>
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE
         Catch2::Catch2
         imgui
