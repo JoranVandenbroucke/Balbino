@@ -113,7 +113,7 @@
       "name": "Linux-GreenHill",
       "hidden": true,
       "inherits": [
-        "NinjaMulti-LLVM"
+        "GreenHills"
       ],
       "environment": {
         "CMAKE_SYSTEM_NAME": "Linux"
