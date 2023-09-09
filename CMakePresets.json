@@ -89,12 +89,7 @@
     {
       "name": "GreenHills",
       "hidden": true,
-      "architecture": "64",
-      "environment": {
-        "CMAKE_GENERATOR_PLATFORM": "x64",
-        "CMAKE_C_COMPILER": "clang-cl.exe",
-        "CMAKE_CXX_COMPILER": "clang-cl.exe"
-      }
+      "architecture": "64"
     },
     {
       "name": "Windows",
