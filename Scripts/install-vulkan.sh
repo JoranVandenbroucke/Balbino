@@ -92,7 +92,7 @@ moveVulkanFiles() {
 
     echo $PWD
     binary_dest="$vulkan_directory/bin"
-    mkdir "$PWD/$binary_dest"
+    mkdir -p "$PWD/$binary_dest"
     binary_dir="$global_vulkan_sdk_directory/bin"
     rsync -av --progress "$binary_dir" "$binary_dest"
     binary_dir="$global_vulkan_sdk_directory/x86_64/bin"
@@ -101,7 +101,7 @@ moveVulkanFiles() {
     rsync -av --progress "$binary_dir" "$binary_dest"
 
     include_dest="$vulkan_directory/include"
-    mkdir "$PWD/$include_dest"
+    mkdir -p "$PWD/$include_dest"
     include_dir="$global_vulkan_sdk_directory/include"
     rsync -av --progress "$include_dir" "$include_dest"
     include_dir="$global_vulkan_sdk_directory/x86_64/include"
@@ -110,7 +110,7 @@ moveVulkanFiles() {
     rsync -av --progress "$include_dir" "$include_dest"
 
     library_dest="$vulkan_directory/lib"
-    mkdir "$PWD/$library_dest"
+    mkdir -p "$PWD/$library_dest"
     library_dir="$global_vulkan_sdk_directory/lib"
     rsync -av --progress "$library_dir" "$library_dest"
     library_dir="$global_vulkan_sdk_directory/x86_64/lib"
