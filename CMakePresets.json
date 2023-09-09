@@ -104,6 +104,7 @@
     },
     {
       "name": "Linux-GreenHill",
+      "binaryDir": "${sourceDir}/build/",
       "hidden": true,
       "inherits": [
         "GreenHills"
