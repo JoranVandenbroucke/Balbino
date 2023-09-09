@@ -88,7 +88,6 @@
     },
     {
       "name": "GreenHills",
-      "generator": "Green Hills MULTI",
       "hidden": true,
       "architecture": "64",
       "environment": {
