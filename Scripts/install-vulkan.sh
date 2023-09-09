@@ -90,6 +90,7 @@ moveVulkanFiles() {
         return
     fi
 
+    echo $PWD
     binary_dest="$vulkan_directory/bin"
     mkdir "../$binary_dest"
     binary_dir="$global_vulkan_sdk_directory/bin"
