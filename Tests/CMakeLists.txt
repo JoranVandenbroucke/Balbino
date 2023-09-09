@@ -4,15 +4,8 @@ add_executable(${PROJECT_NAME} test_main.cpp AntlerTestCore.h GraphicDeviceTest.
 
 set(ROOT_NAMESPACE ${PROJECT_NAME})
 
-Include(FetchContent)
-
-FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG v3.4.0 # or a later release
-)
-
-FetchContent_MakeAvailable(Catch2)
+set(CATCH_INSTALL_DOCS OFF CACHE BOOL "Install documentation alongside library" FORCE)
+add_subdirectory(${CMAKE_SOURCE_DIR}/3rdParty/Catch2 Catch2)
 
 add_dependencies(${PROJECT_NAME}
         Catch2
