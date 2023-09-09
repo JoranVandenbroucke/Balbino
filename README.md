@@ -119,23 +119,6 @@ cmake --preset Debug-Windows-NJ-LLVM -S .
 
 ---
 
-### Linux
-
-Linux with LLVM
-
-```
-Debug-Linux-NinjaMulti
-DebugEditor-Linux-NinjaMulti
-Release-Linux-NinjaMulti
-ReleaseEditor-Linux-NinjaMulti
-```
-
-Which can be used as:
-
-```shell
-cmake --preset Debug-Linux-NinjaMulti -S .
-```
-
 ## Future plans
 
 A comprehensive list of goals and planned features of Balbino is available on the

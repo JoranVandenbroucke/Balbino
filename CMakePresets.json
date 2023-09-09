@@ -436,5 +436,23 @@
       "configurePreset": "ReleaseEditor-Linux-GreenHill",
       "configuration": "RelWithDebInfo"
     }
+  ],
+  "testPresets": [
+    {
+      "name": "MyTestPreset",
+      "displayName": "My Custom Test Preset",
+      "description": "This is a custom test preset for my project",
+      "configurePreset": "Release-Windows-VS-VS",
+      "configuration": "RelDebugInfo",
+      "output": {
+        "shortProgress": true,
+        "verbosity": "default",
+        "debug": false
+      },
+      "execution": {
+        "stopOnFailure": false,
+        "enableFailover": true
+      }
+    }
   ]
 }

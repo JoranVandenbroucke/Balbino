@@ -50,3 +50,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 target_link_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/3rdParty/Vulkan/lib
 )
+add_test(
+        NAME ${PROJECT_NAME}
+        COMMAND $<TARGET_FILE:${PROJECT_NAME}>)
