@@ -14,7 +14,7 @@ jobs:
     runs-on: ${{matrix.os}}
     strategy:
       matrix:
-        os: [ windows-2019, windows-2022 ]
+        os: [ windows-2022 ]
         platform: [ x64 ]
         build_type: [ Release-Windows-VS-VS ]
 
