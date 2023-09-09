@@ -3,8 +3,8 @@
 #include <Core.h>
 #include <UUID.h>
 
-#include "Vulkan/Vulkan.hpp"
 #include <source_location>
+#include <vulkan/vulkan.hpp>
 
 #include "MeshMetadata.h"
 

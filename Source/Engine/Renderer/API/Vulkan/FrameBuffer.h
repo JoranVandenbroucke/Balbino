@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include "Vulkan/Vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 namespace DeerVulkan
 {

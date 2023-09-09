@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Base.h"
-#include "Vulkan/Vulkan.hpp"
 #include <filesystem>
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_reflect.hpp>
 #include <unordered_set>
+#include <vulkan/vulkan.hpp>
 
 namespace DeerVulkan
 {

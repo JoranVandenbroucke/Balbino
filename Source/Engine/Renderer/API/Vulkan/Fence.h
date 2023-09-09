@@ -1,7 +1,7 @@
 #pragma once
 #include "Base.h"
 #include "Device.h"
-#include "Vulkan/Vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
 namespace DeerVulkan
 {
