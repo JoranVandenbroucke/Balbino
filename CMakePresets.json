@@ -9,7 +9,7 @@
     {
       "name": "Debug",
       "hidden": true,
-      "binaryDir": "${sourceDir}/Build-Debug",
+      "binaryDir": "${sourceDir}/Build-Debug/",
       "environment": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -20,7 +20,7 @@
       "inherits": [
         "Debug"
       ],
-      "binaryDir": "${sourceDir}/Build-DebugEditor",
+      "binaryDir": "${sourceDir}/Build-DebugEditor/",
       "cacheVariables": {
         "BALBINO_EDITOR": "1"
       }
@@ -28,7 +28,7 @@
     {
       "name": "Release",
       "hidden": true,
-      "binaryDir": "${sourceDir}/Build-Release",
+      "binaryDir": "${sourceDir}/Build-Release/",
       "environment": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo"
       }
@@ -39,7 +39,7 @@
       "inherits": [
         "Release"
       ],
-      "binaryDir": "${sourceDir}/Build-ReleaseEditor",
+      "binaryDir": "${sourceDir}/Build-ReleaseEditor/",
       "cacheVariables": {
         "BALBINO_EDITOR": "1"
       }
