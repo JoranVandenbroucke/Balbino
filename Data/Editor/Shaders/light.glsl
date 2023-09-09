@@ -1,3 +1,8 @@
+#ifndef LIGHT_GLSL
+#define LIGHT_GLSL
+
+#define LIGHT_COUNT 8
+
 struct Light {
     int type;//type: Directional, Point, Spot, Area
     float strength;//strength
@@ -10,7 +15,7 @@ struct Light {
 //https://google.github.io/filament/Filament.md.html
 //5.2.2.3 Attenuation function
 
-float GetSquareFalloffAttenuation(vec3 posToLight, float lightInvRadius)
+float get_square_falloff_attenuation(vec3 posToLight, float lightInvRadius)
 {
     float distanceSquare = dot(posToLight, posToLight);
     float factor = distanceSquare * lightInvRadius * lightInvRadius;
@@ -18,7 +23,7 @@ float GetSquareFalloffAttenuation(vec3 posToLight, float lightInvRadius)
     return (smoothFactor * smoothFactor) / max(distanceSquare, 1e-4);
 }
 
-float GetSpotAngleAttenuation(vec3 l, vec3 lightDir, float innerAngle, float outerAngle)
+float get_spot_angle_attenuation(vec3 l, vec3 lightDir, float innerAngle, float outerAngle)
 {
     // the scale and offset computations can be done CPU-side
     float cosOuter = cos(outerAngle);
@@ -36,3 +41,5 @@ float GetSpotAngleAttenuation(vec3 l, vec3 lightDir, float innerAngle, float out
 //    float angle = acos(cosTheta) * (1.0 / PI);
 //    return texture2DLodEXT(lightProfileMap, vec2(angle, 0.0), 0.0).r;
 //}
+
+#endif  // LIGHT_GLSL
