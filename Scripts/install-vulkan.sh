@@ -2,7 +2,7 @@
 
 required_vulkan_version="1.3."
 install_vulkan_version="1.3.243.0"
-vulkan_directory="../3rdParty/Vulkan/"
+vulkan_directory="3rdParty/Vulkan"
 
 # Function to check if Vulkan SDK is installed in a directory
 testVulkanSDKInstallation() {
