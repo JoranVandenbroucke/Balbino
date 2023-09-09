@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include <vulkan/vulkan.hpp>
+#include "Vulkan/Vulkan.hpp"
 
 namespace DeerVulkan
 {
@@ -8,7 +8,7 @@ namespace DeerVulkan
     {
     public:
         constexpr explicit CCommandPool( FawnVision::Device device )
-            : CDeviceObject{ device }
+            : CDeviceObject { device }
         {
         }
 

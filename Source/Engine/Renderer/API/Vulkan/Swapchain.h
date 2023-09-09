@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include <vulkan/vulkan.hpp>
+#include "Vulkan/Vulkan.hpp"
 
 namespace DeerVulkan
 {
@@ -8,8 +8,8 @@ namespace DeerVulkan
     {
     public:
         constexpr CSwapchain( FawnVision::Device device, const VkSurfaceKHR& surface )
-        : CDeviceObject{device}
-        , m_surfaceKhr{surface}
+            : CDeviceObject { device }
+            , m_surfaceKhr { surface }
         {
         }
         ~CSwapchain() override;
@@ -17,11 +17,26 @@ namespace DeerVulkan
         bool AcquireNextImage( FawnVision::Semaphore resentCompleteSemaphore, uint32_t& imageIndex ) const;
         void GetImages( std::vector<FawnVision::ImageResource>& swapChainImages, uint32_t& count ) noexcept;
 
-        constexpr VkExtent2D GetExtend() const{return m_swapchainExtent;}
-        constexpr VkSurfaceFormatKHR GetSurfaceFormat() const{return m_swapSurfaceFormat;}
-        constexpr const VkSwapchainKHR& GetHandle() const{return m_swapchain;}
-        constexpr uint32_t GetImageCount() const{return m_imageCount;}
-        constexpr uint32_t GetMinImage() const{return m_minImageCount;}
+        constexpr VkExtent2D GetExtend() const
+        {
+            return m_swapchainExtent;
+        }
+        constexpr VkSurfaceFormatKHR GetSurfaceFormat() const
+        {
+            return m_swapSurfaceFormat;
+        }
+        constexpr const VkSwapchainKHR& GetHandle() const
+        {
+            return m_swapchain;
+        }
+        constexpr uint32_t GetImageCount() const
+        {
+            return m_imageCount;
+        }
+        constexpr uint32_t GetMinImage() const
+        {
+            return m_minImageCount;
+        }
 
     private:
         VkSwapchainKHR m_swapchain { VK_NULL_HANDLE };

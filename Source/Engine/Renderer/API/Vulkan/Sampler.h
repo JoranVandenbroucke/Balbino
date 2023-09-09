@@ -1,5 +1,5 @@
 #pragma once
-#include <vulkan/vulkan.hpp>
+#include "Vulkan/Vulkan.hpp"
 
 #include "Base.h"
 
@@ -9,12 +9,15 @@ namespace DeerVulkan
     {
     public:
         constexpr explicit CSampler( FawnVision::Device device )
-        : CDeviceObject{device}
+            : CDeviceObject { device }
         {
         }
         ~CSampler() override;
         void Initialize( const FawnVision::SSamplerCreateInfo& createInfo );
-        constexpr VkSampler GetSampler() const{return m_sampler;}
+        constexpr VkSampler GetSampler() const
+        {
+            return m_sampler;
+        }
 
     private:
         VkSampler m_sampler { VK_NULL_HANDLE };

@@ -4,11 +4,11 @@
 
 #pragma once
 #include "../../FawnVisionCore.h"
+#include "Vulkan/Vulkan.hpp"
 #include <Core.h>
 #include <iostream>
 #include <source_location>
 #include <string_view>
-#include <vulkan/vulkan.hpp>
 
 namespace DeerVulkan
 {
@@ -33,7 +33,7 @@ namespace DeerVulkan
         std::cerr << "Vulkan Error: " << static_cast<int>( err ) << " at " << file << ":" << line << " (" << func << ")\n";
         if ( !failMessage.empty() )
         {
-#pragma todo("Use the logging library") // todo use the logging library
+#pragma todo( "Use the logging library" )// todo use the logging library
             std::cerr << "    Message: " << failMessage << "\n";
         }
 

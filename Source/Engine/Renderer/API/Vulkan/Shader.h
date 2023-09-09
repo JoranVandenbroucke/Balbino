@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Base.h"
+#include "Vulkan/Vulkan.hpp"
 #include <filesystem>
 #include <shaderc/shaderc.hpp>
 #include <spirv_cross/spirv_reflect.hpp>
 #include <unordered_set>
-#include <vulkan/vulkan.hpp>
 
 namespace DeerVulkan
 {
@@ -20,7 +20,8 @@ namespace DeerVulkan
             : CDeviceObject { other.GetDevice() }
             , m_shaderHandle { other.m_shaderHandle }
             , m_resources { other.m_resources }
-        {}
+        {
+        }
         ~CShader() override;
 
         void Initialize( const FawnVision::SShaderCreateInfo& createInfo );

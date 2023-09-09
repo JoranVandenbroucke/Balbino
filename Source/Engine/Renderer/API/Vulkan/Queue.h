@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include <vulkan/vulkan.hpp>
+#include "Vulkan/Vulkan.hpp"
 
 namespace DeerVulkan
 {
@@ -17,8 +17,14 @@ namespace DeerVulkan
         bool PresentToScreen( FawnVision::Swapchain swapchain, FawnVision::Semaphore signalSemaphore, uint32_t imageIndex ) noexcept;
         void WaitIdle() const;
 
-        constexpr const VkQueue& GetHandle() const{return m_queue;}
-        constexpr uint32_t GetQueFamily() const{return m_queueFamily;}
+        constexpr const VkQueue& GetHandle() const
+        {
+            return m_queue;
+        }
+        constexpr uint32_t GetQueFamily() const
+        {
+            return m_queueFamily;
+        }
 
     private:
         uint32_t m_queueFamily {};

@@ -4,10 +4,10 @@ function(set_compile_options target type)
             /Zi /W4 /WX /MP $<$<CONFIG:Debug>:${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT} ${DEFAULT_CXX_EXCEPTION_HANDLING}>
             >
             $<$<CXX_COMPILER_ID:GNU>:
-            -Wall -Wextra -Werror
+            -g -Wall -Wextra -Werror
             >
             $<$<CXX_COMPILER_ID:Clang>:
-            -Wall -Wextra -Werror
+            -g -Wall -Wextra -Werror
             >
     )
     target_link_options(${target} ${type}

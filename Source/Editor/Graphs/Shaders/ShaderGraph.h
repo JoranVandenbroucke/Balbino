@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "../../../../3rdParty/Vulkan/include/shaderc/shaderc.hpp"
 #include "Nodes/ShaderNode.h"
 #include "Serializer.h"
+#include "shaderc/shaderc.hpp"
 #include <list>
 #include <set>
 

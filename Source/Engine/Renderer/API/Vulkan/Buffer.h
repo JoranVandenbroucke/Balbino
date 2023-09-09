@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include <vulkan/vulkan.hpp>
+#include "Vulkan/Vulkan.hpp"
 
 namespace DeerVulkan
 {
@@ -11,13 +11,16 @@ namespace DeerVulkan
         ~CBuffer() override;
         void Initialize( uint64_t size, uint32_t bufferUsage, uint16_t memoryProperty ) noexcept;
         void Rebuild( uint64_t size, FawnVision::buffer_usage_flag bufferUsage, FawnVision::memory_property_flag memoryProperty ) noexcept;
-        constexpr const VkBuffer& GetBuffer() const{
+        constexpr const VkBuffer& GetBuffer() const
+        {
             return m_buffer;
         }
-        constexpr uint64_t GetRange() const{
+        constexpr uint64_t GetRange() const
+        {
             return m_currentSize;
         }
-        void* GetMapped() const{
+        void* GetMapped() const
+        {
             return m_mappedData;
         }
         void BeginSingleTimeCommands() const;

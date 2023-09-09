@@ -1,6 +1,6 @@
 #pragma once
 #include "Base.h"
-#include <vulkan/vulkan.hpp>
+#include "Vulkan/Vulkan.hpp"
 
 namespace DeerVulkan
 {
@@ -8,12 +8,15 @@ namespace DeerVulkan
     {
     public:
         constexpr explicit CSemaphore( FawnVision::Device device )
-        : CDeviceObject{device}
+            : CDeviceObject { device }
         {
         }
         ~CSemaphore() override;
         void Initialize();
-        constexpr const VkSemaphore& Get() const{return m_semaphore;}
+        constexpr const VkSemaphore& Get() const
+        {
+            return m_semaphore;
+        }
 
     private:
         VkSemaphore m_semaphore { VK_NULL_HANDLE };
