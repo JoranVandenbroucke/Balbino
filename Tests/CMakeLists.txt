@@ -63,12 +63,3 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         ${CMAKE_SOURCE_DIR}/Data  # Source directory
         $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Data  # Destination directory (../Data)
 )
-
-list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
-include(CTest)
-include(Catch)
-catch_discover_tests(${PROJECT_NAME}
-        TEST_PREFIX ""
-        REPORTER "xml::out=-"
-        OUTPUT_DIR "test_results"
-)
