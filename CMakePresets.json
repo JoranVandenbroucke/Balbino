@@ -166,8 +166,8 @@
       "name": "Debug-Linux-GreenHill",
       "hidden": false,
       "inherits": [
-        "Debug",
-        "Linux-GreenHill"
+        "Linux-GreenHill",
+        "Debug"
       ],
       "displayName": "Debug Linux NinjaMulti Config",
       "description": "Debug configuration on Linux with NinjaMulti"
@@ -220,8 +220,8 @@
       "name": "DebugEditor-Linux-GreenHill",
       "hidden": false,
       "inherits": [
-        "DebugEditor",
-        "Linux-GreenHill"
+        "Linux-GreenHill",
+        "DebugEditor"
       ],
       "displayName": "Debug Editor Linux NinjaMulti Config",
       "description": "Debug Editor configuration on Linux with NinjaMulti"
@@ -274,8 +274,8 @@
       "name": "Release-Linux-GreenHill",
       "hidden": false,
       "inherits": [
-        "Release",
-        "Linux-GreenHill"
+        "Linux-GreenHill",
+        "Release"
       ],
       "displayName": "Release Linux NinjaMulti Config",
       "description": "Release configuration on Linux with NinjaMulti"
@@ -328,8 +328,8 @@
       "name": "ReleaseEditor-Linux-GreenHill",
       "hidden": false,
       "inherits": [
-        "ReleaseEditor",
-        "Linux-GreenHill"
+        "Linux-GreenHill",
+        "ReleaseEditor"
       ],
       "displayName": "Release Editor Linux NinjaMulti Config",
       "description": "Release Editor configuration on Linux with NinjaMulti"
