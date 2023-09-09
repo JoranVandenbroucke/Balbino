@@ -30,6 +30,8 @@ if (BALBINO_EDITOR)
 
     add_subdirectory(Source/Editor)
 endif ()
+#set(CATCH_INSTALL_DOCS OFF CACHE BOOL "Install documentation alongside library" FORCE)
+#add_subdirectory(3rdParty/Catch2)
 
 add_subdirectory(Source/Utilities)
 add_subdirectory(Source/Memory)
