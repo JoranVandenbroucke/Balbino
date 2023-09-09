@@ -88,8 +88,7 @@
     },
     {
       "name": "GreenHills",
-      "hidden": true,
-      "architecture": "64"
+      "hidden": true
     },
     {
       "name": "Windows",
