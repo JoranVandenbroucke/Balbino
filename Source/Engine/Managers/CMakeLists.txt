@@ -14,20 +14,20 @@ add_library(${PROJECT_NAME} STATIC
         Camera/CameraManager.h
         Camera/CameraManager.cpp
 )
- add_dependencies(${PROJECT_NAME}
-         DeerUtils
-         BambiMath
-         FawnVision
-         DeerVulkan
-         BalbinoScene
-         FawnTrace
-         BalbinoComponent
-         AntlerSerialize
+add_dependencies(${PROJECT_NAME}
+        DeerUtils
+        BambiMath
+        FawnVision
+        DeerVulkan
+        BalbinoScene
+        FawnTrace
+        BalbinoComponent
+        AntlerSerialize
 
-         glm::glm
-         imgui
-         SDL3::SDL3
- )
+        glm::glm
+        imgui
+        SDL3::SDL3
+)
 set(ROOT_NAMESPACE ${PROJECT_NAME})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -37,7 +37,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/Source/Engine/Renderer/API/Vulkan
         ${CMAKE_SOURCE_DIR}/Source/Engine/Renderer
         ${CMAKE_SOURCE_DIR}/Source/Engine/Scene
-        ${CMAKE_SOURCE_DIR}/Source/Serializer
+        ${CMAKE_SOURCE_DIR}/Source/VirtualFileSystem
         ${CMAKE_SOURCE_DIR}/Source/Utilities
 
         PUBLIC

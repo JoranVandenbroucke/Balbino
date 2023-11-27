@@ -62,3 +62,7 @@
 	path = blink
 	url = https://github.com/JoranVandenbroucke/blink.git
 	branch = main
+[submodule "Source/Serializer/VirtualFileSystem"]
+	path = Source/VirtualFileSystem
+	url = https://github.com/JoranVandenbroucke/VirtualFileSystem.git
+	branch = "main"

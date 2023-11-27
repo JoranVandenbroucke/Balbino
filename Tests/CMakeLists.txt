@@ -24,7 +24,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/Source/Engine/Renderer
         ${CMAKE_SOURCE_DIR}/Source/Engine/Renderer/API/Vulkan
         ${CMAKE_SOURCE_DIR}/Source/Engine/Scene
-        ${CMAKE_SOURCE_DIR}/Source/Serializer
+        ${CMAKE_SOURCE_DIR}/Source/VirtualFileSystem
         ${CMAKE_SOURCE_DIR}/Source/Utilities
 )
 
