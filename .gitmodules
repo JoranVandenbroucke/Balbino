@@ -62,3 +62,11 @@
 	path = blink
 	url = https://github.com/JoranVandenbroucke/blink.git
 	branch = main
+[submodule "Source/Engine/FileSystem"]
+	path = Source/Engine/FileSystem
+	url = https://github.com/JoranVandenbroucke/FileSystem.git
+	branch = main
+[submodule "Source/Engine/Renderer"]
+	path = Source/Engine/Renderer
+	url = https://github.com/JoranVandenbroucke/FawnVision.git
+	branch = main
