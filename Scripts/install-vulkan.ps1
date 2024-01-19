@@ -24,53 +24,58 @@ function Test-VulkanSDKInstallation
     return $false
 }
 
+$loop_count = 0
 function InstallVulkanSDK
 {
+    if ($loop_count -eq 1)
+    {
+        return $false
+    }
+    $loop_count = 1
     $permissionGranted = $false
     while (-not$permissionGranted)
     {
         $reply = Read-Host "Would you like to install VulkanSDK $installVulkanVersion? [Y/N]"
         if ($reply -eq 'n')
         {
-            return
+            return $false
         }
         $permissionGranted = ($reply -eq 'y')
     }
 
     $vulkanInstallURL = "https://sdk.lunarg.com/sdk/download/$installVulkanVersion/windows/VulkanSDK-$installVulkanVersion-Installer.exe"
     $vulkanPath = "$vulkan_directory\VulkanSDK-$installVulkanVersion-Installer.exe"
+    New-Item -Path $vulkan_directory -ItemType "directory"
     Write-Host "Downloading $vulkanInstallURL to $vulkanPath"
     Invoke-WebRequest -Uri $vulkanInstallURL -OutFile $vulkanPath
     Write-Host "Running Vulkan SDK installer..."
     Start-Process $vulkanPath
     Write-Host "Re-run this script after installation!"
-    exit
-}
+    $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
+    return Validate-Vulkan
+}
 function Validate-Vulkan
 {
     $vulkan_sdk = $env:VULKAN_SDK
-    $testDirecotry = Join-Path $PSScriptRoot "VULKAN_SDK"
+    $testDirectory = Join-Path $PSScriptRoot "VULKAN_SDK"
+    Write-Host $vulkan_sdk
     if ($null -eq $vulkan_sdk)
     {
         Write-Host "vulkan not found via Environment Variables."
-        if (!(Test-Path -Path $Folder))
+        if (Test-VulkanSDKInstallation $testDirectory)
         {
-            if (Test-VulkanSDKInstallation $testDirecotry)
-            {
-                $global:vulkan_sdk_directory = $testDirecotry
-                Write-Host "Correct Vulkan SDK located at $testDirecotry"
-                return $true
-            }
+            $global:vulkan_sdk_directory = $testDirectory
+            Write-Host "Correct Vulkan SDK located at $testDirectory"
+            return $true
         }
         else
         {
-            Write-Host "$testDirecotry does not exist!"
+            Write-Host "$testDirectory does not exist!"
         }
 
         Write-Host "You don't have Vulkan SDK!" -ForegroundColor Red
-        InstallVulkanSDK
-        return $false
+        return InstallVulkanSDK
     }
     else
     {

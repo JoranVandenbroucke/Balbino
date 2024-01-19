@@ -1,81 +1,69 @@
+cmake_minimum_required(VERSION 3.27)
 set(PROJECT_NAME Deer)
+set(ROOT_NAMESPACE ${PROJECT_NAME})
+project(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-set(ROOT_NAMESPACE ${PROJECT_NAME})
-
+add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Engine Engine)
 add_dependencies(${PROJECT_NAME}
-        AlbinoApp
-        BalbinoControl
-        FawnVision
-        FawnTrace
-        DeerUtils
-        DeerVulkan
-        BalbinoScene
-
-        SDL3::SDL3
-        SDL3_mixer::SDL3_mixer
-        imgui
+        BalbinoEngine
 )
 
-if (BALBINO_EDITOR)
-    add_dependencies(${PROJECT_NAME}
-            FawnEditor
-            assimp::assimp
-            ImGuizmo
-            imnodes
-    )
-endif ()
-target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_SOURCE_DIR}/Source/Application
-        ${CMAKE_SOURCE_DIR}/Source/Engine/Debugging
-        ${CMAKE_SOURCE_DIR}/Source/Engine/Managers
-        ${CMAKE_SOURCE_DIR}/Source/Utilities
-
-        ${CMAKE_SOURCE_DIR}/3rdParty/SDL/include
-)
-
-include(${CMAKE_SOURCE_DIR}/CMake/CommonUtils.cmake)
-set_compile_options(${PROJECT_NAME} PRIVATE)
-set_definitions(${PROJECT_NAME} PRIVATE)
-
-target_precompile_headers(${PROJECT_NAME} PRIVATE
+target_precompile_headers(${PROJECT_NAME} PUBLIC
         [["Balbino.h"]]
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-        AlbinoApp
-        BalbinoControl
-        FawnVision
-        DeerVulkan
-        BalbinoScene
-
-        SDL3::SDL3
-        SDL3_mixer::SDL3_mixer
-)
-target_link_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_SOURCE_DIR}/3rdParty/Vulkan/lib
+target_include_directories(${PROJECT_NAME} PUBLIC
+        ${CMAKE_SOURCE_DIR}/Source/Engine
 )
 
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        BalbinoEngine
+)
+
+target_compile_features(${PROJECT_NAME} PRIVATE
+        c_static_assert
+        c_std_17
+        cxx_aggregate_default_initializers
+        cxx_alignof
+        cxx_attributes
+        cxx_auto_type
+        cxx_binary_literals
+        cxx_constexpr
+        cxx_contextual_conversions
+        cxx_defaulted_functions
+        cxx_defaulted_move_initializers
+        cxx_delegating_constructors
+        cxx_deleted_functions
+        cxx_enum_forward_declarations
+        cxx_explicit_conversions
+        cxx_final
+        cxx_generalized_initializers
+        cxx_generic_lambdas
+        cxx_inheriting_constructors
+        cxx_inline_namespaces
+        cxx_lambda_init_captures
+        cxx_lambdas
+        cxx_long_long_type
+        cxx_noexcept
+        cxx_nonstatic_member_init
+        cxx_nullptr
+        cxx_override
+        cxx_range_for
+        cxx_raw_string_literals
+        cxx_right_angle_brackets
+        cxx_rvalue_references
+        cxx_sizeof_member
+        cxx_static_assert
+        cxx_std_23
+        cxx_strong_enums
+        cxx_thread_local
+        cxx_uniform_initialization
+        cxx_unrestricted_unions
+        cxx_user_literals
+)
 
 install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} # Installs the executable in the binary directory
-)
-install(FILES
-        $<TARGET_FILE:SDL3::SDL3>
-        $<TARGET_FILE:SDL3_mixer::SDL3_mixer>
-        DESTINATION ${CMAKE_INSTALL_BINDIR}  # Install the DLLs in the binary directory
-)
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_FILE:SDL3::SDL3>
-        $<TARGET_FILE:SDL3_mixer::SDL3_mixer>
-        $<$<BOOL:${BALBINO_EDITOR}>:$<TARGET_FILE:SDL3_image::SDL3_image>>
-        $<$<BOOL:${BALBINO_EDITOR}>:$<TARGET_FILE:SDL3_ttf::SDL3_ttf>>
-        $<$<BOOL:${BALBINO_EDITOR}>:$<TARGET_FILE:assimp::assimp>>
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/Data  # Source directory
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>/../Data  # Destination directory (../Data)
 )

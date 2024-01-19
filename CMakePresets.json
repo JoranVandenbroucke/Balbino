@@ -20,10 +20,7 @@
       "inherits": [
         "Debug"
       ],
-      "binaryDir": "${sourceDir}/Build-DebugEditor/",
-      "cacheVariables": {
-        "BALBINO_EDITOR": "1"
-      }
+      "binaryDir": "${sourceDir}/Build-DebugEditor/"
     },
     {
       "name": "Release",
@@ -39,56 +36,7 @@
       "inherits": [
         "Release"
       ],
-      "binaryDir": "${sourceDir}/Build-ReleaseEditor/",
-      "cacheVariables": {
-        "BALBINO_EDITOR": "1"
-      }
-    },
-    {
-      "name": "VisualStudio-VS",
-      "generator": "Visual Studio 17 2022",
-      "architecture": "x64",
-      "toolset": "host=x64",
-      "hidden": true,
-      "environment": {
-        "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe"
-      }
-    },
-    {
-      "name": "VisualStudio-LLVM",
-      "generator": "Visual Studio 17 2022",
-      "architecture": "x64",
-      "toolset": "host=x64",
-      "hidden": true,
-      "environment": {
-        "CMAKE_C_COMPILER": "clang-cl.exe",
-        "CMAKE_CXX_COMPILER": "clang-cl.exe"
-      }
-    },
-    {
-      "name": "NinjaMulti-VS",
-      "generator": "Ninja Multi-Config",
-      "hidden": true,
-      "environment": {
-        "CMAKE_GENERATOR_PLATFORM": "x64",
-        "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe"
-      }
-    },
-    {
-      "name": "NinjaMulti-LLVM",
-      "generator": "Ninja Multi-Config",
-      "hidden": true,
-      "environment": {
-        "CMAKE_GENERATOR_PLATFORM": "x64",
-        "CMAKE_C_COMPILER": "clang-cl.exe",
-        "CMAKE_CXX_COMPILER": "clang-cl.exe"
-      }
-    },
-    {
-      "name": "GreenHills",
-      "hidden": true
+      "binaryDir": "${sourceDir}/Build-ReleaseEditor/"
     },
     {
       "name": "Windows",
@@ -103,12 +51,9 @@
       }
     },
     {
-      "name": "Linux-GreenHill",
+      "name": "Linux",
       "binaryDir": "${sourceDir}/build/",
       "hidden": true,
-      "inherits": [
-        "GreenHills"
-      ],
       "environment": {
         "CMAKE_SYSTEM_NAME": "Linux"
       },
@@ -119,340 +64,126 @@
       }
     },
     {
-      "name": "Debug-Windows-VS-VS",
+      "name": "Windows-Debug",
       "hidden": false,
       "inherits": [
         "Debug",
-        "Windows",
-        "VisualStudio-VS"
+        "Windows"
       ],
-      "displayName": "Debug Windows VisualStudio Config",
-      "description": "Debug configuration on Windows with Visual Studio"
+      "displayName": "Debug Windows",
+      "description": "Debug configuration on Windows"
     },
     {
-      "name": "Debug-Windows-VS-LLVM",
+      "name": "Windows-DebugEditor",
+      "hidden": false,
+      "inherits": [
+        "DebugEditor",
+        "Windows"
+      ],
+      "displayName": "Debug Editor Windows",
+      "description": "Debug Editor configuration on Windows"
+    },
+    {
+      "name": "Windows-Release",
+      "hidden": false,
+      "inherits": [
+        "Release",
+        "Windows"
+      ],
+      "displayName": "Release Windows",
+      "description": "Release configuration on Windows"
+    },
+    {
+      "name": "Windows-ReleaseEditor",
+      "hidden": false,
+      "inherits": [
+        "ReleaseEditor",
+        "Windows"
+      ],
+      "displayName": "Release Editor Windows",
+      "description": "Release Editor configuration on Windows"
+    },
+    {
+      "name": "Linux-Debug",
       "hidden": false,
       "inherits": [
         "Debug",
-        "Windows",
-        "VisualStudio-LLVM"
+        "Linux"
       ],
-      "displayName": "Debug Windows VisualStudio LLVM Config",
-      "description": "Debug configuration on Windows with Visual Studio LLVM"
+      "displayName": "Debug Linux",
+      "description": "Debug configuration on Linux"
     },
     {
-      "name": "Debug-Windows-NJ-VS",
-      "hidden": false,
-      "inherits": [
-        "Debug",
-        "Windows",
-        "NinjaMulti-VS"
-      ],
-      "displayName": "Debug Windows NinjaMulti VS Config",
-      "description": "Debug configuration on Windows with Ninja Multi-Config Visual Studio"
-    },
-    {
-      "name": "Debug-Windows-NJ-LLVM",
-      "hidden": false,
-      "inherits": [
-        "Debug",
-        "Windows",
-        "NinjaMulti-LLVM"
-      ],
-      "displayName": "Debug Windows NinjaMulti LLVM Config",
-      "description": "Debug configuration on Windows with Ninja Multi-Config LLVM"
-    },
-    {
-      "name": "Debug-Linux-GreenHill",
-      "hidden": false,
-      "inherits": [
-        "Linux-GreenHill",
-        "Debug"
-      ],
-      "displayName": "Debug Linux NinjaMulti Config",
-      "description": "Debug configuration on Linux with NinjaMulti"
-    },
-    {
-      "name": "DebugEditor-Windows-VS-VS",
+      "name": "Linux-DebugEditor",
       "hidden": false,
       "inherits": [
         "DebugEditor",
-        "Windows",
-        "VisualStudio-VS"
+        "Linux"
       ],
-      "displayName": "Debug Editor Windows VisualStudio Config",
-      "description": "Debug Editor configuration on Windows with Visual Studio"
+      "displayName": "Debug Editor Linux",
+      "description": "Debug Editor configuration on Linux"
     },
     {
-      "name": "DebugEditor-Windows-VS-LLVM",
-      "hidden": false,
-      "inherits": [
-        "DebugEditor",
-        "Windows",
-        "VisualStudio-LLVM"
-      ],
-      "displayName": "Debug Editor Windows VisualStudio LLVM Config",
-      "description": "Debug Editor configuration on Windows with Visual Studio LLVM"
-    },
-    {
-      "name": "DebugEditor-Windows-NJ-VS",
-      "hidden": false,
-      "inherits": [
-        "DebugEditor",
-        "Windows",
-        "NinjaMulti-VS"
-      ],
-      "displayName": "Debug Editor Windows NinjaMulti VS Config",
-      "description": "Debug Editor configuration on Windows with Ninja Multi-Config Visual Studio"
-    },
-    {
-      "name": "DebugEditor-Windows-NJ-LLVM",
-      "hidden": false,
-      "inherits": [
-        "DebugEditor",
-        "Windows",
-        "NinjaMulti-LLVM"
-      ],
-      "displayName": "Debug Editor Windows NinjaMulti LLVM Config",
-      "description": "Debug Editor configuration on Windows with Ninja Multi-Config LLVM"
-    },
-    {
-      "name": "DebugEditor-Linux-GreenHill",
-      "hidden": false,
-      "inherits": [
-        "Linux-GreenHill",
-        "DebugEditor"
-      ],
-      "displayName": "Debug Editor Linux NinjaMulti Config",
-      "description": "Debug Editor configuration on Linux with NinjaMulti"
-    },
-    {
-      "name": "Release-Windows-VS-VS",
+      "name": "Linux-Release",
       "hidden": false,
       "inherits": [
         "Release",
-        "Windows",
-        "VisualStudio-VS"
+        "Linux"
       ],
-      "displayName": "Release Windows VisualStudio Config",
-      "description": "Release configuration on Windows with Visual Studio"
+      "displayName": "Release Linux",
+      "description": "Release configuration on Linux"
     },
     {
-      "name": "Release-Windows-VS-LLVM",
-      "hidden": false,
-      "inherits": [
-        "Release",
-        "Windows",
-        "VisualStudio-LLVM"
-      ],
-      "displayName": "Release Windows VisualStudio LLVM Config",
-      "description": "Release configuration on Windows with Visual Studio LLVM"
-    },
-    {
-      "name": "Release-Windows-NJ-VS",
-      "hidden": false,
-      "inherits": [
-        "Release",
-        "Windows",
-        "NinjaMulti-VS"
-      ],
-      "displayName": "Release Windows NinjaMulti VS Config",
-      "description": "Release configuration on Windows with Ninja Multi-Config Visual Studio"
-    },
-    {
-      "name": "Release-Windows-NJ-LLVM",
-      "hidden": false,
-      "inherits": [
-        "Release",
-        "Windows",
-        "NinjaMulti-LLVM"
-      ],
-      "displayName": "Release Windows NinjaMulti LLVM Config",
-      "description": "Release configuration on Windows with Ninja Multi-Config LLVM"
-    },
-    {
-      "name": "Release-Linux-GreenHill",
-      "hidden": false,
-      "inherits": [
-        "Linux-GreenHill",
-        "Release"
-      ],
-      "displayName": "Release Linux NinjaMulti Config",
-      "description": "Release configuration on Linux with NinjaMulti"
-    },
-    {
-      "name": "ReleaseEditor-Windows-VS-VS",
+      "name": "Linux-ReleaseEditor",
       "hidden": false,
       "inherits": [
         "ReleaseEditor",
-        "Windows",
-        "VisualStudio-VS"
+        "Linux"
       ],
-      "displayName": "Release Editor Windows VisualStudio Config",
-      "description": "Release Editor configuration on Windows with Visual Studio"
-    },
-    {
-      "name": "ReleaseEditor-Windows-VS-LLVM",
-      "hidden": false,
-      "inherits": [
-        "ReleaseEditor",
-        "Windows",
-        "VisualStudio-LLVM"
-      ],
-      "displayName": "Release Editor Windows VisualStudio LLVM Config",
-      "description": "Release Editor configuration on Windows with Visual Studio LLVM"
-    },
-    {
-      "name": "ReleaseEditor-Windows-NJ-VS",
-      "hidden": false,
-      "inherits": [
-        "ReleaseEditor",
-        "Windows",
-        "NinjaMulti-VS"
-      ],
-      "displayName": "Release Editor Windows NinjaMulti VS Config",
-      "description": "Release Editor configuration on Windows with Ninja Multi-Config Visual Studio"
-    },
-    {
-      "name": "ReleaseEditor-Windows-NJ-LLVM",
-      "hidden": false,
-      "inherits": [
-        "ReleaseEditor",
-        "Windows",
-        "NinjaMulti-LLVM"
-      ],
-      "displayName": "Release Editor Windows NinjaMulti LLVM Config",
-      "description": "Release Editor configuration on Windows with Ninja Multi-Config LLVM"
-    },
-    {
-      "name": "ReleaseEditor-Linux-GreenHill",
-      "hidden": false,
-      "inherits": [
-        "Linux-GreenHill",
-        "ReleaseEditor"
-      ],
-      "displayName": "Release Editor Linux NinjaMulti Config",
-      "description": "Release Editor configuration on Linux with NinjaMulti"
+      "displayName": "Release Editor Linux",
+      "description": "Release Editor configuration on Linux"
     }
   ],
   "buildPresets": [
     {
-      "name": "Debug-Windows-VS-VS",
-      "configurePreset": "Debug-Windows-VS-VS",
+      "name": "Windows-Debug",
+      "configurePreset": "Windows-Debug",
       "configuration": "Debug"
     },
     {
-      "name": "Debug-Windows-VS-LLVM",
-      "configurePreset": "Debug-Windows-VS-LLVM",
+      "name": "Windows-DebugEditor",
+      "configurePreset": "Windows-DebugEditor",
       "configuration": "Debug"
     },
     {
-      "name": "Debug-Windows-NJ-VS",
-      "configurePreset": "Debug-Windows-NJ-VS",
-      "configuration": "Debug"
-    },
-    {
-      "name": "Debug-Windows-NJ-LLVM",
-      "configurePreset": "Debug-Windows-NJ-LLVM",
-      "configuration": "Debug"
-    },
-    {
-      "name": "Debug-Linux-GreenHill",
-      "configurePreset": "Debug-Linux-GreenHill",
-      "configuration": "Debug"
-    },
-    {
-      "name": "DebugEditor-Windows-VS-VS",
-      "configurePreset": "DebugEditor-Windows-VS-VS",
-      "configuration": "Debug"
-    },
-    {
-      "name": "DebugEditor-Windows-VS-LLVM",
-      "configurePreset": "DebugEditor-Windows-VS-LLVM",
-      "configuration": "Debug"
-    },
-    {
-      "name": "DebugEditor-Windows-NJ-VS",
-      "configurePreset": "DebugEditor-Windows-NJ-VS",
-      "configuration": "Debug"
-    },
-    {
-      "name": "DebugEditor-Windows-NJ-LLVM",
-      "configurePreset": "DebugEditor-Windows-NJ-LLVM",
-      "configuration": "Debug"
-    },
-    {
-      "name": "DebugEditor-Linux-GreenHill",
-      "configurePreset": "DebugEditor-Linux-GreenHill",
-      "configuration": "Debug"
-    },
-    {
-      "name": "Release-Windows-VS-VS",
-      "configurePreset": "Release-Windows-VS-VS",
+      "name": "Windows-Release",
+      "configurePreset": "Windows-Release",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "Release-Windows-VS-LLVM",
-      "configurePreset": "Release-Windows-VS-LLVM",
+      "name": "Windows-ReleaseEditor",
+      "configurePreset": "Windows-ReleaseEditor",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "Release-Windows-NJ-VS",
-      "configurePreset": "Release-Windows-NJ-VS",
+      "name": "Linux-Debug",
+      "configurePreset": "Linux-Debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Linux-DebugEditor",
+      "configurePreset": "Linux-DebugEditor",
+      "configuration": "Debug"
+    },
+    {
+      "name": "Linux-Release",
+      "configurePreset": "Linux-Release",
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "Release-Windows-NJ-LLVM",
-      "configurePreset": "Release-Windows-NJ-LLVM",
+      "name": "Linux-ReleaseEditor",
+      "configurePreset": "Linux-ReleaseEditor",
       "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "Release-Linux-GreenHill",
-      "configurePreset": "Release-Linux-GreenHill",
-      "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "ReleaseEditor-Windows-VS-VS",
-      "configurePreset": "ReleaseEditor-Windows-VS-VS",
-      "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "ReleaseEditor-Windows-VS-LLVM",
-      "configurePreset": "ReleaseEditor-Windows-VS-LLVM",
-      "configuration": "RelWithDebInfo-Windows-VS-LLV"
-    },
-    {
-      "name": "ReleaseEditor-Windows-NJ-VS",
-      "configurePreset": "ReleaseEditor-Windows-NJ-VS",
-      "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "ReleaseEditor-Windows-NJ-LLVM",
-      "configurePreset": "ReleaseEditor-Windows-NJ-LLVM",
-      "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "ReleaseEditor-Linux-GreenHill",
-      "configurePreset": "ReleaseEditor-Linux-GreenHill",
-      "configuration": "RelWithDebInfo"
-    }
-  ],
-  "testPresets": [
-    {
-      "name": "MyTestPreset",
-      "displayName": "My Custom Test Preset",
-      "description": "This is a custom test preset for my project",
-      "configurePreset": "Release-Windows-VS-VS",
-      "configuration": "RelDebugInfo",
-      "output": {
-        "shortProgress": true,
-        "verbosity": "default",
-        "debug": false
-      },
-      "execution": {
-        "stopOnFailure": false,
-        "enableFailover": true
-      }
     }
   ]
 }

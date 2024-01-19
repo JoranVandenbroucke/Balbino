@@ -2,7 +2,6 @@
 
 Balbino is an evolving game engine initially created as a school project. It has since morphed into a passion project,
 credited with multiple revamps, and serves as an impressive demonstration of programified creativity.
-
 ---
 
 ## 3rd Party Libraries

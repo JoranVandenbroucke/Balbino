@@ -31,13 +31,13 @@ void FawnForge::CGameView::Draw() noexcept
                                   //        const auto cameraObject = m_pSystem->GetCameraManager()->GetActiveCamera();
                                   //        if ( cameraObject )
                                   //        {
-                                  //            const auto& cameraCameraComponent    = cameraObject->GetComponent<BalbinoComponent::CCameraComponent>();
-                                  //            const auto& cameraTransformComponent = cameraObject.GetComponent<BalbinoComponent::CTransformComponent>();
+                                  //            const auto& cameraCameraComponent    = cameraObject->GetComponent<CervidaeComponent::CCameraComponent>();
+                                  //            const auto& cameraTransformComponent = cameraObject.GetComponent<CervidaeComponent::CTransformComponent>();
                                   //
         //            const auto& cameraView       = BambiMath::LookAt( cameraTransformComponent->GetTranslation(), cameraTransformComponent->GetTranslation() + glm::rotate( cameraTransformComponent->GetRotation(), BambiMath::Vector3 { 0, 0, 1 } ), BambiMath::Vector3 { 0, 1, 0 } );
         //            const auto& cameraProjection = BambiMath::Perspective( cameraCameraComponent->GetFov(), m_pSystem->GetWindowWidth() / m_pSystem->GetWindowHeight(), cameraCameraComponent->GetNearClip(), cameraCameraComponent->GetFarClip() );
         //
-        //            const auto transformComponentSelected = selected.GetComponent<BalbinoComponent::CTransformComponent>();
+        //            const auto transformComponentSelected = selected.GetComponent<CervidaeComponent::CTransformComponent>();
         //            BambiMath::Matrix4 transformSelected           = transformComponentSelected.GetTransform();
         //
         //            // Snapping
@@ -73,7 +73,7 @@ void FawnForge::CGameView::Draw() noexcept
         {
             const FawnVision::CMesh* pModel = m_pSystem->GetResourceManager()->GetModel( static_cast<SFile*>( pData )->path );
             BalbinoScene::CEntity pEnt      = m_pContext->CreateEntity();
-            pEnt.AddComponent<BalbinoComponent::CMeshRenderComponent>( pModel->GetUuid() ).SetMaterialCount( pModel->GetMaterialCount() );
+            pEnt.AddComponent<CervidaeComponent::CMeshRenderComponent>( pModel->GetUuid() ).SetMaterialCount( pModel->GetMaterialCount() );
         }
         catch ( const FawnTrace::Exception& e )
         {

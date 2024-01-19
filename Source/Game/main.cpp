@@ -1,50 +1,34 @@
-#include <vector>
+#include "Balbino.h"
+
 namespace Dear
 {
-//    class ComponentFactory {
-//    public:
-//        static Component* createComponent(const uuid_t& uuid) {
-//            // Simulate creation based on UUID, you can extend this with more components
-//            if (uuid_compare(uuid, PositionComponentUUID) == 0) {
-//                return new PositionComponent();
-//            }
-//            if (uuid_compare(uuid, RenderComponentUUID) == 0) {
-//                return new RenderComponent();
-//            }
-//            return nullptr;
-//        }
-//
-//    private:
-//        static uuid_t PositionComponentUUID;
-//        static uuid_t RenderComponentUUID;
-//    };
-
-    class Editor final : public BalbinoApp::Application
+    class Game final : public BalbinoApp::Application
     {
     public:
-        Editor()                           = default;
-        ~Editor() override                 = default;
-        Editor( const Editor& )            = delete;
-        Editor( Editor&& )                 = delete;
-        Editor& operator=( const Editor& ) = delete;
-        Editor& operator=( Editor&& )      = delete;
+        Game()                         = default;
+        ~Game() override               = default;
+        Game( const Game& )            = delete;
+        Game( Game&& )                 = delete;
+        Game& operator=( const Game& ) = delete;
+        Game& operator=( Game&& )      = delete;
 
         void LoadGame() override;
     };
 
-    void Editor::LoadGame()
+    void Game::LoadGame()
     {
-
         this->Application::LoadGame();
     }
 }// namespace Dear
 
 BalbinoApp::Application* BalbinoApp::CreateApplication()
 {
-    return new Dear::Editor {};
+    return new Dear::Game {};
 }
 
-void BalbinoApp::DestroyApplication( BalbinoApp::Application* pApplication )
+void BalbinoApp::DestroyApplication( Application* pApplication )
 {
-    delete (Dear::Editor*)pApplication;
+    delete dynamic_cast<Dear::Game*>( pApplication );
 }
+
+#pragma message(__TIME__)

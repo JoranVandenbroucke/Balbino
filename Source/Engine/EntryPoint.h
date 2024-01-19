@@ -1,17 +1,18 @@
 #pragma once
-#include "Balbino_main.h"
-#include <Core.h>
-#include <SDL3/SDL.h>
 #include <iostream>
 
 #include "Application.h"
+#include "Balbino_main.h"
 
-int BL_MAIN( int argc, char* argv[] )
+#define SDL_MAIN_NEEDED
+#include <SDL3/SDL_main.h>
+
+int main( const int argc, char* argv[] )
 {
-    (void)argc;
-    (void)argv;
+    (void) argc;
+    (void) argv;
 
-    auto pApp = BalbinoApp::CreateApplication();
+    const auto pApp { BalbinoApp::CreateApplication() };
     INIT_MEMORY
     try
     {
@@ -20,16 +21,16 @@ int BL_MAIN( int argc, char* argv[] )
     }
     catch ( const std::exception& e )
     {
-        std::cout << e.what();
+        std::cout << e.what() << std::endl;
         pApp->Cleanup();
-        BalbinoApp::DestroyApplication( pApp );
+        DestroyApplication( pApp );
         DUMP_MEMORY_LEAKS
 
         return -1;
     }
     pApp->Cleanup();
 
-    BalbinoApp::DestroyApplication( pApp );
+    DestroyApplication( pApp );
     DUMP_MEMORY_LEAKS
 
     return 0;

@@ -1,5 +1,5 @@
 #include "Importer.h"
-#include "Serializer.h"
+#include "FawnFiles.h"
 
 #include <UUID.h>
 
@@ -25,27 +25,23 @@ bool FawnForge::ImportFont( const std::filesystem::path& path, const char* pDest
         return false;
     }
     TTF_SetFontKerning( pFont, 0 );
-    Serialization::Write( file, CUuid() );
-    Serialization::Write( file, static_cast<uint8_t>( file_type::font ) );
-    Serialization::Write( file, TTF_FontLineSkip( pFont ) );
-    Serialization::Write( file, TTF_GetFontHinting( pFont ) );
-    Serialization::Write( file, TTF_FontHeight( pFont ) );
-    Serialization::Write( file, TTF_FontAscent( pFont ) );
-    Serialization::Write( file, TTF_FontDescent( pFont ) );
-    Serialization::Write( file, TTF_FontLineSkip( pFont ) );
+    FawnFiles::BinaryStream binaryStream;
+    binaryStream << CUuid {} << static_cast<uint16_t>( FawnFiles::file_type::font ) << TTF_FontLineSkip( pFont ) << TTF_GetFontHinting( pFont ) << TTF_FontHeight( pFont ) << TTF_FontAscent( pFont ) << TTF_FontDescent( pFont )
+                 << TTF_FontLineSkip( pFont );
 
     for ( uint16_t i {}; i < 256u; ++i )
     {
         const char c[ 1 ] { static_cast<char>( i ) };
-        SDL_Surface* pSurface = TTF_RenderText_Solid( pFont, c, { 255, 255, 255, 255 } );
+        const SDL_Surface* pSurface = TTF_RenderText_Solid( pFont, c, { 255, 255, 255, 255 } );
         if ( pSurface == nullptr )
         {
             return false;
         }
-        Serialization::Write( file, pSurface->w );
-        Serialization::Write( file, pSurface->h );
-        Serialization::Write( file, pSurface->h * pSurface->pitch );
-        Serialization::Write( file, static_cast<uint8_t*>( pSurface->pixels ), static_cast<uint64_t>( pSurface->h ) * pSurface->pitch );
+        binaryStream
+        << pSurface->w
+        << pSurface->h
+        << pSurface->h * pSurface->pitch;
+        binaryStream.Write( static_cast<const char*>( pSurface->pixels ), static_cast<uint64_t>( pSurface->h ) * pSurface->pitch );
         TTF_CloseFont( pFont );
     }
     file.close();
@@ -54,7 +50,7 @@ bool FawnForge::ImportFont( const std::filesystem::path& path, const char* pDest
 
 bool FawnForge::ImportAudio( const std::filesystem::path& path, const char* pDestinationDirection )
 {
-    (void)pDestinationDirection;
+    (void) pDestinationDirection;
     Mix_Music* pMusic = Mix_LoadMUS( path.string().c_str() );
     if ( pMusic == nullptr )
     {

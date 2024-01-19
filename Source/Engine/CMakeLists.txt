@@ -1,14 +1,28 @@
-set(PROJECT_NAME DeerUtils)
+cmake_minimum_required(VERSION 3.27)
+set(PROJECT_NAME BalbinoEngine)
+set(ROOT_NAMESPACE ${PROJECT_NAME})
+project(${PROJECT_NAME})
 
-add_library(${PROJECT_NAME} INTERFACE
-        Core.h
-        UUID.h
-        ToCompilerConsole.h
+add_library(${PROJECT_NAME}
+        EntryPoint.h
+        Application.h
+        Application.cpp
+        Balbino.h
+        Balbino_main.h
 )
 
-set(ROOT_NAMESPACE ${PROJECT_NAME})
+add_subdirectory(Renderer)
+add_dependencies(${PROJECT_NAME}
+        FawnVision
+)
 
-target_compile_features(${PROJECT_NAME} INTERFACE
+target_include_directories(${PROJECT_NAME} PUBLIC
+        Renderer/Includes
+)
+target_link_libraries(${PROJECT_NAME} PUBLIC
+        FawnVision
+)
+target_compile_features(${PROJECT_NAME} PRIVATE
         c_static_assert
         c_std_17
         cxx_aggregate_default_initializers

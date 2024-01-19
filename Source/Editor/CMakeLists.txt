@@ -2,7 +2,7 @@ set(PROJECT_NAME FawnEditor)
 
 file(GLOB_RECURSE files *.cpp *.hpp)
 
-add_library(${PROJECT_NAME} STATIC
+add_library(${PROJECT_NAME}
         ${files}
         ${CMAKE_SOURCE_DIR}/3rdParty/mikktspace/mikktspace.c
         ${CMAKE_SOURCE_DIR}/3rdParty/mikktspace/mikktspace.h
@@ -14,10 +14,10 @@ add_dependencies(${PROJECT_NAME}
         FawnVision
         DeerVulkan
         BalbinoScene
-        BalbinoComponent
+        CervidaeComponents
         BalbinoControl
-        FawnTrace
-        AntlerSerialize
+        DoeDebug
+        FawnFiles
 
         assimp::assimp
         #        EnTT::EnTT
@@ -42,7 +42,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/Source/Engine/Renderer/API/Vulkan
         ${CMAKE_SOURCE_DIR}/Source/Engine/Renderer
         ${CMAKE_SOURCE_DIR}/Source/Engine/Scene
-        ${CMAKE_SOURCE_DIR}/Source/Serializer
+        ${CMAKE_SOURCE_DIR}/Source/FileSystem/includes
         ${CMAKE_SOURCE_DIR}/Source/Utilities
 
         PUBLIC
@@ -68,7 +68,7 @@ include(${CMAKE_SOURCE_DIR}/CMake/CommonUtils.cmake)
 set_precompiled_header(${PROJECT_NAME})
 set_compile_options(${PROJECT_NAME} PRIVATE)
 set_definitions(${PROJECT_NAME} PRIVATE)
-target_compile_definitions(${PROJECT_NAME} PRIVATE "_LIB")
+
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         BambiMath
@@ -76,6 +76,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         DeerVulkan
         BalbinoScene
         BalbinoControl
+        FawnFiles
 
         glslang$<$<CONFIG:Debug>:d>
         glslang-default-resource-limits$<$<CONFIG:Debug>:d>

@@ -4,12 +4,15 @@
 #include "EditorGui.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
+#include <array>
+#include <format>
+
 #include <imgui.h>
 #include <imgui_internal.h>
 
 namespace FawnForge::Gui
 {
-    void IntValue( std::string_view name, uint64_t value, float width )
+    void IntValue( const std::string_view name, const uint64_t value, const float width )
     {
         ImGui::PushID( name.data() );
 
@@ -22,7 +25,7 @@ namespace FawnForge::Gui
 
         ImGui::PopID();
     }
-    void IntValue( std::string_view name, int value, float width )
+    void IntValue( const std::string_view name, const int value, const float width )
     {
         ImGui::PushID( name.data() );
 
@@ -37,7 +40,7 @@ namespace FawnForge::Gui
 
         ImGui::PopID();
     }
-    void Int2Value( std::string_view name, const int* value, float width )
+    void Int2Value( const std::string_view name, const int* value, const float width )
     {
         const ImGuiIO& io   = ImGui::GetIO();
         const auto boldFont = io.Fonts->Fonts[ 0 ];
@@ -76,7 +79,7 @@ namespace FawnForge::Gui
 
         ImGui::PopID();
     }
-    void Int3Value( std::string_view name, const int* value, float width )
+    void Int3Value( const std::string_view name, const int* value, const float width )
     {
         const ImGuiIO& io   = ImGui::GetIO();
         const auto boldFont = io.Fonts->Fonts[ 0 ];
@@ -123,7 +126,7 @@ namespace FawnForge::Gui
 
         ImGui::PopID();
     }
-    void Int4Value( std::string_view name, const int* value, float width )
+    void Int4Value( const std::string_view name, const int* value, const float width )
     {
         const ImGuiIO& io   = ImGui::GetIO();
         const auto boldFont = io.Fonts->Fonts[ 0 ];
@@ -179,7 +182,7 @@ namespace FawnForge::Gui
         ImGui::PopID();
     }
 
-    void FloatValue( std::string_view name, float value, float width )
+    void FloatValue( const std::string_view name, const float value, const float width )
     {
         ImGui::PushID( name.data() );
 
@@ -194,7 +197,7 @@ namespace FawnForge::Gui
 
         ImGui::PopID();
     }
-    void Float2Value( std::string_view name, const float* value, float width )
+    void Float2Value( const std::string_view name, const float* value, const float width )
     {
 
         const ImGuiIO& io   = ImGui::GetIO();
@@ -234,7 +237,7 @@ namespace FawnForge::Gui
 
         ImGui::PopID();
     }
-    void Float3Value( std::string_view name, const float* value, float width )
+    void Float3Value( const std::string_view name, const float* value, const float width )
     {
         const ImGuiIO& io   = ImGui::GetIO();
         const auto boldFont = io.Fonts->Fonts[ 0 ];
@@ -281,7 +284,7 @@ namespace FawnForge::Gui
 
         ImGui::PopID();
     }
-    void Float4Value( std::string_view name, const float* value, float width )
+    void Float4Value( const std::string_view name, const float* value, const float width )
     {
         const ImGuiIO& io   = ImGui::GetIO();
         const auto boldFont = io.Fonts->Fonts[ 0 ];
@@ -337,9 +340,8 @@ namespace FawnForge::Gui
         ImGui::PopID();
     }
 
-    bool IntSlider( std::string_view name, int& value, int min, int max, float width )
+    bool IntSlider( const std::string_view name, int& value, const int min, const int max, const float width )
     {
-        bool hasChanged;
         ImGui::PushID( name.data() );
 
         ImGui::BeginColumns( name.data(), 2, ImGuiOldColumnFlags_NoResize );
@@ -347,16 +349,15 @@ namespace FawnForge::Gui
         ImGui::Text( "%s", name.data() );
         ImGui::NextColumn();
 
-        hasChanged = ImGui::SliderInt( "##V", &value, min, max );
+        const bool hasChanged = ImGui::SliderInt( "##V", &value, min, max );
 
         ImGui::EndColumns();
 
         ImGui::PopID();
         return hasChanged;
     }
-    bool FloatSlider( std::string_view name, float& value, float min, float max, float width, bool showName )
+    bool FloatSlider( const std::string_view name, float& value, const float min, const float max, const float width, const bool showName )
     {
-        bool hasChanged;
         ImGui::PushID( name.data() );
         if ( showName )
         {
@@ -366,7 +367,7 @@ namespace FawnForge::Gui
             ImGui::NextColumn();
         }
 
-        hasChanged = ImGui::SliderFloat( "##V", &value, min, max, "%.2f" );
+        const bool hasChanged = ImGui::SliderFloat( "##V", &value, min, max, "%.2f" );
 
         ImGui::EndColumns();
 
@@ -374,9 +375,8 @@ namespace FawnForge::Gui
         return hasChanged;
     }
 
-    bool Float( std::string_view name, float& value, float steps, float width )
+    bool Float( const std::string_view name, float& value, const float steps, const float width )
     {
-        bool hasChanged;
         ImGui::PushID( name.data() );
 
         ImGui::BeginColumns( name.data(), 2, ImGuiOldColumnFlags_NoResize );
@@ -384,13 +384,13 @@ namespace FawnForge::Gui
         ImGui::Text( "%s", name.data() );
         ImGui::NextColumn();
 
-        hasChanged = ImGui::DragFloat( "##V", &value, steps, 0.0f, 0.0f, "%.2f" );
+        const bool hasChanged = ImGui::DragFloat( "##V", &value, steps, 0.0f, 0.0f, "%.2f" );
         ImGui::EndColumns();
 
         ImGui::PopID();
         return hasChanged;
     }
-    bool Float2( std::string_view name, float* value, float steps, float resetValue, float width )
+    bool Float2( const std::string_view name, float* value, const float steps, const float resetValue, const float width )
     {
         bool hasChanged {};
         const ImGuiIO& io   = ImGui::GetIO();
@@ -442,7 +442,7 @@ namespace FawnForge::Gui
         ImGui::PopID();
         return hasChanged;
     }
-    bool Float3( std::string_view name, float* value, float steps, float resetValue, float width )
+    bool Float3( const std::string_view name, float* value, const float steps, const float resetValue, const float width )
     {
         bool hasChanged {};
         const ImGuiIO& io   = ImGui::GetIO();
@@ -506,7 +506,7 @@ namespace FawnForge::Gui
         ImGui::PopID();
         return hasChanged;
     }
-    bool Float4( std::string_view name, float* value, float steps, float resetValue, float width )
+    bool Float4( const std::string_view name, float* value, const float steps, const float resetValue, const float width )
     {
         bool hasChanged {};
         const ImGuiIO& io   = ImGui::GetIO();
@@ -583,9 +583,8 @@ namespace FawnForge::Gui
         return hasChanged;
     }
 
-    bool Int( std::string_view name, int& value, float steps, int min, int max, float width )
+    bool Int( const std::string_view name, int& value, const float steps, const int min, const int max, const float width )
     {
-        bool hasChanged;
         ImGui::PushID( name.data() );
 
         ImGui::BeginColumns( name.data(), 2, ImGuiOldColumnFlags_NoResize );
@@ -593,14 +592,14 @@ namespace FawnForge::Gui
         ImGui::Text( "%s", name.data() );
         ImGui::NextColumn();
 
-        hasChanged = ImGui::DragInt( "##V", &value, steps, min, max );
+        const bool hasChanged = ImGui::DragInt( "##V", &value, steps, min, max );
 
         ImGui::EndColumns();
 
         ImGui::PopID();
         return hasChanged;
     }
-    bool Int2( std::string_view name, int* value, float steps, int resetValue, float width )
+    bool Int2( const std::string_view name, int* value, const float steps, const int resetValue, const float width )
     {
         bool hasChanged {};
         const ImGuiIO& io   = ImGui::GetIO();
@@ -652,7 +651,7 @@ namespace FawnForge::Gui
         ImGui::PopID();
         return hasChanged;
     }
-    bool Int3( std::string_view name, int* value, float steps, int resetValue, float width )
+    bool Int3( const std::string_view name, int* value, const float steps, const int resetValue, const float width )
     {
         bool hasChanged {};
         const ImGuiIO& io   = ImGui::GetIO();
@@ -716,7 +715,7 @@ namespace FawnForge::Gui
         ImGui::PopID();
         return hasChanged;
     }
-    bool Int4( std::string_view name, int* value, float steps, int resetValue, float width )
+    bool Int4( const std::string_view name, int* value, const float steps, const int resetValue, const float width )
     {
         bool hasChanged {};
         const ImGuiIO& io   = ImGui::GetIO();
@@ -793,9 +792,8 @@ namespace FawnForge::Gui
         return hasChanged;
     }
 
-    bool Toggle( std::string_view name, bool& value, float width )
+    bool Toggle( const std::string_view name, bool& value, const float width )
     {
-        bool hasChanged;
         ImGui::PushID( name.data() );
 
         ImGui::BeginColumns( name.data(), 2, ImGuiOldColumnFlags_NoResize );
@@ -803,7 +801,7 @@ namespace FawnForge::Gui
         ImGui::Text( "%s", name.data() );
         ImGui::NextColumn();
 
-        hasChanged = ImGui::Checkbox( "##V", &value );
+        const bool hasChanged = ImGui::Checkbox( "##V", &value );
 
         ImGui::EndColumns();
 
@@ -811,9 +809,8 @@ namespace FawnForge::Gui
         return hasChanged;
     }
 
-    bool InputText( std::string_view name, char* text, int maxLength, float width, int flags )
+    bool InputText( const std::string_view name, char* text, const int maxLength, const float width, const int flags )
     {
-        bool hasChanged;
         const char* pName { name.data() };
         const float w { ImGui::CalcItemWidth() };
         ImGui::PushID( pName );
@@ -822,25 +819,24 @@ namespace FawnForge::Gui
         ImGui::Text( "%s", pName );
         ImGui::NextColumn();
         ImGui::SetNextItemWidth( std::fmax( w - width * 1.15f, 50.f ) );
-        hasChanged = ImGui::InputText( "##input", text, maxLength, flags );
+        const bool hasChanged = ImGui::InputText( "##input", text, maxLength, flags );
         ImGui::EndColumns();
         ImGui::PopID();
         return hasChanged;
     }
-    bool Color( std::string_view name, float color[ 3 ], float width )
+    bool Color( const std::string_view name, float color[ 3 ], const float width )
     {
-        bool hasChanged;
         ImGui::PushID( name.data() );
         ImGui::BeginColumns( name.data(), 2, ImGuiOldColumnFlags_NoResize );
         ImGui::SetColumnWidth( 0, width );
         ImGui::Text( "%s", name.data() );
         ImGui::NextColumn();
-        hasChanged = ImGui::ColorEdit3( "##Col", color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel );
+        const bool hasChanged = ImGui::ColorEdit3( "##Col", color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel );
         ImGui::EndColumns();
         ImGui::PopID();
         return hasChanged;
     }
-    void Text( const std::string& text, float maxLength )
+    void Text( const std::string& text, const float maxLength )
     {
         if ( maxLength == -1 )
         {
@@ -848,18 +844,15 @@ namespace FawnForge::Gui
             return;
         }
 
-        ImVec2 textSize = ImGui::CalcTextSize( text.data() );
-
         // If the text width exceeds the maximum width, truncate and display "..."
-        if ( textSize.x > maxLength )
+        if ( const ImVec2 textSize = ImGui::CalcTextSize( text.data() ); textSize.x > maxLength )
         {
             // Find the last character that fits within the maximum width
             int lastVisibleChar = 0;
             float widthSoFar    = 0.0f;
             for ( int i = 0; i < text.length(); i++ )
             {
-                float charWidth = ImGui::CalcTextSize( &text[ i ], &text[ i + 1 ] ).x;
-                if ( widthSoFar + charWidth <= maxLength )
+                if ( const float charWidth = ImGui::CalcTextSize( &text[ i ], &text[ i + 1 ] ).x; widthSoFar + charWidth <= maxLength )
                 {
                     lastVisibleChar = i;
                     widthSoFar += charWidth;
@@ -891,12 +884,12 @@ namespace FawnForge::Gui
             ImGui::Text( "%s", text.c_str() );
         }
     }
-    bool Button( std::string_view name, const BambiMath::Vector2& size )
+    bool Button( const std::string_view name, const BambiMath::Vector2& size )
     {
         return ImGui::Button( name.data(), { size.x, size.y } );
     }
 
-    bool HandleComboBoxItem( uint64_t index, uint64_t& currentIndex, const std::vector<std::string>& elements, const std::vector<int>& dividers, int& divider )
+    bool HandleComboBoxItem( const uint64_t index, uint64_t& currentIndex, const std::vector<std::string>& elements, const std::vector<int>& dividers, int& divider )
     {
         const bool isSelected = currentIndex == index;
         bool hasChanged       = false;
@@ -921,7 +914,7 @@ namespace FawnForge::Gui
         return hasChanged;
     }
 
-    bool ComboBox( std::string_view name, uint64_t& currentIndex, const std::vector<std::string>& elements, const std::vector<int>& dividers, float width, bool inMenuBar )
+    bool ComboBox( const std::string_view name, uint64_t& currentIndex, const std::vector<std::string>& elements, const std::vector<int>& dividers, const float width, const bool inMenuBar )
     {
         if ( currentIndex >= elements.size() )
         {
@@ -1033,12 +1026,12 @@ namespace FawnForge::Gui
         return ~0u;
     }
 
-    bool StartPopup( std::string_view name, bool centered, BambiMath::Vector2 size )
+    bool StartPopup( const std::string_view name, const bool centered, BambiMath::Vector2 size )
     {
         ImGui::OpenPopup( name.data() );
         if ( centered )
         {
-            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+            const ImVec2 center = ImGui::GetMainViewport()->GetCenter();
             ImGui::SetNextWindowPos( center, ImGuiCond_Appearing, ImVec2( 0.5f, 0.5f ) );
             if ( size.x > 0 || size.y > 0 )
             {
@@ -1049,7 +1042,7 @@ namespace FawnForge::Gui
         }
         return true;
     }
-    bool BeginPopup( std::string_view name )
+    bool BeginPopup( const std::string_view name )
     {
         return ImGui::BeginPopup( name.data() );
     }
@@ -1066,7 +1059,7 @@ namespace FawnForge::Gui
         ImGui::EndPopup();
     }
 
-    bool Begin( std::string_view title, bool& isVisible, int flags )
+    bool Begin( const std::string_view title, bool& isVisible, const int flags )
     {
         if ( isVisible )
         {
@@ -1074,7 +1067,7 @@ namespace FawnForge::Gui
         }
         return false;
     }
-    bool BeginChild( std::string_view title, const BambiMath::Vector2& position, bool border, int flags )
+    bool BeginChild( const std::string_view title, const BambiMath::Vector2& position, const bool border, const int flags )
     {
         return ImGui::BeginChild( title.data(), { position.x, position.y }, border, flags );
     }
@@ -1091,7 +1084,7 @@ namespace FawnForge::Gui
     {
         return ImGui::BeginMenuBar();
     }
-    bool BeginMenu( std::string_view text )
+    bool BeginMenu( const std::string_view text )
     {
         return ImGui::BeginMenu( text.data() );
     }
@@ -1103,14 +1096,13 @@ namespace FawnForge::Gui
     {
         ImGui::EndMenu();
     }
-    bool MenuItem( const std::string_view name, bool isSelected )
+    bool MenuItem( const std::string_view name, const bool isSelected )
     {
-        bool hasChanged;
         if ( !isSelected )
         {
             ImGui::BeginDisabled( true );
         }
-        hasChanged = ImGui::MenuItem( name.data() );
+        const bool hasChanged = ImGui::MenuItem( name.data() );
         if ( !isSelected )
         {
             ImGui::EndDisabled();
@@ -1126,26 +1118,26 @@ namespace FawnForge::Gui
     {
         ImGui::Separator();
     }
-    void SameLine( float d )
+    void SameLine( const float d )
     {
         ImGui::SameLine( d );
     }
 
-    void SetWindowFocus( std::string_view name )
+    void SetWindowFocus( const std::string_view name )
     {
         ImGui::SetWindowFocus( name.data() );
     }
 
-    bool TreeNodeEx( uint64_t id, int flags, std::string_view name )
+    bool TreeNodeEx( const uint64_t id, const int flags, const std::string_view name )
     {
-        return ImGui::TreeNodeEx( (void*)id, flags, "%s", name.data() );
+        return ImGui::TreeNodeEx( reinterpret_cast<void*>( id ), flags, "%s", name.data() );
     }
     void TreePop()
     {
         ImGui::TreePop();
     }
 
-    void PushStyleVar( int styleVar, const BambiMath::Vector2& val )
+    void PushStyleVar( const int styleVar, const BambiMath::Vector2& val )
     {
         ImGui::PushStyleVar( styleVar, { val.x, val.y } );
     }
@@ -1164,7 +1156,7 @@ namespace FawnForge::Gui
         return GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.0f;
     }
 
-    void* ReceiveDragDrop( std::string_view name )
+    void* ReceiveDragDrop( const std::string_view name )
     {
         if ( ImGui::BeginDragDropTarget() )
         {
@@ -1180,14 +1172,14 @@ namespace FawnForge::Gui
 
     BambiMath::Vector2 GetMousePos()
     {
-        ImVec2 pos = ImGui::GetMousePos();
+        const ImVec2 pos = ImGui::GetMousePos();
         return BambiMath::Vector2 { pos.x, pos.y };
     }
     bool IsWindowHovered()
     {
         return ImGui::IsWindowHovered();
     }
-    bool IsMouseDown( int i )
+    bool IsMouseDown( const int i )
     {
         return ImGui::IsMouseDown( i );
     }
@@ -1195,7 +1187,7 @@ namespace FawnForge::Gui
     {
         return ImGui::IsItemClicked();
     }
-    void Columns( int nrOfColumns )
+    void Columns( const int nrOfColumns )
     {
         ImGui::Columns( nrOfColumns );
     }
@@ -1205,29 +1197,29 @@ namespace FawnForge::Gui
     }
     void MaxNextWindow()
     {
-        ImGuiIO io = ImGui::GetIO();
+        const ImGuiIO io = ImGui::GetIO();
         ImGui::SetNextWindowSize( io.DisplaySize );
         ImGui::SetNextWindowPos( { 0, 0 } );
     }
-    void ResourceItem( const SFile& file, VkDescriptorSet descriptorSet, float imageSize )
-    {
-        if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ) )
-        {
-            ImGui::SetDragDropPayload( ToString( file.type ), &file, sizeof( SFile ) );
-            ImGui::Text( "%s", file.fileName.c_str() );
-            ImGui::EndDragDropSource();
-        }
-        Gui::SameLine();
-        if ( descriptorSet )
-            ImGui::Image( descriptorSet, { imageSize, imageSize } );
-        Gui::SameLine();
-        ImGui::Text( "%s", file.fileName.c_str() );
-    }
-    void PushId( std::string_view id )
+    // void ResourceItem( const SFile& file, VkDescriptorSet descriptorSet, float imageSize )
+    // {
+    //     if ( ImGui::BeginDragDropSource( ImGuiDragDropFlags_None ) )
+    //     {
+    //         ImGui::SetDragDropPayload( ToString( file.type ), &file, sizeof( SFile ) );
+    //         ImGui::Text( "%s", file.fileName.c_str() );
+    //         ImGui::EndDragDropSource();
+    //     }
+    //     Gui::SameLine();
+    //     if ( descriptorSet )
+    //         ImGui::Image( descriptorSet, { imageSize, imageSize } );
+    //     Gui::SameLine();
+    //     ImGui::Text( "%s", file.fileName.c_str() );
+    // }
+    void PushId( const std::string_view id )
     {
         ImGui::PushID( id.data() );
     }
-    void PushId( int id )
+    void PushId( const int id )
     {
         ImGui::PushID( id );
     }
@@ -1235,11 +1227,11 @@ namespace FawnForge::Gui
     {
         ImGui::PopID();
     }
-    bool IsMouseDoubleClicked( int button )
+    bool IsMouseDoubleClicked( const int button )
     {
         return ImGui::IsMouseDoubleClicked( button );
     }
-    void SetNextItemOpen( bool open )
+    void SetNextItemOpen( const bool open )
     {
         ImGui::SetNextItemOpen( open );
     }
@@ -1247,15 +1239,15 @@ namespace FawnForge::Gui
     {
         return ImGui::BeginPopupContextWindow( std::format( "##ContextMenu{}", uuid ).c_str() );
     }
-    unsigned int GetId( std::string_view name )
+    unsigned int GetId( const std::string_view name )
     {
         return ImGui::GetID( name.data() );
     }
-    unsigned int DockSpace( unsigned int id, const BambiMath::Vector2& size, int flags )
+    unsigned int DockSpace( const unsigned int id, const BambiMath::Vector2& size, const int flags )
     {
         return ImGui::DockSpace( id, { size.x, size.y }, flags );
     }
-    void SetNextWindowDockId( unsigned int id, int flags )
+    void SetNextWindowDockId( const unsigned int id, const int flags )
     {
         ImGui::SetNextWindowDockID( id, flags );
     }
@@ -1264,16 +1256,16 @@ namespace FawnForge::Gui
         ImGui::Selectable( std::format( "##file{}", id ).c_str(), &isSelected, 1 << 2, { 0, height } );
         isSelected |= ImGui::IsItemHovered();
     }
-    void SetTooltip( std::string_view tip )
+    void SetTooltip( const std::string_view tip )
     {
         if ( ImGui::IsItemHovered() )
         {
             ImGui::SetTooltip( "%s", tip.data() );
         }
     }
-    bool TristateToggle( const std::array<const char*, 3>& names, int32_t& currentIndex, float width, bool inMenuBar )
+    bool TristateToggle( const std::array<const char*, 3>& names, int32_t& currentIndex, const float width, const bool inMenu )
     {
-        if ( inMenuBar )
+        if ( inMenu )
         {
             bool hasChanged;
             ImGui::PushID( names[ 0 ] );
@@ -1328,7 +1320,7 @@ namespace FawnForge::Gui
         ImGui::PopID();
         return hasChanged;
     }
-    bool CollapsingHeader( std::string_view name )
+    bool CollapsingHeader( const std::string_view name )
     {
         return ImGui::CollapsingHeader( name.data() );
     }

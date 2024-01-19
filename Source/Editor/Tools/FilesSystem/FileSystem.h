@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Serializer.h>
 #include <filesystem>
 
 // todo expose for in code use
@@ -17,7 +16,5 @@ namespace FawnForge
     constexpr const char* g_supportedMeshFormat[] { ".FBX", ".DAE",     ".GLTF", ".GLB", ".BLEND", ".3DS", ".ASE", ".OBJ", ".IFC",  ".XGL", ".ZGL", ".PLY",  ".DXF", ".LWO", ".LWS", ".LXO", ".STL", ".X",   ".AC",  ".MS3D", ".COB", ".SCN", ".BVH", ".CSM",
                                                     ".XML", ".IRRMESH", ".IRR",  ".MDL", ".MD2",   ".MD3", ".PK3", ".MDC", ".MD5*", ".SMD", ".VTA", ".OGEX", ".3D",  ".B3D", ".Q3D", ".Q3S", ".NFF", ".NFF", ".OFF", ".RAW",  ".TER", ".MDL", ".HMP", ".NDO" };
 
-    bool ImportFile( const char* pPath, const char* pDestinationDirection, FawnForge::CMeshFileImporter* pMeshImporter, FawnForge::CTextureFileImporter* pTextureImporter );
-
-    SFile GetData( const std::filesystem::path& path );
+    bool ImportFile( const char* pPath, const char* pDestinationDirection, CMeshFileImporter* pMeshImporter, CTextureFileImporter* pTextureImporter );
 }// namespace FawnForge

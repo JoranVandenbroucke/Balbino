@@ -3,9 +3,9 @@
 //
 
 #pragma once
-#include "Serializer.h"
 #include <string>
 #include <vector>
+#include <BambiMath.h>
 
 namespace FawnForge::Gui
 {
@@ -82,7 +82,7 @@ namespace FawnForge::Gui
     void Columns( int nrOfColumns );
     void NextColumn();
     void MaxNextWindow();
-    void ResourceItem( const SFile& file, VkDescriptorSet descriptorSet, float imageSize );
+    // void ResourceItem( const SFile& file, VkDescriptorSet descriptorSet, float imageSize );
     void PushId( std::string_view id );
     void PushId( int id );
     void PopId();

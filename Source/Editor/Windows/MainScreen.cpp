@@ -52,7 +52,7 @@ void FawnForge::CMainScreen::Draw() noexcept
             if ( Gui::MenuItem( "Light" ) )
             {
                 BalbinoScene::CEntity entity {m_pScene->CreateEntity()};
-                entity.AddComponent<BalbinoComponent::CLightComponent>();
+                entity.AddComponent<CervidaeComponent::CLightComponent>();
             }
             Gui::EndMenu();
         }

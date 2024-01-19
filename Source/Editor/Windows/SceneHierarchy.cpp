@@ -41,8 +41,8 @@ void FawnForge::CSceneHierarchy::Draw() noexcept
                 DrawComponents( m_selectedEntity );
                 if ( Gui::BeginPopup( "AddComponent" ) )
                 {
-                    DisplayAddComponentEntry<BalbinoComponent::CCameraComponent>( "Camera" );
-                    DisplayAddComponentEntry<BalbinoComponent::CLightComponent>( "Light" );
+                    DisplayAddComponentEntry<CervidaeComponent::CCameraComponent>( "Camera" );
+                    DisplayAddComponentEntry<CervidaeComponent::CLightComponent>( "Light" );
                     Gui::EndPopup();
                 }
             }
@@ -120,11 +120,11 @@ constexpr static void DrawComponent( const std::string& name, BalbinoScene::CEnt
 
 void FawnForge::CSceneHierarchy::DrawEntityNode( const BalbinoScene::CEntity& entity ) noexcept
 {
-    const BalbinoComponent::CIDComponent& idComponent { entity.GetComponent<BalbinoComponent::CIDComponent>() };
+    const CervidaeComponent::CIDComponent& idComponent { entity.GetComponent<CervidaeComponent::CIDComponent>() };
 
     const std::string tag = idComponent.GetUUID().ToString();
     //todo:if children but closed, skip
-    const uint32_t childCount { entity.GetComponent<BalbinoComponent::CTransformComponent>().GetChildCount() };
+    const uint32_t childCount { entity.GetComponent<CervidaeComponent::CTransformComponent>().GetChildCount() };
     const int flags   = ( m_selectedEntity == entity ? 1 << 0 : 0 ) | 1 << 7 | 1 << 11 | ( !childCount ? 1 << 8 : 0 );
     const bool opened = Gui::TreeNodeEx( std::hash<CUuid>()(idComponent.GetUUID()), flags, tag );
     if ( Gui::IsItemClicked() )
@@ -169,7 +169,7 @@ void FawnForge::CSceneHierarchy::DrawEntityNode( const BalbinoScene::CEntity& en
 void FawnForge::CSceneHierarchy::DrawComponents( BalbinoScene::CEntity& pEntity )
 {
     (void)pEntity;
-    DrawComponent<BalbinoComponent::CTransformComponent>( "Transform", pEntity, []( auto component ) {
+    DrawComponent<CervidaeComponent::CTransformComponent>( "Transform", pEntity, []( auto component ) {
         BambiMath::Vector3 translation = component.GetTranslation();
         BambiMath::Vector3 rotation    = BambiMath::radianceToDegree * BambiMath::EulerAngles( component.GetRotation() );
         BambiMath::Vector3 scale       = component.GetScale();
@@ -187,7 +187,7 @@ void FawnForge::CSceneHierarchy::DrawComponents( BalbinoScene::CEntity& pEntity 
         component.SetTranslation( BambiMath::Vector3 { tra[ 0 ], tra[ 1 ], tra[ 2 ] } );
     } );
 
-    DrawComponent<BalbinoComponent::CCameraComponent>( "Camera", pEntity, []( auto& component ) {
+    DrawComponent<CervidaeComponent::CCameraComponent>( "Camera", pEntity, []( auto& component ) {
         float fov  = BambiMath::radianceToDegree * component.GetFov();
         float nearClip = component.GetNearClip();
         float farClip  = component.GetFarClip();
@@ -203,7 +203,7 @@ void FawnForge::CSceneHierarchy::DrawComponents( BalbinoScene::CEntity& pEntity 
         }
     } );
 
-    DrawComponent<BalbinoComponent::CMeshRenderComponent>( "Mesh Render Component", pEntity, [ & ]( auto& component ) {
+    DrawComponent<CervidaeComponent::CMeshRenderComponent>( "Mesh Render Component", pEntity, [ & ]( auto& component ) {
         const CUuid meshId                                                = component.GetMeshId();
         const std::vector<CUuid>& materials                               = component.GetMaterials();
         Gui::Text( std::format( "Mesh ID: {}", meshId.ToString() ) );
@@ -217,7 +217,7 @@ void FawnForge::CSceneHierarchy::DrawComponents( BalbinoScene::CEntity& pEntity 
         }
     } );
 
-    DrawComponent<BalbinoComponent::CLightComponent>( "Light Component", pEntity, []( auto& component ) {
+    DrawComponent<CervidaeComponent::CLightComponent>( "Light Component", pEntity, []( auto& component ) {
         float strength { component.GetStrength() };
         BambiMath::Vector3 size { component.GetSize() };
         BambiMath::Vector3 color { component.GetColor() };
@@ -233,14 +233,14 @@ void FawnForge::CSceneHierarchy::DrawComponents( BalbinoScene::CEntity& pEntity 
 
         switch ( component.GetType() )
         {
-            case BalbinoComponent::light_type::directional:
-            case BalbinoComponent::light_type::point: hasChanged |= Gui::Float( "Size", size.r, 0.01f ); break;
-            case BalbinoComponent::light_type::spot:
+            case CervidaeComponent::light_type::directional:
+            case CervidaeComponent::light_type::point: hasChanged |= Gui::Float( "Size", size.r, 0.01f ); break;
+            case CervidaeComponent::light_type::spot:
                 hasChanged |= Gui::Float( "Size", size.r, 0.01f );
                 hasChanged |= Gui::Float( "Near Radius", size.g, 0.01f );
                 hasChanged |= Gui::Float( "Far Radius", size.b, 0.01f );
                 break;
-            case BalbinoComponent::light_type::area:
+            case CervidaeComponent::light_type::area:
                 hasChanged |= Gui::Float( "Size", size.r, 0.01f );
                 hasChanged |= Gui::Float( "Width", size.g, 0.01f );
                 hasChanged |= Gui::Float( "Height", size.b, 0.01f );
@@ -265,17 +265,17 @@ void FawnForge::CSceneHierarchy::DrawComponents( BalbinoScene::CEntity& pEntity 
 
             if ( type != oldType )
             {
-                BalbinoComponent::light_type newType = BalbinoComponent::light_type( type );
+                CervidaeComponent::light_type newType = CervidaeComponent::light_type( type );
                 switch ( newType )
                 {
-                    case BalbinoComponent::light_type::directional:
-                    case BalbinoComponent::light_type::point: size.g = size.b = 0; break;
-                    case BalbinoComponent::light_type::spot:
+                    case CervidaeComponent::light_type::directional:
+                    case CervidaeComponent::light_type::point: size.g = size.b = 0; break;
+                    case CervidaeComponent::light_type::spot:
                         size.g = 0.01f;
                         size.b = 10.0f;
                         break;
-                    case BalbinoComponent::light_type::area: size.g = 1.0f; break;
-                    case BalbinoComponent::light_type::max: size.b = 1.0f; break;
+                    case CervidaeComponent::light_type::area: size.g = 1.0f; break;
+                    case CervidaeComponent::light_type::max: size.b = 1.0f; break;
                     default: break;
                 }
                 component.SetSize( size );
