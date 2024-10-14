@@ -1,4 +1,6 @@
-#include "Balbino.h"
+#include <Balbino.h>
+
+#include "Versions.hpp"
 
 namespace Dear
 {
@@ -30,5 +32,3 @@ void BalbinoApp::DestroyApplication( Application* pApplication )
 {
     delete dynamic_cast<Dear::Game*>( pApplication );
 }
-
-#pragma message(__TIME__)

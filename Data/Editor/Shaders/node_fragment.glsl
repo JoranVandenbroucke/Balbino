@@ -16,7 +16,7 @@ out vec4 outColor
     float roughness = perceptualRoughness * perceptualRoughness;
     
     vec3 f0 = 0.16 * sqr(roughness) * (1.0 - metallic) + baseColor * metallic;
-    for (int i = 0; i < LIGHT_COUNT; ++i)
+    for (int i{}; i < LIGHT_COUNT; ++i)
     {
         Light light = lights[i];
         if(light.strength < 0)

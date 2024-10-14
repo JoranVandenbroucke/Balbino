@@ -2,7 +2,13 @@
 	path = 3rdParty/SDL
 	url = https://github.com/libsdl-org/SDL.git
 	branch = main
+[submodule "3rdParty/Catch2"]
+	path = 3rdParty/Catch2
+	url = https://github.com/catchorg/Catch2.git
 [submodule "Source/Engine/Renderer"]
 	path = Source/Engine/Renderer
 	url = https://github.com/JoranVandenbroucke/FawnVision.git
 	branch = main
+[submodule "Source/Engine/Math"]
+	path = Source/Engine/Math
+	url = https://github.com/JoranVandenbroucke/FawnAlgebra.git

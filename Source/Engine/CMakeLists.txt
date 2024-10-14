@@ -1,30 +1,55 @@
-cmake_minimum_required(VERSION 3.27)
-set(PROJECT_NAME BalbinoEngine)
-set(ROOT_NAMESPACE ${PROJECT_NAME})
-project(${PROJECT_NAME})
+cmake_minimum_required(VERSION 3.28)
+project(BalbinoEngine VERSION 0.3.2 LANGUAGES C CXX)
+
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 
 add_library(${PROJECT_NAME}
-        EntryPoint.h
-        Application.h
+        Embedded/Images.hpp
+        Embedded/Shaders.hpp
         Application.cpp
+        Application.h
         Balbino.h
         Balbino_main.h
+        EntryPoint.h
+        Versions.hpp
 )
 
+include(${CMAKE_SOURCE_DIR}/CMake/SetupSDL3.cmake)
+setup_sdl3(${PROJECT_NAME})
+
+add_subdirectory(Math)
 add_subdirectory(Renderer)
 add_dependencies(${PROJECT_NAME}
-        FawnVision
+        FawnVision::FawnVision
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-        Renderer/Includes
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        FawnVision::FawnVision
 )
-target_link_libraries(${PROJECT_NAME} PUBLIC
-        FawnVision
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_SOURCE_DIR}/Embedded")
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:-DBALBINO_DEBUG>)
+target_compile_options(${PROJECT_NAME}
+        PRIVATE
+        $<$<CONFIG:Debug>:${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT} ${DEFAULT_CXX_EXCEPTION_HANDLING}>
+        $<$<CXX_COMPILER_ID:MSVC>: /W4 /WX /MP $<$<CONFIG:Debug>:${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT} ${DEFAULT_CXX_EXCEPTION_HANDLING}>>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+        PUBLIC
+        $<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++>
+        #todo -embed-dir="${CMAKE_SOURCE_DIR}/Embedded"
+        $<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++>
 )
+
 target_compile_features(${PROJECT_NAME} PRIVATE
+        c_function_prototypes
+        c_restrict
         c_static_assert
-        c_std_17
+#        c_std_23
+        c_variadic_macros
         cxx_aggregate_default_initializers
         cxx_alignof
         cxx_attributes
