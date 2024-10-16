@@ -1,0 +1,18 @@
+// config.hpp.in
+#pragma once
+
+namespace Balbino{
+constexpr const char* PROJECT_NAME "@PROJECT_NAME@"
+constexpr unsigned int PROJECT_VERSION "@PROJECT_VERSION@"
+constexpr const char* ENGINE_NAME "@PROJECT_NAME@"
+constexpr unsigned int ENGINE_VERSION "@PROJECT_VERSION@"
+
+constexpr const char* ASSET_ROOT_PATH "@ASSET_ROOT_PATH"
+constexpr const char* AVAILABLE_SCENES[] "@AVAILABLE_SCENES"
+
+#define IS_SHIPPING "@IS_SHIPPING"
+#define AUDIO_ENABLED "@AUDIO_ENABLED"
+#define PHYSICS_ENABLED "@PHYSICS_ENABLED"
+#define NPC_ENABLED "@NPC_ENABLED"
+#define ONLINE_ENABLED "@ONLINE_ENABLED"
+}

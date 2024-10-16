@@ -1,30 +1,52 @@
-cmake_minimum_required(VERSION 3.27)
-set(PROJECT_NAME Deer)
-set(ROOT_NAMESPACE ${PROJECT_NAME})
-project(${PROJECT_NAME})
+cmake_minimum_required(VERSION 3.28)
+project(Deer VERSION 0.1.0 LANGUAGES CXX)
 
-add_executable(${PROJECT_NAME} main.cpp)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+
+add_executable(${PROJECT_NAME}
+        main.cpp
+        Versions.hpp
+)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/Source/Engine Engine)
 add_dependencies(${PROJECT_NAME}
+        FawnVision::FawnVision
         BalbinoEngine
 )
 
-target_precompile_headers(${PROJECT_NAME} PUBLIC
-        [["Balbino.h"]]
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ../Engine
+        ${CMAKE_SOURCE_DIR}/Embedded
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-        ${CMAKE_SOURCE_DIR}/Source/Engine
+target_compile_options(${PROJECT_NAME}
+        PRIVATE
+        $<$<CONFIG:Debug>:${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT} ${DEFAULT_CXX_EXCEPTION_HANDLING}>
+        $<$<CXX_COMPILER_ID:MSVC>: /W4 /WX /MP $<$<CONFIG:Debug>:${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT} ${DEFAULT_CXX_EXCEPTION_HANDLING}>>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+        PUBLIC
+        $<$<CXX_COMPILER_ID:GNU>:-fmodules-ts>
+        #todo --embed-dir=${CMAKE_SOURCE_DIR}/Embedded/
+        $<$<CXX_COMPILER_ID:Clang>:-stdlib=libc++>
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        FawnVision::FawnVision
         BalbinoEngine
 )
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:-DBALBINO_DEBUG>)
 
 target_compile_features(${PROJECT_NAME} PRIVATE
+        $<$<C_COMPILER_ID:MSVC>:c_std_17>
+        $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:c_std_23>
+        c_function_prototypes
+        c_restrict
         c_static_assert
-        c_std_17
+        c_variadic_macros
         cxx_aggregate_default_initializers
         cxx_alignof
         cxx_attributes

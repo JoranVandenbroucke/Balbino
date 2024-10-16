@@ -2,8 +2,8 @@
   "version": 6,
   "cmakeMinimumRequired": {
     "major": 3,
-    "minor": 26,
-    "patch": 4
+    "minor": 28,
+    "patch": 0
   },
   "configurePresets": [
     {
@@ -148,42 +148,50 @@
     {
       "name": "Windows-Debug",
       "configurePreset": "Windows-Debug",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "jobs": 4
     },
     {
       "name": "Windows-DebugEditor",
       "configurePreset": "Windows-DebugEditor",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "jobs": 4
     },
     {
       "name": "Windows-Release",
       "configurePreset": "Windows-Release",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "jobs": 4
     },
     {
       "name": "Windows-ReleaseEditor",
       "configurePreset": "Windows-ReleaseEditor",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "jobs": 4
     },
     {
       "name": "Linux-Debug",
       "configurePreset": "Linux-Debug",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "jobs": 4
     },
     {
       "name": "Linux-DebugEditor",
       "configurePreset": "Linux-DebugEditor",
-      "configuration": "Debug"
+      "configuration": "Debug",
+      "jobs": 4
     },
     {
       "name": "Linux-Release",
       "configurePreset": "Linux-Release",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "jobs": 4
     },
     {
       "name": "Linux-ReleaseEditor",
       "configurePreset": "Linux-ReleaseEditor",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "jobs": 4
     }
   ]
 }
