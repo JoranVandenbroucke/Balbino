@@ -1,0 +1,63 @@
+#version 450
+
+#ifndef BLOCK_SIZE
+#pragma message( "BLOCK_SIZE undefined. Default to 16.")
+#define BLOCK_SIZE 16// should be defined by the application.
+#endif
+
+struct frustum
+{
+    vec4 planes[4];
+};
+
+shared uint uMinDepth;
+shared uint uMaxDepth;
+shared Frustum GroupFrustum;
+
+vec4 ScreenToView( vec4 screen )
+{
+    // Convert to normalized texture coordinates
+    vec2 texCoord = screen.xy / ScreenDimensions;
+
+    // Convert to clip space
+    vec4 clip = vec4( vec2( texCoord.x, 1.0f - texCoord.y ) * 2.0f - 1.0f, screen.z, screen.w );
+
+    return ClipToView( clip );
+}
+
+layout(binding = 3) uniform sampler2D DepthTextureVS;
+
+layout(local_size_x = BLOCK_SIZE, local_size_y = BLOCK_SIZE, local_size_z = 1) in;
+void main()
+{
+    uvec3 groupID = gl_WorkGroupID;
+    uvec3 groupThreadID = gl_LocalInvocationID;
+    uvec3 dispatchThreadID = gl_GlobalInvocationID;
+    uint groupIndex = gl_LocalInvocationIndex;
+
+    ivec2 texCoord = ivec2(dispatchThreadID.xy);
+    float fDepth = texelFetch(DepthTextureVS, texCoord, 0).r;
+
+    uint uDepth = floatBitsToUint(fDepth);
+
+    if (groupIndex == 0) {
+        uMinDepth = 0xFFFFFFFF;
+        uMaxDepth = 0;
+        o_LightCount = 0;
+        t_LightCount = 0;
+        GroupFrustum = in_Frustums[groupID.x + (groupID.y * numThreadGroups.x)];
+    }
+
+    memoryBarrierShared();
+    barrier();
+
+    atomicMin(uMinDepth, uDepth);
+    atomicMax(uMaxDepth, uDepth);
+
+    memoryBarrierShared();
+    barrier();
+
+    float minDepth = uintBitsToFloat(uMinDepth);
+    float maxDepth = uintBitsToFloat(uMaxDepth);
+
+}

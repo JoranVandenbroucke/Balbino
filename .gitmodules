@@ -1,0 +1,12 @@
+[submodule "source/engine/math"]
+	path = source/engine/math
+	url = git@github.com:JoranVandenbroucke/FawnAlgebra.git
+[submodule "source/engine/renderer"]
+	path = source/engine/renderer
+	url = git@github.com:JoranVandenbroucke/FawnVision.git
+[submodule "3rd_paryt/sdl3"]
+	path = 3rd_paryt/sdl3
+	url = https://github.com/libsdl-org/SDL.git
+[submodule "3rd_party/sdl3"]
+	path = 3rd_party/sdl3
+	url = https://github.com/libsdl-org/SDL.git
