@@ -25,16 +25,16 @@ CImageTextureNode::CImageTextureNode(int& id)
 void CImageTextureNode::Draw() noexcept
 {
     uint64_t type{(uint64_t)m_type};
-    const int size{64};
+    constexpr int size{64};
     char name[size]{};
-    for (int i{}; i < std::min((int)m_bindingName.size(), size); ++i)
+    for (int i{}; i < std::min(static_cast<int>(m_bindingName.size()), size); ++i)
     {
         name[i] = m_bindingName[i];
     }
     StartNode("Texture", GetId());
     if (FawnForge::Gui::ComboBox("texture Type", type, m_allModeNames, {}, 100.f, true))
     {
-        m_type = (texture)type;
+        m_type = static_cast<texture>(type);
         switch (m_type)
         {
         case texture_1d:

@@ -13,7 +13,7 @@ COutputNode::COutputNode(int& id)
     m_allShaderNames.reserve(shader_stage_max);
     for (uint16_t i{shader_stage_vertex}; i < shader_stage_max; i <<= 1)
     {
-        m_allShaderNames.emplace_back(ToStringUi((shader_stage)i));
+        m_allShaderNames.emplace_back(ToStringUi(static_cast<shader_stage>(i)));
     }
 }
 void COutputNode::Draw() noexcept
@@ -28,10 +28,10 @@ void COutputNode::Draw() noexcept
         DrawInput(pIn->GetType(), pIn->GetName(), val, pIn->IsConnected(), pIn->HasEditorValues(), id + i);
         pIn->SetValue(val);
         ImGui::SameLine();
-        uint64_t shaderId{(uint64_t)std::log2((uint64_t)m_shaders[i])};
+        uint64_t shaderId{static_cast<uint64_t>(std::log2((uint64_t)m_shaders[i]))};
         if (FawnForge::Gui::ComboBox(std::to_string(id + i), shaderId, m_allShaderNames, {}, 100.f, true))
         {
-            m_shaders[i] = (shader_stage)(1 << shaderId);
+            m_shaders[i] = static_cast<shader_stage>(1 << shaderId);
             pIn->SetSocketType(SSocketType{pIn->HasEditorValues(), pIn->GetType(), pIn->GetFlags(), ToString(m_shaders[i]), m_allShaderNames[shaderId]});
         }
     }

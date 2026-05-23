@@ -22,17 +22,17 @@ CFragmentLitNode::CFragmentLitNode(int& id)
     {
         if (i < fresnel_max)
         {
-            m_fresnelNames[i] = ToString(fresnel(i));
+            m_fresnelNames[i] = ToString(static_cast<fresnel>(i));
         }
         if (i < diffuse_max)
         {
-            m_diffuseNames[i] = ToString(diffuse(i));
+            m_diffuseNames[i] = ToString(static_cast<diffuse>(i));
         }
         if (i < distribution_max)
         {
-            m_distributionNames[i] = ToString(distribution(i));
+            m_distributionNames[i] = ToString(static_cast<distribution>(i));
         }
-        m_specularNames[i] = ToString(specular(i));
+        m_specularNames[i] = ToString(static_cast<specular>(i));
     }
 }
 void CFragmentLitNode::Draw() noexcept

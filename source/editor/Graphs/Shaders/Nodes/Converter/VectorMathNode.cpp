@@ -14,7 +14,7 @@ CVectorMathNode::CVectorMathNode(int& id)
     m_allModeNames.reserve(math_mode::math_mode_max);
     for (int n = 0; n < math_mode::math_mode_max; ++n)
     {
-        m_allModeNames.emplace_back(ToString(math_mode(n)));
+        m_allModeNames.emplace_back(ToString(static_cast<math_mode>(n)));
     }
 }
 void CVectorMathNode::Draw() noexcept
@@ -24,7 +24,7 @@ void CVectorMathNode::Draw() noexcept
     StartNode(m_allModeNames[type].c_str(), id);
     if (FawnForge::Gui::ComboBox("mode", type, m_allModeNames, {}, 100.f, true))
     {
-        m_type = (math_mode)type;
+        m_type = static_cast<math_mode>(type);
     }
     const auto& inputs{GetInputNodes()};
     const auto& outputs{GetOutputNodes()};

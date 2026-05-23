@@ -57,7 +57,7 @@ CMathNode::CMathNode(int& id)
     m_allModeNames.reserve(math_mode::max);
     for (int n = 0; n < math_mode::max; ++n)
     {
-        m_allModeNames.emplace_back(ToString(math_mode(n)));
+        m_allModeNames.emplace_back(ToString(static_cast<math_mode>(n)));
     }
 }
 
@@ -71,7 +71,7 @@ void CMathNode::Draw() noexcept
     StartNode(m_allModeNames[type].c_str(), GetId());
     if (FawnForge::Gui::ComboBox("mode", type, m_allModeNames, {10, 18, 27, 37}, 100.f, true))
     {
-        m_type = (math_mode)type;
+        m_type = static_cast<math_mode>(type);
         switch (m_type)
         {
         // 2
@@ -118,7 +118,7 @@ void CMathNode::Draw() noexcept
         ++id;
         in[i]->SetValue(val);
     }
-    id = GetId() + (int)in.size();
+    id = GetId() + static_cast<int>(in.size());
     for (const CShaderOutput* out : GetOutputNodes())
     {
         DrawOutput(out->GetType(), out->GetName(), id);

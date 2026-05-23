@@ -10,7 +10,7 @@ namespace BalbinoApp
 {
 struct SplashScreenArt
 {
-    fawn_vision::Shader shader;
+    fawn_vision::Shader shader{};
 };
 
 void Application::Initialize()
@@ -38,7 +38,7 @@ void Application::Initialize()
     SplashScreenArt* splashScreenArt{};
     auto passBuilder = fawn_vision::AddRasterRenderPass<SplashScreenArt>(m_renderGraph, splashScreenArt);
 
-    const std::array<fawn_vision::ShaderData, 2> shaderData{
+    const std::array shaderData{
         fawn_vision::ShaderData{fawn_vision::shader_stage::vertex, {g_fullscreenVert, g_fullscreenVert + g_fullscreenVertSize}},
         fawn_vision::ShaderData{fawn_vision::shader_stage::fragment, {g_fullscreenFrag, g_fullscreenFrag + g_fullscreenFragSize}},
     };
@@ -88,19 +88,17 @@ void Application::Initialize()
     }
 
     // todo : initialize font engine (set up font rendering)
-    // todo : initialize user interface (UI) components (if your application
-    // has a GUI) todo : initialize randomization (if needed for procedural
-    // generation) todo : initialize file manager (prepare for file I/O
-    // operations) todo : initialize asset manager (manage game assets like
-    // textures, models, etc.) todo : initialize input manager (handle user
-    // input) todo : initialize audio engine (set up audio processing) todo
-    // : initialize physics engine (if applicable, for handling physics
-    // simulations) todo : initialize AI module (initialize artificial
-    // intelligence systems) todo : initialize network manager (if
-    // applicable, for networking functionalities) todo : initialize scene
-    // manager (manage different scenes in the application) todo :
-    // initialize scripting language (if applicable, set up scripting
-    // support)
+    // todo : initialize user interface (UI) components (if your application has a GUI)
+    // todo : initialize randomization (if needed for procedural generation)
+    // todo : initialize file manager (prepare for file I/O operations)
+    // todo : initialize asset manager (manage game assets like textures, models, etc.)
+    // todo : initialize input manager (handle user input)
+    // todo : initialize audio engine (set up audio processing)
+    // todo : initialize physics engine (if applicable, for handling physics simulations)
+    // todo : initialize AI module (initialize artificial intelligence systems)
+    // todo : initialize network manager (if applicable, for networking functionalities)
+    // todo : initialize scene manager (manage different scenes in the application)
+    // todo : initialize scripting language (if applicable, set up scripting support)
 }
 
 void Application::LoadGame()

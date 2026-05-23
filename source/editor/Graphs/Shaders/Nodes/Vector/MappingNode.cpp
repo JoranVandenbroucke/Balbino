@@ -24,7 +24,7 @@ void CMappingNode::Draw() noexcept
     StartNode(m_allNames[type].c_str(), GetId());
     if (FawnForge::Gui::ComboBox("mode", type, m_allNames, {}, 100.f, true))
     {
-        m_type = (mapping_type)type;
+        m_type = static_cast<mapping_type>(type);
     }
     CShaderNode::Draw();
     EndNode();

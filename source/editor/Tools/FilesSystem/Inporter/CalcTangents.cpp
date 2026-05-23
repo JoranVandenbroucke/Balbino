@@ -1,5 +1,7 @@
 #include "CalcTangents.h"
 
+#include <cassert>
+
 CCalcTangents::CCalcTangents()
 {
     m_iface.m_getNumFaces          = GetNumFaces;
@@ -25,7 +27,7 @@ int CCalcTangents::GetVertexIndex(const SMikkTSpaceContext* context, int iFace, 
     const STempMesh* workingMesh = static_cast<STempMesh*>(context->m_pUserData);
     const auto faceSize          = GetNumVerticesOfFace(context, iFace);
     const auto indicesIndex      = (iFace * faceSize) + iVert;
-    const int index              = (int)workingMesh->indices[indicesIndex];
+    const int index              = static_cast<int>(workingMesh->indices[indicesIndex]);
 
     return index;
 }
@@ -36,7 +38,7 @@ int CCalcTangents::GetNumFaces(const SMikkTSpaceContext* context)
     const float fSize            = static_cast<float>(workingMesh->indices.size()) / 3.f;
     const int iSize              = static_cast<int>(workingMesh->indices.size()) / 3;
 
-    assert((fSize - (float)iSize) == 0.f);
+    assert((fSize - static_cast<float>(iSize)) == 0.f);
     (void)fSize;
     return iSize;
 }

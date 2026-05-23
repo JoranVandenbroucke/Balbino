@@ -21,7 +21,7 @@ void CColorMixNode::Draw() noexcept
     StartNode(m_allModeNames[type].c_str(), GetId());
     if (FawnForge::Gui::ComboBox("mode", type, m_allModeNames, {}, 100.f, true))
     {
-        m_type = (mix_mode)type;
+        m_type = static_cast<mix_mode>(type);
     }
     CShaderNode::Draw();
     EndNode();
