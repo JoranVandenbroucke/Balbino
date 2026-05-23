@@ -8,6 +8,13 @@ using namespace fawn_algebra;
 
 namespace BalbinoApp
 {
+namespace
+{
+// Must match g_Balbino_splash_screen_width/height in images.hpp.
+constexpr std::int32_t splashWidth{360};
+constexpr std::int32_t splashHeight{640};
+} // namespace
+
 struct SplashScreenArt
 {
     fawn_vision::Shader shader{};
@@ -15,18 +22,21 @@ struct SplashScreenArt
 
 void Application::Initialize()
 {
-    // todo : initialize memory manager (ensure memory is managed before other
-    // components) todo : initialize logger/assert (set up logging and
-    // assertions early for debugging)
+    // todo : initialize memory manager (ensure memory is managed before other components)
+    // todo : initialize logger/assert (set up logging and assertions early for debugging)
 
     if (!fawn_vision::InitializeSDL())
     {
         throw std::invalid_argument("Failed to initialize the sdl");
     }
 
-    // todo : name by "game_name", if in editor update title to "balbino engine:
-    // game_name - open scene"
-    if (constexpr fawn_vision::WindowCreateInfo windowCreateInfo{u8"Balbino Engine", 0, 860, 640, fawn_vision::window_flags::borderless | fawn_vision::window_flags::vulkan};
+    // todo : name by "game_name", if in editor update title to "balbino engine: game_name - open scene"
+    if (constexpr fawn_vision::WindowCreateInfo windowCreateInfo{
+            u8"Balbino Engine",
+            0,
+            static_cast<std::int32_t>(splashWidth),
+            static_cast<std::int32_t>(splashHeight),
+            fawn_vision::window_flags::borderless | fawn_vision::window_flags::vulkan | fawn_vision::window_flags::resizable};
         !fawn_vision::CreateWindow(windowCreateInfo, m_window))
     {
         throw std::invalid_argument("Failed to create a window");
@@ -47,40 +57,59 @@ void Application::Initialize()
         throw std::invalid_argument("Failed To Create Shader");
     }
 
-    fawn_vision::SetRenderFunc<SplashScreenArt>(
-        m_renderGraph, passBuilder,
-        [&window = m_window](const SplashScreenArt* pSplashScreenArt, const fawn_vision::RenderPassContext& renderContext)
-        {
-            fawn_vision::BindShader(renderContext, pSplashScreenArt->shader);
+    fawn_vision::SetRenderFunc<SplashScreenArt>(m_renderGraph, passBuilder,
+                                                [](const SplashScreenArt* pSplashScreenArt, const fawn_vision::RenderPassContext& renderContext)
+                                                {
+                                                    fawn_vision::BindShader(renderContext, pSplashScreenArt->shader);
 
-            fawn_vision::SetViewport(renderContext, 0.0f, 0.0f, static_cast<float>(window.width), static_cast<float>(window.height));
-            fawn_vision::SetScissor(renderContext, static_cast<std::uint32_t>(window.width), static_cast<std::uint32_t>(window.height), 0, 0);
+                                                    const float width{static_cast<float>(renderContext.swapChain.extent.width)};
+                                                    const float height{static_cast<float>(renderContext.swapChain.extent.height)};
+                                                    fawn_vision::SetViewport(renderContext, 0.0f, 0.0f, width, height);
+                                                    fawn_vision::SetScissor(renderContext, renderContext.swapChain.extent.width, renderContext.swapChain.extent.height, 0, 0);
 
-            fawn_vision::SetAlphaToCoverageEnable(renderContext, false);
-            fawn_vision::SetColorBlendEnable(renderContext, false);
+                                                    fawn_vision::SetAlphaToCoverageEnable(renderContext, false);
+                                                    fawn_vision::SetColorBlendEnable(renderContext, false);
 
-            fawn_vision::SetColorBlendEquation(renderContext, fawn_vision::blend_factor::zero, fawn_vision::blend_factor::zero, fawn_vision::blend_operator::add,
-                                               fawn_vision::blend_factor::one, fawn_vision::blend_factor::one, fawn_vision::blend_operator::add);
-            fawn_vision::SetColorWriteMask(renderContext, static_cast<fawn_vision::color_component>(15));
-            fawn_vision::SetCullMode(renderContext, fawn_vision::cull_mode::back);
-            fawn_vision::SetDepthBiasEnable(renderContext, false);
-            fawn_vision::SetDepthCompareOperator(renderContext, fawn_vision::compare_operator::less_or_equal);
-            fawn_vision::SetDepthTestEnable(renderContext, false);
-            fawn_vision::SetDepthWriteEnable(renderContext, false);
-            fawn_vision::SetFrontFace(renderContext, true);
-            fawn_vision::SetLineWidth(renderContext, 1.0f);
-            fawn_vision::SetPolygonMode(renderContext, fawn_vision::polygon_mode::fill);
-            fawn_vision::SetPrimitiveRestartEnable(renderContext, false);
-            fawn_vision::SetPrimitiveTopology(renderContext, fawn_vision::primitive_topology::triangle_list);
-            fawn_vision::SetRasterizationSamples(renderContext, 1U);
-            fawn_vision::SetRasterizerDiscardEnable(renderContext, false);
-            fawn_vision::SetStencilTestEnable(renderContext, false);
-            fawn_vision::SetVertexInput(renderContext);
-            fawn_vision::DrawFullscreen(renderContext);
-        });
+                                                    fawn_vision::SetColorBlendEquation(renderContext, fawn_vision::blend_factor::zero, fawn_vision::blend_factor::zero,
+                                                                                       fawn_vision::blend_operator::add, fawn_vision::blend_factor::one,
+                                                                                       fawn_vision::blend_factor::one, fawn_vision::blend_operator::add);
+                                                    fawn_vision::SetColorWriteMask(renderContext, static_cast<fawn_vision::color_component>(15));
+                                                    fawn_vision::SetCullMode(renderContext, fawn_vision::cull_mode::back);
+                                                    fawn_vision::SetDepthBiasEnable(renderContext, false);
+                                                    fawn_vision::SetDepthCompareOperator(renderContext, fawn_vision::compare_operator::less_or_equal);
+                                                    fawn_vision::SetDepthTestEnable(renderContext, false);
+                                                    fawn_vision::SetDepthWriteEnable(renderContext, false);
+                                                    fawn_vision::SetFrontFace(renderContext, true);
+                                                    fawn_vision::SetLineWidth(renderContext, 1.0f);
+                                                    fawn_vision::SetPolygonMode(renderContext, fawn_vision::polygon_mode::fill);
+                                                    fawn_vision::SetPrimitiveRestartEnable(renderContext, false);
+                                                    fawn_vision::SetPrimitiveTopology(renderContext, fawn_vision::primitive_topology::triangle_list);
+                                                    fawn_vision::SetRasterizationSamples(renderContext, 1U);
+                                                    fawn_vision::SetRasterizerDiscardEnable(renderContext, false);
+                                                    fawn_vision::SetStencilTestEnable(renderContext, false);
+                                                    fawn_vision::SetVertexInput(renderContext);
+                                                    fawn_vision::DrawFullscreen(renderContext);
+                                                });
     Draw();
     fawn_vision::CleanupRenderGraph(m_renderGraph);
     fawn_vision::Cleanup(m_renderer, splashScreenArt->shader);
+
+    if (!fawn_vision::IsHyprlandSession())
+    {
+        const fawn_vision::WindowSettings savedSettings{fawn_vision::LoadWindowSettings()};
+        if (!fawn_vision::ApplySavedWindowLayout(m_window, savedSettings))
+        {
+            throw std::invalid_argument("Failed to apply saved window layout");
+        }
+        if (!fawn_vision::SyncWindowSize(m_window))
+        {
+            throw std::invalid_argument("Failed to sync window size after splash");
+        }
+        if (fawn_vision::RecreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
+        {
+            throw std::invalid_argument("Failed to recreate renderer after splash");
+        }
+    }
 
     if (deer_ui::Initialize(m_renderer, m_renderGraph, m_uiRenderer) != 0)
     {
@@ -126,63 +155,65 @@ void Application::LoadGame()
     //     std::cerr << "could not set create renderer\n";
     // }
 
-    /*
-        // Create a canvas that fills the screen
-        deer_ui::CanvasHandle hud;
-        deer_ui::CreateCanvas(m_uiRenderer, {0, 0}, // position
-                           {1920, 1080},         // size (0,0 = fill)
-                           0,                    // layer
-                           deer_ui::canvas_flag::accepts_inputs, hud);
+    // Create a canvas that fills the screen
+    deer_ui::CanvasHandle hud;
+    deer_ui::CreateCanvas(m_uiRenderer, {0, 0},
+                          {static_cast<std::uint16_t>(m_window.width), static_cast<std::uint16_t>(m_window.height)},
+                          0,
+                          deer_ui::canvas_flag::accepts_inputs, hud);
 
-        // ---------------------------------------------------------------------------
-        // Simple square — just a colored quad, no components
-        // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // Simple square — just a colored quad, no components
+    // ---------------------------------------------------------------------------
 
-        deer_ui::UIElementHandle square;
-        deer_ui::AddElement(m_uiRenderer, hud, deer_ui::invalidElement,
-                            deer_ui::LayoutProperties{
-                                .padding = {4, 4},
-                                .margin  = {8, 8},
-                                .size    = {64, 64},
-                            },
-                            {0.2F, 0.6F, 1.0F, 1.0F}, // blue
-                            square);
+    deer_ui::UIElementHandle square;
+    deer_ui::AddElement(m_uiRenderer, hud, deer_ui::invalidElement,
+                        deer_ui::LayoutProperties{
+                            .padding = {4, 4},
+                            .margin  = {8, 8},
+                            .size    = {64, 64},
+                        },
+                        {0.2F, 0.6F, 1.0F, 1.0F}, // blue
+                        square);
 
-        // ---------------------------------------------------------------------------
-        // Button — square + click component
-        // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // Button — square + click component
+    // ---------------------------------------------------------------------------
 
-        deer_ui::UIElementHandle button;
-        deer_ui::AddElement(m_uiRenderer, hud, deer_ui::invalidElement,
-                            deer_ui::LayoutProperties{
-                                .padding = {8, 4},
-                                .margin  = {8, 8},
-                                .size    = {120, 40},
-                            },
-                            {0.3F, 0.3F, 0.3F, 1.0F}, // dark grey
-                            button);
+    deer_ui::UIElementHandle button;
+    deer_ui::AddElement(m_uiRenderer, hud, deer_ui::invalidElement,
+                        deer_ui::LayoutProperties{
+                            .padding = {8, 4},
+                            .margin  = {8, 8},
+                            .size    = {120, 40},
+                        },
+                        {0.3F, 0.3F, 0.3F, 1.0F}, // dark grey
+                        button);
 
-        deer_ui::AttachClickComponent(
-            m_uiRenderer, hud, button,
-            []
-            {
-                std::println("pressed");
-            }, // onPress
-            []
-            {
-                std::println("released");
-            }, // onRelease
-            []
-            {
-                std::println("hovered");
-            }); // onHover
-    */
+    deer_ui::AttachClickComponent(
+        m_uiRenderer, hud, button,
+        []
+        {
+            std::println("pressed");
+        }, // onPress
+        []
+        {
+            std::println("released");
+        }, // onRelease
+        []
+        {
+            std::println("hovered");
+        }); // onHover
 }
 
 void Application::Cleanup()
 {
     deer_ui::Cleanup(m_renderer, m_uiRenderer);
     fawn_vision::CleanupRenderGraph(m_renderGraph);
+    if (!fawn_vision::IsHyprlandSession())
+    {
+        static_cast<void>(fawn_vision::SaveWindowSettings(m_window));
+    }
     fawn_vision::ReleaseRenderer(m_renderer);
     fawn_vision::ReleaseWindow(m_window);
 }
@@ -220,7 +251,8 @@ void Application::Draw()
 
 void Application::WindowResize()
 {
-    // todo: handle resize
+    static_cast<void>(fawn_vision::SyncWindowSize(m_window));
+    deer_ui::NotifyWindowResized(m_uiRenderer);
     if (fawn_vision::RecreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
     {
         std::cerr << "could not recreate renderer";
