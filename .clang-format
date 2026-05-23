@@ -32,8 +32,10 @@ BreakBeforeBinaryOperators: All
 BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializers: BeforeComma
+ColumnLimit: 180
 IndentPPDirectives: AfterHash
 IndentWidth: 4
 PointerAlignment: Left
 SpaceBeforeParens: ControlStatements
 TabWidth: 4
+

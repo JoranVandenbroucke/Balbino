@@ -1,99 +1,106 @@
 #include "application.hpp"
 
-#include <stdexcept>
-
-#include <SDL3/SDL.h>
-
-#include "embedded/shaders.hpp"
+#include "shaders.hpp"
 
 import FawnAlgebra;
-using namespace FawnAlgebra;
+import std;
+using namespace fawn_algebra;
 
 namespace BalbinoApp
 {
 struct SplashScreenArt
 {
-    FawnVision::SShader shader;
+    fawn_vision::Shader shader;
 };
 
 void Application::Initialize()
 {
-    // todo : initialize memory manager (ensure memory is managed before other components)
-    // todo : initialize logger/assert (set up logging and assertions early for debugging)
+    // todo : initialize memory manager (ensure memory is managed before other
+    // components) todo : initialize logger/assert (set up logging and
+    // assertions early for debugging)
 
-    if (FawnVision::InitializeSDL() != 0)
+    if (!fawn_vision::InitializeSDL())
     {
-        throw std::invalid_argument("Failed to initialize the renderer");
+        throw std::invalid_argument("Failed to initialize the sdl");
     }
 
-    // todo : name by "game_name", if in editor update title to "balbino engine: game_name - open scene"
-    if (constexpr FawnVision::SWindowCreateInfo windowCreateInfo{u8"Balbino Engine", 0, 650, 1000, static_cast<uint32_t>(FawnVision::window_flags::borderless | FawnVision::window_flags::vulkan)};
-        CreateWindow(windowCreateInfo, m_window) != 0)
+    // todo : name by "game_name", if in editor update title to "balbino engine:
+    // game_name - open scene"
+    if (constexpr fawn_vision::WindowCreateInfo windowCreateInfo{u8"Balbino Engine", 0, 860, 640, fawn_vision::window_flags::borderless | fawn_vision::window_flags::vulkan};
+        !fawn_vision::CreateWindow(windowCreateInfo, m_window))
     {
         throw std::invalid_argument("Failed to create a window");
     }
-    if (CreateRenderer(m_window, m_renderer) != 0)
+    if (fawn_vision::CreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
     {
         throw std::invalid_argument("Failed to create a renderer");
     }
     SplashScreenArt* splashScreenArt{};
-    auto passBuilder = FawnVision::AddRasterRenderPass<SplashScreenArt>(m_renderGraph, splashScreenArt);
+    auto passBuilder = fawn_vision::AddRasterRenderPass<SplashScreenArt>(m_renderGraph, splashScreenArt);
 
-    if (const FawnVision::ShaderCreateInfo shaderCreateInfo{{FawnVision::shader_stage::vertex, {g_fullscreenVert, g_fullscreenVert + sizeof(g_fullscreenVert)}}, {FawnVision::shader_stage::fragment, {g_fullscreenFrag, g_fullscreenFrag + sizeof(g_fullscreenFrag)}}};
-        CreateShader(m_renderer, shaderCreateInfo, splashScreenArt->shader) != 0)
+    const std::array<fawn_vision::ShaderData, 2> shaderData{
+        fawn_vision::ShaderData{fawn_vision::shader_stage::vertex, {g_fullscreenVert, g_fullscreenVert + g_fullscreenVertSize}},
+        fawn_vision::ShaderData{fawn_vision::shader_stage::fragment, {g_fullscreenFrag, g_fullscreenFrag + g_fullscreenFragSize}},
+    };
+    if (fawn_vision::CreateShader(m_renderer, std::span(shaderData), splashScreenArt->shader) != fawn_vision::gfx_status::ok)
     {
         throw std::invalid_argument("Failed To Create Shader");
     }
-    FawnVision::SetRenderFunc<SplashScreenArt>(m_renderGraph, passBuilder,
-                                               [&window = m_window](const SplashScreenArt* pSplashScreenArt, const FawnVision::SRenderPassContext& renderContext)
-                                               {
-                                                   BindShader(renderContext, pSplashScreenArt->shader);
 
-                                                   SetViewport(renderContext, 0.0f, 0.0f, static_cast<float>(window.width), static_cast<float>(window.height));
-                                                   SetScissor(renderContext, window.width, window.height, 0, 0);
+    fawn_vision::SetRenderFunc<SplashScreenArt>(
+        m_renderGraph, passBuilder,
+        [&window = m_window](const SplashScreenArt* pSplashScreenArt, const fawn_vision::RenderPassContext& renderContext)
+        {
+            fawn_vision::BindShader(renderContext, pSplashScreenArt->shader);
 
-                                                   SetAlphaToCoverageEnable(renderContext, false);
-                                                   SetColorBlendEnable(renderContext, false);
-                                                   SetColorBlendEquation(renderContext, FawnVision::blend_factor::zero, FawnVision::blend_factor::one, FawnVision::blend_operator::add, FawnVision::blend_factor::zero,
-                                                                         FawnVision::blend_factor::one, FawnVision::blend_operator::add);
-                                                   SetColorWriteMask(renderContext, static_cast<FawnVision::color_component>(15));
-                                                   SetCullMode(renderContext, FawnVision::cull_mode::back);
-                                                   SetDepthBiasEnable(renderContext, false);
-                                                   SetDepthCompareOperator(renderContext, FawnVision::compare_operator::less_or_equal);
-                                                   SetDepthTestEnable(renderContext, false);
-                                                   SetDepthWriteEnable(renderContext, false);
-                                                   SetFrontFace(renderContext, true);
-                                                   SetLineWidth(renderContext, 1.0f);
-                                                   SetPolygonMode(renderContext, FawnVision::polygon_mode::fill);
-                                                   SetPrimitiveRestartEnable(renderContext, false);
-                                                   SetPrimitiveTopology(renderContext, FawnVision::primitive_topology::triangle_list);
-                                                   SetRasterizationSamples(renderContext, 1U);
-                                                   SetRasterizerDiscardEnable(renderContext, false);
-                                                   SetStencilTestEnable(renderContext, false);
-                                                   SetVertexInput(renderContext);
-                                                   DrawFullscreen(renderContext);
-                                               });
+            fawn_vision::SetViewport(renderContext, 0.0f, 0.0f, static_cast<float>(window.width), static_cast<float>(window.height));
+            fawn_vision::SetScissor(renderContext, static_cast<std::uint32_t>(window.width), static_cast<std::uint32_t>(window.height), 0, 0);
+
+            fawn_vision::SetAlphaToCoverageEnable(renderContext, false);
+            fawn_vision::SetColorBlendEnable(renderContext, false);
+
+            fawn_vision::SetColorBlendEquation(renderContext, fawn_vision::blend_factor::zero, fawn_vision::blend_factor::zero, fawn_vision::blend_operator::add,
+                                               fawn_vision::blend_factor::one, fawn_vision::blend_factor::one, fawn_vision::blend_operator::add);
+            fawn_vision::SetColorWriteMask(renderContext, static_cast<fawn_vision::color_component>(15));
+            fawn_vision::SetCullMode(renderContext, fawn_vision::cull_mode::back);
+            fawn_vision::SetDepthBiasEnable(renderContext, false);
+            fawn_vision::SetDepthCompareOperator(renderContext, fawn_vision::compare_operator::less_or_equal);
+            fawn_vision::SetDepthTestEnable(renderContext, false);
+            fawn_vision::SetDepthWriteEnable(renderContext, false);
+            fawn_vision::SetFrontFace(renderContext, true);
+            fawn_vision::SetLineWidth(renderContext, 1.0f);
+            fawn_vision::SetPolygonMode(renderContext, fawn_vision::polygon_mode::fill);
+            fawn_vision::SetPrimitiveRestartEnable(renderContext, false);
+            fawn_vision::SetPrimitiveTopology(renderContext, fawn_vision::primitive_topology::triangle_list);
+            fawn_vision::SetRasterizationSamples(renderContext, 1U);
+            fawn_vision::SetRasterizerDiscardEnable(renderContext, false);
+            fawn_vision::SetStencilTestEnable(renderContext, false);
+            fawn_vision::SetVertexInput(renderContext);
+            fawn_vision::DrawFullscreen(renderContext);
+        });
     Draw();
-    CleanupRenderGraph(m_renderGraph);
-    FawnVision::Cleanup(m_renderer, splashScreenArt->shader);
+    fawn_vision::CleanupRenderGraph(m_renderGraph);
+    fawn_vision::Cleanup(m_renderer, splashScreenArt->shader);
 
-    if (DeerUI::Initialize(m_renderer, m_renderGraph, m_uiRenderer) != 0)
+    if (deer_ui::Initialize(m_renderer, m_renderGraph, m_uiRenderer) != 0)
     {
         throw std::invalid_argument("Failed to initialize the ui renderer");
     }
 
     // todo : initialize font engine (set up font rendering)
-    // todo : initialize user interface (UI) components (if your application has a GUI)
-    // todo : initialize randomization (if needed for procedural generation)
-    // todo : initialize file manager (prepare for file I/O operations)
-    // todo : initialize asset manager (manage game assets like textures, models, etc.)
-    // todo : initialize input manager (handle user input)
-    // todo : initialize audio engine (set up audio processing)
-    // todo : initialize physics engine (if applicable, for handling physics simulations)
-    // todo : initialize AI module (initialize artificial intelligence systems)
-    // todo : initialize network manager (if applicable, for networking functionalities)
-    // todo : initialize scene manager (manage different scenes in the application)
-    // todo : initialize scripting language (if applicable, set up scripting support)
+    // todo : initialize user interface (UI) components (if your application
+    // has a GUI) todo : initialize randomization (if needed for procedural
+    // generation) todo : initialize file manager (prepare for file I/O
+    // operations) todo : initialize asset manager (manage game assets like
+    // textures, models, etc.) todo : initialize input manager (handle user
+    // input) todo : initialize audio engine (set up audio processing) todo
+    // : initialize physics engine (if applicable, for handling physics
+    // simulations) todo : initialize AI module (initialize artificial
+    // intelligence systems) todo : initialize network manager (if
+    // applicable, for networking functionalities) todo : initialize scene
+    // manager (manage different scenes in the application) todo :
+    // initialize scripting language (if applicable, set up scripting
+    // support)
 }
 
 void Application::LoadGame()
@@ -104,44 +111,105 @@ void Application::LoadGame()
     // todo : read out desired flags;
     // todo : read out desired position;
     // todo : read out desired size;
-    SetWindowFlags(m_window, static_cast<uint32_t>(FawnVision::window_flags::maximized | FawnVision::window_flags::resizable));
-    SetWindowPosition(m_window);
-    SetWindowSize(m_window, 860, 640);
-    RecreateRenderer(m_window, m_renderer);
+    // if (!fawn_vision::SetWindowFlags(m_window, fawn_vision::window_flags::maximized | fawn_vision::window_flags::resizable))
+    // {
+    //     std::cerr << "could not set window flag\n";
+    // }
+    // if (!fawn_vision::SetWindowPosition(m_window))
+    // {
+    //     std::cerr << "could not set window position\n";
+    // }
+    // if (!fawn_vision::SetWindowSize(m_window, 860, 640))
+    // {
+    //     std::cerr << "could not set window size\n";
+    // }
+    // if (fawn_vision::RecreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
+    // {
+    //     std::cerr << "could not set create renderer\n";
+    // }
 
-    DeerUI::CanvasHandle canvasHandle;
-    DeerUI::UIElementHandle uiElementHandle;
-    CreateCanvas(m_uiRenderer,ushort2{0u,0u},ushort2{80u,60u}, DeerUI::canvas_flag::background, canvasHandle );
-    AddElement(m_uiRenderer, canvasHandle, DeerUI::LayoutProperties{.padding = ushort2{5u,10u}, .margin = ushort2{4u,4u}, .size = ushort2{64u,24u}, .border = uchar2{0u,0u}, .flex = uchar2{1u,1u}}, uiElementHandle);
+    /*
+        // Create a canvas that fills the screen
+        deer_ui::CanvasHandle hud;
+        deer_ui::CreateCanvas(m_uiRenderer, {0, 0}, // position
+                           {1920, 1080},         // size (0,0 = fill)
+                           0,                    // layer
+                           deer_ui::canvas_flag::accepts_inputs, hud);
+
+        // ---------------------------------------------------------------------------
+        // Simple square — just a colored quad, no components
+        // ---------------------------------------------------------------------------
+
+        deer_ui::UIElementHandle square;
+        deer_ui::AddElement(m_uiRenderer, hud, deer_ui::invalidElement,
+                            deer_ui::LayoutProperties{
+                                .padding = {4, 4},
+                                .margin  = {8, 8},
+                                .size    = {64, 64},
+                            },
+                            {0.2F, 0.6F, 1.0F, 1.0F}, // blue
+                            square);
+
+        // ---------------------------------------------------------------------------
+        // Button — square + click component
+        // ---------------------------------------------------------------------------
+
+        deer_ui::UIElementHandle button;
+        deer_ui::AddElement(m_uiRenderer, hud, deer_ui::invalidElement,
+                            deer_ui::LayoutProperties{
+                                .padding = {8, 4},
+                                .margin  = {8, 8},
+                                .size    = {120, 40},
+                            },
+                            {0.3F, 0.3F, 0.3F, 1.0F}, // dark grey
+                            button);
+
+        deer_ui::AttachClickComponent(
+            m_uiRenderer, hud, button,
+            []
+            {
+                std::println("pressed");
+            }, // onPress
+            []
+            {
+                std::println("released");
+            }, // onRelease
+            []
+            {
+                std::println("hovered");
+            }); // onHover
+    */
 }
 
 void Application::Cleanup()
 {
-    DeerUI::Cleanup(m_renderer, m_uiRenderer);
-    CleanupRenderGraph(m_renderGraph);
-    ReleaseRenderer(m_renderer);
-    ReleaseWindow(m_window);
+    deer_ui::Cleanup(m_renderer, m_uiRenderer);
+    fawn_vision::CleanupRenderGraph(m_renderGraph);
+    fawn_vision::ReleaseRenderer(m_renderer);
+    fawn_vision::ReleaseWindow(m_window);
 }
 
 void Application::Run()
 {
     LoadGame();
+    std::cout << "game loaded\n";
 
     while (m_isRunning)
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event) != 0)
-        {
-            if (event.type == SDL_EVENT_QUIT)
-            {
-                m_isRunning = false;
-            }
-            else if (event.type == SDL_EVENT_WINDOW_RESIZED)
-            {
-                GetWindowSize(m_window);
-                WindowResize();
-            }
-        }
+        const std::array<std::pair<fawn_vision::event_type, std::function<void(const fawn_vision::EventContext&)>>, 2> handlers{
+            std::make_pair(fawn_vision::event_type::quit,
+                           [&](const fawn_vision::EventContext&)
+                           {
+                               m_isRunning = false;
+                           }),
+            // todo : add keyboard input support
+            std::make_pair(fawn_vision::event_type::window_resized,
+                           [&](const fawn_vision::EventContext&)
+                           {
+                               WindowResize();
+                           })};
+
+        fawn_vision::PollEvents(std::span(handlers));
         // todo : update physics
         // todo : update scene(s)
         Draw();
@@ -149,12 +217,15 @@ void Application::Run()
 }
 void Application::Draw()
 {
-    ExecuteAll(m_renderer, m_renderGraph);
+    fawn_vision::ExecuteAll(m_renderer, m_renderGraph);
 }
 
 void Application::WindowResize()
 {
     // todo: handle resize
-    RecreateRenderer(m_window, m_renderer);
+    if (fawn_vision::RecreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
+    {
+        std::cerr << "could not recreate renderer";
+    }
 }
 } // namespace BalbinoApp

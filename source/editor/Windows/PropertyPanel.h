@@ -53,7 +53,6 @@ namespace FawnForge
         bool m_isVisible {};
         property_type m_currentPropertyType { property_type::audio };
 
-#pragma region graphics
         enum shader_types : uint8_t
         {
             shader_types_default = 0,
@@ -86,7 +85,6 @@ namespace FawnForge
         const char* materialNames[ material_types_max ] {
             "Default Material", "Transparent Material", "Cloth Material", "Skin Material", "Hair Material", "Skybox Material", "Debug Material",
         };
-#pragma endregion graphics
 
         void DrawAudioProperties() const noexcept;
         void DrawGraphicsProperties() noexcept;

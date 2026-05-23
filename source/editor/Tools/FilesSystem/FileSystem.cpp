@@ -5,42 +5,42 @@
 
 #include <fstream>
 
-bool FawnForge::ImportFile( const char* pPath, const char* pDestinationDirection, FawnForge::CMeshFileImporter* pMeshImporter, FawnForge::CTextureFileImporter* pTextureImporter )
+bool FawnForge::ImportFile(const char* pPath, const char* pDestinationDirection, FawnForge::CMeshFileImporter* pMeshImporter, FawnForge::CTextureFileImporter* pTextureImporter)
 {
-    std::ifstream fileChecker { pPath };
-    if ( !fileChecker.is_open() )
+    std::ifstream fileChecker{pPath};
+    if (!fileChecker.is_open())
     {
         return false;
     }
     fileChecker.close();
 
-    const std::filesystem::path dirPath { pPath };
+    const std::filesystem::path dirPath{pPath};
     std::string extension = dirPath.extension().string();
-    for ( char& character : extension )
+    for (char& character : extension)
     {
-        character = static_cast<char>( std::toupper( character ) );
+        character = static_cast<char>(std::toupper(character));
     }
-    if ( extension == ".BALBINO" || extension == ".BASSET" || extension == ".CPP" || extension == ".H" )
+    if (extension == ".BALBINO" || extension == ".BASSET" || extension == ".CPP" || extension == ".H")
     {
-        copy( dirPath, pDestinationDirection );
+        copy(dirPath, pDestinationDirection);
         return true;
     }
-    if ( std::ranges::find( g_supportedImageFormat, extension ) != std::end(g_supportedImageFormat) )
+    if (std::ranges::find(g_supportedImageFormat, extension) != std::end(g_supportedImageFormat))
     {
-        pTextureImporter->SetVisible( dirPath, pDestinationDirection );
+        pTextureImporter->SetVisible(dirPath, pDestinationDirection);
         return true;
     }
-    if ( std::ranges::find( g_supportedAudioFormat, extension ) != std::end(g_supportedAudioFormat) )
+    if (std::ranges::find(g_supportedAudioFormat, extension) != std::end(g_supportedAudioFormat))
     {
-        return ImportAudio( dirPath, pDestinationDirection );   // todo: add importer
+        return ImportAudio(dirPath, pDestinationDirection); // todo: add importer
     }
-    if ( std::ranges::find( g_supportedFontFormat, extension ) != std::end(g_supportedFontFormat) )
+    if (std::ranges::find(g_supportedFontFormat, extension) != std::end(g_supportedFontFormat))
     {
-        return ImportFont( dirPath, pDestinationDirection );    // todo: add importer
+        return ImportFont(dirPath, pDestinationDirection); // todo: add importer
     }
-    if ( std::ranges::find( g_supportedMeshFormat, extension ) != std::end(g_supportedMeshFormat) )
+    if (std::ranges::find(g_supportedMeshFormat, extension) != std::end(g_supportedMeshFormat))
     {
-        pMeshImporter->SetVisible( dirPath, pDestinationDirection );
+        pMeshImporter->SetVisible(dirPath, pDestinationDirection);
         return true;
     }
     return false;

@@ -1,41 +1,37 @@
-cmake_minimum_required(VERSION 4.0.1)
-project(Deer VERSION 0.1.0 LANGUAGES CXX C)
+cmake_minimum_required(VERSION 4.3.0)
+set(CMAKE_CXX_COMPILER_IMPORT_STD ON)
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "451f2fe2-a8a2-47c3-bc32-94786d8fc91b")
+project(Deer VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CXX_SCAN_FOR_MODULES ON)
-set(CXX_STANDARD_REQUIRED ON)
-set(CXX_EXTENSIONS OFF)
-set(CXX_SCAN_FOR_MODULES ON)
-set(CMAKE_CXX_COMPILER_IMPORT_STD ON)
+set(CMAKE_CXX_MODULE_STD 1)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(${PROJECT_NAME}
-        main.cpp
-)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
-target_sources(${PROJECT_NAME} PRIVATE
-    main.cpp
-)
+add_executable(${PROJECT_NAME})
+target_sources(${PROJECT_NAME} PRIVATE main.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/source)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_EXTENSIONS OFF)
-
 target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:-DBALBINO_DEBUG>)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS        OFF
+    CXX_SCAN_FOR_MODULES  ON
+)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(compiler_select_flags)
 include(compiler_select_sdl)
 include(compiler_select_linker)
-set(COMPILE_FUNCTION_NAME "set_${CMAKE_CXX_COMPILER_ID}_compile_flags")
-if(EXISTS ${COMPILE_FUNCTION_NAME})
-    execute_process(COMMAND ${COMPILE_FUNCTION_NAME} ${PROJECT_NAME})
-endif()
+set_compile_flags(${PROJECT_NAME})
 select_best_stl(${PROJECT_NAME})
 select_best_linker(${PROJECT_NAME})
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/source/engine Engine)
+add_subdirectory(${CMAKE_SOURCE_DIR}/source/engine engine)
 
 add_dependencies(${PROJECT_NAME}
         FawnVision::FawnVision
@@ -44,6 +40,7 @@ add_dependencies(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/embedded
+        ${CMAKE_SOURCE_DIR}/source/engine
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

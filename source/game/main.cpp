@@ -1,16 +1,16 @@
 #include <balbino.hpp>
 
-namespace Dear
+namespace dear
 {
 class Game final : public BalbinoApp::Application
 {
   public:
-    Game()                       = default;
-    ~Game() override             = default;
-    Game(const Game&)            = delete;
-    Game(Game&&)                 = delete;
-    Game& operator=(const Game&) = delete;
-    Game& operator=(Game&&)      = delete;
+    Game()                               = default;
+    ~Game() override                     = default;
+    Game(const Game&)                    = delete;
+    Game(Game&&)                         = delete;
+    auto operator=(const Game&) -> Game& = delete;
+    auto operator=(Game&&) -> Game&      = delete;
 
     void LoadGame() override;
 };
@@ -19,14 +19,14 @@ void Game::LoadGame()
 {
     this->Application::LoadGame();
 }
-} // namespace Dear
+} // namespace dear
 
-BalbinoApp::Application* BalbinoApp::CreateApplication()
+auto BalbinoApp::CreateApplication() -> BalbinoApp::Application*
 {
-    return new Dear::Game{};
+    return new dear::Game{};
 }
 
 void BalbinoApp::DestroyApplication(Application* pApplication)
 {
-    delete dynamic_cast<Dear::Game*>(pApplication);
+    delete pApplication;
 }

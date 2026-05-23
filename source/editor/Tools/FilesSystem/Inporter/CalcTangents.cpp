@@ -13,85 +13,85 @@ CCalcTangents::CCalcTangents()
     m_context.m_pInterface = &m_iface;
 }
 
-void CCalcTangents::Calc( STempMesh* mesh ) noexcept
+void CCalcTangents::Calc(STempMesh* mesh) noexcept
 {
     m_context.m_pUserData = mesh;
 
-    genTangSpaceDefault( &this->m_context );
+    genTangSpaceDefault(&this->m_context);
 }
 
-int CCalcTangents::GetVertexIndex( const SMikkTSpaceContext* context, int iFace, int iVert )
+int CCalcTangents::GetVertexIndex(const SMikkTSpaceContext* context, int iFace, int iVert)
 {
-    const STempMesh* workingMesh = static_cast<STempMesh*>( context->m_pUserData );
-    const auto faceSize          = GetNumVerticesOfFace( context, iFace );
-    const auto indicesIndex      = ( iFace * faceSize ) + iVert;
-    const int index              = (int)workingMesh->indices[ indicesIndex ];
+    const STempMesh* workingMesh = static_cast<STempMesh*>(context->m_pUserData);
+    const auto faceSize          = GetNumVerticesOfFace(context, iFace);
+    const auto indicesIndex      = (iFace * faceSize) + iVert;
+    const int index              = (int)workingMesh->indices[indicesIndex];
 
     return index;
 }
 
-int CCalcTangents::GetNumFaces( const SMikkTSpaceContext* context )
+int CCalcTangents::GetNumFaces(const SMikkTSpaceContext* context)
 {
-    const STempMesh* workingMesh = static_cast<STempMesh*>( context->m_pUserData );
-    const float fSize            = static_cast<float>( workingMesh->indices.size() ) / 3.f;
-    const int iSize              = static_cast<int>( workingMesh->indices.size() ) / 3;
+    const STempMesh* workingMesh = static_cast<STempMesh*>(context->m_pUserData);
+    const float fSize            = static_cast<float>(workingMesh->indices.size()) / 3.f;
+    const int iSize              = static_cast<int>(workingMesh->indices.size()) / 3;
 
-    assert( ( fSize - (float)iSize ) == 0.f );
+    assert((fSize - (float)iSize) == 0.f);
     (void)fSize;
     return iSize;
 }
 
-int CCalcTangents::GetNumVerticesOfFace( const SMikkTSpaceContext* context, int iFace )
+int CCalcTangents::GetNumVerticesOfFace(const SMikkTSpaceContext* context, int iFace)
 {
     (void)context;
     (void)iFace;
     return 3;
 }
 
-void CCalcTangents::GetTranslation( const SMikkTSpaceContext* context, float outpos[], int iFace, int iVert )
+void CCalcTangents::GetTranslation(const SMikkTSpaceContext* context, float outpos[], int iFace, int iVert)
 {
-    const STempMesh* workingMesh = static_cast<STempMesh*>( context->m_pUserData );
+    const STempMesh* workingMesh = static_cast<STempMesh*>(context->m_pUserData);
 
-    const auto index  = GetVertexIndex( context, iFace, iVert );
-    const auto vertex = workingMesh->vertices[ index ];
+    const auto index  = GetVertexIndex(context, iFace, iVert);
+    const auto vertex = workingMesh->vertices[index];
 
-    outpos[ 0 ] = vertex.position.x;
-    outpos[ 1 ] = vertex.position.y;
-    outpos[ 2 ] = vertex.position.z;
+    outpos[0] = vertex.position.x;
+    outpos[1] = vertex.position.y;
+    outpos[2] = vertex.position.z;
 }
 
-void CCalcTangents::GetNormal( const SMikkTSpaceContext* context, float outnormal[], int iFace, int iVert )
+void CCalcTangents::GetNormal(const SMikkTSpaceContext* context, float outnormal[], int iFace, int iVert)
 {
-    const STempMesh* workingMesh = static_cast<STempMesh*>( context->m_pUserData );
+    const STempMesh* workingMesh = static_cast<STempMesh*>(context->m_pUserData);
 
-    const auto index  = GetVertexIndex( context, iFace, iVert );
-    const auto vertex = workingMesh->vertices[ index ];
+    const auto index  = GetVertexIndex(context, iFace, iVert);
+    const auto vertex = workingMesh->vertices[index];
 
-    outnormal[ 0 ] = vertex.normal.x;
-    outnormal[ 1 ] = vertex.normal.y;
-    outnormal[ 2 ] = vertex.normal.z;
+    outnormal[0] = vertex.normal.x;
+    outnormal[1] = vertex.normal.y;
+    outnormal[2] = vertex.normal.z;
 }
 
-void CCalcTangents::GetTexCoords( const SMikkTSpaceContext* context, float outuv[], int iFace, int iVert )
+void CCalcTangents::GetTexCoords(const SMikkTSpaceContext* context, float outuv[], int iFace, int iVert)
 {
-    auto workingMesh = static_cast<STempMesh*>( context->m_pUserData );
+    auto workingMesh = static_cast<STempMesh*>(context->m_pUserData);
 
-    auto index  = GetVertexIndex( context, iFace, iVert );
-    auto vertex = workingMesh->vertices[ index ];
+    auto index  = GetVertexIndex(context, iFace, iVert);
+    auto vertex = workingMesh->vertices[index];
 
-    outuv[ 0 ] = vertex.uv.x;
-    outuv[ 1 ] = vertex.uv.y;
+    outuv[0] = vertex.uv.x;
+    outuv[1] = vertex.uv.y;
 }
 
-void CCalcTangents::SetTspaceBasic( const SMikkTSpaceContext* context, const float tangentu[], float fSign, int iFace, int iVert )
+void CCalcTangents::SetTspaceBasic(const SMikkTSpaceContext* context, const float tangentu[], float fSign, int iFace, int iVert)
 {
-    auto workingMesh = static_cast<STempMesh*>( context->m_pUserData );
+    auto workingMesh = static_cast<STempMesh*>(context->m_pUserData);
 
-    const auto index = GetVertexIndex( context, iFace, iVert );
-    auto* vertex     = &workingMesh->vertices[ index ];
+    const auto index = GetVertexIndex(context, iFace, iVert);
+    auto* vertex     = &workingMesh->vertices[index];
 
-    vertex->tangent.x = tangentu[ 0 ];
-    vertex->tangent.y = tangentu[ 1 ];
-    vertex->tangent.z = tangentu[ 2 ];
+    vertex->tangent.x = tangentu[0];
+    vertex->tangent.y = tangentu[1];
+    vertex->tangent.z = tangentu[2];
     vertex->tangent.w = fSign;
 }

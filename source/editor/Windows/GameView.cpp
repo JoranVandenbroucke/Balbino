@@ -18,24 +18,26 @@
 void FawnForge::CGameView::Draw() noexcept
 {
     int flags = 1 << 5 | 43 | 1 << 7 | 1 << 0;
-    bool open { true };
-    Gui::Begin( "GameView", open, flags );
-    Gui::BeginChild( "GameViewChild", { -1, -1 }, false, flags );
-    if ( const BalbinoScene::CEntity& selected = m_pSceneHierarchy->GetSelectedEntity(); selected.IsValid() )
+    bool open{true};
+    Gui::Begin("GameView", open, flags);
+    Gui::BeginChild("GameViewChild", {-1, -1}, false, flags);
+    if (const BalbinoScene::CEntity& selected = m_pSceneHierarchy->GetSelectedEntity(); selected.IsValid())
     {
-        ImGuizmo::SetOrthographic( false );
+        ImGuizmo::SetOrthographic(false);
         ImGuizmo::SetDrawlist();
-        ImGuizmo::SetRect( 0, 0, (float)m_pSystem->GetWindowWidth(), (float)m_pSystem->GetWindowHeight() );
-#pragma todo( "Re Add ImGuizmo" ) // todo: fix those comments
-#pragma fixme( "Re Add ImGuizmo" )// fixme: fix those comments
-                                  //        const auto cameraObject = m_pSystem->GetCameraManager()->GetActiveCamera();
-                                  //        if ( cameraObject )
-                                  //        {
-                                  //            const auto& cameraCameraComponent    = cameraObject->GetComponent<CervidaeComponent::CCameraComponent>();
-                                  //            const auto& cameraTransformComponent = cameraObject.GetComponent<CervidaeComponent::CTransformComponent>();
-                                  //
-        //            const auto& cameraView       = BambiMath::LookAt( cameraTransformComponent->GetTranslation(), cameraTransformComponent->GetTranslation() + glm::rotate( cameraTransformComponent->GetRotation(), BambiMath::Vector3 { 0, 0, 1 } ), BambiMath::Vector3 { 0, 1, 0 } );
-        //            const auto& cameraProjection = BambiMath::Perspective( cameraCameraComponent->GetFov(), m_pSystem->GetWindowWidth() / m_pSystem->GetWindowHeight(), cameraCameraComponent->GetNearClip(), cameraCameraComponent->GetFarClip() );
+        ImGuizmo::SetRect(0, 0, (float)m_pSystem->GetWindowWidth(), (float)m_pSystem->GetWindowHeight());
+#pragma todo("Re Add ImGuizmo")  // todo: fix those comments
+#pragma fixme("Re Add ImGuizmo") // fixme: fix those comments
+                                 //        const auto cameraObject = m_pSystem->GetCameraManager()->GetActiveCamera();
+                                 //        if ( cameraObject )
+                                 //        {
+                                 //            const auto& cameraCameraComponent    = cameraObject->GetComponent<CervidaeComponent::CCameraComponent>();
+                                 //            const auto& cameraTransformComponent = cameraObject.GetComponent<CervidaeComponent::CTransformComponent>();
+                                 //
+        //            const auto& cameraView       = BambiMath::LookAt( cameraTransformComponent->GetTranslation(), cameraTransformComponent->GetTranslation() + glm::rotate(
+        //            cameraTransformComponent->GetRotation(), BambiMath::Vector3 { 0, 0, 1 } ), BambiMath::Vector3 { 0, 1, 0 } ); const auto& cameraProjection =
+        //            BambiMath::Perspective( cameraCameraComponent->GetFov(), m_pSystem->GetWindowWidth() / m_pSystem->GetWindowHeight(), cameraCameraComponent->GetNearClip(),
+        //            cameraCameraComponent->GetFarClip() );
         //
         //            const auto transformComponentSelected = selected.GetComponent<CervidaeComponent::CTransformComponent>();
         //            BambiMath::Matrix4 transformSelected           = transformComponentSelected.GetTransform();
@@ -49,7 +51,8 @@ void FawnForge::CGameView::Draw() noexcept
         //
         //            const float snapValues[ 3 ] { snapValue, snapValue, snapValue };
         //
-        //            Manipulate( value_ptr( cameraView ), value_ptr( cameraProjection ), static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::LOCAL, value_ptr( transformSelected ), nullptr, m_snap ? snapValues : nullptr );
+        //            Manipulate( value_ptr( cameraView ), value_ptr( cameraProjection ), static_cast<ImGuizmo::OPERATION>( m_gizmoType ), ImGuizmo::LOCAL, value_ptr(
+        //            transformSelected ), nullptr, m_snap ? snapValues : nullptr );
         //
         //            if ( ImGuizmo::IsUsing() )
         //            {
@@ -67,35 +70,35 @@ void FawnForge::CGameView::Draw() noexcept
         //        }
     }
     Gui::EndChild();
-    if ( void* pData = Gui::ReceiveDragDrop( ToString( file_type::model ) ) )
+    if (void* pData = Gui::ReceiveDragDrop(ToString(file_type::model)))
     {
         try
         {
-            const FawnVision::CMesh* pModel = m_pSystem->GetResourceManager()->GetModel( static_cast<SFile*>( pData )->path );
+            const FawnVision::CMesh* pModel = m_pSystem->GetResourceManager()->GetModel(static_cast<SFile*>(pData)->path);
             BalbinoScene::CEntity pEnt      = m_pContext->CreateEntity();
-            pEnt.AddComponent<CervidaeComponent::CMeshRenderComponent>( pModel->GetUuid() ).SetMaterialCount( pModel->GetMaterialCount() );
+            pEnt.AddComponent<CervidaeComponent::CMeshRenderComponent>(pModel->GetUuid()).SetMaterialCount(pModel->GetMaterialCount());
         }
-        catch ( const FawnTrace::Exception& e )
+        catch (const FawnTrace::Exception& e)
         {
-            m_pSystem->Log.Error( e.what() );
+            m_pSystem->Log.Error(e.what());
         }
     }
     Gui::End();
 }
 
-void FawnForge::CGameView::SetContext( ISystem* pSystem, CSceneHierarchy* pSceneHierarchy ) noexcept
+void FawnForge::CGameView::SetContext(ISystem* pSystem, CSceneHierarchy* pSceneHierarchy) noexcept
 {
     m_pSceneHierarchy = pSceneHierarchy;
     m_pSystem         = pSystem;
     m_pContext        = pSystem->GetCurrentActiveScene();
 }
 
-void FawnForge::CGameView::SetSnap( bool snap ) noexcept
+void FawnForge::CGameView::SetSnap(bool snap) noexcept
 {
     m_snap = snap;
 }
 
-void FawnForge::CGameView::SetGuizmo( int key ) noexcept
+void FawnForge::CGameView::SetGuizmo(int key) noexcept
 {
     m_gizmoType = key;
 }

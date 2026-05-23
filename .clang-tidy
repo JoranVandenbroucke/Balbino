@@ -1,30 +1,27 @@
+# Generated from CLion Inspection settings
 ---
 Checks: >
-  -*,
+  -*
+  -boost-*
   bugprone-*
-  cert-*,
-  clang-*,
-  cppcoreguidelines-*,
-  google-*,
-  llvm-*,
-  misc-*,
-  -misc-include-cleaner,
-  -misc-non-private-member-variables-in-classes,
-  modernize-*,
-  mpi-*,
-  openmp-*,
-  performance-*,
-  readability-*,
+  cert-*
+  cppcoreguidelines-*
+  google-*
+  llvm-*
+  modernize-*
+  mpi-*
+  openmp-*
+  performance-*
+  readability-*
+  misc-*
+  -misc-include-cleaner
+  -misc-non-private-member-variables-in-classes
 
 CheckOptions:
   - key: readability-identifier-naming.AbstractClassCase
     value: CamelCase
-  - key: readability-identifier-naming.AbstractClassPrefix
-    value: I
   - key: readability-identifier-naming.ClassCase
     value: CamelCase
-  - key: readability-identifier-naming.ClassPrefix
-    value: C
   - key: readability-identifier-naming.ClassConstantCase
     value: camelCase
   - key: readability-identifier-naming.ClassMemberCase
@@ -127,8 +124,6 @@ CheckOptions:
     value: camelCase
   - key: readability-identifier-naming.StructCase
     value: CamelCase
-  - key: readability-identifier-naming.StructPrefix
-    value: S
   - key: readability-identifier-naming.TemplateParameterCase
     value: CamelCase
   - key: readability-identifier-naming.TemplateTemplateParameterCase
@@ -141,11 +136,10 @@ CheckOptions:
     value: CamelCase
   - key: readability-identifier-naming.UnionCase
     value: CamelCase
-  - key: readability-identifier-naming.UnionPrefix
-    value: U
   - key: readability-identifier-naming.ValueTemplateParameterCase
     value: CamelCase
   - key: readability-identifier-naming.VariableCase
     value: camelCase
   - key: readability-identifier-naming.VirtualMethodCase
     value: CamelCase
+
