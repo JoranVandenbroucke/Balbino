@@ -3,12 +3,12 @@
 //
 
 #pragma once
-#if defined(_MSC_VER)
 
-// ----- MSVC / Windows -----
+// ----- Windows + MSVC (incl. clang-cl) -----
+#if defined(_WIN32) && defined(_MSC_VER)
+
 #    define _CRTDBG_MAP_ALLOC
 #    include <crtdbg.h>
-#    include <stdlib.h>
 
 #    define INIT_MEMORY_LEAKS()                                                                                                                                                    \
         _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                                                                                                              \
@@ -20,11 +20,14 @@
         _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);                                                                                                                          \
         _CrtDumpMemoryLeaks()
 
-// ----- GCC / Clang with LeakSanitizer active at compile time -----
+// ----- Linux + GCC/Clang with LeakSanitizer active at compile time -----
 // __has_feature is Clang; __SANITIZE_ADDRESS__ covers GCC -fsanitize=address.
 // -fsanitize=leak alone sets __SANITIZE_LEAK__ on GCC 13+ / Clang 17+,
 // so we check all three to be safe.
-#elif (defined(__has_feature) && (__has_feature(address_sanitizer) || __has_feature(leak_sanitizer))) || defined(__SANITIZE_ADDRESS__) || defined(__SANITIZE_LEAK__)
+// LSan's runtime interface is only available on Linux (not Windows/macOS),
+// so this branch is additionally gated on __linux__.
+#elif defined(__linux__) && (defined(__GNUC__) || defined(__clang__))                                                                                                              \
+    && ((defined(__has_feature) && (__has_feature(address_sanitizer) || __has_feature(leak_sanitizer))) || defined(__SANITIZE_ADDRESS__) || defined(__SANITIZE_LEAK__))
 
 #    include <sanitizer/lsan_interface.h>
 
@@ -33,7 +36,7 @@
 
 #else
 
-// ----- Fallback: no-ops (release builds / sanitizer not enabled) -----
+// ----- Fallback: no-ops (release builds / unsupported platform-compiler combo / sanitizer not enabled) -----
 #    define INIT_MEMORY_LEAKS() ((void)0)
 #    define DUMP_MEMORY_LEAKS() ((void)0)
 

@@ -33,5 +33,5 @@ class Application
 
 // to be defined in a client
 Application* CreateApplication();
-void DestroyApplication(Application* pApplication);
+void DestroyApplication(const Application* pApplication);
 } // namespace BalbinoApp

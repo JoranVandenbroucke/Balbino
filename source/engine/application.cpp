@@ -94,23 +94,6 @@ void Application::Initialize()
     fawn_vision::CleanupRenderGraph(m_renderGraph);
     fawn_vision::Cleanup(m_renderer, splashScreenArt->shader);
 
-    if (!fawn_vision::IsHyprlandSession())
-    {
-        const fawn_vision::WindowSettings savedSettings{fawn_vision::LoadWindowSettings()};
-        if (!fawn_vision::ApplySavedWindowLayout(m_window, savedSettings))
-        {
-            throw std::invalid_argument("Failed to apply saved window layout");
-        }
-        if (!fawn_vision::SyncWindowSize(m_window))
-        {
-            throw std::invalid_argument("Failed to sync window size after splash");
-        }
-        if (fawn_vision::RecreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
-        {
-            throw std::invalid_argument("Failed to recreate renderer after splash");
-        }
-    }
-
     if (deer_ui::Initialize(m_renderer, m_renderGraph, m_uiRenderer) != 0)
     {
         throw std::invalid_argument("Failed to initialize the ui renderer");
@@ -138,22 +121,23 @@ void Application::LoadGame()
     // todo : read out desired flags;
     // todo : read out desired position;
     // todo : read out desired size;
-    // if (!fawn_vision::SetWindowFlags(m_window, fawn_vision::window_flags::maximized | fawn_vision::window_flags::resizable))
-    // {
-    //     std::cerr << "could not set window flag\n";
-    // }
-    // if (!fawn_vision::SetWindowPosition(m_window))
-    // {
-    //     std::cerr << "could not set window position\n";
-    // }
-    // if (!fawn_vision::SetWindowSize(m_window, 860, 640))
-    // {
-    //     std::cerr << "could not set window size\n";
-    // }
-    // if (fawn_vision::RecreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
-    // {
-    //     std::cerr << "could not set create renderer\n";
-    // }
+
+    if (!fawn_vision::IsHyprlandSession())
+    {
+        const fawn_vision::WindowSettings savedSettings{fawn_vision::LoadWindowSettings()};
+        if (!fawn_vision::ApplySavedWindowLayout(m_window, savedSettings))
+        {
+            throw std::invalid_argument("Failed to apply saved window layout");
+        }
+        if (!fawn_vision::SyncWindowSize(m_window))
+        {
+            throw std::invalid_argument("Failed to sync window size after splash");
+        }
+        if (fawn_vision::RecreateRenderer(m_window, m_renderer) != fawn_vision::gfx_status::ok)
+        {
+            throw std::invalid_argument("Failed to recreate renderer after splash");
+        }
+    }
 
     // Create a canvas that fills the screen
     deer_ui::CanvasHandle hud;
