@@ -21,12 +21,12 @@ void Game::LoadGame()
 }
 } // namespace dear
 
-auto BalbinoApp::CreateApplication() -> BalbinoApp::Application*
+auto BalbinoApp::CreateApplication() -> Application*
 {
     return new dear::Game{};
 }
 
-void BalbinoApp::DestroyApplication(Application* pApplication)
+void BalbinoApp::DestroyApplication(const Application* pApplication)
 {
     delete pApplication;
 }

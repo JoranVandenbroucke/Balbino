@@ -9,6 +9,7 @@ function(setup_imgui target_name)
             GIT_REPOSITORY https://github.com/ocornut/ImGui.git
             GIT_TAG docking
             GIT_PROGRESS TRUE
+            GIT_SHALLOW    TRUE
         )
         FetchContent_MakeAvailable(imgui)
 
